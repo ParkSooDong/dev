@@ -32,7 +32,14 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
     }
 
-    /* 화면 전체를 2x2 칸으로 정확히 균등 분할 (1280x1024 기준 각 칸 약 628x500) */
+    /* 화면 전체를 2x2 칸으로 정확히 균등 분할 (기준 해상도: 1024x768 → 각 칸 약 500x372)
+       계산식: 가로 = (화면폭 - 좌우여백 16 - 칸간격 8) / 2
+               세로 = (화면높이 - 상하여백 16 - 칸간격 8) / 2
+       해상도별 각 칸 크기 (섹션 패딩/제목 포함 바깥 크기):
+         - 1280x1024 → 각 칸 약 628 x 500
+         - 1024x768  → 각 칸 약 500 x 372  (현재 기준)
+         - 800x600   → 각 칸 약 388 x 288
+    */
     .grid {
       height: 100%;
       display: grid;
@@ -71,8 +78,8 @@
       height: 100%;
     }
 
-    /* 좁은 화면(모바일 등)에서는 한 줄씩 세로로 배치 */
-    @media (max-width: 900px) {
+    /* 좁은 화면(모바일 등)에서는 한 줄씩 세로로 배치 (800x600도 2x2 유지되도록 640px로 설정) */
+    @media (max-width: 640px) {
       html, body { height: auto; }
       .grid {
         height: auto;
