@@ -29,11 +29,13 @@
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
     }
-    main { max-width: 1100px; margin: 0 auto; }
+    main { max-width: 1400px; margin: 0 auto; }
     h1 { font-size: 1.5rem; margin: 0 0 20px; }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      /* 넓은 화면: 왼쪽 Advanced / 오른쪽 Seasonal, 좁은 화면: 세로로 쌓임 */
+      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      align-items: start;
       gap: 16px;
     }
     section {
@@ -56,10 +58,8 @@
       overflow: hidden;
       contain: size layout paint;
     }
-    .box.mini { height: 300px; max-height: 300px; }
-    .box.seasonal { height: 420px; max-height: 420px; }
+    .box.seasonal { height: 600px; max-height: 600px; }
     .box.advanced { height: 600px; max-height: 600px; }
-    .box > tv-mini-chart,
     .box > tv-seasonal-chart,
     .box > tv-advanced-chart {
       display: block;
@@ -67,7 +67,6 @@
       height: 100%;
     }
   </style>
-  <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-seasonal-chart.js"></script>
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-advanced-chart.js"></script>
 </head>
@@ -76,32 +75,17 @@
     <h1>EUR/USD 차트</h1>
 
     <div class="grid">
-      <section class="wide">
-        <h2>Seasonal Chart</h2>
-        <div class="box seasonal">
-          <tv-seasonal-chart symbol="eurusd"></tv-seasonal-chart>
-        </div>
-      </section>
-
-      <section class="wide">
+      <section>
         <h2>Advanced Chart</h2>
         <div class="box advanced">
           <tv-advanced-chart symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
 
-      <!-- 1W, 1D는 맨 아래에 배치 -->
       <section>
-        <h2>Mini Chart 1W</h2>
-        <div class="box mini">
-          <tv-mini-chart symbol="eurusd" time-frame="7D" line-chart-type="Baseline"></tv-mini-chart>
-        </div>
-      </section>
-
-      <section>
-        <h2>Mini Chart 1D</h2>
-        <div class="box mini">
-          <tv-mini-chart symbol="eurusd" time-frame="1D" line-chart-type="Baseline"></tv-mini-chart>
+        <h2>Seasonal Chart</h2>
+        <div class="box seasonal">
+          <tv-seasonal-chart symbol="eurusd"></tv-seasonal-chart>
         </div>
       </section>
     </div>
