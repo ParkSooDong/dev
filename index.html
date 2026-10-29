@@ -49,8 +49,19 @@
       font-weight: 600;
       margin: 0 0 12px;
     }
-    tv-mini-chart, tv-seasonal-chart { display: block; }
-    tv-advanced-chart { display: block; height: 600px; }
+    /* 위젯이 부모 높이를 기준으로 커지며 무한 확장되는 것을 막기 위해
+       래퍼와 위젯 모두에 고정 높이를 지정 */
+    .box { position: relative; width: 100%; overflow: hidden; }
+    .box.mini { height: 300px; }
+    .box.seasonal { height: 420px; }
+    .box.advanced { height: 600px; }
+    .box > tv-mini-chart,
+    .box > tv-seasonal-chart,
+    .box > tv-advanced-chart {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
   </style>
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-seasonal-chart.js"></script>
@@ -63,22 +74,30 @@
     <div class="grid">
       <section>
         <h2>Mini Chart 1W</h2>
-        <tv-mini-chart symbol="eurusd" time-frame="7D" line-chart-type="Baseline"></tv-mini-chart>
+        <div class="box mini">
+          <tv-mini-chart symbol="eurusd" time-frame="7D" line-chart-type="Baseline"></tv-mini-chart>
+        </div>
       </section>
 
       <section>
         <h2>Mini Chart 1D</h2>
-        <tv-mini-chart symbol="eurusd" line-chart-type="Baseline"></tv-mini-chart>
+        <div class="box mini">
+          <tv-mini-chart symbol="eurusd" line-chart-type="Baseline"></tv-mini-chart>
+        </div>
       </section>
 
       <section class="wide">
         <h2>Seasonal Chart</h2>
-        <tv-seasonal-chart symbol="eurusd"></tv-seasonal-chart>
+        <div class="box seasonal">
+          <tv-seasonal-chart symbol="eurusd"></tv-seasonal-chart>
+        </div>
       </section>
 
       <section class="wide">
         <h2>Advanced Chart</h2>
-        <tv-advanced-chart symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        <div class="box advanced">
+          <tv-advanced-chart symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        </div>
       </section>
     </div>
   </main>
