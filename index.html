@@ -65,9 +65,7 @@
       overflow: hidden;
       contain: size layout paint;
     }
-    .box > tv-advanced-chart,
-    .box > tv-seasonal-chart,
-    .box > tv-mini-chart {
+    .box > tv-advanced-chart {
       display: block;
       width: 100%;
       height: 100%;
@@ -85,40 +83,38 @@
     }
   </style>
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-advanced-chart.js"></script>
-  <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-seasonal-chart.js"></script>
-  <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-mini-chart.js"></script>
 </head>
 <body>
   <div class="grid">
-    <!-- 위쪽 왼쪽 -->
+    <!-- 상단 왼쪽: 15분 -->
     <section>
-      <h2>Advanced Chart</h2>
+      <h2>Advanced Chart · 15분</h2>
       <div class="box">
         <tv-advanced-chart symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
       </div>
     </section>
 
-    <!-- 위쪽 오른쪽 -->
+    <!-- 상단 오른쪽: 3분 -->
     <section>
-      <h2>Seasonal Chart</h2>
+      <h2>Advanced Chart · 3분</h2>
       <div class="box">
-        <tv-seasonal-chart symbol="eurusd"></tv-seasonal-chart>
+        <tv-advanced-chart symbol="eurusd" interval="3" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
       </div>
     </section>
 
-    <!-- 아래쪽 왼쪽 -->
+    <!-- 하단 왼쪽: 일봉 -->
     <section>
-      <h2>Mini Chart LASTSESSION</h2>
+      <h2>Advanced Chart · 일</h2>
       <div class="box">
-        <tv-mini-chart symbol="eurusd" time-frame="LASTSESSION" line-chart-type="Baseline"></tv-mini-chart>
+        <tv-advanced-chart symbol="eurusd" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
       </div>
     </section>
 
-    <!-- 아래쪽 오른쪽 -->
+    <!-- 하단 오른쪽: 1시간 -->
     <section>
-      <h2>Mini Chart 13D</h2>
+      <h2>Advanced Chart · 1시간</h2>
       <div class="box">
-        <tv-mini-chart symbol="eurusd" time-frame="13D" line-chart-type="Baseline"></tv-mini-chart>
+        <tv-advanced-chart symbol="eurusd" interval="60" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
       </div>
     </section>
   </div>
