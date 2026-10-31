@@ -23,19 +23,33 @@ textarea:disabled{opacity:.6}
 </head>
 <body>
 <header><h1>공용 메모장</h1><span id="st" role="status">불러오는 중…</span></header>
-<textarea id="memo" maxlength="60000" placeholder="누구나 수정할 수 있는 메모예요. 자동으로 저장돼요." disabled aria-label="메모"></textarea>
+<textarea id="memo" maxlength="3000000" placeholder="누구나 수정할 수 있는 메모예요. 자동으로 저장돼요." disabled aria-label="메모"></textarea>
 <script>
 /* ▼▼ 여기만 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이) ▼▼ */
 const DB_URL = "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app";
+/*const DB_URL = "https://YOUR-PROJECT-default-rtdb.firebaseio.com"; */
 /* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
 
-const POLL_MS = 3000;
+const MAX_CHARS = 3000000;   // 메모 최대 글자 수 (Firebase 규칙의 숫자와 같아야 해요)
+const POLL_MS = 3000;        // 다른 기기의 변경을 확인하는 간격
+const IDLE_MS = 3000;        // 입력을 멈춘 뒤 저장까지 기다리는 시간
+const MAX_WAIT_MS = 30000;   // 계속 입력해도 이 시간이 지나면 한 번 저장
+
 const ta = document.getElementById("memo"), st = document.getElementById("st");
 const say = (t, c) => { st.textContent = t; st.className = c || ""; };
 const hhmm = () => new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
-const URL_MEMO = DB_URL.replace(/\/+$/, "") + "/memo.json";
+const BASE = DB_URL.replace(/\/+$/, "");
+const URL_MEMO = BASE + "/memo.json";
+const URL_AT = BASE + "/memo/updatedAt.json";   // 수정 시각 숫자만 (아주 작음)
+ta.maxLength = MAX_CHARS;
 
-let dirty = false, timer = null, knownAt = 0, ready = false, saving = false;
+let dirty = false, idleT = null, maxT = null, knownAt = 0, ready = false, saving = false;
+
+function clearTimers() { clearTimeout(idleT); clearTimeout(maxT); idleT = maxT = null; }
+function schedule() {
+  clearTimeout(idleT); idleT = setTimeout(save, IDLE_MS);
+  if (!maxT) maxT = setTimeout(save, MAX_WAIT_MS);
+}
 
 async function fetchRemote() {
   const r = await fetch(URL_MEMO, { cache: "no-store" });
@@ -44,36 +58,46 @@ async function fetchRemote() {
 }
 
 function apply(d, msg) {
-  if (!d || typeof d.text !== "string") return;
-  if (d.updatedAt > knownAt) {
-    knownAt = d.updatedAt;
-    if (!dirty && ta.value !== d.text) { ta.value = d.text; if (msg) say(msg, "ok"); }
-  }
+  if (!d || typeof d.text !== "string" || !(d.updatedAt > knownAt) || dirty) return;
+  knownAt = d.updatedAt;
+  if (ta.value !== d.text) { ta.value = d.text; if (msg) say(msg, "ok"); }
 }
 
-async function save(keepalive) {
-  clearTimeout(timer);
-  if (saving) { timer = setTimeout(save, 400); return; }
-  const v = ta.value, at = Date.now();
-  saving = true;
+async function save(unloading) {
+  clearTimers();
+  if (!dirty) return;
+  if (saving) { schedule(); return; }
+  const v = ta.value;
+  const at = Math.max(Date.now(), knownAt + 1);   // 기기 시계가 달라도 항상 더 큰 값
+  const body = JSON.stringify({ text: v, updatedAt: at });
+  const small = body.length < 20000;               // 창 닫는 중 전송은 작은 메모만 가능
+  saving = true; say("저장 중…");
   try {
     const r = await fetch(URL_MEMO, {
-      method: "PUT", keepalive: !!keepalive,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: v, updatedAt: at })
+      method: "PUT", keepalive: unloading === true && small,
+      headers: { "Content-Type": "application/json" }, body
     });
     if (!r.ok) throw new Error("HTTP " + r.status);
-    knownAt = Math.max(knownAt, at);
+    knownAt = at;
     if (ta.value === v) { dirty = false; say("저장됨 " + hhmm(), "ok"); }
+    else schedule();                               // 저장 중에 더 입력한 경우
   } catch (e) {
-    say("저장 실패. 잠시 후 다시 시도돼요", "err");
-    timer = setTimeout(save, 5000);
+    say("저장 실패. 5초 뒤 다시 시도해요", "err");
+    clearTimeout(idleT); idleT = setTimeout(save, 5000);
   } finally { saving = false; }
 }
 
 async function poll() {
-  if (!ready || dirty || document.hidden) return;
-  try { apply(await fetchRemote(), "다른 기기의 변경을 반영했어요"); } catch (e) {}
+  if (!ready || dirty || saving || document.hidden) return;
+  try {
+    const r = await fetch(URL_AT, { cache: "no-store" });
+    if (!r.ok) return;
+    const at = await r.json();
+    if (typeof at === "number" && at > knownAt) {
+      say("다른 기기의 변경을 불러오는 중…");
+      apply(await fetchRemote(), "다른 기기의 변경을 반영했어요");
+    }
+  } catch (e) {}
 }
 
 async function start() {
@@ -87,11 +111,12 @@ async function start() {
   }
 }
 
-ta.addEventListener("input", () => { dirty = true; say("저장 중…"); clearTimeout(timer); timer = setTimeout(save, 600); });
+ta.addEventListener("input", () => { dirty = true; say("저장 대기 중…"); schedule(); });
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) { if (dirty) save(true); } else { poll(); }
 });
 window.addEventListener("focus", poll);
+window.addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
 start();
 </script>
 </body>
