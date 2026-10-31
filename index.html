@@ -32,12 +32,12 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
     }
 
-    /* 화면 전체를 2x2 칸으로 정확히 균등 분할 */
+    /* 화면 전체를 1x2 칸(가로 1줄, 좌우 2칸)으로 정확히 균등 분할 */
     .grid {
       height: 100%;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(0, 1fr));
+      grid-template-rows: minmax(0, 1fr);
       gap: var(--gap);
     }
     section {
@@ -98,7 +98,7 @@
 </head>
 <body>
   <div class="grid">
-    <!-- 상단 왼쪽: 15분 -->
+    <!-- 왼쪽: 15분 -->
     <section>
       <div class="head"><h2>KOSPI · 15분</h2><a href="https://www.tradingview.com/chart/?symbol=KRX%3AKOSPI&interval=15" target="_blank" rel="noopener">새 창</a></div>
       <div class="box">
@@ -106,27 +106,11 @@
       </div>
     </section>
 
-    <!-- 상단 오른쪽: 3분 -->
+    <!-- 오른쪽: 3분 -->
     <section>
       <div class="head"><h2>KOSPI · 3분</h2><a href="https://www.tradingview.com/chart/?symbol=KRX%3AKOSPI&interval=3" target="_blank" rel="noopener">새 창</a></div>
       <div class="box">
         <iframe src="https://www.tradingview.com/chart/?symbol=KRX%3AKOSPI&interval=3" title="KOSPI 3분" allow="fullscreen"></iframe>
-      </div>
-    </section>
-
-    <!-- 하단 왼쪽: 일봉 -->
-    <section>
-      <div class="head"><h2>KOSPI · 일</h2><a href="https://www.tradingview.com/chart/?symbol=KRX%3AKOSPI&interval=D" target="_blank" rel="noopener">새 창</a></div>
-      <div class="box">
-        <iframe src="https://www.tradingview.com/chart/?symbol=KRX%3AKOSPI&interval=D" title="KOSPI 일" allow="fullscreen"></iframe>
-      </div>
-    </section>
-
-    <!-- 하단 오른쪽: 1시간 -->
-    <section>
-      <div class="head"><h2>KOSPI · 1시간</h2><a href="https://www.tradingview.com/chart/?symbol=KRX%3AKOSPI&interval=60" target="_blank" rel="noopener">새 창</a></div>
-      <div class="box">
-        <iframe src="https://www.tradingview.com/chart/?symbol=KRX%3AKOSPI&interval=60" title="KOSPI 1시간" allow="fullscreen"></iframe>
       </div>
     </section>
   </div>
