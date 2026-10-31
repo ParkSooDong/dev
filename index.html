@@ -1,3 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>공용 메모장</title>
+<style>
+:root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fffefb;--ok:#2e7d32;--err:#b3261e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--card:#1e1d21;--ok:#81c784;--err:#ff8a80}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;display:flex;flex-direction:column;padding:12px;gap:8px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+h1{font-size:17px;margin:0;letter-spacing:-.01em}
+#st{font-size:12px;color:var(--mute)}
+#st.ok{color:var(--ok)}
+#st.err{color:var(--err)}
+textarea{flex:1;min-height:0;width:100%;resize:none;font:inherit;font-size:16px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+textarea:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+textarea:disabled{opacity:.6}
+</style>
+</head>
+<body>
+<header><h1>공용 메모장</h1><span id="st" role="status">불러오는 중…</span></header>
+<textarea id="memo" maxlength="60000" placeholder="누구나 수정할 수 있는 메모예요. 자동으로 저장돼요." disabled aria-label="메모"></textarea>
+<script>
+/* ▼▼ 여기만 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이) ▼▼ */
+const DB_URL = "https://YOUR-PROJECT-default-rtdb.firebaseio.com";
+/* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
 
-메인 페이지입니다.
-아직은 빈 공간입니다.
+const POLL_MS = 3000;
+const ta = document.getElementById("memo"), st = document.getElementById("st");
+const say = (t, c) => { st.textContent = t; st.className = c || ""; };
+const hhmm = () => new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+const URL_MEMO = DB_URL.replace(/\/+$/, "") + "/memo.json";
+
+let dirty = false, timer = null, knownAt = 0, ready = false, saving = false;
+
+async function fetchRemote() {
+  const r = await fetch(URL_MEMO, { cache: "no-store" });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json(); // null 또는 {text, updatedAt}
+}
+
+function apply(d, msg) {
+  if (!d || typeof d.text !== "string") return;
+  if (d.updatedAt > knownAt) {
+    knownAt = d.updatedAt;
+    if (!dirty && ta.value !== d.text) { ta.value = d.text; if (msg) say(msg, "ok"); }
+  }
+}
+
+async function save(keepalive) {
+  clearTimeout(timer);
+  if (saving) { timer = setTimeout(save, 400); return; }
+  const v = ta.value, at = Date.now();
+  saving = true;
+  try {
+    const r = await fetch(URL_MEMO, {
+      method: "PUT", keepalive: !!keepalive,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: v, updatedAt: at })
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    knownAt = Math.max(knownAt, at);
+    if (ta.value === v) { dirty = false; say("저장됨 " + hhmm(), "ok"); }
+  } catch (e) {
+    say("저장 실패. 잠시 후 다시 시도돼요", "err");
+    timer = setTimeout(save, 5000);
+  } finally { saving = false; }
+}
+
+async function poll() {
+  if (!ready || dirty || document.hidden) return;
+  try { apply(await fetchRemote(), "다른 기기의 변경을 반영했어요"); } catch (e) {}
+}
+
+async function start() {
+  if (DB_URL.includes("YOUR-PROJECT")) { say("DB_URL을 먼저 설정해 주세요", "err"); return; }
+  try {
+    apply(await fetchRemote());
+    ready = true; ta.disabled = false; say("불러옴", "ok");
+    setInterval(poll, POLL_MS);
+  } catch (e) {
+    say("불러오기 실패. DB 주소와 규칙을 확인해 주세요", "err");
+  }
+}
+
+ta.addEventListener("input", () => { dirty = true; say("저장 중…"); clearTimeout(timer); timer = setTimeout(save, 600); });
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { if (dirty) save(true); } else { poll(); }
+});
+window.addEventListener("focus", poll);
+start();
+</script>
+</body>
+</html>
