@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>초미니 바코드 3×3</title>
+<style>
+:root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fff;--acc:#1c1b19;--accfg:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--acc:#ecebe6;--accfg:#17161a}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;padding:20px 12px}
+main{max-width:900px;margin:0 auto}
+h1{font-size:18px;margin:0 0 14px;letter-spacing:-.01em}
+.top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) repeat(2,minmax(0,.8fr));gap:8px;align-items:end;margin-bottom:14px}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mute);min-width:0}
+input,select{width:100%;font:inherit;font-size:15px;padding:9px 10px;border:1.5px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);min-width:0}
+select option{color:#111}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cell{border:1.5px solid var(--line);border-radius:8px;padding:6px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.view{background:var(--card);border-radius:6px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px 3px;overflow:hidden}
+.view svg{width:100%;height:auto;max-height:90px}
+.txt{color:#111;font:10px ui-monospace,Menlo,monospace;margin-top:3px;word-break:break-all;text-align:center}
+.empty,.err{font-size:11px;color:var(--mute);text-align:center}
+.err{color:#b3261e}
+.cell input{font-size:13px;padding:6px 7px}
+.btns{display:flex;gap:4px}
+button{flex:1;font:inherit;font-size:12px;font-weight:600;padding:6px 2px;border-radius:6px;border:1.5px solid var(--acc);background:var(--acc);color:var(--accfg);cursor:pointer}
+button.l{background:transparent;color:var(--ink)}
+button:disabled{opacity:.35;cursor:default}
+textarea{width:100%;font:inherit;font-size:14px;line-height:1.5;padding:10px;border:1.5px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);resize:vertical;min-height:110px}
+textarea:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+p{color:var(--mute);font-size:12px;margin:12px 0 0}
+@media (max-width:560px){.top{grid-template-columns:repeat(3,minmax(0,1fr))}.btns{flex-direction:column}}
+</style>
+<script type="text/javascript" nonce="a52e000b71e848dc8b8f11854c6" src="//local.adguard.org?ts=1793439946428&amp;type=content-script&amp;dmn=219ded57-01d3-45ad-8ff1-711a10d74152.frame.claudeusercontent.com&amp;url=https%3A%2F%2F219ded57-01d3-45ad-8ff1-711a10d74152.frame.claudeusercontent.com%2F_f%2F1793454469-4fa1%2F_src%2Findex.html%3F__frame_t%3Dj6DovFiN9QFcVqriX7Lbmhxy.ee9adf90-33b5-4d3e-b4d5-3eda6c8dbdfc.d7873454-9f5a-476a-8737-32ce5221a34a.1793458070&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="a52e000b71e848dc8b8f11854c6" src="//local.adguard.org?ts=1793439946428&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+<body>
+<main>
+<h1>초미니 바코드 3×3</h1>
+<div class="top">
+<label>작업자 코드<input id="w" value="T8836853" autocomplete="off"></label>
+<label>사업장 코드<input id="s" value="136" autocomplete="off"></label>
+<label>년도 코드<input id="y" value="" inputmode="numeric" autocomplete="off"></label>
+<label>모드<select id="m"><option value="light">라이트</option><option value="dark">다크</option></select></label>
+<label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
+</div>
+<div class="grid" id="g"></div>
+<label style="margin-top:12px">메모<textarea id="memo" rows="5" placeholder="여러 줄로 메모할 수 있어요"></textarea></label>
+<p>Code 128 · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 1~3번은 직접 입력하세요.</p>
+</main>
+<script>
+const P="212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 114131 311141 411131 211412 211214 211232 2331112".split(" ");
+const $=id=>document.getElementById(id);
+const THEME={light:{fg:"#000",bg:"#fff"},dark:{fg:"#fff",bg:"#111111"}};
+function encode(s){
+  const c=[104];
+  for(const ch of s){const k=ch.charCodeAt(0);if(k<32||k>126)throw new Error("지원하지 않는 문자: "+ch);c.push(k-32)}
+  let sum=104;for(let i=1;i<c.length;i++)sum+=c[i]*i;
+  c.push(sum%103,106);return c.map(v=>P[v]).join("");
+}
+function build(s,t){
+  const w=encode(s),q=10,m=2;let x=q,r="";
+  for(let i=0;i<w.length;i++){const n=+w[i]*m;if(i%2===0)r+=`<rect x="${x}" y="0" width="${n}" height="60" fill="${t.fg}"/>`;x+=n}
+  const W=x+q;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} 60" width="${W}" height="60"><rect width="${W}" height="60" fill="${t.bg}"/>${r}</svg>`;
+}
+const defs=()=>{const S=$("s").value,Y=$("y").value.replace(/\D/g,"").slice(-2);return ["","","",$("w").value,`${S}-XY0-1-5`,`${S}-XY0-1-6`,`${S}-XX${Y}-1-501`,`${S}-XY0-1-10`,`${S}-13G10-13-401`]};
+const cells=[];$("y").value=new Date().getFullYear();let gen=defs();
+function save(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function fname(i,mode,ext){
+  const safe=v=>v.replace(/[^\w-]+/g,"_");
+  return `${safe($("y").value)||"year"}_${safe(cells[i].inp.value)}_${mode}.${ext}`;
+}
+function download(i,mode){
+  const v=cells[i].inp.value;if(!v)return;
+  let svg;try{svg=build(v,THEME[mode])}catch(e){return}
+  if($("f").value==="svg"){save(new Blob([svg],{type:"image/svg+xml"}),fname(i,mode,"svg"));return}
+  const img=new Image();
+  img.onload=()=>{const k=3,c=document.createElement("canvas");c.width=img.width*k;c.height=img.height*k;
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);c.toBlob(b=>save(b,fname(i,mode,"png")))};
+  img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+}
+function draw(i){
+  const {inp,view,bl}=cells[i],v=inp.value;
+  bl.disabled=true;view.textContent="";view.style.background=THEME[$("m").value].bg;
+  const d=document.createElement("div");
+  if(!v){d.className="empty";d.textContent="코드를 입력하세요";view.append(d);return}
+  try{view.insertAdjacentHTML("beforeend",build(v,THEME[$("m").value]));
+    const t=document.createElement("div");t.className="txt";t.textContent=v;t.style.color=THEME[$("m").value].fg;view.append(t);bl.disabled=false}
+  catch(e){d.className="err";d.textContent=e.message;view.append(d)}
+}
+function init(){
+  const g=$("g");
+  for(let i=0;i<9;i++){
+    const el=document.createElement("div");el.className="cell";
+    el.innerHTML=`<div class="view"></div><input aria-label="바코드 ${i+1}번 내용" placeholder="${i+1}번" autocomplete="off"><div class="btns"><button>저장</button></div>`;
+    const c={inp:el.querySelector("input"),view:el.querySelector(".view"),bl:el.querySelector("button")};
+    c.inp.value=gen[i];
+    c.inp.addEventListener("input",()=>draw(i));
+    c.bl.onclick=()=>download(i,$("m").value);
+    cells.push(c);g.append(el);draw(i);
+  }
+}
+function sync(){
+  const n=defs();
+  for(let i=3;i<9;i++){if(cells[i].inp.value===gen[i]){cells[i].inp.value=n[i];draw(i)}}
+  gen=n;
+}
+$("m").addEventListener("change",()=>cells.forEach((_,i)=>draw(i)));$("w").addEventListener("input",sync);$("s").addEventListener("input",sync);$("y").addEventListener("input",sync);
+try{$("memo").value=localStorage.getItem("bc-memo")||""}catch(e){}
+$("memo").addEventListener("input",()=>{try{localStorage.setItem("bc-memo",$("memo").value)}catch(e){}});
+init();
+</script>
+</body>
+</html>
