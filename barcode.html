@@ -3,11 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<meta name="supported-color-schemes" content="light">
+<script>
+/* 모바일 브라우저의 강제 다크모드 방지: 저장된 모드가 dark일 때만 dark, 그 외에는 항상 light */
+(function(){var m="light";try{var s=JSON.parse(localStorage.getItem("bc9-state"));if(s&&s.m==="dark")m="dark"}catch(e){}
+document.documentElement.setAttribute("data-theme",m);
+document.querySelector('meta[name="color-scheme"]').setAttribute("content",m==="dark"?"dark":"only light")})();
+</script>
 <title>미니 바코드 3×3</title>
 <style>
 :root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fff;--acc:#1c1b19;--accfg:#fff;
 --wk:#ffe08a;--wkb:#d9a400;--warn:#c62828;--note:#b85500;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:only light}
 :root[data-theme="dark"]{--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--card:#1f1e22;--acc:#ecebe6;--accfg:#17161a;
 --wk:#6b5200;--wkb:#d4a91c;--warn:#ff8a80;--note:#ffb74d;color-scheme:dark}
 *{box-sizing:border-box}
@@ -88,7 +96,9 @@ if(saved){
   if(["png","svg"].includes(saved.f))$("f").value=saved.f;
   if(typeof saved.memo==="string")$("memo").value=saved.memo;
 }
-function applyTheme(){document.documentElement.setAttribute("data-theme",$("m").value)}
+function applyTheme(){const m=$("m").value;document.documentElement.setAttribute("data-theme",m);
+  document.querySelector('meta[name="color-scheme"]').setAttribute("content",m==="dark"?"dark":"only light");
+  document.querySelector('meta[name="supported-color-schemes"]').setAttribute("content",m==="dark"?"dark":"light")}
 function saveState(){try{localStorage.setItem(KEY,JSON.stringify({w:$("w").value,s:$("s").value,y:yEdited?$("y").value:null,m:$("m").value,f:$("f").value,memo:$("memo").value,cells:cells.map(c=>c.inp.value)}))}catch(e){}}
 function save(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function fname(i,mode,ext){
