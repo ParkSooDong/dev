@@ -1,61 +1,62 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>초미니 바코드 3×3</title>
+<title>미니 바코드 3×3</title>
 <style>
 :root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fff;--acc:#1c1b19;--accfg:#fff;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--acc:#ecebe6;--accfg:#17161a}}
+--wk:#ffe08a;--wkb:#d9a400;--warn:#c62828;--note:#b85500;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+:root[data-theme="dark"]{--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--card:#1f1e22;--acc:#ecebe6;--accfg:#17161a;
+--wk:#6b5200;--wkb:#d4a91c;--warn:#ff8a80;--note:#ffb74d;color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;padding:20px 12px}
-main{max-width:900px;margin:0 auto}
+main{width:100%;max-width:1600px;margin:0 auto}
 h1{font-size:18px;margin:0 0 14px;letter-spacing:-.01em}
 .top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) repeat(2,minmax(0,.8fr));gap:8px;align-items:end;margin-bottom:14px}
 label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mute);min-width:0}
 input,select{width:100%;font:inherit;font-size:15px;padding:9px 10px;border:1.5px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);min-width:0}
 select option{color:#111}
+#w{background:var(--wk);border-color:var(--wkb)}
 input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .cell{border:1.5px solid var(--line);border-radius:8px;padding:6px;display:flex;flex-direction:column;gap:6px;min-width:0}
-.view{background:var(--card);border-radius:6px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px 3px;overflow:hidden}
-.view svg{width:100%;height:auto;max-height:90px}
-.txt{color:#111;font:10px ui-monospace,Menlo,monospace;margin-top:3px;word-break:break-all;text-align:center}
+.cell.wk{background:var(--wk);border-color:var(--wkb)}
+.cell.wk input{background:transparent;border-color:var(--wkb)}
+.view{background:var(--card);border-radius:6px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 4px 3px;overflow:hidden;width:100%}
+.view svg{display:block;width:100%;height:clamp(40px,8vw,110px)}
+.txt{color:#111;font:clamp(8px,1.5vw,14px) ui-monospace,Menlo,monospace;margin-top:3px;word-break:break-all;text-align:center}
 .empty,.err{font-size:11px;color:var(--mute);text-align:center}
 .err{color:#b3261e}
 .cell input{font-size:13px;padding:6px 7px}
 .btns{display:flex;gap:4px}
 button{flex:1;font:inherit;font-size:12px;font-weight:600;padding:6px 2px;border-radius:6px;border:1.5px solid var(--acc);background:var(--acc);color:var(--accfg);cursor:pointer}
-button.l{background:transparent;color:var(--ink)}
 button:disabled{opacity:.35;cursor:default}
 textarea{width:100%;font:inherit;font-size:14px;line-height:1.5;padding:10px;border:1.5px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);resize:vertical;min-height:110px}
 textarea:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 p{color:var(--mute);font-size:12px;margin:12px 0 0}
-.warn{color:#c62828;font-size:13px;font-weight:600}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .warn{color:#ff8a80}}
-.note{color:#b85500;font-size:13px;font-weight:600;margin-top:6px}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .note{color:#ffb74d}}
+.warn{color:var(--warn);font-size:13px;font-weight:600}
+.note{color:var(--note);font-size:13px;font-weight:600;margin-top:6px}
 @media (max-width:560px){.top{grid-template-columns:repeat(3,minmax(0,1fr))}.btns{flex-direction:column}}
 </style>
-<script type="text/javascript" nonce="a52e000b71e848dc8b8f11854c6" src="//local.adguard.org?ts=1793439946428&amp;type=content-script&amp;dmn=219ded57-01d3-45ad-8ff1-711a10d74152.frame.claudeusercontent.com&amp;url=https%3A%2F%2F219ded57-01d3-45ad-8ff1-711a10d74152.frame.claudeusercontent.com%2F_f%2F1793455692-c641%2F_src%2Findex.html%3F__frame_t%3Dq3Q2pWTx73eksrZLxZ7lWx2D.ee9adf90-33b5-4d3e-b4d5-3eda6c8dbdfc.d7873454-9f5a-476a-8737-32ce5221a34a.1793459293&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="a52e000b71e848dc8b8f11854c6" src="//local.adguard.org?ts=1793439946428&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+</head>
 <body>
 <main>
-<h1>초미니 바코드 3×3</h1>
+<h1>미니 바코드 3×3</h1>
 <div class="top">
 <label>작업자 코드<input id="w" value="T8836853" autocomplete="off"></label>
-<label>사업장 코드<input id="s" value="136" autocomplete="off"></label>
-<label>년도 코드<input id="y" value="" inputmode="numeric" autocomplete="off"></label>
+<label>사업장 코드<input id="s" value="136" inputmode="numeric" maxlength="3" autocomplete="off"></label>
+<label>년도<input id="y" value="" inputmode="numeric" autocomplete="off"></label>
 <label>모드<select id="m"><option value="light">라이트</option><option value="dark">다크</option></select></label>
 <label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
 </div>
 <div class="grid" id="g"></div>
-<label style="margin-top:12px">메모<textarea id="memo" rows="5" placeholder="여러 줄로 메모할 수 있어요"></textarea></label>
-<p>Code 128 · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 1~3번은 직접 입력하세요.</p>
+<label style="margin-top:12px">메모<textarea id="memo" rows="5" placeholder="이 곳에 메모하면 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다."></textarea></label>
+<p>Code 128 · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 4번은 작업자 코드, 나머지는 직접 입력도 가능해요. 사업장 코드(앞 3자리-)와 년도(○○○-XX 뒤 2자리)를 바꾸면 1~9번 전체에 일괄 적용돼요.</p>
 <p class="warn" role="alert">입력하거나 수정한 내용은 이 기기의 브라우저에 자동 저장되므로, 웹페이지를 닫았다가 다시 열어도 직전 상태가 다시 보입니다.</p>
-<p class="note">다만, 회사 PC 보안프로그램이 종료시 브라우저 데이터를 초기화하는 경우에는 직전 내용을 가져오지 않습니다.</p>
+<p class="note">화면 상단의 코드와 년도, 1~9번의 바코드를 변경하면 브라우저를 다시 열어도 그 변경한 값이 유지됩니다.</p>
 </main>
 <script>
 const P="212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 114131 311141 411131 211412 211214 211232 2331112".split(" ");
@@ -87,8 +88,8 @@ if(saved){
   if(["png","svg"].includes(saved.f))$("f").value=saved.f;
   if(typeof saved.memo==="string")$("memo").value=saved.memo;
 }
-let gen=defs();
-function saveState(){try{localStorage.setItem(KEY,JSON.stringify({w:$("w").value,s:$("s").value,y:yEdited?$("y").value:null,m:$("m").value,f:$("f").value,memo:$("memo").value,gen,cells:cells.map(c=>c.inp.value)}))}catch(e){}}
+function applyTheme(){document.documentElement.setAttribute("data-theme",$("m").value)}
+function saveState(){try{localStorage.setItem(KEY,JSON.stringify({w:$("w").value,s:$("s").value,y:yEdited?$("y").value:null,m:$("m").value,f:$("f").value,memo:$("memo").value,cells:cells.map(c=>c.inp.value)}))}catch(e){}}
 function save(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function fname(i,mode,ext){
   const safe=v=>v.replace(/[^\w-]+/g,"_");
@@ -109,29 +110,43 @@ function draw(i){
   const d=document.createElement("div");
   if(!v){d.className="empty";d.textContent="코드를 입력하세요";view.append(d);return}
   try{view.insertAdjacentHTML("beforeend",build(v,THEME[$("m").value]));
+    const sv=view.querySelector("svg");sv.removeAttribute("width");sv.removeAttribute("height");sv.setAttribute("preserveAspectRatio","none");
     const t=document.createElement("div");t.className="txt";t.textContent=v;t.style.color=THEME[$("m").value].fg;view.append(t);bl.disabled=false}
   catch(e){d.className="err";d.textContent=e.message;view.append(d)}
 }
+const drawAll=()=>cells.forEach((_,i)=>draw(i));
 function init(){
-  const g=$("g");
+  const g=$("g"),d=defs();
   for(let i=0;i<9;i++){
-    const el=document.createElement("div");el.className="cell";
-    el.innerHTML=`<div class="view"></div><input aria-label="바코드 ${i+1}번 내용" placeholder="${i+1}번" autocomplete="off"><div class="btns"><button>저장</button></div>`;
+    const el=document.createElement("div");el.className="cell"+(i===3?" wk":"");
+    el.innerHTML=`<div class="view"></div><input aria-label="바코드 ${i+1}번 내용${i===3?" (작업자)":""}" placeholder="${i+1}번" autocomplete="off"><div class="btns"><button>저장</button></div>`;
     const c={inp:el.querySelector("input"),view:el.querySelector(".view"),bl:el.querySelector("button")};
-    c.inp.value=gen[i];
+    c.inp.value=d[i];
     c.inp.addEventListener("input",()=>{draw(i);saveState()});
     c.bl.onclick=()=>download(i,$("m").value);
-    cells.push(c);g.append(el);draw(i);
+    cells.push(c);g.append(el);
   }
 }
-function sync(){
-  const n=defs();
-  for(let i=3;i<9;i++){if(cells[i].inp.value===gen[i]){cells[i].inp.value=n[i];draw(i)}}
-  gen=n;saveState();
+/* 사업장 코드: 값이 'ddd-'로 시작하면 1~9번 모두 앞 3자리를 교체 */
+function applyShop(){
+  const S=$("s").value.trim();if(!/^\d{3}$/.test(S))return;
+  cells.forEach(c=>{if(/^\d{3}-/.test(c.inp.value))c.inp.value=S+c.inp.value.slice(3)});
 }
-$("m").addEventListener("change",()=>{cells.forEach((_,i)=>draw(i));saveState()});$("w").addEventListener("input",sync);$("s").addEventListener("input",sync);$("y").addEventListener("input",()=>{yEdited=true;sync()});
+/* 년도: 'ddd-XXdd' 구성이면 1~9번 모두 뒤 두 자리를 교체 */
+function applyYear(){
+  const D=$("y").value.replace(/\D/g,"");if(D.length<2)return;
+  const Y=D.slice(-2);
+  cells.forEach(c=>{c.inp.value=c.inp.value.replace(/^(\d{3}-XX)\d{2}(?!\d)/,(m,a)=>a+Y)});
+}
 init();
-if(saved&&Array.isArray(saved.cells)&&Array.isArray(saved.gen)){cells.forEach((c,i)=>{const v=saved.cells[i];if(typeof v==="string"&&v!==saved.gen[i]){c.inp.value=v;draw(i)}})}
+if(saved&&Array.isArray(saved.cells)){cells.forEach((c,i)=>{const v=saved.cells[i];if(typeof v==="string")c.inp.value=v})}
+cells[3].inp.value=$("w").value;
+if(!yEdited)applyYear();
+applyTheme();drawAll();
+$("m").addEventListener("change",()=>{applyTheme();drawAll();saveState()});
+$("w").addEventListener("input",()=>{cells[3].inp.value=$("w").value;draw(3);saveState()});
+$("s").addEventListener("input",()=>{applyShop();drawAll();saveState()});
+$("y").addEventListener("input",()=>{yEdited=true;applyYear();drawAll();saveState()});
 $("f").addEventListener("change",saveState);$("memo").addEventListener("input",saveState);
 saveState();
 </script>
