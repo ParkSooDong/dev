@@ -28,10 +28,11 @@
     padding:8px 10px; font:12px/1.5 ui-monospace, Consolas, monospace; white-space:pre-wrap; word-break:break-all;
     background:#fff3cd; color:#7a4b00; border-top:2px solid #e0a800; z-index:9999; }
   @media (prefers-color-scheme: dark) { #log { background:#3b2f06; color:#ffd666; border-color:#a67c00; } }
-  /* 좁은 화면/세로 화면: 1열 4행으로 쌓고, 페이지 스크롤 */
+  /* 모바일/PC 모두 2x2 고정. 좁은 화면에서는 헤더만 작게 */
   @media (max-width: 800px), (orientation: portrait) {
-    .wrap { height: auto; min-height: 100dvh; }
-    .grid { height: auto; grid-template-columns: 1fr; grid-template-rows: repeat(4, 60dvh); }
+    .wrap { padding: 3px; }
+    .grid { gap: 3px; }
+    .head { flex-direction: column; gap: 0; padding: 3px 6px; font-size: 11px; }
   }
 </style>
 </head>
