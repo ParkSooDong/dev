@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KOSPI 1x2 차트 (15분 / 3분)</title>
+<style>
+  :root { --bg:#ffffff; --panel:#ffffff; --text:#111827; --grid:#e5e7eb; --border:#d1d5db; color-scheme: light dark; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f172a; --panel:#111827; --text:#e5e7eb; --grid:#1f2937; --border:#334155; }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+  .wrap { height: 100dvh; padding: 6px; }
+  .grid { height: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .cell { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .head { display: flex; justify-content: space-between; gap: 8px; padding: 5px 10px; font-size: 13px;
+    border-bottom: 1px solid var(--border); }
+  .head b { font-weight: 700; }
+  .up { color: #e0393e; } .down { color: #1e6fd9; }   /* 한국식: 상승 빨강, 하락 파랑 */
+  .chart { flex: 1; min-height: 0; }
+  .msg { position: absolute; inset: 40px 0 0 0; display: none; align-items: center; justify-content: center;
+    text-align: center; padding: 16px; font-size: 13px; opacity: .8; pointer-events: none; }
+  @media (max-width: 800px), (orientation: portrait) {
+    .grid { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="grid">
+    <section class="cell" data-interval="15">
+      <div class="head"><b>KOSPI · 15분</b><span class="info">-</span></div>
+      <div class="chart"></div><div class="msg"></div>
+    </section>
+    <section class="cell" data-interval="3">
+      <div class="head"><b>KOSPI · 3분</b><span class="info">-</span></div>
+      <div class="chart"></div><div class="msg"></div>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+  // 배포한 Cloudflare Worker 주소로 바꾸세요 (끝에 / 없이)
+  const API_BASE = "kospi-proxy.pesdee00.workers.dev";
+  const REFRESH_MS = 15000;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  function setup(cell) {
+    const interval = cell.dataset.interval;
+    const box = cell.querySelector(".chart");
+    const info = cell.querySelector(".info");
+    const msg = cell.querySelector(".msg");
+
+    const chart = LightweightCharts.createChart(box, {
+      autoSize: true,                               // 컨테이너 크기에 맞춰 자동 조절
+      layout: { background: { color: css("--panel") }, textColor: css("--text") },
+      grid: { vertLines: { color: css("--grid") }, horzLines: { color: css("--grid") } },
+      timeScale: { timeVisible: true, secondsVisible: false, rightOffset: 4 },
+      rightPriceScale: { borderColor: css("--border") },
+      crosshair: { mode: 0 },
+    });
+    const series = chart.addCandlestickSeries({
+      upColor: "#e0393e", borderUpColor: "#e0393e", wickUpColor: "#e0393e",
+      downColor: "#1e6fd9", borderDownColor: "#1e6fd9", wickDownColor: "#1e6fd9",
+    });
+
+    let first = true;
+    async function load() {
+      try {
+        const r = await fetch(`${API_BASE}/api/candles?interval=${interval}`);
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || r.status);
+        series.setData(d.candles);
+        if (first && d.candles.length) { chart.timeScale().fitContent(); first = false; }
+        const last = d.candles[d.candles.length - 1];
+        if (last) {
+          const prev = d.candles[d.candles.length - 2] || last;
+          const diff = last.close - prev.close;
+          info.innerHTML = `<span class="${diff >= 0 ? "up" : "down"}">${last.close.toLocaleString()} (${diff >= 0 ? "+" : ""}${diff.toFixed(2)})</span>`;
+        }
+        msg.style.display = "none";
+      } catch (e) {
+        msg.textContent = "데이터를 불러오지 못했습니다: " + e.message;
+        msg.style.display = "flex";
+      }
+    }
+    load();
+    setInterval(load, REFRESH_MS);
+  }
+
+  document.querySelectorAll(".cell").forEach(setup);
+</script>
+</body>
+</html>
