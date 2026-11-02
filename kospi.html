@@ -69,23 +69,29 @@
     });
 
     let first = true;
+    function fail(text) { msg.textContent = text; msg.style.display = "flex"; info.textContent = "오류"; }
     async function load() {
+      if (API_BASE.includes("YOUR-SUBDOMAIN")) { return fail("API_BASE를 Worker 주소로 바꿔주세요."); }
+      info.textContent = "불러오는 중…";
+      const url = `${API_BASE}/api/candles?interval=${interval}`;
       try {
-        const r = await fetch(`${API_BASE}/api/candles?interval=${interval}`);
+        const r = await fetch(url);
         const d = await r.json();
-        if (!r.ok) throw new Error(d.error || r.status);
-        series.setData(d.candles);
-        if (first && d.candles.length) { chart.timeScale().fitContent(); first = false; }
-        const last = d.candles[d.candles.length - 1];
-        if (last) {
-          const prev = d.candles[d.candles.length - 2] || last;
-          const diff = last.close - prev.close;
-          info.innerHTML = `<span class="${diff >= 0 ? "up" : "down"}">${last.close.toLocaleString()} (${diff >= 0 ? "+" : ""}${diff.toFixed(2)})</span>`;
+        console.log("[kospi]", url, r.status, d);
+        if (!r.ok || d.error) throw new Error(d.error || ("HTTP " + r.status));
+        if (!Array.isArray(d.candles) || d.candles.length === 0) {
+          return fail("서버 응답은 정상이나 캔들이 0개입니다. (Yahoo 데이터 없음)");
         }
+        series.setData(d.candles);
+        if (first) { chart.timeScale().fitContent(); first = false; }
+        const last = d.candles[d.candles.length - 1];
+        const prev = d.candles[d.candles.length - 2] || last;
+        const diff = last.close - prev.close;
+        info.innerHTML = `<span class="${diff >= 0 ? "up" : "down"}">${last.close.toLocaleString()} (${diff >= 0 ? "+" : ""}${diff.toFixed(2)})</span> · ${d.candles.length}봉`;
         msg.style.display = "none";
       } catch (e) {
-        msg.textContent = "데이터를 불러오지 못했습니다: " + e.message;
-        msg.style.display = "flex";
+        console.error("[kospi]", e);
+        fail("데이터를 불러오지 못했습니다: " + e.message);
       }
     }
     load();
