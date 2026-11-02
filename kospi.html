@@ -53,6 +53,8 @@
   // 배포한 Cloudflare Worker 주소로 바꾸세요 (끝에 / 없이)
   const API_BASE = "https://kospi-proxy.pesdee00.workers.dev";
   const REFRESH_MS = 15000;
+  const VISIBLE_BARS = 100;   // 두 차트 모두 화면에 보이는 캔들 수 (원하는 숫자로 변경)
+  const RIGHT_PAD = 4;        // 오른쪽 여백(캔들 몇 개 분량)
   const logEl = document.getElementById("log");
   function logLine(t) { logEl.style.display = "block"; logEl.textContent += t + "\n"; logEl.scrollTop = logEl.scrollHeight; }
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -77,6 +79,12 @@
     });
 
     let first = true;
+    let barCount = 0;
+    function showLast() {
+      if (!barCount) return;
+      chart.timeScale().setVisibleLogicalRange({ from: barCount - VISIBLE_BARS, to: barCount - 1 + RIGHT_PAD });
+    }
+    new ResizeObserver(showLast).observe(box);
     function fail(text, detail) { msg.textContent = text; msg.style.display = "flex"; info.textContent = "오류"; logLine(`[${interval}분] ${text}` + (detail ? "\n  " + detail : "")); }
     async function load() {
       if (API_BASE.includes("YOUR-SUBDOMAIN")) { return fail("API_BASE를 Worker 주소로 바꿔주세요."); }
@@ -92,7 +100,8 @@
           return fail("서버 응답은 정상이나 캔들이 0개입니다. (Yahoo 데이터 없음)");
         }
         series.setData(d.candles);
-        if (first) { chart.timeScale().fitContent(); first = false; }
+        barCount = d.candles.length;
+        if (first) { showLast(); first = false; }
         const last = d.candles[d.candles.length - 1];
         const prev = d.candles[d.candles.length - 2] || last;
         const diff = last.close - prev.close;
