@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>KOSPI 2x2 차트 (15분 / 3분 / 일봉 / 1시간)</title>
+<title>2x2 차트 (15분 / 3분 / 일봉 / 1시간)</title>
 <style>
   :root { --bg:#ffffff; --panel:#ffffff; --text:#111827; --grid:#e5e7eb; --border:#d1d5db; color-scheme: light dark; }
   @media (prefers-color-scheme: dark) {
@@ -38,21 +38,21 @@
 <body>
 <div class="wrap">
   <div class="grid">
-    <!-- data-interval: Worker에 넘기는 값(15, 3, 60, D) / data-refresh: 갱신 주기(ms) -->
-    <section class="cell" data-interval="15" data-refresh="15000">
-      <div class="head"><b>KOSPI · 15분</b><span class="info">-</span></div>
+    <!-- data-interval: Worker에 넘기는 값(15, 3, 60, D) / data-refresh: 갱신 주기(ms) / data-label: 제목 뒤에 붙는 봉 이름 -->
+    <section class="cell" data-interval="15" data-refresh="15000" data-label="15분">
+      <div class="head"><b>차트 · 15분</b><span class="info">-</span></div>
       <div class="chart"></div><div class="msg"></div>
     </section>
-    <section class="cell" data-interval="3" data-refresh="15000">
-      <div class="head"><b>KOSPI · 3분</b><span class="info">-</span></div>
+    <section class="cell" data-interval="3" data-refresh="15000" data-label="3분">
+      <div class="head"><b>차트 · 3분</b><span class="info">-</span></div>
       <div class="chart"></div><div class="msg"></div>
     </section>
-    <section class="cell" data-interval="D" data-refresh="60000">
-      <div class="head"><b>KOSPI · 일봉</b><span class="info">-</span></div>
+    <section class="cell" data-interval="D" data-refresh="60000" data-label="일봉">
+      <div class="head"><b>차트 · 일봉</b><span class="info">-</span></div>
       <div class="chart"></div><div class="msg"></div>
     </section>
-    <section class="cell" data-interval="60" data-refresh="30000">
-      <div class="head"><b>KOSPI · 1시간</b><span class="info">-</span></div>
+    <section class="cell" data-interval="60" data-refresh="30000" data-label="1시간">
+      <div class="head"><b>차트 · 1시간</b><span class="info">-</span></div>
       <div class="chart"></div><div class="msg"></div>
     </section>
   </div>
@@ -63,6 +63,9 @@
 <script>
   // 배포한 Cloudflare Worker 주소로 바꾸세요 (끝에 / 없이, .workers.dev 까지만)
   const API_BASE = "https://kospi-proxy.pesdee00.workers.dev";
+  // 종목 코드: 비워두면(="") Cloudflare Worker의 SYMBOL 변수를 따름.
+  // 값을 넣으면(예: "005930.KS") 이 값이 Cloudflare 설정보다 우선함. 코드표는 worker.js 상단 주석 참고.
+  const SYMBOL = "";
   const VISIBLE_BARS = 100;   // 네 차트 모두 화면에 보이는 캔들 수 (원하는 숫자로 변경)
   const RIGHT_PAD = 4;        // 오른쪽 여백(캔들 몇 개 분량)
 
@@ -72,11 +75,13 @@
 
   function setup(cell) {
     const interval = cell.dataset.interval;
+    const label = cell.dataset.label || interval;
     const refresh = parseInt(cell.dataset.refresh, 10) || 15000;
     const daily = interval === "D";
     const box = cell.querySelector(".chart");
     const info = cell.querySelector(".info");
     const msg = cell.querySelector(".msg");
+    const ttl = cell.querySelector(".head b");
 
     const chart = LightweightCharts.createChart(box, {
       autoSize: true,
@@ -93,6 +98,7 @@
 
     let first = true;
     let barCount = 0;
+    let curSymbol = null;
     function showLast() {
       if (!barCount) return;
       chart.timeScale().setVisibleLogicalRange({ from: barCount - VISIBLE_BARS, to: barCount - 1 + RIGHT_PAD });
@@ -106,15 +112,22 @@
 
     async function load() {
       if (API_BASE.includes("YOUR-SUBDOMAIN")) { return fail("API_BASE를 Worker 주소로 바꿔주세요."); }
-      const url = `${API_BASE}/api/candles?interval=${interval}`;
+      const url = `${API_BASE}/api/candles?interval=${interval}` + (SYMBOL ? `&symbol=${encodeURIComponent(SYMBOL)}` : "");
       try {
         const r = await fetch(url);
         const raw = await r.text();
         let d; try { d = JSON.parse(raw); } catch (_) { throw new Error("JSON이 아닌 응답 (HTTP " + r.status + "): " + raw.slice(0, 120)); }
         if (!r.ok || d.error) throw new Error(d.error || ("HTTP " + r.status));
         if (!Array.isArray(d.candles) || d.candles.length === 0) {
-          return fail("서버 응답은 정상이나 캔들이 0개입니다. (Yahoo 데이터 없음)");
+          return fail("서버 응답은 정상이나 캔들이 0개입니다. (Yahoo 데이터 없음: " + d.symbol + ")");
         }
+
+        // 종목이 바뀌었으면(Cloudflare에서 SYMBOL 변경) 화면 범위를 처음처럼 다시 잡음
+        if (curSymbol !== null && curSymbol !== d.symbol) first = true;
+        curSymbol = d.symbol;
+
+        ttl.textContent = `${d.name || d.symbol} · ${label}`;
+        document.title = `${d.name || d.symbol} 2x2 차트`;
 
         const rng = chart.timeScale().getVisibleLogicalRange();
         const oldCount = barCount;
@@ -133,7 +146,7 @@
         info.innerHTML = `<span class="${diff >= 0 ? "up" : "down"}">${last.close.toLocaleString()} (${diff >= 0 ? "+" : ""}${diff.toFixed(2)})</span> · ${d.candles.length}봉`;
         msg.style.display = "none";
       } catch (e) {
-        console.error("[kospi]", e);
+        console.error("[chart]", e);
         fail("데이터를 불러오지 못했습니다: " + e.message, `요청 주소: ${url}\n  페이지 주소: ${location.href}`);
       }
     }
