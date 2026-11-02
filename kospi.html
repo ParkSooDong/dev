@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>KOSPI 1x2 차트 (15분 / 3분)</title>
+<title>KOSPI 2x2 차트 (15분 / 3분 / 일봉 / 1시간)</title>
 <style>
   :root { --bg:#ffffff; --panel:#ffffff; --text:#111827; --grid:#e5e7eb; --border:#d1d5db; color-scheme: light dark; }
   @media (prefers-color-scheme: dark) {
@@ -13,7 +13,8 @@
   html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text);
     font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
   .wrap { height: 100dvh; padding: 6px; }
-  .grid { height: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .grid { height: 100%; display: grid; gap: 6px;
+    grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
   .cell { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0;
     background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .head { display: flex; justify-content: space-between; gap: 8px; padding: 5px 10px; font-size: 13px;
@@ -23,53 +24,65 @@
   .chart { flex: 1; min-height: 0; }
   .msg { z-index: 20; position: absolute; inset: 40px 0 0 0; display: none; align-items: center; justify-content: center;
     text-align: center; padding: 16px; font-size: 13px; opacity: .8; pointer-events: none; }
-  @media (max-width: 800px), (orientation: portrait) {
-    .grid { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-  }
   #log { display:none; position:fixed; left:0; right:0; bottom:0; max-height:35vh; overflow:auto; margin:0;
     padding:8px 10px; font:12px/1.5 ui-monospace, Consolas, monospace; white-space:pre-wrap; word-break:break-all;
     background:#fff3cd; color:#7a4b00; border-top:2px solid #e0a800; z-index:9999; }
   @media (prefers-color-scheme: dark) { #log { background:#3b2f06; color:#ffd666; border-color:#a67c00; } }
+  /* 좁은 화면/세로 화면: 1열 4행으로 쌓고, 페이지 스크롤 */
+  @media (max-width: 800px), (orientation: portrait) {
+    .wrap { height: auto; min-height: 100dvh; }
+    .grid { height: auto; grid-template-columns: 1fr; grid-template-rows: repeat(4, 60dvh); }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="grid">
-    <section class="cell" data-interval="15">
+    <!-- data-interval: Worker에 넘기는 값(15, 3, 60, D) / data-refresh: 갱신 주기(ms) -->
+    <section class="cell" data-interval="15" data-refresh="15000">
       <div class="head"><b>KOSPI · 15분</b><span class="info">-</span></div>
       <div class="chart"></div><div class="msg"></div>
     </section>
-    <section class="cell" data-interval="3">
+    <section class="cell" data-interval="3" data-refresh="15000">
       <div class="head"><b>KOSPI · 3분</b><span class="info">-</span></div>
+      <div class="chart"></div><div class="msg"></div>
+    </section>
+    <section class="cell" data-interval="D" data-refresh="60000">
+      <div class="head"><b>KOSPI · 일봉</b><span class="info">-</span></div>
+      <div class="chart"></div><div class="msg"></div>
+    </section>
+    <section class="cell" data-interval="60" data-refresh="30000">
+      <div class="head"><b>KOSPI · 1시간</b><span class="info">-</span></div>
       <div class="chart"></div><div class="msg"></div>
     </section>
   </div>
 </div>
-
 <pre id="log"></pre>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script>
-  // 배포한 Cloudflare Worker 주소로 바꾸세요 (끝에 / 없이)
-  const API_BASE = "https://kospi-proxy.pesdee00.workers.dev";
-  const REFRESH_MS = 15000;
-  const VISIBLE_BARS = 100;   // 두 차트 모두 화면에 보이는 캔들 수 (원하는 숫자로 변경)
+  // 배포한 Cloudflare Worker 주소로 바꾸세요 (끝에 / 없이, .workers.dev 까지만)
+  const API_BASE = "https://kospi-proxy.YOUR-SUBDOMAIN.workers.dev";
+  const VISIBLE_BARS = 100;   // 네 차트 모두 화면에 보이는 캔들 수 (원하는 숫자로 변경)
   const RIGHT_PAD = 4;        // 오른쪽 여백(캔들 몇 개 분량)
+
   const logEl = document.getElementById("log");
   function logLine(t) { logEl.style.display = "block"; logEl.textContent += t + "\n"; logEl.scrollTop = logEl.scrollHeight; }
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
   function setup(cell) {
     const interval = cell.dataset.interval;
+    const refresh = parseInt(cell.dataset.refresh, 10) || 15000;
+    const daily = interval === "D";
     const box = cell.querySelector(".chart");
     const info = cell.querySelector(".info");
     const msg = cell.querySelector(".msg");
 
     const chart = LightweightCharts.createChart(box, {
-      autoSize: true,                               // 컨테이너 크기에 맞춰 자동 조절
+      autoSize: true,
       layout: { background: { color: css("--panel") }, textColor: css("--text") },
       grid: { vertLines: { color: css("--grid") }, horzLines: { color: css("--grid") } },
-      timeScale: { timeVisible: true, secondsVisible: false, rightOffset: 4 },
+      timeScale: { timeVisible: !daily, secondsVisible: false, rightOffset: RIGHT_PAD },
       rightPriceScale: { borderColor: css("--border") },
       crosshair: { mode: 0 },
     });
@@ -85,23 +98,35 @@
       chart.timeScale().setVisibleLogicalRange({ from: barCount - VISIBLE_BARS, to: barCount - 1 + RIGHT_PAD });
     }
     new ResizeObserver(showLast).observe(box);
-    function fail(text, detail) { msg.textContent = text; msg.style.display = "flex"; info.textContent = "오류"; logLine(`[${interval}분] ${text}` + (detail ? "\n  " + detail : "")); }
+
+    function fail(text, detail) {
+      msg.textContent = text; msg.style.display = "flex"; info.textContent = "오류";
+      logLine(`[${interval}] ${text}` + (detail ? "\n  " + detail : ""));
+    }
+
     async function load() {
       if (API_BASE.includes("YOUR-SUBDOMAIN")) { return fail("API_BASE를 Worker 주소로 바꿔주세요."); }
-      info.textContent = "불러오는 중…";
       const url = `${API_BASE}/api/candles?interval=${interval}`;
       try {
         const r = await fetch(url);
         const raw = await r.text();
         let d; try { d = JSON.parse(raw); } catch (_) { throw new Error("JSON이 아닌 응답 (HTTP " + r.status + "): " + raw.slice(0, 120)); }
-        console.log("[kospi]", url, r.status, d);
         if (!r.ok || d.error) throw new Error(d.error || ("HTTP " + r.status));
         if (!Array.isArray(d.candles) || d.candles.length === 0) {
           return fail("서버 응답은 정상이나 캔들이 0개입니다. (Yahoo 데이터 없음)");
         }
+
+        const rng = chart.timeScale().getVisibleLogicalRange();
+        const oldCount = barCount;
         series.setData(d.candles);
         barCount = d.candles.length;
         if (first) { showLast(); first = false; }
+        else if (rng && barCount !== oldCount && rng.to >= oldCount - 1) {
+          // 최신 봉을 보고 있던 경우: 새 봉이 생겨도 같은 구간(줌 유지)으로 따라가기
+          const delta = barCount - oldCount;
+          chart.timeScale().setVisibleLogicalRange({ from: rng.from + delta, to: rng.to + delta });
+        }
+
         const last = d.candles[d.candles.length - 1];
         const prev = d.candles[d.candles.length - 2] || last;
         const diff = last.close - prev.close;
@@ -113,7 +138,7 @@
       }
     }
     load();
-    setInterval(load, REFRESH_MS);
+    setInterval(load, refresh);
   }
 
   document.querySelectorAll(".cell").forEach(setup);
