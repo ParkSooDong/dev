@@ -12,8 +12,15 @@
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text);
     font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
-  .wrap { height: 100dvh; padding: 6px; }
-  .grid { height: 100%; display: grid; gap: 6px;
+  .wrap { height: 100dvh; padding: 6px; display: flex; flex-direction: column; gap: 6px; }
+  .top { display: none; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; padding: 5px 12px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px; font-size: 15px; }
+  .top .nm { font-weight: 700; font-size: 17px; }
+  .top .px { font-weight: 700; font-size: 17px; font-variant-numeric: tabular-nums; }
+  .top .lb { opacity: .6; font-size: 12px; margin-right: 4px; }
+  .top .chg { font-variant-numeric: tabular-nums; }
+  .top .flat { opacity: .7; }
+  .grid { flex: 1; min-height: 0; display: grid; gap: 6px;
     grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
   .cell { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0;
     background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -30,7 +37,9 @@
   @media (prefers-color-scheme: dark) { #log { background:#3b2f06; color:#ffd666; border-color:#a67c00; } }
   /* 모바일/PC 모두 2x2 고정. 좁은 화면에서는 헤더만 작게 */
   @media (max-width: 800px), (orientation: portrait) {
-    .wrap { padding: 3px; }
+    .wrap { padding: 3px; gap: 3px; }
+    .top { padding: 3px 8px; gap: 2px 10px; font-size: 12px; }
+    .top .nm, .top .px { font-size: 14px; }
     .grid { gap: 3px; }
     .head { flex-direction: column; gap: 0; padding: 3px 6px; font-size: 11px; }
   }
@@ -38,6 +47,7 @@
 </head>
 <body>
 <div class="wrap">
+  <div class="top" id="top"></div>
   <div class="grid">
     <!-- data-interval: Worker에 넘기는 값(15, 3, 60, D) / data-refresh: 갱신 주기(ms) / data-label: 제목 뒤에 붙는 봉 이름 -->
     <section class="cell" data-interval="15" data-refresh="15000" data-label="15분">
@@ -63,7 +73,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script>
   // 배포한 Cloudflare Worker 주소로 바꾸세요 (끝에 / 없이, .workers.dev 까지만)
-  const API_BASE = "https://kospi-proxy.pesdee00.workers.dev";
+  const API_BASE = "https://kospi-proxy.YOUR-SUBDOMAIN.workers.dev";
   // 종목 코드: 비워두면(="") Cloudflare Worker의 SYMBOL 변수를 따름.
   // 값을 넣으면(예: "005930.KS") 이 값이 Cloudflare 설정보다 우선함. 코드표는 worker.js 상단 주석 참고.
   const SYMBOL = "";
@@ -77,6 +87,42 @@
   const logEl = document.getElementById("log");
   function logLine(t) { logEl.style.display = "block"; logEl.textContent += t + "\n"; logEl.scrollTop = logEl.scrollHeight; }
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  // ── 최상단: 종목명 / 현재가 / 전일대비 등락폭 / 등락률 ──
+  // 전일 종가 = 일봉의 마지막에서 두 번째 봉 종가, 현재가 = 가장 최근 봉의 종가
+  const topEl = document.getElementById("top");
+  const topState = { symbol: null, name: "", dec: 2, prev: null, price: null, priceTime: -1 };
+  function renderTop() {
+    const s = topState;
+    if (s.price === null) return;
+    const fmt = v => v.toLocaleString(undefined, { minimumFractionDigits: s.dec, maximumFractionDigits: s.dec });
+    let html = `<span class="nm">${s.name}</span><span class="px">${fmt(s.price)}</span>`;
+    if (s.prev) {
+      const diff = s.price - s.prev;
+      const pct = diff / s.prev * 100;
+      const cls = diff > 0 ? "up" : diff < 0 ? "down" : "flat";
+      const arrow = diff > 0 ? "▲" : diff < 0 ? "▼" : "-";
+      const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
+      html += `<span class="chg ${cls}"><span class="lb">전일대비</span>${arrow} ${fmt(Math.abs(diff))}</span>`
+            + `<span class="chg ${cls}"><span class="lb">등락률</span>${sign}${Math.abs(pct).toFixed(2)}%</span>`;
+    }
+    topEl.innerHTML = html;
+    topEl.style.display = "flex";
+  }
+  function reportTop(d, interval, dec) {
+    const s = topState;
+    if (s.symbol !== d.symbol) Object.assign(s, { symbol: d.symbol, prev: null, price: null, priceTime: -1 });
+    s.name = d.name || d.symbol;
+    s.dec = dec;
+    const c = d.candles, last = c[c.length - 1];
+    if (interval === "D") {
+      s.prev = c.length >= 2 ? c[c.length - 2].close : null;
+      if (s.price === null) s.price = last.close;
+    } else if (last.time >= s.priceTime) {
+      s.price = last.close; s.priceTime = last.time;
+    }
+    renderTop();
+  }
 
   function setup(cell) {
     const interval = cell.dataset.interval;
@@ -132,6 +178,10 @@
         if (curSymbol !== null && curSymbol !== d.symbol) first = true;
         curSymbol = d.symbol;
 
+        // 가격 표시 자릿수 (Worker가 알려줌: 외환 5, 주식·지수 2)
+        const dec = Number.isInteger(d.decimals) ? d.decimals : 2;
+        series.applyOptions({ priceFormat: { type: "price", precision: dec, minMove: Math.pow(10, -dec) } });
+
         ttl.textContent = `${d.name || d.symbol} · ${label}`;
         document.title = `${d.name || d.symbol} 2x2 차트`;
 
@@ -149,8 +199,9 @@
         const last = d.candles[d.candles.length - 1];
         const prev = d.candles[d.candles.length - 2] || last;
         const diff = last.close - prev.close;
-        info.innerHTML = `<span class="${diff >= 0 ? "up" : "down"}">${last.close.toLocaleString()} (${diff >= 0 ? "+" : ""}${diff.toFixed(2)})</span> · ${d.candles.length}봉`;
+        info.innerHTML = `<span class="${diff >= 0 ? "up" : "down"}">${last.close.toLocaleString(undefined, { minimumFractionDigits: dec, maximumFractionDigits: dec })} (${diff >= 0 ? "+" : ""}${diff.toFixed(dec)})</span> · ${d.candles.length}봉`;
         msg.style.display = "none";
+        reportTop(d, interval, dec);
       } catch (e) {
         console.error("[chart]", e);
         fail("데이터를 불러오지 못했습니다: " + e.message, `요청 주소: ${url}\n  페이지 주소: ${location.href}`);
