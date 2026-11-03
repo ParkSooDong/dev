@@ -20,6 +20,8 @@
   .top .lb { opacity: .6; font-size: 12px; margin-right: 4px; }
   .top .chg { font-variant-numeric: tabular-nums; }
   .top .flat { opacity: .7; }
+  .top .asof { margin-left: auto; font-size: 12px; opacity: .6; }
+  .top .asof.stale { color: #d97706; opacity: 1; }
   .grid { flex: 1; min-height: 0; display: grid; gap: 6px;
     grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
   .cell { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0;
@@ -91,7 +93,7 @@
   // ── 최상단: 종목명 / 현재가 / 전일대비 등락폭 / 등락률 ──
   // 전일 종가 = 일봉의 마지막에서 두 번째 봉 종가, 현재가 = 가장 최근 봉의 종가
   const topEl = document.getElementById("top");
-  const topState = { symbol: null, name: "", dec: 2, prev: null, price: null, priceTime: -1 };
+  const topState = { symbol: null, name: "", dec: 2, prev: null, price: null, priceTime: -1, asOf: null };
   function renderTop() {
     const s = topState;
     if (s.price === null) return;
@@ -106,14 +108,20 @@
       html += `<span class="chg ${cls}"><span class="lb">전일대비</span>${arrow} ${fmt(Math.abs(diff))}</span>`
             + `<span class="chg ${cls}"><span class="lb">등락률</span>${sign}${Math.abs(pct).toFixed(2)}%</span>`;
     }
+    if (s.asOf) {
+      const mins = Math.max(0, Math.round((Date.now() / 1000 - s.asOf) / 60));
+      const hhmm = new Date(s.asOf * 1000).toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", hour12: false });
+      html += `<span class="asof ${mins >= 5 ? "stale" : ""}">데이터 ${hhmm} 기준 (${mins < 1 ? "방금" : mins + "분 전"})</span>`;
+    }
     topEl.innerHTML = html;
     topEl.style.display = "flex";
   }
   function reportTop(d, interval, dec) {
     const s = topState;
-    if (s.symbol !== d.symbol) Object.assign(s, { symbol: d.symbol, prev: null, price: null, priceTime: -1 });
+    if (s.symbol !== d.symbol) Object.assign(s, { symbol: d.symbol, prev: null, price: null, priceTime: -1, asOf: null });
     s.name = d.name || d.symbol;
     s.dec = dec;
+    if (d.asOf && (s.asOf === null || d.asOf > s.asOf)) s.asOf = d.asOf;
     const c = d.candles, last = c[c.length - 1];
     if (interval === "D") {
       s.prev = c.length >= 2 ? c[c.length - 2].close : null;
@@ -123,6 +131,8 @@
     }
     renderTop();
   }
+
+  setInterval(renderTop, 30000);   // '몇 분 전' 표시 갱신
 
   function setup(cell) {
     const interval = cell.dataset.interval;
