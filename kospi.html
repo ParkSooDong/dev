@@ -80,9 +80,9 @@
   // 값을 넣으면(예: "005930.KS") 이 값이 Cloudflare 설정보다 우선함. 코드표는 worker.js 상단 주석 참고.
   const SYMBOL = "";
   // 화면에 보이는 캔들 수 = 차트 폭(px) / BAR_PX 를 MIN_BARS~MAX_BARS 로 제한 (좁으면 적게, 넓으면 많게)
-  const BAR_PX = 7;           // 캔들 1개당 가로 px (작을수록 캔들이 많이 보임)
-  const MIN_BARS = 30;        // 최소 캔들 수
-  const MAX_BARS = 300;       // 최대 캔들 수
+  const BAR_PX = 12;          // 캔들 1개당 가로 px (클수록 캔들이 적게, 굵게 보임)
+  const MIN_BARS = 20;        // 최소 캔들 수
+  const MAX_BARS = 100;       // 최대 캔들 수
   const visibleBars = w => Math.max(MIN_BARS, Math.min(MAX_BARS, Math.round(w / BAR_PX)));
   const RIGHT_PAD = 4;        // 오른쪽 여백(캔들 몇 개 분량)
 
