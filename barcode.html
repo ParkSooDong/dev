@@ -21,7 +21,8 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;padding:20px 12px}
-main{width:100%;max-width:1600px;margin:0 auto}
+main{width:100%;max-width:1280px;margin:0 auto;display:flex;flex-direction:column}
+main>*{flex:none}
 h1{font-size:18px;margin:0 0 14px;letter-spacing:-.01em}
 #kind{cursor:pointer;color:var(--link);font-weight:800;border-bottom:2px dashed var(--link);user-select:none;-webkit-user-select:none}
 #kind:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
@@ -36,7 +37,8 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .cell.wk{background:var(--wk);border-color:var(--wkb)}
 .cell.wk input{background:transparent;border-color:var(--wkb)}
 .view{background:var(--card);border-radius:6px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 4px 3px;overflow:hidden;width:100%}
-.view svg{display:block;width:100%;height:clamp(40px,8vw,110px)}
+.view svg{display:block;width:100%;height:clamp(40px,12vw,110px)}
+.view[data-k=qr] svg{width:auto;max-width:100%;aspect-ratio:1;height:clamp(70px,24vw,200px)}
 .txt{color:#111;font:clamp(8px,1.5vw,14px) ui-monospace,Menlo,monospace;margin-top:3px;word-break:break-all;text-align:center}
 .empty,.err{font-size:11px;color:var(--mute);text-align:center}
 .err{color:#b3261e}
@@ -49,6 +51,22 @@ textarea:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 p{color:var(--mute);font-size:12px;margin:12px 0 0}
 .warn{color:var(--warn);font-size:13px;font-weight:600}
 .note{color:var(--note);font-size:13px;font-weight:600;margin-top:6px}
+/* 가로 1280 이상: 1280x1024 고정(모든 내용이 한 화면). 미만: 가로폭 반응형 */
+@media (min-width:1280px){
+body{padding:12px 0}
+main{width:1280px;height:1000px;padding:0 12px}
+h1{margin:0 0 8px}
+.top{margin-bottom:8px}
+.grid{flex:1 1 0;min-height:0;grid-template-rows:repeat(3,minmax(0,1fr))}
+.cell{min-height:0}
+.view{flex:1 1 0;min-height:0}
+.view svg,.view[data-k=qr] svg{flex:1 1 0;min-height:0;height:auto}
+.view[data-k=qr] svg{width:auto;max-width:100%;aspect-ratio:1}
+label[for-memo],main>label{margin-top:8px!important}
+textarea{min-height:56px;height:56px;resize:none;padding:6px 10px}
+p{margin:6px 0 0}
+.note{margin-top:4px}
+}
 @media (max-width:560px){.top{grid-template-columns:repeat(3,minmax(0,1fr))}.btns{flex-direction:column}}
 </style>
 </head>
@@ -136,8 +154,8 @@ function draw(i){
   if(!v){d.className="empty";d.textContent="코드를 입력하세요";view.append(d);return}
   try{view.insertAdjacentHTML("beforeend",buildAny(v,THEME[$("m").value]));
     const sv=view.querySelector("svg");sv.removeAttribute("width");sv.removeAttribute("height");
-    if(kind==="qr"){sv.style.width="auto";sv.style.maxWidth="100%";sv.style.height="clamp(80px,16vw,200px)"}
-    else sv.setAttribute("preserveAspectRatio","none");
+    view.dataset.k=kind;
+    if(kind!=="qr")sv.setAttribute("preserveAspectRatio","none");
     const t=document.createElement("div");t.className="txt";t.textContent=v;t.style.color=THEME[$("m").value].fg;view.append(t);bl.disabled=false}
   catch(e){d.className="err";d.textContent=e.message;view.append(d)}
 }
