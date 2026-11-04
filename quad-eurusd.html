@@ -92,14 +92,14 @@
     .slot-readout { flex: 1 1 0; }
 
     .pane.single { padding: 4px 8px; contain: size layout paint; }
-    .pane.single > tv-single-ticker {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
+
+    /* Crop / zoom: the element with data-crop="x1 x2 y1 y2" (0-100 %) clips,
+       and its .cropee child is scaled so that region fills the whole box. */
+    .cropbox { position: relative; width: 100%; height: 100%; overflow: hidden; }
+    .cropee  { display: block; width: 100%; height: 100%; transform-origin: 0 0; }
 
     /* Values read from the single ticker */
-    .pane.readout {
+    .readout-view {
       display: flex;
       flex-wrap: wrap;
       align-items: baseline;
@@ -119,7 +119,7 @@
       .readout .down { color: #f7525f; }
     }
     /* Maximized readout: scale the text with the viewport */
-    .pane.readout.max { justify-content: center; align-content: center; gap: 1vh 4vw; }
+    .pane.readout.max .readout-view { justify-content: center; align-content: center; gap: 1vh 4vw; }
     .readout.max .name  { font-size: clamp(2rem, 7vw, 7rem); }
     .readout.max .price { font-size: clamp(3rem, 12vw, 12rem); }
     .readout.max .chg   { font-size: clamp(1.5rem, 5vw, 5rem); }
@@ -189,16 +189,23 @@
     <div class="slot slot-single">
       <div class="pane single">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <tv-single-ticker symbol="FX:EURUSD"></tv-single-ticker>
+        <!-- data-crop = "x1 x2 y1 y2" in % of the widget (left→right, top→bottom). Remove the attribute for the full view. -->
+        <div class="cropbox" data-crop="50 100 0 50">
+          <tv-single-ticker class="cropee" symbol="FX:EURUSD"></tv-single-ticker>
+        </div>
       </div>
     </div>
     <div class="slot slot-readout">
       <div class="pane readout" id="readout">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <span class="name">EURUSD</span>
-        <span class="price" id="r-price">--</span>
-        <span class="chg flat" id="r-chg">Change --</span>
-        <span class="time" id="r-time">Reading ticker value…</span>
+        <div class="cropbox" data-crop="">
+          <div class="cropee readout-view">
+            <span class="name">EURUSD</span>
+            <span class="price" id="r-price">--</span>
+            <span class="chg flat" id="r-chg">Change --</span>
+            <span class="time" id="r-time">Reading ticker value…</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -208,8 +215,8 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <h2>Advanced Chart · 15m</h2>
-        <div class="box">
-          <tv-advanced-chart symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        <div class="box" data-crop="">
+          <tv-advanced-chart class="cropee" symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -218,8 +225,8 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <h2>Advanced Chart · 3m</h2>
-        <div class="box">
-          <tv-advanced-chart symbol="eurusd" interval="3" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        <div class="box" data-crop="">
+          <tv-advanced-chart class="cropee" symbol="eurusd" interval="3" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -228,8 +235,8 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <h2>Advanced Chart · 1D</h2>
-        <div class="box">
-          <tv-advanced-chart symbol="eurusd" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        <div class="box" data-crop="">
+          <tv-advanced-chart class="cropee" symbol="eurusd" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -238,8 +245,8 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <h2>Advanced Chart · 1h</h2>
-        <div class="box">
-          <tv-advanced-chart symbol="eurusd" interval="60" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        <div class="box" data-crop="">
+          <tv-advanced-chart class="cropee" symbol="eurusd" interval="60" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -270,6 +277,29 @@
         const open = document.querySelector('.pane.max');
         if (open) setMax(open, false);
       }
+    });
+
+    // ---------- Crop / zoom: show only a region of a widget, scaled to fill its box ----------
+    // data-crop="x1 x2 y1 y2" (0-100 %). Empty or missing = full view.
+    // Equal-aspect regions fill the box exactly; otherwise the region is fitted and centered (no distortion).
+    function applyCrop(box) {
+      const target = box.querySelector('.cropee');
+      if (!target) return;
+      const v = (box.dataset.crop || '').trim().split(/[\s,]+/).map(Number);
+      const W = box.clientWidth, H = box.clientHeight;
+      if (v.length !== 4 || v.some(isNaN) || !W || !H) { target.style.transform = ''; return; }
+      const [x1, x2, y1, y2] = v;
+      const rw = (x2 - x1) / 100, rh = (y2 - y1) / 100;
+      if (rw <= 0 || rh <= 0) { target.style.transform = ''; return; }
+      const s = Math.min(1 / rw, 1 / rh);
+      const cx = ((x1 + x2) / 200) * W, cy = ((y1 + y2) / 200) * H;
+      target.style.transform = `translate(${W / 2 - s * cx}px, ${H / 2 - s * cy}px) scale(${s})`;
+    }
+    const cropObserver = new ResizeObserver(entries => entries.forEach(e => applyCrop(e.target)));
+    document.querySelectorAll('[data-crop]').forEach(box => {
+      cropObserver.observe(box);
+      new MutationObserver(() => applyCrop(box)).observe(box, { attributes: true, attributeFilter: ['data-crop'] });
+      applyCrop(box);
     });
 
     // ---------- Read the single ticker (including shadow DOM) and parse price / change ----------
