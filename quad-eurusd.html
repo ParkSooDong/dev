@@ -36,9 +36,15 @@
     }
 
     /* 상단 시세 (TradingView Market Data 위젯, EURUSD만) */
-    .ticker {
+    .top {
       flex: 0 0 auto;
       height: 120px;
+      display: flex;
+      gap: var(--gap);
+    }
+    .ticker, .single {
+      min-width: 0;
+      height: 100%;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -46,7 +52,10 @@
       overflow: hidden;
       contain: size layout paint;
     }
-    .ticker > tv-market-data {
+    .ticker { flex: 1 1 0; }
+    .single { flex: 1 1 0; }
+    .ticker > tv-market-data,
+    .single > tv-single-ticker {
       display: block;
       width: 100%;
       height: 100%;
@@ -93,6 +102,8 @@
 
     @media (max-width: 640px) {
       html, body { height: auto; }
+      .top { flex-direction: column; height: auto; }
+      .ticker, .single { height: 120px; flex: none; }
       .grid {
         flex: none;
         grid-template-columns: minmax(0, 1fr);
@@ -103,10 +114,16 @@
   </style>
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-advanced-chart.js"></script>
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-market-data.js"></script>
+  <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-single-ticker.js"></script>
 </head>
 <body>
-  <div class="ticker">
-    <tv-market-data symbol-sectors='[{"sectionName":"Forex","symbols":["FX:EURUSD"]}]'></tv-market-data>
+  <div class="top">
+    <div class="ticker">
+      <tv-market-data symbol-sectors='[{"sectionName":"Forex","symbols":["FX:EURUSD"]}]'></tv-market-data>
+    </div>
+    <div class="single">
+      <tv-single-ticker symbol="FX:EURUSD"></tv-single-ticker>
+    </div>
   </div>
 
   <div class="grid">
