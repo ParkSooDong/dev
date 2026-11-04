@@ -34,47 +34,78 @@
       flex-direction: column;
       gap: var(--gap);
     }
+    body.has-max { overflow: hidden; }
 
-    /* Top quote (TradingView Single Ticker widget) */
+    /* ---------- Slots keep the layout stable while a pane is maximized ---------- */
+    .slot {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+    }
+    .pane {
+      position: absolute;
+      inset: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    /* Maximized: cover the whole viewport (CSS only, so iframes are not reloaded) */
+    .pane.max {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      border-radius: 0;
+    }
+
+    /* Expand / collapse button */
+    .expand {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      z-index: 5;
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+      line-height: 1;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .expand:hover { color: var(--text); border-color: var(--muted); }
+    .pane.single .expand { top: auto; bottom: 6px; }   /* keep clear of the TradingView logo */
+    .pane.max .expand { top: 10px; right: 12px; bottom: auto; width: 32px; height: 32px; font-size: 18px; }
+
+    /* ---------- Top row: single ticker + readout ---------- */
     .top {
       flex: 0 0 auto;
       height: 120px;
       display: flex;
       gap: var(--gap);
     }
-    .single {
-      min-width: 0;
-      height: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 4px 8px;
-      overflow: hidden;
-      contain: size layout paint;
-    }
-    /* Same width as one chart cell (change to flex: 1 1 0; for full width) */
-    .single { flex: 0 0 calc((100% - var(--gap)) / 2); }
-    .single > tv-single-ticker {
+    .slot-single  { flex: 0 0 calc((100% - var(--gap)) / 2); }
+    .slot-readout { flex: 1 1 0; }
+
+    .pane.single { padding: 4px 8px; contain: size layout paint; }
+    .pane.single > tv-single-ticker {
       display: block;
       width: 100%;
       height: 100%;
     }
 
     /* Values read from the single ticker */
-    .readout {
-      flex: 1 1 0;
-      min-width: 0;
-      height: 100%;
+    .pane.readout {
       display: flex;
       flex-wrap: wrap;
       align-items: baseline;
       align-content: center;
       gap: 2px 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
       padding: 8px 16px;
-      overflow: hidden;
     }
     .readout .name  { font-size: 1.8rem; font-weight: 800; }
     .readout .price { font-size: 2.4rem; font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -87,8 +118,14 @@
       .readout .up   { color: #22ab94; }
       .readout .down { color: #f7525f; }
     }
+    /* Maximized readout: scale the text with the viewport */
+    .pane.readout.max { justify-content: center; align-content: center; gap: 1vh 4vw; }
+    .readout.max .name  { font-size: clamp(2rem, 7vw, 7rem); }
+    .readout.max .price { font-size: clamp(3rem, 12vw, 12rem); }
+    .readout.max .chg   { font-size: clamp(1.5rem, 5vw, 5rem); }
+    .readout.max .time  { font-size: clamp(1rem, 2vw, 2rem); text-align: center; }
 
-    /* Split the remaining space evenly into 2x2 cells */
+    /* ---------- Split the remaining space evenly into 2x2 cells ---------- */
     .grid {
       flex: 1 1 0;
       min-height: 0;
@@ -97,14 +134,9 @@
       grid-template-rows: repeat(2, minmax(0, 1fr));
       gap: var(--gap);
     }
-    section {
-      min-width: 0;
-      min-height: 0;
+    .pane.chart {
       display: grid;
       grid-template-rows: auto minmax(0, 1fr);
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
       padding: 8px;
     }
     h2 {
@@ -130,8 +162,7 @@
     @media (max-width: 640px) {
       html, body { height: auto; }
       .top { flex-direction: column; height: auto; }
-      .single { height: 120px; flex: none; }
-      .readout { height: 120px; flex: none; }
+      .slot-single, .slot-readout { flex: none; height: 120px; }
       .readout .name  { font-size: 1.3rem; }
       .readout .price { font-size: 1.8rem; }
       .readout .chg   { font-size: 1.1rem; }
@@ -155,49 +186,93 @@
 </head>
 <body>
   <div class="top">
-    <div class="single">
-      <tv-single-ticker symbol="FX:EURUSD"></tv-single-ticker>
+    <div class="slot slot-single">
+      <div class="pane single">
+        <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
+        <tv-single-ticker symbol="FX:EURUSD"></tv-single-ticker>
+      </div>
     </div>
-    <div class="readout" id="readout">
-      <span class="name">EURUSD</span>
-      <span class="price" id="r-price">--</span>
-      <span class="chg flat" id="r-chg">Change --</span>
-      <span class="time" id="r-time">Reading ticker value…</span>
+    <div class="slot slot-readout">
+      <div class="pane readout" id="readout">
+        <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
+        <span class="name">EURUSD</span>
+        <span class="price" id="r-price">--</span>
+        <span class="chg flat" id="r-chg">Change --</span>
+        <span class="time" id="r-time">Reading ticker value…</span>
+      </div>
     </div>
   </div>
 
   <div class="grid">
-    <section>
-      <h2>Advanced Chart · 15m</h2>
-      <div class="box">
-        <tv-advanced-chart symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
-      </div>
-    </section>
+    <div class="slot">
+      <section class="pane chart">
+        <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
+        <h2>Advanced Chart · 15m</h2>
+        <div class="box">
+          <tv-advanced-chart symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        </div>
+      </section>
+    </div>
 
-    <section>
-      <h2>Advanced Chart · 3m</h2>
-      <div class="box">
-        <tv-advanced-chart symbol="eurusd" interval="3" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
-      </div>
-    </section>
+    <div class="slot">
+      <section class="pane chart">
+        <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
+        <h2>Advanced Chart · 3m</h2>
+        <div class="box">
+          <tv-advanced-chart symbol="eurusd" interval="3" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        </div>
+      </section>
+    </div>
 
-    <section>
-      <h2>Advanced Chart · 1D</h2>
-      <div class="box">
-        <tv-advanced-chart symbol="eurusd" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
-      </div>
-    </section>
+    <div class="slot">
+      <section class="pane chart">
+        <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
+        <h2>Advanced Chart · 1D</h2>
+        <div class="box">
+          <tv-advanced-chart symbol="eurusd" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        </div>
+      </section>
+    </div>
 
-    <section>
-      <h2>Advanced Chart · 1h</h2>
-      <div class="box">
-        <tv-advanced-chart symbol="eurusd" interval="60" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
-      </div>
-    </section>
+    <div class="slot">
+      <section class="pane chart">
+        <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
+        <h2>Advanced Chart · 1h</h2>
+        <div class="box">
+          <tv-advanced-chart symbol="eurusd" interval="60" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+        </div>
+      </section>
+    </div>
   </div>
 
   <script>
-    // Collect text inside the single ticker (including shadow DOM) and parse price / change
+    // ---------- Expand / collapse any of the 6 panes ----------
+    function setMax(pane, on) {
+      document.querySelectorAll('.pane.max').forEach(p => {
+        p.classList.remove('max');
+        p.querySelector('.expand').textContent = '⤢';
+      });
+      if (on) {
+        pane.classList.add('max');
+        pane.querySelector('.expand').textContent = '✕';
+      }
+      document.body.classList.toggle('has-max', on);
+      window.dispatchEvent(new Event('resize'));   // let widgets re-measure
+    }
+    document.querySelectorAll('.pane').forEach(pane => {
+      pane.querySelector('.expand').addEventListener('click', e => {
+        e.stopPropagation();
+        setMax(pane, !pane.classList.contains('max'));
+      });
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        const open = document.querySelector('.pane.max');
+        if (open) setMax(open, false);
+      }
+    });
+
+    // ---------- Read the single ticker (including shadow DOM) and parse price / change ----------
     const $ticker = document.querySelector('tv-single-ticker');
     const $price = document.getElementById('r-price');
     const $chg = document.getElementById('r-chg');
