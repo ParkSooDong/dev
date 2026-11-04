@@ -235,7 +235,7 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <h2>Advanced Chart · 1D</h2>
-        <div class="box" data-crop="50 100 50 100">
+        <div class="box" data-crop="50 100 8 92">
           <tv-advanced-chart class="cropee" symbol="eurusd" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
@@ -281,7 +281,8 @@
 
     // ---------- Crop / zoom: show only a region of a widget, scaled to fill its box ----------
     // data-crop="x1 x2 y1 y2" (0-100 %). Empty or missing = full view.
-    // Equal-aspect regions fill the box exactly; otherwise the region is fitted and centered (no distortion).
+    // The region always fills the box exactly (stretched if its aspect differs from the box).
+    // Add data-crop-fit="contain" to the same element to keep the aspect ratio instead (region fitted and centered).
     function applyCrop(box) {
       const target = box.querySelector('.cropee');
       if (!target) return;
@@ -292,14 +293,21 @@
       const rw = (x2 - x1) / 100, rh = (y2 - y1) / 100;
       if (rw <= 0 || rh <= 0) { target.style.transform = ''; return; }
       if (x1 <= 0 && x2 >= 100 && y1 <= 0 && y2 >= 100) { target.style.transform = ''; return; }  // full view: no transform
-      const s = Math.min(1 / rw, 1 / rh);
-      const cx = ((x1 + x2) / 200) * W, cy = ((y1 + y2) / 200) * H;
-      target.style.transform = `translate(${W / 2 - s * cx}px, ${H / 2 - s * cy}px) scale(${s})`;
+      if (box.dataset.cropFit === 'contain') {
+        // Keep the aspect ratio: fit the whole region inside the box and center it (no distortion)
+        const s = Math.min(1 / rw, 1 / rh);
+        const cx = ((x1 + x2) / 200) * W, cy = ((y1 + y2) / 200) * H;
+        target.style.transform = `translate(${W / 2 - s * cx}px, ${H / 2 - s * cy}px) scale(${s})`;
+      } else {
+        // Default: stretch so the region fills the box exactly (text is stretched if the aspect differs)
+        const sx = 1 / rw, sy = 1 / rh;
+        target.style.transform = `translate(${-sx * (x1 / 100) * W}px, ${-sy * (y1 / 100) * H}px) scale(${sx}, ${sy})`;
+      }
     }
     const cropObserver = new ResizeObserver(entries => entries.forEach(e => applyCrop(e.target)));
     document.querySelectorAll('[data-crop]').forEach(box => {
       cropObserver.observe(box);
-      new MutationObserver(() => applyCrop(box)).observe(box, { attributes: true, attributeFilter: ['data-crop'] });
+      new MutationObserver(() => applyCrop(box)).observe(box, { attributes: true, attributeFilter: ['data-crop', 'data-crop-fit'] });
       applyCrop(box);
     });
 
