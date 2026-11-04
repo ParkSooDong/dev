@@ -198,7 +198,7 @@
     <div class="slot slot-readout">
       <div class="pane readout" id="readout">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <div class="cropbox" data-crop="">
+        <div class="cropbox" data-crop="0 100 0 100">
           <div class="cropee readout-view">
             <span class="name">EURUSD</span>
             <span class="price" id="r-price">--</span>
@@ -215,7 +215,7 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <h2>Advanced Chart · 15m</h2>
-        <div class="box" data-crop="">
+        <div class="box" data-crop="0 100 0 100">
           <tv-advanced-chart class="cropee" symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
@@ -225,7 +225,7 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <h2>Advanced Chart · 3m</h2>
-        <div class="box" data-crop="">
+        <div class="box" data-crop="0 100 0 100">
           <tv-advanced-chart class="cropee" symbol="eurusd" interval="3" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
@@ -235,7 +235,7 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <h2>Advanced Chart · 1D</h2>
-        <div class="box" data-crop="">
+        <div class="box" data-crop="0 100 0 100">
           <tv-advanced-chart class="cropee" symbol="eurusd" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
@@ -245,7 +245,7 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <h2>Advanced Chart · 1h</h2>
-        <div class="box" data-crop="">
+        <div class="box" data-crop="0 100 0 100">
           <tv-advanced-chart class="cropee" symbol="eurusd" interval="60" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
@@ -291,6 +291,7 @@
       const [x1, x2, y1, y2] = v;
       const rw = (x2 - x1) / 100, rh = (y2 - y1) / 100;
       if (rw <= 0 || rh <= 0) { target.style.transform = ''; return; }
+      if (x1 <= 0 && x2 >= 100 && y1 <= 0 && y2 >= 100) { target.style.transform = ''; return; }  // full view: no transform
       const s = Math.min(1 / rw, 1 / rh);
       const cx = ((x1 + x2) / 200) * W, cy = ((y1 + y2) / 200) * H;
       target.style.transform = `translate(${W / 2 - s * cx}px, ${H / 2 - s * cy}px) scale(${s})`;
