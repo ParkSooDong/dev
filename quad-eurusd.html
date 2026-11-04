@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EUR/USD 차트</title>
+  <title>EUR/USD Chart</title>
   <style>
     :root {
       --bg: #f5f6f8;
@@ -35,7 +35,7 @@
       gap: var(--gap);
     }
 
-    /* 상단 시세 (TradingView Single Ticker 위젯) */
+    /* Top quote (TradingView Single Ticker widget) */
     .top {
       flex: 0 0 auto;
       height: 120px;
@@ -52,7 +52,7 @@
       overflow: hidden;
       contain: size layout paint;
     }
-    /* 차트 한 칸 폭과 동일 (전체 폭으로 하려면 flex: 1 1 0; 로 변경) */
+    /* Same width as one chart cell (change to flex: 1 1 0; for full width) */
     .single { flex: 0 0 calc((100% - var(--gap)) / 2); }
     .single > tv-single-ticker {
       display: block;
@@ -60,7 +60,7 @@
       height: 100%;
     }
 
-    /* 싱글 티커에서 읽어온 값 표시 */
+    /* Values read from the single ticker */
     .readout {
       flex: 1 1 0;
       min-width: 0;
@@ -88,7 +88,7 @@
       .readout .down { color: #f7525f; }
     }
 
-    /* 남은 공간을 2x2 칸으로 균등 분할 */
+    /* Split the remaining space evenly into 2x2 cells */
     .grid {
       flex: 1 1 0;
       min-height: 0;
@@ -143,7 +143,7 @@
       }
     }
   </style>
-  <!-- 위젯 스크립트보다 먼저 실행: 닫힌 shadow DOM을 열린 것으로 바꿔 내부 텍스트를 읽을 수 있게 함 -->
+  <!-- Runs before the widget scripts: turns closed shadow DOMs into open ones so inner text can be read -->
   <script>
     const _attachShadow = Element.prototype.attachShadow;
     Element.prototype.attachShadow = function (init) {
@@ -161,35 +161,35 @@
     <div class="readout" id="readout">
       <span class="name">EURUSD</span>
       <span class="price" id="r-price">--</span>
-      <span class="chg flat" id="r-chg">전일대비 --</span>
-      <span class="time" id="r-time">싱글 티커 값을 읽는 중…</span>
+      <span class="chg flat" id="r-chg">Change --</span>
+      <span class="time" id="r-time">Reading ticker value…</span>
     </div>
   </div>
 
   <div class="grid">
     <section>
-      <h2>Advanced Chart · 15분</h2>
+      <h2>Advanced Chart · 15m</h2>
       <div class="box">
         <tv-advanced-chart symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
       </div>
     </section>
 
     <section>
-      <h2>Advanced Chart · 3분</h2>
+      <h2>Advanced Chart · 3m</h2>
       <div class="box">
         <tv-advanced-chart symbol="eurusd" interval="3" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
       </div>
     </section>
 
     <section>
-      <h2>Advanced Chart · 일</h2>
+      <h2>Advanced Chart · 1D</h2>
       <div class="box">
         <tv-advanced-chart symbol="eurusd" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
       </div>
     </section>
 
     <section>
-      <h2>Advanced Chart · 1시간</h2>
+      <h2>Advanced Chart · 1h</h2>
       <div class="box">
         <tv-advanced-chart symbol="eurusd" interval="60" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
       </div>
@@ -197,14 +197,14 @@
   </div>
 
   <script>
-    // 싱글 티커 내부(shadow DOM 포함)의 텍스트를 모아서 가격/전일대비를 파싱
+    // Collect text inside the single ticker (including shadow DOM) and parse price / change
     const $ticker = document.querySelector('tv-single-ticker');
     const $price = document.getElementById('r-price');
     const $chg = document.getElementById('r-chg');
     const $time = document.getElementById('r-time');
-    const fmtTime = new Intl.DateTimeFormat('ko-KR', {
+    const fmtTime = new Intl.DateTimeFormat('en-US', {
       timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
     });
 
     function collect(root, out) {
@@ -237,8 +237,8 @@
       const { out, joined, m } = read();
       if (!m) {
         $time.textContent = out.iframe
-          ? '읽기 불가: 위젯이 iframe으로 렌더링됨'
-          : ($ticker.shadowRoot ? '값을 찾지 못함 (콘솔의 tvRaw 확인)' : '읽는 중…');
+          ? 'Cannot read: widget is rendered in an iframe'
+          : ($ticker.shadowRoot ? 'Value not found (check tvRaw in the console)' : 'Reading…');
         window.tvRaw = joined;
         return;
       }
@@ -249,10 +249,10 @@
       const absChg = m[2].replace(/^[+\-−]/, '');
       $price.textContent = price;
       $chg.className = 'chg ' + cls;
-      $chg.textContent = `전일대비 ${sign}${absChg} (${sign}${m[3].replace(/^[+\-−]/, '')}%)`;
+      $chg.textContent = `Change ${sign}${absChg} (${sign}${m[3].replace(/^[+\-−]/, '')}%)`;
       if (price !== lastPrice) {
         lastPrice = price;
-        $time.textContent = '마지막 갱신 ' + fmtTime.format(new Date()) + ' KST (브라우저 시각)';
+        $time.textContent = 'Last update ' + fmtTime.format(new Date()) + ' KST (browser time)';
       }
     }
     setInterval(update, 500);
