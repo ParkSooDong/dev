@@ -60,6 +60,34 @@
       height: 100%;
     }
 
+    /* 싱글 티커에서 읽어온 값 표시 */
+    .readout {
+      flex: 1 1 0;
+      min-width: 0;
+      height: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      align-content: center;
+      gap: 2px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 16px;
+      overflow: hidden;
+    }
+    .readout .name  { font-size: 1.8rem; font-weight: 800; }
+    .readout .price { font-size: 2.4rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .readout .chg   { font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .readout .time  { width: 100%; font-size: 0.95rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .readout .up   { color: #d92d20; }
+    .readout .down { color: #1570ef; }
+    .readout .flat { color: var(--muted); }
+    @media (prefers-color-scheme: dark) {
+      .readout .up   { color: #f97066; }
+      .readout .down { color: #53b1fd; }
+    }
+
     /* 남은 공간을 2x2 칸으로 균등 분할 */
     .grid {
       flex: 1 1 0;
@@ -103,6 +131,10 @@
       html, body { height: auto; }
       .top { flex-direction: column; height: auto; }
       .single { height: 120px; flex: none; }
+      .readout { height: 120px; flex: none; }
+      .readout .name  { font-size: 1.3rem; }
+      .readout .price { font-size: 1.8rem; }
+      .readout .chg   { font-size: 1.1rem; }
       .grid {
         flex: none;
         grid-template-columns: minmax(0, 1fr);
@@ -111,6 +143,13 @@
       }
     }
   </style>
+  <!-- 위젯 스크립트보다 먼저 실행: 닫힌 shadow DOM을 열린 것으로 바꿔 내부 텍스트를 읽을 수 있게 함 -->
+  <script>
+    const _attachShadow = Element.prototype.attachShadow;
+    Element.prototype.attachShadow = function (init) {
+      return _attachShadow.call(this, { ...init, mode: 'open' });
+    };
+  </script>
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-advanced-chart.js"></script>
   <script type="module" src="https://widgets.tradingview-widget.com/w/en/tv-single-ticker.js"></script>
 </head>
@@ -118,6 +157,12 @@
   <div class="top">
     <div class="single">
       <tv-single-ticker symbol="FX:EURUSD"></tv-single-ticker>
+    </div>
+    <div class="readout" id="readout">
+      <span class="name">EURUSD</span>
+      <span class="price" id="r-price">--</span>
+      <span class="chg flat" id="r-chg">전일대비 --</span>
+      <span class="time" id="r-time">싱글 티커 값을 읽는 중…</span>
     </div>
   </div>
 
@@ -150,5 +195,67 @@
       </div>
     </section>
   </div>
+
+  <script>
+    // 싱글 티커 내부(shadow DOM 포함)의 텍스트를 모아서 가격/전일대비를 파싱
+    const $ticker = document.querySelector('tv-single-ticker');
+    const $price = document.getElementById('r-price');
+    const $chg = document.getElementById('r-chg');
+    const $time = document.getElementById('r-time');
+    const fmtTime = new Intl.DateTimeFormat('ko-KR', {
+      timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+
+    function collect(root, out) {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+      let n;
+      while ((n = walker.nextNode())) {
+        if (n.nodeType === Node.TEXT_NODE) {
+          const p = n.parentElement;
+          if (p && /^(STYLE|SCRIPT)$/.test(p.tagName)) continue;
+          const t = n.textContent.trim();
+          if (t) out.texts.push(t);
+        } else {
+          if (n.tagName === 'IFRAME') out.iframe = true;
+          if (n.shadowRoot) collect(n.shadowRoot, out);
+        }
+      }
+    }
+
+    function read() {
+      const out = { texts: [], iframe: false };
+      if ($ticker.shadowRoot) collect($ticker.shadowRoot, out);
+      collect($ticker, out);
+      const joined = out.texts.join(' ');
+      const m = joined.match(/(\d+\.\d{3,6})\s*(?:USD)?\s*([+\-−]?\d+\.\d+)\s*([+\-−]?\d+\.\d+)\s*%/);
+      return { out, joined, m };
+    }
+
+    let lastPrice = null;
+    function update() {
+      const { out, joined, m } = read();
+      if (!m) {
+        $time.textContent = out.iframe
+          ? '읽기 불가: 위젯이 iframe으로 렌더링됨'
+          : ($ticker.shadowRoot ? '값을 찾지 못함 (콘솔의 tvRaw 확인)' : '읽는 중…');
+        window.tvRaw = joined;
+        return;
+      }
+      const price = m[1];
+      const pctNum = parseFloat(m[3].replace('−', '-'));
+      const sign = m[3].replace('−', '-').startsWith('-') ? '-' : (pctNum > 0 ? '+' : '');
+      const cls = pctNum > 0 ? 'up' : pctNum < 0 ? 'down' : 'flat';
+      const absChg = m[2].replace(/^[+\-−]/, '');
+      $price.textContent = price;
+      $chg.className = 'chg ' + cls;
+      $chg.textContent = `전일대비 ${sign}${absChg} (${sign}${m[3].replace(/^[+\-−]/, '')}%)`;
+      if (price !== lastPrice) {
+        lastPrice = price;
+        $time.textContent = '마지막 갱신 ' + fmtTime.format(new Date()) + ' KST (브라우저 시각)';
+      }
+    }
+    setInterval(update, 500);
+  </script>
 </body>
 </html>
