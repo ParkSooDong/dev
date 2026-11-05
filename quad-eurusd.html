@@ -148,6 +148,40 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    .head { position: relative; }
+    .keys-pop {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      z-index: 20;
+      width: 300px;
+      max-height: 70vh;
+      overflow: auto;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    }
+    .keys-pop.open { display: block; }
+    .keys-pop h3 { margin: 8px 0 4px; font-size: 0.74rem; color: var(--muted); font-weight: 700; }
+    .keys-pop h3:first-child { margin-top: 0; }
+    .keys-pop .row { display: flex; justify-content: space-between; gap: 12px; padding: 1px 0; }
+    .keys-pop kbd {
+      font-family: inherit;
+      font-size: 0.72rem;
+      padding: 0 5px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .keys-pop .note { margin-top: 8px; font-size: 0.7rem; color: var(--muted); }
     .box {
       position: relative;
       min-width: 0;
@@ -214,9 +248,30 @@
         <div class="head">
           <h2>Advanced Chart · 15m</h2>
           <form class="symform" id="symform">
+            <button type="button" id="keysBtn" title="Keyboard shortcuts">⌨ 단축키</button>
             <input id="symInput" placeholder="e.g. FX:USDJPY" autocomplete="off" spellcheck="false">
             <button type="submit">Apply</button>
           </form>
+        <div class="keys-pop" id="keysPop">
+          <h3>가격축</h3>
+          <div class="row"><span>축 뒤집기</span><kbd>Alt+I</kbd></div>
+          <div class="row"><span>로그 스케일</span><kbd>Alt+L</kbd></div>
+          <div class="row"><span>퍼센트 스케일</span><kbd>Alt+P</kbd></div>
+          <div class="row"><span>자동 스케일</span><kbd>Alt+A</kbd></div>
+          <h3>화면 이동</h3>
+          <div class="row"><span>차트 보기 초기화</span><kbd>Alt+R</kbd></div>
+          <h3>그리기 도구</h3>
+          <div class="row"><span>추세선</span><kbd>Alt+T</kbd></div>
+          <div class="row"><span>수평선</span><kbd>Alt+H</kbd></div>
+          <div class="row"><span>수직선</span><kbd>Alt+V</kbd></div>
+          <div class="row"><span>십자선</span><kbd>Alt+C</kbd></div>
+          <div class="row"><span>피보나치 되돌림</span><kbd>Alt+F</kbd></div>
+          <h3>편집</h3>
+          <div class="row"><span>선택한 그림 삭제</span><kbd>Delete</kbd></div>
+          <div class="row"><span>되돌리기</span><kbd>Ctrl+Z</kbd></div>
+          <div class="row"><span>다시 실행</span><kbd>Ctrl+Y</kbd></div>
+          <div class="note">차트를 한 번 클릭해 포커스를 준 뒤 누르세요. Mac: Alt→Option, Ctrl→Cmd</div>
+        </div>
         </div>
         <div class="box" data-crop="0 100 0 100">
           <tv-advanced-chart id="master" class="cropee" symbol="FX:EURUSD" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
@@ -427,6 +482,14 @@
       e.preventDefault();
       applySymbol(symInput.value, 'input');
     });
+
+    // ---------- Shortcut help popover ----------
+    const keysBtn = document.getElementById('keysBtn');
+    const keysPop = document.getElementById('keysPop');
+    keysBtn.addEventListener('click', e => { e.stopPropagation(); keysPop.classList.toggle('open'); });
+    keysPop.addEventListener('click', e => e.stopPropagation());
+    document.addEventListener('click', () => keysPop.classList.remove('open'));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') keysPop.classList.remove('open'); });
   </script>
 </body>
 </html>
