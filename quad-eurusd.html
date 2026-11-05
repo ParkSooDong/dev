@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Synced Chart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=block" rel="stylesheet">
   <style>
     :root {
       --bg: #f5f6f8;
@@ -29,7 +32,7 @@
       padding: var(--gap);
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
       display: flex;
       flex-direction: column;
       gap: var(--gap);
@@ -219,7 +222,7 @@
     <div class="slot slot-single">
       <div class="pane single">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <div class="cropbox" data-crop="0 100 0 60">
+        <div class="cropbox" data-crop="50 100 0 50">
           <tv-single-ticker class="cropee" symbol="FX:EURUSD"></tv-single-ticker>
         </div>
       </div>
@@ -247,7 +250,7 @@
         <div class="head">
           <h2>15m</h2>
           <form class="symform" id="symform">
-            <button type="button" id="keysBtn" title="Keyboard shortcuts">⌨ Shortcut</button>
+            <button type="button" id="keysBtn" title="Keyboard shortcuts">⌨ 단축키</button>
             <input id="symInput" placeholder="e.g. FX:USDJPY" autocomplete="off" spellcheck="false">
             <button type="submit">Apply</button>
           </form>
@@ -291,7 +294,7 @@
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <div class="head"><h2>1D</h2></div>
-        <div class="box" data-crop="40 100 2 96">
+        <div class="box" data-crop="40 100 3 95">
           <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
