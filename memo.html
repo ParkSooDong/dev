@@ -228,9 +228,9 @@ const URL_AT = BASE + "/memo/updatedAt.json";   // 수정 시각 숫자만 (아�
 const dbSet = !DB_URL.includes("YOUR-PROJECT");
 const localNote = () => say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
 
-/* 저장된 상태 복원: 사용/미사용 선택(처음엔 DB 주소가 있으면 사용), 이 PC의 메모 사본 */
+/* 저장된 상태 복원: 사용/미사용 선택(처음엔 항상 미사용), 이 PC의 메모 사본 */
 let saved = null; try { saved = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
-let useFb = saved && typeof saved.fb === "boolean" ? saved.fb : dbSet;
+let useFb = !!(saved && saved.fb === true);
 let dirty = !!(saved && useFb && saved.d), knownAt = (saved && useFb && +saved.at) || 0;
 let ready = false, saving = false, connecting = false, firstTry = false, idleT = null, maxT = null, localT = null;
 if (saved && typeof saved.memo === "string") ta.value = saved.memo;
