@@ -16,18 +16,32 @@ h1{font-size:17px;margin:0;letter-spacing:-.01em}
 #st{font-size:12px;color:var(--mute)}
 #st.ok{color:var(--ok)}
 #st.err{color:var(--err)}
-textarea{flex:1;min-height:0;width:100%;resize:none;font:inherit;font-size:16px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+/* .slot 이 자리를 지키고 .pane(확대 대상)이 그 안을 채움 → 확대해도 원래 레이아웃은 그대로 */
+.slot{flex:1;min-height:0;position:relative}
+.pane{position:absolute;inset:0}
+textarea{display:block;height:100%;width:100%;resize:none;font:inherit;font-size:16px;line-height:1.6;padding:14px 44px 14px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+/* 확대/축소 버튼 */
+.expand{position:absolute;top:8px;right:22px;z-index:5;width:28px;height:28px;padding:0;display:grid;place-items:center;font-size:15px;line-height:1;color:var(--ink);opacity:.5;background:var(--card);border:1px solid var(--line);border-radius:7px;cursor:pointer}
+.expand:hover,.expand:focus-visible{opacity:1}
+/* 확대: 화면 전체를 메모가 차지 (CSS 만 바꾸므로 입력 중인 내용/커서/저장 상태는 그대로) */
+.pane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))}
+.pane.max .expand{top:max(20px,calc(env(safe-area-inset-top,0px) + 8px));right:30px}
+/* 확대 중에는 제목을 숨기고 저장 상태만 우하단에 작게 표시 */
+body.has-max header{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
+body.has-max h1{display:none}
 textarea:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 textarea:disabled{opacity:.6}
 </style>
 </head>
 <body>
 <header><h1>공용 메모장</h1><span id="st" role="status">불러오는 중…</span></header>
+<div class="slot"><div class="pane" id="pane">
+<button class="expand" id="ex" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
 <textarea id="memo" maxlength="3000000" placeholder="누구나 수정할 수 있는 메모예요. 자동으로 저장돼요." disabled aria-label="메모"></textarea>
+</div></div>
 <script>
 /* ▼▼ 여기만 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이) ▼▼ */
-const DB_URL = "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app";
-/*const DB_URL = "https://YOUR-PROJECT-default-rtdb.firebaseio.com"; */
+const DB_URL = "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app";";
 /* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
 
 const MAX_CHARS = 3000000;   // 메모 최대 글자 수 (Firebase 규칙의 숫자와 같아야 해요)
@@ -112,6 +126,18 @@ async function start() {
 }
 
 ta.addEventListener("input", () => { dirty = true; say("저장 대기 중…"); schedule(); });
+
+/* 확대/축소: 버튼 또는 Esc */
+const pane = document.getElementById("pane"), ex = document.getElementById("ex");
+function setMax(on) {
+  pane.classList.toggle("max", on);
+  document.body.classList.toggle("has-max", on);
+  ex.textContent = on ? "✕" : "⤢";
+  ex.setAttribute("aria-label", on ? "축소" : "확대");
+}
+ex.addEventListener("mousedown", e => e.preventDefault());   // 버튼을 눌러도 메모의 커서/포커스를 유지
+ex.addEventListener("click", () => setMax(!pane.classList.contains("max")));
+document.addEventListener("keydown", e => { if (e.key === "Escape" && pane.classList.contains("max")) setMax(false); });
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) { if (dirty) save(true); } else { poll(); }
 });
