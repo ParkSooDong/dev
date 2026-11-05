@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EUR/USD Chart</title>
+  <title>Synced Chart</title>
   <style>
     :root {
       --bg: #f5f6f8;
@@ -36,12 +36,7 @@
     }
     body.has-max { overflow: hidden; }
 
-    /* ---------- Slots keep the layout stable while a pane is maximized ---------- */
-    .slot {
-      position: relative;
-      min-width: 0;
-      min-height: 0;
-    }
+    .slot { position: relative; min-width: 0; min-height: 0; }
     .pane {
       position: absolute;
       inset: 0;
@@ -50,15 +45,8 @@
       border-radius: 10px;
       overflow: hidden;
     }
-    /* Maximized: cover the whole viewport (CSS only, so iframes are not reloaded) */
-    .pane.max {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      border-radius: 0;
-    }
+    .pane.max { position: fixed; inset: 0; z-index: 1000; border-radius: 0; }
 
-    /* Expand / collapse button */
     .expand {
       position: absolute;
       top: 6px;
@@ -78,27 +66,18 @@
       cursor: pointer;
     }
     .expand:hover { color: var(--text); border-color: var(--muted); }
-    .pane.single .expand { top: auto; bottom: 6px; }   /* keep clear of the TradingView logo */
+    .pane.single .expand { top: auto; bottom: 6px; }
     .pane.max .expand { top: 10px; right: 12px; bottom: auto; width: 32px; height: 32px; font-size: 18px; }
 
-    /* ---------- Top row: single ticker + readout ---------- */
-    .top {
-      flex: 0 0 auto;
-      height: 120px;
-      display: flex;
-      gap: var(--gap);
-    }
+    .top { flex: 0 0 auto; height: 120px; display: flex; gap: var(--gap); }
     .slot-single  { flex: 0 0 calc((100% - var(--gap)) / 2); }
     .slot-readout { flex: 1 1 0; }
 
     .pane.single { padding: 4px 8px; contain: size layout paint; }
 
-    /* Crop / zoom: the element with data-crop="x1 x2 y1 y2" (0-100 %) clips,
-       and its .cropee child is scaled so that region fills the whole box. */
     .cropbox { position: relative; width: 100%; height: 100%; overflow: hidden; }
     .cropee  { display: block; width: 100%; height: 100%; transform-origin: 0 0; }
 
-    /* Values read from the single ticker */
     .readout-view {
       display: flex;
       flex-wrap: wrap;
@@ -118,14 +97,12 @@
       .readout .up   { color: #22ab94; }
       .readout .down { color: #f7525f; }
     }
-    /* Maximized readout: scale the text with the viewport */
     .pane.readout.max .readout-view { justify-content: center; align-content: center; gap: 1vh 4vw; }
     .readout.max .name  { font-size: clamp(2rem, 7vw, 7rem); }
     .readout.max .price { font-size: clamp(3rem, 12vw, 12rem); }
     .readout.max .chg   { font-size: clamp(1.5rem, 5vw, 5rem); }
     .readout.max .time  { font-size: clamp(1rem, 2vw, 2rem); text-align: center; }
 
-    /* ---------- Split the remaining space evenly into 2x2 cells ---------- */
     .grid {
       flex: 1 1 0;
       min-height: 0;
@@ -139,12 +116,37 @@
       grid-template-rows: auto minmax(0, 1fr);
       padding: 8px;
     }
+    .head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 34px 6px 2px;
+    }
     h2 {
       font-size: 0.8rem;
       line-height: 1.2;
       color: var(--muted);
       font-weight: 600;
-      margin: 0 0 6px 2px;
+      margin: 0;
+    }
+    .symform { display: flex; gap: 4px; margin-left: auto; }
+    .symform input {
+      width: 140px;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+    }
+    .symform button {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      color: var(--text);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      cursor: pointer;
     }
     .box {
       position: relative;
@@ -153,11 +155,7 @@
       overflow: hidden;
       contain: size layout paint;
     }
-    .box > tv-advanced-chart {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
+    .box > tv-advanced-chart { display: block; width: 100%; height: 100%; }
 
     @media (max-width: 640px) {
       html, body { height: auto; }
@@ -174,7 +172,6 @@
       }
     }
   </style>
-  <!-- Runs before the widget scripts: turns closed shadow DOMs into open ones so inner text can be read -->
   <script>
     const _attachShadow = Element.prototype.attachShadow;
     Element.prototype.attachShadow = function (init) {
@@ -189,7 +186,6 @@
     <div class="slot slot-single">
       <div class="pane single">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <!-- data-crop = "x1 x2 y1 y2" in % of the widget (left→right, top→bottom). Remove the attribute for the full view. -->
         <div class="cropbox" data-crop="50 100 0 50">
           <tv-single-ticker class="cropee" symbol="FX:EURUSD"></tv-single-ticker>
         </div>
@@ -200,7 +196,7 @@
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <div class="cropbox" data-crop="0 100 0 100">
           <div class="cropee readout-view">
-            <span class="name">EURUSD</span>
+            <span class="name" id="r-name">EURUSD</span>
             <span class="price" id="r-price">--</span>
             <span class="chg flat" id="r-chg">Change --</span>
             <span class="time" id="r-time">Reading ticker value…</span>
@@ -211,12 +207,19 @@
   </div>
 
   <div class="grid">
+    <!-- MASTER: changing the symbol here updates every other chart and the ticker -->
     <div class="slot">
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <h2>Advanced Chart · 15m</h2>
+        <div class="head">
+          <h2>Advanced Chart · 15m (master)</h2>
+          <form class="symform" id="symform">
+            <input id="symInput" placeholder="e.g. FX:USDJPY" autocomplete="off" spellcheck="false">
+            <button type="submit">Apply</button>
+          </form>
+        </div>
         <div class="box" data-crop="0 100 0 100">
-          <tv-advanced-chart class="cropee" symbol="eurusd" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+          <tv-advanced-chart id="master" class="cropee" symbol="FX:EURUSD" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -224,9 +227,9 @@
     <div class="slot">
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <h2>Advanced Chart · 3m</h2>
+        <div class="head"><h2>Advanced Chart · 3m</h2></div>
         <div class="box" data-crop="0 100 0 100">
-          <tv-advanced-chart class="cropee" symbol="eurusd" interval="3" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+          <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="3" timezone="Asia/Seoul"></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -234,9 +237,9 @@
     <div class="slot">
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <h2>Advanced Chart · 1D</h2>
+        <div class="head"><h2>Advanced Chart · 1D</h2></div>
         <div class="box" data-crop="40 100 3 95">
-          <tv-advanced-chart class="cropee" symbol="eurusd" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+          <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="1D" timezone="Asia/Seoul"></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -244,16 +247,16 @@
     <div class="slot">
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <h2>Advanced Chart · 1h</h2>
+        <div class="head"><h2>Advanced Chart · 1h</h2></div>
         <div class="box" data-crop="0 100 0 100">
-          <tv-advanced-chart class="cropee" symbol="eurusd" interval="60" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+          <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="60" timezone="Asia/Seoul"></tv-advanced-chart>
         </div>
       </section>
     </div>
   </div>
 
   <script>
-    // ---------- Expand / collapse any of the 6 panes ----------
+    // ---------- Expand / collapse ----------
     function setMax(pane, on) {
       document.querySelectorAll('.pane.max').forEach(p => {
         p.classList.remove('max');
@@ -264,7 +267,7 @@
         pane.querySelector('.expand').textContent = '✕';
       }
       document.body.classList.toggle('has-max', on);
-      window.dispatchEvent(new Event('resize'));   // let widgets re-measure
+      window.dispatchEvent(new Event('resize'));
     }
     document.querySelectorAll('.pane').forEach(pane => {
       pane.querySelector('.expand').addEventListener('click', e => {
@@ -279,10 +282,7 @@
       }
     });
 
-    // ---------- Crop / zoom: show only a region of a widget, scaled to fill its box ----------
-    // data-crop="x1 x2 y1 y2" (0-100 %). Empty or missing = full view.
-    // The region always fills the box exactly (stretched if its aspect differs from the box).
-    // Add data-crop-fit="contain" to the same element to keep the aspect ratio instead (region fitted and centered).
+    // ---------- Crop / zoom ----------
     function applyCrop(box) {
       const target = box.querySelector('.cropee');
       if (!target) return;
@@ -292,14 +292,12 @@
       const [x1, x2, y1, y2] = v;
       const rw = (x2 - x1) / 100, rh = (y2 - y1) / 100;
       if (rw <= 0 || rh <= 0) { target.style.transform = ''; return; }
-      if (x1 <= 0 && x2 >= 100 && y1 <= 0 && y2 >= 100) { target.style.transform = ''; return; }  // full view: no transform
+      if (x1 <= 0 && x2 >= 100 && y1 <= 0 && y2 >= 100) { target.style.transform = ''; return; }
       if (box.dataset.cropFit === 'contain') {
-        // Keep the aspect ratio: fit the whole region inside the box and center it (no distortion)
         const s = Math.min(1 / rw, 1 / rh);
         const cx = ((x1 + x2) / 200) * W, cy = ((y1 + y2) / 200) * H;
         target.style.transform = `translate(${W / 2 - s * cx}px, ${H / 2 - s * cy}px) scale(${s})`;
       } else {
-        // Default: stretch so the region fills the box exactly (text is stretched if the aspect differs)
         const sx = 1 / rw, sy = 1 / rh;
         target.style.transform = `translate(${-sx * (x1 / 100) * W}px, ${-sy * (y1 / 100) * H}px) scale(${sx}, ${sy})`;
       }
@@ -311,8 +309,9 @@
       applyCrop(box);
     });
 
-    // ---------- Read the single ticker (including shadow DOM) and parse price / change ----------
-    const $ticker = document.querySelector('tv-single-ticker');
+    // ---------- Single ticker readout ----------
+    let $ticker = document.querySelector('tv-single-ticker');
+    const $name = document.getElementById('r-name');
     const $price = document.getElementById('r-price');
     const $chg = document.getElementById('r-chg');
     const $time = document.getElementById('r-time');
@@ -336,16 +335,15 @@
         }
       }
     }
-
     function read() {
       const out = { texts: [], iframe: false };
       if ($ticker.shadowRoot) collect($ticker.shadowRoot, out);
       collect($ticker, out);
       const joined = out.texts.join(' ');
-      const m = joined.match(/(\d+\.\d{3,6})\s*(?:USD)?\s*([+\-−]?\d+\.\d+)\s*([+\-−]?\d+\.\d+)\s*%/);
+      // price: allow 2-6 decimals so non-FX symbols (e.g. 5432.10) also parse
+      const m = joined.match(/(\d[\d,]*\.\d{2,6})\s*(?:[A-Z]{3})?\s*([+\-−]?\d[\d,]*\.\d+)\s*([+\-−]?\d+\.\d+)\s*%/);
       return { out, joined, m };
     }
-
     let lastPrice = null;
     function update() {
       const { out, joined, m } = read();
@@ -370,6 +368,106 @@
       }
     }
     setInterval(update, 500);
+
+    // ---------- Symbol sync: master chart -> all other charts + ticker ----------
+    const master = document.getElementById('master');
+    const symInput = document.getElementById('symInput');
+    let currentSymbol = 'FX:EURUSD';
+    window.tvDebug = false;   // set tvDebug = true in the console to log widget messages
+
+    function normalize(s) {
+      s = String(s || '').trim().toUpperCase().replace(/\s+/g, '');
+      if (!s) return '';
+      if (!s.includes(':') && /^[A-Z]{6}$/.test(s)) s = 'FX:' + s;   // EURUSD -> FX:EURUSD
+      return s;
+    }
+
+    function replaceWith(oldEl, tag, attrs) {
+      const el = document.createElement(tag);
+      el.className = oldEl.className;
+      for (const [k, v] of Object.entries(attrs)) if (v !== null) el.setAttribute(k, v);
+      oldEl.replaceWith(el);
+      return el;
+    }
+
+    function applySymbol(raw, source) {
+      const sym = normalize(raw);
+      if (!sym || sym === currentSymbol) return;
+      currentSymbol = sym;
+      symInput.value = sym;
+
+      // 1) the other three charts (recreated so the new symbol is loaded for sure)
+      document.querySelectorAll('tv-advanced-chart.follower').forEach(old => {
+        const box = old.closest('[data-crop]');
+        const el = replaceWith(old, 'tv-advanced-chart', {
+          symbol: sym,
+          interval: old.getAttribute('interval'),
+          timezone: old.getAttribute('timezone')
+        });
+        if (box) requestAnimationFrame(() => applyCrop(box));
+      });
+
+      // 2) the top ticker + the readout title
+      const t = replaceWith($ticker, 'tv-single-ticker', { symbol: sym });
+      $ticker = t;
+      lastPrice = null;
+      $price.textContent = '--';
+      $chg.className = 'chg flat';
+      $chg.textContent = 'Change --';
+      $time.textContent = 'Reading ticker value…';
+      $name.textContent = sym.split(':').pop();
+      const tbox = t.closest('[data-crop]');
+      if (tbox) requestAnimationFrame(() => applyCrop(tbox));
+
+      // 3) if the change came from the input box, push it into the master too
+      if (source === 'input' && master.getAttribute('symbol') !== sym) {
+        master.setAttribute('symbol', sym);
+      }
+    }
+
+    // (a) manual input fallback
+    document.getElementById('symform').addEventListener('submit', e => {
+      e.preventDefault();
+      applySymbol(symInput.value, 'input');
+    });
+
+    // (b) the master's own `symbol` attribute (if the widget reflects changes)
+    new MutationObserver(() => applySymbol(master.getAttribute('symbol'), 'master'))
+      .observe(master, { attributes: true, attributeFilter: ['symbol'] });
+
+    // (c) postMessage from the master's iframe (symbol changes made inside the chart UI)
+    function masterIframes() {
+      const list = [];
+      (function walk(root) {
+        root.querySelectorAll('*').forEach(n => {
+          if (n.tagName === 'IFRAME') list.push(n);
+          if (n.shadowRoot) walk(n.shadowRoot);
+        });
+      })(master.shadowRoot || master);
+      return list;
+    }
+    window.addEventListener('message', e => {
+      const fromMaster = masterIframes().some(f => f.contentWindow === e.source);
+      if (!fromMaster) return;
+      let text;
+      try { text = typeof e.data === 'string' ? e.data : JSON.stringify(e.data); } catch { return; }
+      if (window.tvDebug) console.log('[master message]', text);
+      const m = text.match(/"symbol"\s*:\s*"([^"]+)"/i) || text.match(/\b([A-Z0-9_]+:[A-Z0-9!._\-]+)\b/);
+      if (m) applySymbol(m[1], 'master');
+    });
+
+    // (d) light polling of the master's iframe URL / attribute as a safety net
+    setInterval(() => {
+      const attr = master.getAttribute('symbol');
+      if (attr && normalize(attr) !== currentSymbol) { applySymbol(attr, 'master'); return; }
+      for (const f of masterIframes()) {
+        try {
+          const src = decodeURIComponent(f.src || '');
+          const m = src.match(/"symbol"\s*:\s*"([^"]+)"/i);
+          if (m && normalize(m[1]) !== currentSymbol) { applySymbol(m[1], 'master'); return; }
+        } catch {}
+      }
+    }, 1000);
   </script>
 </body>
 </html>
