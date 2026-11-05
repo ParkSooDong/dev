@@ -219,7 +219,7 @@
           </form>
         </div>
         <div class="box" data-crop="0 100 0 100">
-          <tv-advanced-chart id="master" class="cropee" symbol="FX:EURUSD" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
+          <tv-advanced-chart id="master" class="cropee" symbol="FX:EURUSD" interval="15" timezone="Asia/Seoul"></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -370,10 +370,9 @@
     setInterval(update, 500);
 
     // ---------- Symbol sync: master chart -> all other charts + ticker ----------
-    const master = document.getElementById('master');
+    let master = document.getElementById('master');
     const symInput = document.getElementById('symInput');
     let currentSymbol = 'FX:EURUSD';
-    window.tvDebug = false;   // set tvDebug = true in the console to log widget messages
 
     function normalize(s) {
       s = String(s || '').trim().toUpperCase().replace(/\s+/g, '');
@@ -396,14 +395,16 @@
       currentSymbol = sym;
       symInput.value = sym;
 
-      // 1) the other three charts (recreated so the new symbol is loaded for sure)
-      document.querySelectorAll('tv-advanced-chart.follower').forEach(old => {
+      // 1) all four charts (recreated so the new symbol is loaded for sure)
+      document.querySelectorAll('tv-advanced-chart').forEach(old => {
+        const isMaster = old === master;
         const box = old.closest('[data-crop]');
         const el = replaceWith(old, 'tv-advanced-chart', {
           symbol: sym,
           interval: old.getAttribute('interval'),
           timezone: old.getAttribute('timezone')
         });
+        if (isMaster) { el.id = 'master'; master = el; }
         if (box) requestAnimationFrame(() => applyCrop(box));
       });
 
@@ -418,56 +419,13 @@
       $name.textContent = sym.split(':').pop();
       const tbox = t.closest('[data-crop]');
       if (tbox) requestAnimationFrame(() => applyCrop(tbox));
-
-      // 3) if the change came from the input box, push it into the master too
-      if (source === 'input' && master.getAttribute('symbol') !== sym) {
-        master.setAttribute('symbol', sym);
-      }
     }
 
-    // (a) manual input fallback
+    // symbol input drives all 4 charts + ticker
     document.getElementById('symform').addEventListener('submit', e => {
       e.preventDefault();
       applySymbol(symInput.value, 'input');
     });
-
-    // (b) the master's own `symbol` attribute (if the widget reflects changes)
-    new MutationObserver(() => applySymbol(master.getAttribute('symbol'), 'master'))
-      .observe(master, { attributes: true, attributeFilter: ['symbol'] });
-
-    // (c) postMessage from the master's iframe (symbol changes made inside the chart UI)
-    function masterIframes() {
-      const list = [];
-      (function walk(root) {
-        root.querySelectorAll('*').forEach(n => {
-          if (n.tagName === 'IFRAME') list.push(n);
-          if (n.shadowRoot) walk(n.shadowRoot);
-        });
-      })(master.shadowRoot || master);
-      return list;
-    }
-    window.addEventListener('message', e => {
-      const fromMaster = masterIframes().some(f => f.contentWindow === e.source);
-      let text;
-      try { text = typeof e.data === 'string' ? e.data : JSON.stringify(e.data); } catch { return; }
-      console.log('[message]', fromMaster ? 'MASTER' : 'other', e.origin, (text || '').slice(0, 300));
-      if (!fromMaster) return;
-      const m = text.match(/"symbol"\s*:\s*"([^"]+)"/i) || text.match(/\b([A-Z0-9_]+:[A-Z0-9!._\-]+)\b/);
-      if (m) applySymbol(m[1], 'master');
-    });
-
-    // (d) light polling of the master's iframe URL / attribute as a safety net
-    setInterval(() => {
-      const attr = master.getAttribute('symbol');
-      if (attr && normalize(attr) !== currentSymbol) { applySymbol(attr, 'master'); return; }
-      for (const f of masterIframes()) {
-        try {
-          const src = decodeURIComponent(f.src || '');
-          const m = src.match(/"symbol"\s*:\s*"([^"]+)"/i);
-          if (m && normalize(m[1]) !== currentSymbol) { applySymbol(m[1], 'master'); return; }
-        } catch {}
-      }
-    }, 1000);
   </script>
 </body>
 </html>
