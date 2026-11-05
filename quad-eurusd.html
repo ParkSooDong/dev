@@ -207,19 +207,19 @@
   </div>
 
   <div class="grid">
-    <!-- MASTER: changing the symbol here updates every other chart and the ticker -->
+    <!-- Input + Apply below sets the symbol of ALL charts and the ticker; each chart can also be changed individually -->
     <div class="slot">
       <section class="pane chart">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <div class="head">
-          <h2>Advanced Chart · 15m (master)</h2>
+          <h2>Advanced Chart · 15m</h2>
           <form class="symform" id="symform">
             <input id="symInput" placeholder="e.g. FX:USDJPY" autocomplete="off" spellcheck="false">
             <button type="submit">Apply</button>
           </form>
         </div>
         <div class="box" data-crop="0 100 0 100">
-          <tv-advanced-chart id="master" class="cropee" symbol="FX:EURUSD" interval="15" timezone="Asia/Seoul"></tv-advanced-chart>
+          <tv-advanced-chart id="master" class="cropee" symbol="FX:EURUSD" interval="15" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -229,7 +229,7 @@
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <div class="head"><h2>Advanced Chart · 3m</h2></div>
         <div class="box" data-crop="0 100 0 100">
-          <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="3" timezone="Asia/Seoul"></tv-advanced-chart>
+          <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="3" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -239,7 +239,7 @@
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <div class="head"><h2>Advanced Chart · 1D</h2></div>
         <div class="box" data-crop="40 100 3 95">
-          <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="1D" timezone="Asia/Seoul"></tv-advanced-chart>
+          <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="1D" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -249,7 +249,7 @@
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
         <div class="head"><h2>Advanced Chart · 1h</h2></div>
         <div class="box" data-crop="0 100 0 100">
-          <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="60" timezone="Asia/Seoul"></tv-advanced-chart>
+          <tv-advanced-chart class="cropee follower" symbol="FX:EURUSD" interval="60" timezone="Asia/Seoul" allow-symbol-change></tv-advanced-chart>
         </div>
       </section>
     </div>
@@ -391,7 +391,7 @@
 
     function applySymbol(raw, source) {
       const sym = normalize(raw);
-      if (!sym || sym === currentSymbol) return;
+      if (!sym) return;
       currentSymbol = sym;
       symInput.value = sym;
 
@@ -402,7 +402,8 @@
         const el = replaceWith(old, 'tv-advanced-chart', {
           symbol: sym,
           interval: old.getAttribute('interval'),
-          timezone: old.getAttribute('timezone')
+          timezone: old.getAttribute('timezone'),
+          'allow-symbol-change': ''
         });
         if (isMaster) { el.id = 'master'; master = el; }
         if (box) requestAnimationFrame(() => applyCrop(box));
