@@ -448,10 +448,10 @@
     }
     window.addEventListener('message', e => {
       const fromMaster = masterIframes().some(f => f.contentWindow === e.source);
-      if (!fromMaster) return;
       let text;
       try { text = typeof e.data === 'string' ? e.data : JSON.stringify(e.data); } catch { return; }
-      if (window.tvDebug) console.log('[master message]', text);
+      console.log('[message]', fromMaster ? 'MASTER' : 'other', e.origin, (text || '').slice(0, 300));
+      if (!fromMaster) return;
       const m = text.match(/"symbol"\s*:\s*"([^"]+)"/i) || text.match(/\b([A-Z0-9_]+:[A-Z0-9!._\-]+)\b/);
       if (m) applySymbol(m[1], 'master');
     });
