@@ -48,6 +48,16 @@ button{flex:1;font:inherit;font-size:15px;font-weight:600;padding:5px 2px;border
 button:disabled{opacity:.35;cursor:default}
 textarea{width:100%;font:inherit;font-size:17px;line-height:1.5;padding:10px;border:1.5px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);resize:vertical;min-height:calc(4.5em + 23px)}
 textarea:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* 메모 확대(expand): .mslot 이 원래 자리의 높이를 지키고 .mpane 이 확대 대상 */
+.mslot{position:relative}
+.mpane{position:relative}
+.mpane textarea{display:block;padding-right:44px}
+.expand{flex:none;position:absolute;top:6px;right:8px;z-index:5;width:28px;height:28px;padding:0;display:grid;place-items:center;font-size:15px;font-weight:400;line-height:1;color:var(--ink);opacity:.55;background:var(--card);border:1.5px solid var(--line);border-radius:7px;cursor:pointer}
+.expand:hover,.expand:focus-visible{opacity:1}
+.mpane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))}
+.mpane.max textarea{height:100%;min-height:0;resize:none;padding:14px 48px 14px 14px;border-radius:10px}
+.mpane.max .expand{top:max(20px,calc(env(safe-area-inset-top,0px) + 8px));right:26px}
+body.has-max{overflow:hidden}
 p{color:var(--mute);font-size:14px;margin:12px 0 0}
 .warn{color:var(--warn);font-size:16px;font-weight:600}
 /* 가로 1280 이상: 1280x1024 고정(모든 내용이 한 화면). 미만: 가로폭 반응형 */
@@ -79,7 +89,7 @@ p{margin:6px 0 0}
 <label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
 </div>
 <div class="grid" id="g"></div>
-<label style="margin-top:12px">메모<textarea id="memo" rows="3" placeholder="이 곳에 메모해 보세요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다."></textarea></label>
+<label style="margin-top:12px">메모<div class="mslot" id="mslot"><div class="mpane" id="mpane"><textarea id="memo" rows="3" placeholder="이 곳에 메모해 보세요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다."></textarea><button class="expand" id="mex" type="button" title="메모 확대 / 축소 (Esc)" aria-label="메모 확대">⤢</button></div></div></label>
 <p>Code 128 / QR(오류정정 M) · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 4번은 작업자 코드, 나머지는 직접 입력도 가능해요. 사업장 코드(앞 3자리-)와 년도(○○○-XX 뒤 2자리)를 바꾸면 1~9번 전체에 일괄 적용돼요.</p>
 <p class="warn" role="alert">입력하거나 수정한 내용은 이 기기의 브라우저에 자동 저장되므로, 웹페이지를 닫았다가 다시 열어도 직전 상태가 다시 보입니다.</p>
 </main>
@@ -193,6 +203,19 @@ $("w").addEventListener("input",()=>{cells[3].inp.value=$("w").value;draw(3);sav
 $("s").addEventListener("input",()=>{applyShop();drawAll();saveState()});
 $("y").addEventListener("input",()=>{yEdited=true;applyYear();drawAll();saveState()});
 $("f").addEventListener("change",saveState);$("memo").addEventListener("input",saveState);
+/* 메모 확대/축소: 버튼 또는 Esc. CSS 만 바꾸므로 입력 내용·커서·저장 상태는 그대로이고, 나머지 화면 레이아웃도 변하지 않음 */
+const mpane=$("mpane"),mslot=$("mslot"),mex=$("mex");
+function setMemoMax(on){
+  if(on)mslot.style.height=mpane.getBoundingClientRect().height+"px";   /* 확대 중에도 원래 자리의 높이 유지 */
+  else mslot.style.height="";
+  mpane.classList.toggle("max",on);
+  document.body.classList.toggle("has-max",on);
+  mex.textContent=on?"✕":"⤢";
+  mex.setAttribute("aria-label",on?"메모 축소":"메모 확대");
+}
+mex.addEventListener("mousedown",e=>e.preventDefault());   /* 버튼을 눌러도 메모의 커서/포커스 유지 */
+mex.addEventListener("click",()=>setMemoMax(!mpane.classList.contains("max")));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.contains("max"))setMemoMax(false)});
 saveState();
 </script>
 </body>
