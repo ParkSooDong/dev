@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>공용 메모장</title>
+<title>메모장</title>
 <style>
 :root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fffefb;--ok:#2e7d32;--err:#b3261e;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -11,7 +11,10 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;display:flex;flex-direction:column;padding:12px;gap:8px}
-header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 8px}
+.fbbtn{flex:none;font:inherit;font-size:13px;font-weight:600;padding:2px 12px;border-radius:999px;background:transparent;color:var(--ink);border:1.5px solid var(--line);cursor:pointer}
+.fbbtn[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.fbbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 h1{font-size:17px;margin:0;letter-spacing:-.01em}
 #st{font-size:12px;color:var(--mute)}
 #st.ok{color:var(--ok)}
@@ -19,7 +22,13 @@ h1{font-size:17px;margin:0;letter-spacing:-.01em}
 /* .slot 이 자리를 지키고 .pane(확대 대상)이 그 안을 채움 → 확대해도 원래 레이아웃은 그대로 */
 .slot{flex:1;min-height:0;position:relative}
 .pane{position:absolute;inset:0}
-textarea{display:block;height:100%;width:100%;resize:none;font:inherit;font-size:16px;line-height:1.6;padding:14px 44px 14px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+.rich{display:block;overflow:auto;word-break:break-word;outline:none}
+.rich:empty::before{content:attr(data-ph);color:var(--mute);pointer-events:none}
+.rich img{display:block;max-width:100%;height:auto;margin:4px 0}
+.rich table{border-collapse:collapse;margin:4px 0}
+.rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top}
+.rich a{color:inherit}
+.rich{height:100%;width:100%;font:inherit;font-size:16px;line-height:1.6;padding:14px 44px 14px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
 /* 확대/축소 버튼 */
 .expand{position:absolute;top:8px;right:22px;z-index:5;width:28px;height:28px;padding:0;display:grid;place-items:center;font-size:15px;line-height:1;color:var(--ink);opacity:.5;background:var(--card);border:1px solid var(--line);border-radius:7px;cursor:pointer}
 .expand:hover,.expand:focus-visible{opacity:1}
@@ -29,36 +38,212 @@ textarea{display:block;height:100%;width:100%;resize:none;font:inherit;font-size
 /* 확대 중에는 제목을 숨기고 저장 상태만 우하단에 작게 표시 */
 body.has-max header{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
 body.has-max h1{display:none}
-textarea:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-textarea:disabled{opacity:.6}
+.rich:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.rich[contenteditable=false]{opacity:.6}
 </style>
 </head>
 <body>
-<header><h1>공용 메모장</h1><span id="st" role="status">불러오는 중…</span></header>
+<header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="st" role="status"></span></header>
 <div class="slot"><div class="pane" id="pane">
 <button class="expand" id="ex" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
-<textarea id="memo" maxlength="3000000" placeholder="누구나 수정할 수 있는 메모예요. 자동으로 저장돼요." disabled aria-label="메모"></textarea>
+<div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="메모해 보세요. 자동으로 저장돼요. (엑셀 셀 범위·캡처 이미지도 붙여넣을 수 있어요)" aria-label="메모"></div>
 </div></div>
 <script>
-/* ▼▼ 여기만 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이) ▼▼ */
+/* ===== 리치 메모: 엑셀 표 / 캡처 이미지 붙여넣기 지원 =====
+   <div contenteditable> 를 textarea 처럼 .value / .disabled 로 쓸 수 있게 만들어요.
+   저장 값은 "<!--h-->" + 정리(sanitize)된 HTML 이고, 예전 순수 글자 메모도 그대로 불러와요. */
+const RICH_PREFIX = "<!--h-->";
+function makeRich(el) {
+  const TAGS = new Set("A B STRONG I EM U S STRIKE SUB SUP BR P DIV SPAN UL OL LI H1 H2 H3 H4 H5 H6 TABLE THEAD TBODY TFOOT TR TD TH CAPTION IMG PRE CODE BLOCKQUOTE HR".split(" "));
+  const DROP = new Set("SCRIPT STYLE META LINK TITLE HEAD XML O:P NOSCRIPT IFRAME OBJECT EMBED FORM INPUT BUTTON SELECT TEXTAREA SVG MATH AUDIO VIDEO CANVAS".split(" "));
+  const PROPS = new Set("font-weight font-style text-decoration color background-color text-align vertical-align border border-top border-right border-bottom border-left".split(" "));
+  const IMG = /^data:image\/(png|jpe?g|gif|webp|bmp);base64,[A-Za-z0-9+\/=]+$/i;
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  /* 허용된 스타일만 남김 (url(), expression 등은 차단) */
+  function cleanStyle(s) {
+    const out = [];
+    for (const d of (s || "").split(";")) {
+      const i = d.indexOf(":"); if (i < 0) continue;
+      const p = d.slice(0, i).trim().toLowerCase(), v = d.slice(i + 1).trim();
+      if (PROPS.has(p) && v.length < 80 && /^[#\w\s.,()%-]+$/.test(v) && !/url|expression|var\(/i.test(v)) out.push(p + ":" + v);
+    }
+    return out.join(";");
+  }
+  function walk(src, dst) {
+    for (const n of Array.from(src.childNodes)) {
+      if (n.nodeType === 3) { dst.appendChild(document.createTextNode(n.nodeValue)); continue; }
+      if (n.nodeType !== 1) continue;
+      const t = n.nodeName.toUpperCase();
+      if (DROP.has(t)) continue;
+      if (!TAGS.has(t)) { walk(n, dst); continue; }
+      if (t === "IMG") {
+        const s = n.getAttribute("src") || ""; if (!IMG.test(s)) continue;
+        const im = document.createElement("img"); im.src = s;
+        const a = n.getAttribute("alt"); if (a) im.alt = a.slice(0, 200);
+        dst.appendChild(im); continue;
+      }
+      const e = document.createElement(t.toLowerCase());
+      const st = cleanStyle(n.getAttribute("style")); if (st) e.setAttribute("style", st);
+      if (t === "A") {
+        const h = n.getAttribute("href") || "";
+        if (/^(https?:|mailto:)/i.test(h)) { e.setAttribute("href", h); e.setAttribute("target", "_blank"); e.setAttribute("rel", "noopener noreferrer"); }
+      }
+      if (t === "TD" || t === "TH") for (const k of ["colspan", "rowspan"]) { const v = parseInt(n.getAttribute(k), 10); if (v > 1 && v < 100) e.setAttribute(k, v); }
+      walk(n, e); dst.appendChild(e);
+    }
+  }
+  function clean(html) {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const box = document.createElement("div"); walk(doc.body, box); return box.innerHTML;
+  }
+
+  /* .value / .disabled 호환 (textarea 처럼 사용) */
+  Object.defineProperty(el, "value", {
+    get() { return (!el.querySelector("img,table") && !el.textContent.trim()) ? "" : RICH_PREFIX + el.innerHTML; },
+    set(v) { v = String(v || ""); el.innerHTML = v.startsWith(RICH_PREFIX) ? clean(v.slice(RICH_PREFIX.length)) : esc(v).replace(/\r?\n/g, "<br>"); }
+  });
+  Object.defineProperty(el, "disabled", {
+    get() { return el.contentEditable !== "true"; },
+    set(b) { el.contentEditable = b ? "false" : "true"; }
+  });
+  el.addEventListener("input", () => { if (el.value === "" && el.innerHTML) el.innerHTML = ""; });
+
+  /* 이미지 → 가로 1600px 이하로 줄여서 data URL 로 (저장 용량 절약) */
+  function loadImg(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = r.result; };
+      r.onerror = rej; r.readAsDataURL(file);
+    });
+  }
+  async function imgToUrl(file) {
+    const im = await loadImg(file);
+    let s = Math.min(1, 1600 / im.naturalWidth);
+    for (let k = 0; k < 4; k++) {
+      const c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(im.naturalWidth * s)); c.height = Math.max(1, Math.round(im.naturalHeight * s));
+      const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, c.width, c.height); x.drawImage(im, 0, 0, c.width, c.height);
+      let u = c.toDataURL("image/png");
+      if (u.length > 300000) u = c.toDataURL("image/jpeg", 0.85);
+      if (u.length <= 800000 || k === 3) return u;
+      s *= 0.7;
+    }
+  }
+
+  /* 엑셀 등의 HTML: 보이지 않는 iframe 에서 계산된 스타일(굵게/글자색/배경색/테두리/정렬)을 인라인으로 옮김 */
+  function fromHtml(html) {
+    return new Promise(res => {
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      doc.querySelectorAll("script,iframe,object,embed,link,meta").forEach(n => n.remove());
+      doc.querySelectorAll("img").forEach(i => { if (!IMG.test(i.getAttribute("src") || "")) i.remove(); });
+      doc.querySelectorAll("style").forEach(s => { s.textContent = s.textContent.replace(/@import[^;]*;?/gi, "").replace(/url\([^)]*\)/gi, "none"); });
+      const f = document.createElement("iframe");
+      f.setAttribute("sandbox", "allow-same-origin");
+      f.style.cssText = "position:fixed;left:-99999px;top:0;width:1200px;height:800px;border:0;visibility:hidden";
+      let fin = false;
+      const done = h => { if (fin) return; fin = true; f.remove(); res(h); };
+      f.onload = () => {
+        try {
+          const w = f.contentWindow, d = f.contentDocument, els = d.body.querySelectorAll("*");
+          if (els.length > 20000) throw 0;
+          els.forEach(n => {
+            const cs = w.getComputedStyle(n), pcs = n.parentElement ? w.getComputedStyle(n.parentElement) : cs, o = [];
+            const tag = n.nodeName.toUpperCase(), cell = tag === "TD" || tag === "TH";
+            if (parseInt(cs.fontWeight, 10) >= 600 && parseInt(pcs.fontWeight, 10) < 600) o.push("font-weight:700");
+            if (cs.fontStyle === "italic" && pcs.fontStyle !== "italic") o.push("font-style:italic");
+            const dl = cs.textDecorationLine || "";
+            if (dl.includes("underline") || dl.includes("line-through")) o.push("text-decoration:" + (dl.includes("underline") ? "underline" : "line-through"));
+            const bg = cs.backgroundColor, hasBg = bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)";
+            if (hasBg) o.push("background-color:" + bg);
+            if (hasBg || cs.color !== pcs.color) o.push("color:" + cs.color);   /* 다크 모드에서도 읽히도록 배경이 있으면 글자색을 고정 */
+            if (/^(left|right|center|justify)$/.test(cs.textAlign) && cs.textAlign !== pcs.textAlign) o.push("text-align:" + cs.textAlign);
+            if (cell && /^(top|middle|bottom)$/.test(cs.verticalAlign)) o.push("vertical-align:" + cs.verticalAlign);
+            if (cell || tag === "TABLE") for (const sd of ["top", "right", "bottom", "left"]) {
+              const bw = parseFloat(cs.getPropertyValue("border-" + sd + "-width")), bs = cs.getPropertyValue("border-" + sd + "-style");
+              if (bw > 0 && bs !== "none" && bs !== "hidden") o.push("border-" + sd + ":" + Math.max(1, Math.round(bw)) + "px " + bs + " " + cs.getPropertyValue("border-" + sd + "-color"));
+            }
+            n.setAttribute("style", o.join(";"));
+          });
+          const box = document.createElement("div"); walk(d.body, box); done(box.innerHTML);
+        } catch (e) { done(""); }
+      };
+      f.srcdoc = doc.documentElement.outerHTML;
+      document.body.appendChild(f);
+      setTimeout(() => done(""), 5000);
+    });
+  }
+
+  function insert(html) {
+    if (!html) return;
+    el.focus();
+    if (!document.execCommand("insertHTML", false, html)) { el.insertAdjacentHTML("beforeend", html); el.dispatchEvent(new Event("input", { bubbles: true })); }
+  }
+  async function build(html, imgs, txt) {
+    let h = "";
+    if (/<table[\s>]/i.test(html) || (!imgs.length && html)) h = await fromHtml(html);
+    else for (const f of imgs) { try { h += '<img src="' + await imgToUrl(f) + '"><br>'; } catch (e) {} }
+    if (!h && txt) h = esc(txt).replace(/\r?\n/g, "<br>");
+    return clean(h);
+  }
+  function keepCaret() {
+    const s = getSelection(), r = s.rangeCount ? s.getRangeAt(0).cloneRange() : null;
+    return () => { el.focus(); if (r && el.contains(r.commonAncestorContainer)) { s.removeAllRanges(); s.addRange(r); } };
+  }
+  el.addEventListener("paste", e => {
+    const cd = e.clipboardData; if (!cd) return;
+    const html = cd.getData("text/html"), txt = cd.getData("text/plain");
+    const imgs = Array.from(cd.files || []).filter(f => /^image\//.test(f.type));
+    if (!html && !imgs.length) return;            /* 글자만 있으면 기본 붙여넣기 */
+    e.preventDefault();
+    const back = keepCaret();
+    build(html, imgs, txt).then(h => { back(); insert(h); });
+  });
+  el.addEventListener("dragover", e => { if (e.dataTransfer && Array.from(e.dataTransfer.types).includes("Files")) e.preventDefault(); });
+  el.addEventListener("drop", e => {
+    const imgs = Array.from((e.dataTransfer && e.dataTransfer.files) || []).filter(f => /^image\//.test(f.type));
+    if (!imgs.length) return;
+    e.preventDefault();
+    build("", imgs, "").then(h => insert(h));
+  });
+}
+
+/* ▼▼ DB 를 쓰려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이) ▼▼ */
 const DB_URL = "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app";
 /* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
 
 const MAX_CHARS = 3000000;   // 메모 최대 글자 수 (Firebase 규칙의 숫자와 같아야 해요)
 const POLL_MS = 3000;        // 다른 기기의 변경을 확인하는 간격
-const IDLE_MS = 3000;        // 입력을 멈춘 뒤 저장까지 기다리는 시간
+const IDLE_MS = 3000;        // 입력을 멈춘 뒤 DB 저장까지 기다리는 시간
 const MAX_WAIT_MS = 30000;   // 계속 입력해도 이 시간이 지나면 한 번 저장
+const KEY = "memo-state";    // 이 PC(브라우저)에 저장되는 이름
 
-const ta = document.getElementById("memo"), st = document.getElementById("st");
+const ta = document.getElementById("memo"), st = document.getElementById("st"), fbBtn = document.getElementById("fbBtn");
+makeRich(ta);   // 메모 칸을 표/이미지 붙여넣기가 되는 편집 영역으로
 const say = (t, c) => { st.textContent = t; st.className = c || ""; };
 const hhmm = () => new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
 const BASE = DB_URL.replace(/\/+$/, "");
 const URL_MEMO = BASE + "/memo.json";
 const URL_AT = BASE + "/memo/updatedAt.json";   // 수정 시각 숫자만 (아주 작음)
-ta.maxLength = MAX_CHARS;
+const dbSet = !DB_URL.includes("YOUR-PROJECT");
+const localNote = () => say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
 
-let dirty = false, idleT = null, maxT = null, knownAt = 0, ready = false, saving = false;
+/* 저장된 상태 복원: 사용/미사용 선택(처음엔 DB 주소가 있으면 사용), 이 PC의 메모 사본 */
+let saved = null; try { saved = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+let useFb = saved && typeof saved.fb === "boolean" ? saved.fb : dbSet;
+let dirty = !!(saved && useFb && saved.d), knownAt = (saved && useFb && +saved.at) || 0;
+let ready = false, saving = false, connecting = false, firstTry = false, idleT = null, maxT = null, localT = null;
+if (saved && typeof saved.memo === "string") ta.value = saved.memo;
 
+function saveLocal() {
+  clearTimeout(localT); localT = null;
+  try { localStorage.setItem(KEY, JSON.stringify({ fb: useFb, memo: ta.value, at: knownAt, d: dirty })); return true; }
+  catch (e) { if (!useFb) say("브라우저 저장 공간이 가득 차서 저장하지 못했어요. 이미지를 줄여 주세요", "err"); return false; }
+}
+function renderFb() {
+  fbBtn.textContent = "Firebase Realtime Database " + (useFb ? "사용" : "미사용");
+  fbBtn.setAttribute("aria-pressed", String(useFb));
+}
 function clearTimers() { clearTimeout(idleT); clearTimeout(maxT); idleT = maxT = null; }
 function schedule() {
   clearTimeout(idleT); idleT = setTimeout(save, IDLE_MS);
@@ -71,17 +256,12 @@ async function fetchRemote() {
   return r.json(); // null 또는 {text, updatedAt}
 }
 
-function apply(d, msg) {
-  if (!d || typeof d.text !== "string" || !(d.updatedAt > knownAt) || dirty) return;
-  knownAt = d.updatedAt;
-  if (ta.value !== d.text) { ta.value = d.text; if (msg) say(msg, "ok"); }
-}
-
 async function save(unloading) {
   clearTimers();
-  if (!dirty) return;
+  if (!useFb || !ready || !dirty) return;
   if (saving) { schedule(); return; }
   const v = ta.value;
+  if (v.length > MAX_CHARS) { say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지를 줄여 주세요", "err"); return; }
   const at = Math.max(Date.now(), knownAt + 1);   // 기기 시계가 달라도 항상 더 큰 값
   const body = JSON.stringify({ text: v, updatedAt: at });
   const small = body.length < 20000;               // 창 닫는 중 전송은 작은 메모만 가능
@@ -95,6 +275,7 @@ async function save(unloading) {
     knownAt = at;
     if (ta.value === v) { dirty = false; say("저장됨 " + hhmm(), "ok"); }
     else schedule();                               // 저장 중에 더 입력한 경우
+    saveLocal();
   } catch (e) {
     say("저장 실패. 5초 뒤 다시 시도해요", "err");
     clearTimeout(idleT); idleT = setTimeout(save, 5000);
@@ -102,30 +283,60 @@ async function save(unloading) {
 }
 
 async function poll() {
-  if (!ready || dirty || saving || document.hidden) return;
+  if (!useFb || !ready || dirty || saving || document.hidden) return;
   try {
     const r = await fetch(URL_AT, { cache: "no-store" });
     if (!r.ok) return;
     const at = await r.json();
     if (typeof at === "number" && at > knownAt) {
       say("다른 기기의 변경을 불러오는 중…");
-      apply(await fetchRemote(), "다른 기기의 변경을 반영했어요");
+      const d = await fetchRemote();
+      if (useFb && d && typeof d.text === "string" && d.updatedAt > knownAt && !dirty) {
+        knownAt = d.updatedAt;
+        if (ta.value !== d.text) { ta.value = d.text; saveLocal(); say("다른 기기의 변경을 반영했어요", "ok"); }
+        else say("저장됨 " + hhmm(), "ok");
+      }
     }
   } catch (e) {}
 }
 
-async function start() {
-  if (DB_URL.includes("YOUR-PROJECT")) { say("DB_URL을 먼저 설정해 주세요", "err"); return; }
+/* DB 와 처음 연결: 어느 쪽 메모를 쓸지 정하고 자동저장을 시작 */
+async function connect() {
+  if (connecting || ready || !useFb || !dbSet) return;
+  connecting = true;
+  if (firstTry) ta.disabled = true;
   try {
-    apply(await fetchRemote());
-    ready = true; ta.disabled = false; say("불러옴", "ok");
-    setInterval(poll, POLL_MS);
+    const d = await fetchRemote();
+    if (!useFb) return;
+    const local = ta.value, has = d && typeof d.text === "string" && d.updatedAt > 0;
+    if (!has) { if (local) dirty = true; }                           // DB 가 비어 있음 → 이 PC 메모를 올림
+    else if (d.text === local) { knownAt = Math.max(knownAt, d.updatedAt); dirty = false; }
+    else if (!local) { ta.value = d.text; knownAt = d.updatedAt; dirty = false; }
+    else if (!dirty && knownAt > 0 && d.updatedAt > knownAt) { ta.value = d.text; knownAt = d.updatedAt; }   // 다른 기기에서 수정됨
+    else if (confirm("DB에 저장된 메모와 이 PC의 메모가 달라요.\n\n[확인] DB의 메모로 바꾸기\n[취소] 이 PC의 메모를 DB에 덮어쓰기")) {
+      ta.value = d.text; knownAt = d.updatedAt; dirty = false;
+    } else { knownAt = Math.max(knownAt, d.updatedAt); dirty = true; }
+    ready = true; say("불러옴", "ok"); saveLocal();
+    if (dirty) save();
   } catch (e) {
-    say("불러오기 실패. DB 주소와 규칙을 확인해 주세요", "err");
-  }
+    if (useFb) say("불러오기 실패. DB 주소와 규칙을 확인해 주세요", "err");
+  } finally { connecting = false; firstTry = false; ta.disabled = false; }
 }
 
-ta.addEventListener("input", () => { dirty = true; say("저장 대기 중…"); schedule(); });
+function setFb(on) {
+  useFb = on; renderFb(); clearTimers(); ready = false;
+  if (!on) { dirty = false; knownAt = 0; localNote(); saveLocal(); return; }
+  knownAt = 0; dirty = false; saveLocal();
+  if (!dbSet) { say("DB_URL을 먼저 설정해 주세요", "err"); return; }
+  say("불러오는 중…"); firstTry = true; connect();
+}
+fbBtn.addEventListener("click", () => setFb(!useFb));
+
+ta.addEventListener("input", () => {
+  if (useFb) { dirty = true; if (ready) { say("저장 대기 중…"); schedule(); } }
+  clearTimeout(localT); localT = setTimeout(saveLocal, 300);   // 이 PC 사본은 입력을 멈추면 바로 저장
+});
+setInterval(() => { if (useFb && dbSet) ready ? poll() : connect(); }, POLL_MS);
 
 /* 확대/축소: 버튼 또는 Esc */
 const pane = document.getElementById("pane"), ex = document.getElementById("ex");
@@ -139,11 +350,17 @@ ex.addEventListener("mousedown", e => e.preventDefault());   // 버튼을 눌러
 ex.addEventListener("click", () => setMax(!pane.classList.contains("max")));
 document.addEventListener("keydown", e => { if (e.key === "Escape" && pane.classList.contains("max")) setMax(false); });
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) { if (dirty) save(true); } else { poll(); }
+  if (document.hidden) { saveLocal(); if (useFb && dirty) save(true); } else poll();
 });
+window.addEventListener("pagehide", saveLocal);
 window.addEventListener("focus", poll);
-window.addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
-start();
+window.addEventListener("beforeunload", e => { if (useFb && dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+/* 시작 */
+renderFb();
+if (!useFb) localNote();
+else if (!dbSet) say("DB_URL을 먼저 설정해 주세요", "err");
+else { say("불러오는 중…"); firstTry = true; connect(); }
 </script>
 </body>
 </html>
