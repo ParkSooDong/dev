@@ -552,24 +552,36 @@
     });
 
     // ---------- Scrolling rate ticker ----------
-    // Same symbols as the TradingView "rates" table on wonforecast.com, read from hidden TradingView widgets.
+    // src 'tv'   : read from hidden TradingView widgets (same symbols as wonforecast.com's rates table)
+    // src 'naver': Naver Finance JSON (KRX symbols are blocked in TradingView's free embed widgets)
     const MQ_ITEMS = [
-      { code: 'USDKRW', sym: 'FX_IDC:USDKRW', name: '달러' },
-      { code: 'EURUSD', sym: 'FX_IDC:EURUSD', name: '유로 / 달러' },
-      { code: 'USDJPY', sym: 'FX_IDC:USDJPY', name: '달러 / 일본 엔' },
-      { code: 'XAUUSD', sym: 'FX_IDC:XAUUSD', name: '달러 골드 $' },
-      { code: 'USOIL',  sym: 'TVC:USOIL',     name: '원유 WTI $' }
+      { code: 'USDKRW',   src: 'tv', sym: 'FX_IDC:USDKRW', name: '달러' },
+      { code: 'EURUSD',   src: 'tv', sym: 'FX_IDC:EURUSD', name: '유로 / 달러' },
+      { code: 'USDJPY',   src: 'tv', sym: 'FX_IDC:USDJPY', name: '달러 / 일본 엔' },
+      { code: 'XAUUSD',   src: 'tv', sym: 'FX_IDC:XAUUSD', name: '달러 골드 $' },
+      { code: 'USOIL',    src: 'tv', sym: 'TVC:USOIL',     name: '원유 WTI $' },
+      { code: 'KOSPI',    src: 'naver', naver: 'KOSPI',    name: '코스피' },
+      { code: 'KOSPI200', src: 'naver', naver: 'KPI200',   name: '코스피200' }
     ];
     const MQ_SPEED_PX_S = 70;
+    const MQ_NAVER_MS = 5000;
     const MQ_RE = /(\d[\d,]*\.\d{2,6})\s*(?:[A-Z]{3})?\s*([+\-−]?\d[\d,]*\.\d+)\s*([+\-−]?\d+\.\d+)\s*%/;
+    // direct first; if the browser blocks it (CORS / file://), fall back to a public relay
+    const MQ_NAVER_ROUTES = [
+      u => u,
+      u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u)
+    ];
     const $mqTrack = document.getElementById('mqTrack');
     const $mqView = document.getElementById('mqViewport');
     const $mqStatus = document.getElementById('mqStatus');
     const $mqSrc = document.getElementById('mqSrc');
     const mqStart = Date.now();
-    let mqData = {};   // code -> {price, chg, pct, dir}
+    let mqData = {};            // code -> {price, chg, pct, dir}
+    let mqLastTv = '', mqLastNaver = '';
+    let mqNaverRoute = 0;       // index of the route that worked last
+    const mqNaverErr = {};      // code -> last error text
 
-    MQ_ITEMS.forEach(it => {
+    MQ_ITEMS.filter(it => it.src === 'tv').forEach(it => {
       const el = document.createElement('tv-single-ticker');
       el.setAttribute('symbol', it.sym);
       $mqSrc.appendChild(el);
@@ -578,14 +590,10 @@
 
     const mqNum = s => parseFloat(String(s).replace(/[,%\s]/g, '').replace('−', '-'));
     const mqNeg = s => /^\s*[\-−]/.test(String(s));
+    const mqAbs = s => String(s).replace(/^[+\-−]\s*/, '');
     function mqMake(m) {
       const dir = (mqNeg(m[3]) || mqNeg(m[2])) ? -1 : ((mqNum(m[3]) > 0 || mqNum(m[2]) > 0) ? 1 : 0);
-      return {
-        price: m[1],
-        chg: m[2].replace(/^[+\-−]\s*/, ''),
-        pct: m[3].replace(/^[+\-−]\s*/, ''),
-        dir
-      };
+      return { price: m[1], chg: mqAbs(m[2]), pct: mqAbs(m[3]), dir };
     }
 
     function mqFill(el, it) {
@@ -630,34 +638,90 @@
       $mqTrack.style.setProperty('--mq-dur', Math.max(15, w / MQ_SPEED_PX_S) + 's');
     }
 
-    function mqPoll() {
-      let changed = false, countBefore = Object.keys(mqData).length;
-      MQ_ITEMS.forEach(it => {
+    // store a new value; rebuild once when an item first appears (widths change), otherwise update text in place
+    function mqApply(it, d) {
+      const old = mqData[it.code];
+      if (old && old.price === d.price && old.chg === d.chg && old.pct === d.pct && old.dir === d.dir) return false;
+      mqData[it.code] = d;
+      if (!old) mqRender();
+      else $mqTrack.querySelectorAll(`.mq-item[data-code="${it.code}"]`).forEach(el => mqFill(el, it));
+      return true;
+    }
+
+    function mqStatusUpdate() {
+      const parts = [];
+      if (mqLastTv) parts.push('TradingView ' + mqLastTv);
+      if (mqLastNaver) parts.push('네이버 ' + mqLastNaver + (mqNaverRoute ? ' (relay)' : ''));
+      let msg = parts.length ? parts.join(' · ') + ' KST' : '';
+      const missing = MQ_ITEMS.filter(i => !mqData[i.code]);
+      if (missing.length && Date.now() - mqStart > 15000) {
+        const diag = missing.map(it => {
+          if (it.src === 'naver') return `${it.code}: ${mqNaverErr[it.code] || 'waiting'}`;
+          const out = { texts: [], iframe: false };
+          if (it.el.shadowRoot) collect(it.el.shadowRoot, out);
+          collect(it.el, out);
+          const raw = out.texts.join(' ').replace(/\s+/g, ' ').trim();
+          return `${it.code}: ${raw ? '"' + raw.slice(0, 70) + '"' : (it.el.shadowRoot ? 'empty' : 'widget not loaded')}${out.iframe ? ' [iframe]' : ''}`;
+        });
+        window.mqDiag = diag;
+        msg += (msg ? ' · ' : '') + 'No data → ' + diag.join(' | ');
+      }
+      if (msg !== $mqStatus.textContent) { $mqStatus.textContent = msg; $mqStatus.title = msg; }
+    }
+
+    // --- TradingView widgets (polled every second) ---
+    function mqPollTv() {
+      MQ_ITEMS.filter(it => it.src === 'tv').forEach(it => {
         const out = { texts: [], iframe: false };
         if (it.el.shadowRoot) collect(it.el.shadowRoot, out);
         collect(it.el, out);
         const m = out.texts.join(' ').match(MQ_RE);
-        if (!m) return;
-        const d = mqMake(m), old = mqData[it.code];
-        if (!old || old.price !== d.price || old.chg !== d.chg || old.pct !== d.pct || old.dir !== d.dir) {
-          mqData[it.code] = d;
-          changed = true;
-        }
+        if (m && mqApply(it, mqMake(m))) mqLastTv = fmtTime.format(new Date());
       });
-      const have = Object.keys(mqData).length;
-      if (have !== countBefore) {
-        mqRender();                     // item widths changed -> rebuild once
-      } else if (changed) {
-        $mqTrack.querySelectorAll('.mq-item').forEach(el => mqFill(el, MQ_ITEMS.find(i => i.code === el.dataset.code)));
-      }
-      if (changed) {
-        $mqStatus.textContent = 'TradingView · ' + fmtTime.format(new Date()) + ' KST';
-      } else if (have < MQ_ITEMS.length && Date.now() - mqStart > 20000) {
-        $mqStatus.textContent = 'Waiting for: ' + MQ_ITEMS.filter(i => !mqData[i.code]).map(i => i.code).join(', ');
-      }
+      mqStatusUpdate();
     }
+
+    // --- Naver Finance JSON ---
+    async function mqNaverOne(it) {
+      const url = 'https://m.stock.naver.com/api/index/' + it.naver + '/basic';
+      const errs = [];
+      for (let k = 0; k < MQ_NAVER_ROUTES.length; k++) {
+        const i = (mqNaverRoute + k) % MQ_NAVER_ROUTES.length;
+        const ctrl = new AbortController();
+        const to = setTimeout(() => ctrl.abort(), 8000);
+        try {
+          const r = await fetch(MQ_NAVER_ROUTES[i](url), { signal: ctrl.signal, cache: 'no-store' });
+          if (!r.ok) { errs.push(`route${i} HTTP ${r.status}`); continue; }
+          const j = await r.json();
+          if (!j || !j.closePrice) { errs.push(`route${i} no closePrice`); continue; }
+          const nm = j.compareToPreviousPrice && j.compareToPreviousPrice.name;
+          const dir = /RISING|UPPER/.test(nm) ? 1 : /FALLING|LOWER/.test(nm) ? -1
+                    : (mqNeg(j.fluctuationsRatio) ? -1 : (mqNum(j.fluctuationsRatio) > 0 ? 1 : 0));
+          mqNaverRoute = i;
+          delete mqNaverErr[it.code];
+          if (mqApply(it, { price: j.closePrice, chg: mqAbs(j.compareToPreviousClosePrice), pct: mqAbs(j.fluctuationsRatio), dir })) {
+            mqLastNaver = fmtTime.format(new Date());
+          }
+          return;
+        } catch (e) {
+          errs.push(`route${i} ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+        } finally { clearTimeout(to); }
+      }
+      mqNaverErr[it.code] = errs.join(', ');
+    }
+    let mqNaverBusy = false;
+    async function mqNaverTick() {
+      if (mqNaverBusy) return;
+      mqNaverBusy = true;
+      try { await Promise.all(MQ_ITEMS.filter(it => it.src === 'naver').map(mqNaverOne)); }
+      finally { mqNaverBusy = false; }
+      mqStatusUpdate();
+    }
+
     mqRender();
-    setInterval(mqPoll, 1000);
+    setInterval(mqPollTv, 1000);
+    mqNaverTick();
+    setInterval(mqNaverTick, MQ_NAVER_MS);
     let mqResizeT;
     window.addEventListener('resize', () => { clearTimeout(mqResizeT); mqResizeT = setTimeout(mqRender, 200); });
 
