@@ -25,6 +25,9 @@ main{width:100%;max-width:1280px;margin:0 auto;display:flex;flex-direction:colum
 main>*{flex:none}
 h1{font-size:24px;margin:0;letter-spacing:-.01em}
 .hd{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 16px;margin:0 0 14px}
+.tr{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.tm.off{visibility:hidden}   /* 끄면 색과 내용은 사라지고 빈 공간만 남아 버튼 위치가 움직이지 않음 */
+.tmbtn{font-size:16px;padding:6px 16px}
 .tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:16px;color:var(--ink)}
 .tm.pink{background:#ffe3ec;border-color:#f4a9c0;color:#3a1020}
 :root[data-theme="dark"] .tm.pink{background:#4a2332;border-color:#a8506d;color:#ffe3ec}
@@ -105,9 +108,12 @@ p{margin:6px 0 0}
 <main>
 <div class="hd">
 <h1>미니 <span id="kind" role="button" tabindex="0" title="클릭하면 바코드/QR 전환">바코드</span> 3×3</h1>
-<div class="tm" id="tm" role="timer" aria-live="off">
+<div class="tr">
+<div class="tm pink" id="tm" role="timer" aria-live="off">
 <label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label>
 <span class="rm">남은 시간 <span id="rem">--:--:--.---</span></span>
+</div>
+<button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button>
 </div>
 </div>
 <div class="top">
@@ -501,12 +507,16 @@ window.addEventListener("focus",poll);
 window.addEventListener("beforeunload",e=>{if(useFb&&dirty){e.preventDefault();e.returnValue=""}});
 
 /* ===== 목표 시각까지 남은 시간 타이머 ===== */
-const TIMER_PINK=true;                 /* ← true: 타이머 공간을 연핑크 바탕으로 구분 / false: 바탕 없음 */
+const TIMER_ON=true;                   /* [타이머] 버튼의 처음 상태 (true: 켜짐 / false: 꺼짐) */
 const TIMER_DEFAULT="17:00";           /* 목표 시각 기본값 (시:분) */
 const TKEY="bc9-target";
 (function(){
   const tt=$("tt"),rem=$("rem");
-  $("tm").classList.toggle("pink",TIMER_PINK);
+  /* [타이머] 버튼: 켜면 연핑크 영역에 목표 시각·남은 시간 표시, 끄면 색 없는 빈 공간 */
+  const box=$("tm"),tb=$("tmBtn");let on=TIMER_ON;
+  function setOn(v){on=v;box.classList.toggle("pink",v);box.classList.toggle("off",!v);box.setAttribute("aria-hidden",String(!v));tb.setAttribute("aria-pressed",String(v))}
+  tb.addEventListener("click",()=>setOn(!on));
+  setOn(on);
   let target=TIMER_DEFAULT;
   try{const v=localStorage.getItem(TKEY);if(v)target=v}catch(e){}
   /* "17", "1730", "17:30" 형태를 [시,분,0] 으로 해석 (분 단위까지만, 예전에 저장된 "17:30:15" 는 초를 버림) */
