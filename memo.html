@@ -21,23 +21,39 @@ h1{font-size:17px;margin:0;letter-spacing:-.01em}
 #st.err{color:var(--err)}
 /* .slot 이 자리를 지키고 .pane(확대 대상)이 그 안을 채움 → 확대해도 원래 레이아웃은 그대로 */
 .slot{flex:1;min-height:0;position:relative}
-.pane{position:absolute;inset:0}
+.pane{position:absolute;inset:0;display:flex;flex-direction:column;gap:6px}
 .rich{display:block;overflow:auto;word-break:break-word;outline:none}
 .rich:empty::before{content:attr(data-ph);color:var(--mute);pointer-events:none}
 .rich img{display:block;max-width:100%;height:auto;margin:4px 0}
 .rich table{border-collapse:collapse;margin:4px 0}
-.rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top}
+.rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em}
 .rich a{color:inherit}
-.rich{height:100%;width:100%;font:inherit;font-size:16px;line-height:1.6;padding:14px 44px 14px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
-/* 확대/축소 버튼 */
-.expand{position:absolute;top:8px;right:22px;z-index:5;width:28px;height:28px;padding:0;display:grid;place-items:center;font-size:15px;line-height:1;color:var(--ink);opacity:.5;background:var(--card);border:1px solid var(--line);border-radius:7px;cursor:pointer}
-.expand:hover,.expand:focus-visible{opacity:1}
+.rich h1{font-size:1.6em;line-height:1.3;margin:.5em 0 .25em;letter-spacing:-.01em}
+.rich h2{font-size:1.3em;line-height:1.3;margin:.5em 0 .25em}
+.rich h3{font-size:1.1em;line-height:1.3;margin:.5em 0 .25em}
+.rich ul,.rich ol{margin:.3em 0;padding-left:1.6em}
+.rich{flex:1;min-height:0;width:100%;font:inherit;font-size:16px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+/* 서식 툴바 */
+.tb{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:4px;border:1.5px solid var(--line);border-radius:10px;background:var(--card)}
+.tb button{font:inherit;font-size:14px;min-width:32px;height:32px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer}
+.tb button:hover{background:var(--line)}
+.tb button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.tb button:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.tb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tb .sep{width:1px;height:18px;background:var(--line);margin:0 4px}
+.tb .menu{position:relative}
+.tb .pop{position:absolute;top:calc(100% + 4px);left:0;z-index:10;display:flex;flex-direction:column;min-width:150px;padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.tb .pop[hidden]{display:none}
+.tb .pop.r{left:auto;right:0}
+.tb .pop button{justify-content:flex-start;padding:0 10px;white-space:nowrap}
+/* 확대/축소 버튼 (툴바 맨 오른쪽) */
+.tb .expand{margin-left:auto;font-size:15px;line-height:1;opacity:.7}
+.tb .expand:hover,.tb .expand:focus-visible{opacity:1}
 /* 확대: 화면 전체를 메모가 차지 (CSS 만 바꾸므로 입력 중인 내용/커서/저장 상태는 그대로) */
 .pane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))}
-.pane.max .expand{top:max(20px,calc(env(safe-area-inset-top,0px) + 8px));right:30px}
 /* 확대 중에는 제목을 숨기고 저장 상태만 우하단에 작게 표시 */
 body.has-max header{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
-body.has-max h1{display:none}
+body.has-max header h1{display:none}
 .rich:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .rich[contenteditable=false]{opacity:.6}
 </style>
@@ -45,7 +61,32 @@ body.has-max h1{display:none}
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="st" role="status"></span></header>
 <div class="slot"><div class="pane" id="pane">
-<button class="expand" id="ex" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
+<div class="tb" id="tb" role="toolbar" aria-label="서식">
+  <button type="button" data-cmd="h1" title="제목 1" aria-label="제목 1" aria-pressed="false"><b>H1</b></button>
+  <button type="button" data-cmd="h2" title="제목 2" aria-label="제목 2" aria-pressed="false"><b>H2</b></button>
+  <button type="button" data-cmd="h3" title="제목 3" aria-label="제목 3" aria-pressed="false"><b>H3</b></button>
+  <i class="sep"></i>
+  <button type="button" data-cmd="ul" title="글머리 기호 목록" aria-label="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg></button>
+  <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
+  <i class="sep"></i>
+  <button type="button" data-cmd="bold" title="굵게 (Ctrl+B)" aria-label="굵게" aria-pressed="false"><b>B</b></button>
+  <button type="button" data-cmd="italic" title="기울임 (Ctrl+I)" aria-label="기울임" aria-pressed="false"><i style="font-family:serif;font-size:16px">I</i></button>
+  <button type="button" data-cmd="strike" title="취소선" aria-label="취소선" aria-pressed="false"><s>S</s></button>
+  <i class="sep"></i>
+  <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
+  <button type="button" data-cmd="table" title="표 삽입" aria-label="표 삽입"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg></button>
+  <i class="sep"></i>
+  <button type="button" id="impBtn" title="불러오기 (.html / .txt)" aria-label="불러오기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>불러오기</span></button>
+  <input type="file" id="impFile" accept=".html,.htm,.txt,text/html,text/plain" hidden>
+  <div class="menu">
+    <button type="button" id="expBtn" title="내보내기" aria-label="내보내기" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span>내보내기</span></button>
+    <div class="pop" id="pop" hidden>
+      <button type="button" data-exp="html">HTML (.html)</button>
+      <button type="button" data-exp="txt">텍스트 (.txt)</button>
+    </div>
+  </div>
+  <button class="expand" id="ex" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
+</div>
 <div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="메모해 보세요. 자동으로 저장돼요. (엑셀 셀 범위·캡처 이미지도 붙여넣을 수 있어요)" aria-label="메모"></div>
 </div></div>
 <script>
@@ -98,15 +139,20 @@ function makeRich(el) {
     const box = document.createElement("div"); walk(doc.body, box); return box.innerHTML;
   }
 
-  /* .value / .disabled 호환 (textarea 처럼 사용) */
+  /* .value / .disabled 호환 (textarea 처럼 사용)
+     ※ 빈 목록/제목(글자가 없어도 서식을 막 켠 상태)이 "빈 메모"로 오해돼 지워지지 않도록 ul,ol,h1~h3 도 내용으로 취급 */
   Object.defineProperty(el, "value", {
-    get() { return (!el.querySelector("img,table") && !el.textContent.trim()) ? "" : RICH_PREFIX + el.innerHTML; },
+    get() { return (!el.querySelector("img,table,ul,ol,h1,h2,h3") && !el.textContent.trim()) ? "" : RICH_PREFIX + el.innerHTML; },
     set(v) { v = String(v || ""); el.innerHTML = v.startsWith(RICH_PREFIX) ? clean(v.slice(RICH_PREFIX.length)) : esc(v).replace(/\r?\n/g, "<br>"); }
   });
   Object.defineProperty(el, "disabled", {
     get() { return el.contentEditable !== "true"; },
     set(b) { el.contentEditable = b ? "false" : "true"; }
   });
+  /* 내보내기용: 저장할 때와 같은 기준으로 정리한 HTML */
+  el.cleanHtml = () => clean(el.innerHTML);
+  /* 불러오기용: 외부 HTML 을 저장할 때와 같은 기준으로 정리 */
+  el.sanitize = clean;
   el.addEventListener("input", () => { if (el.value === "" && el.innerHTML) el.innerHTML = ""; });
 
   /* 이미지 → 가로 1600px 이하로 줄여서 data URL 로 (저장 용량 절약) */
@@ -338,6 +384,184 @@ ta.addEventListener("input", () => {
 });
 setInterval(() => { if (useFb && dbSet) ready ? poll() : connect(); }, POLL_MS);
 
+/* ===== 서식 툴바 ===== */
+const tb = document.getElementById("tb"), pop = document.getElementById("pop"), expBtn = document.getElementById("expBtn");
+const escH = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const elOf = n => n && (n.nodeType === 1 ? n : n.parentElement);
+const closestIn = (n, sel) => { const e = elOf(n), r = e && e.closest(sel); return r && ta.contains(r) ? r : null; };
+
+/* 입력창 밖에서 prompt 등을 쓴 뒤에도 커서(선택 영역)를 되돌리기 위함 */
+function saveRange() {
+  const s = getSelection(), r = s.rangeCount ? s.getRangeAt(0).cloneRange() : null;
+  return () => { ta.focus(); if (r && ta.contains(r.commonAncestorContainer)) { s.removeAllRanges(); s.addRange(r); } };
+}
+function exec(c, v) {
+  if (ta.disabled) return;
+  ta.focus();
+  document.execCommand(c, false, v);   // 실행하면 input 이벤트가 발생해 자동 저장도 같이 동작
+  refreshTb();
+}
+function block(tag) {
+  if (ta.disabled) return;
+  ta.focus();
+  const cur = (document.queryCommandValue("formatBlock") || "").toLowerCase().replace(/[<>]/g, "");
+  exec("formatBlock", cur === tag ? "<div>" : "<" + tag + ">");   // 같은 제목을 다시 누르면 본문으로
+}
+function link() {
+  if (ta.disabled) return;
+  ta.focus();
+  const s = getSelection();
+  if (!s.rangeCount || !ta.contains(s.anchorNode)) return;
+  const restore = saveRange(), collapsed = s.getRangeAt(0).collapsed, a = closestIn(s.anchorNode, "a");
+  const input = prompt("링크 주소 (비우면 링크 해제)", a ? (a.getAttribute("href") || "") : "https://");
+  restore();
+  if (input === null) return;
+  let u = input.trim();
+  if (!u) {
+    if (a && collapsed) { while (a.firstChild) a.before(a.firstChild); a.remove(); ta.dispatchEvent(new Event("input", { bubbles: true })); }
+    else exec("unlink");
+    refreshTb(); return;
+  }
+  if (!/^(https?:|mailto:)/i.test(u)) {
+    if (/^[\w-]+(\.[\w-]+)+(\/|$|\?|#|:)/.test(u)) u = "https://" + u;
+    else { alert("http://, https://, mailto: 로 시작하는 주소만 쓸 수 있어요"); return; }
+  }
+  if (a && collapsed) { a.setAttribute("href", u); ta.dispatchEvent(new Event("input", { bubbles: true })); }
+  else if (collapsed) exec("insertHTML", '<a href="' + escH(u) + '">' + escH(u) + "</a>&nbsp;");
+  else exec("createLink", u);
+}
+function table() {
+  if (ta.disabled) return;
+  ta.focus();
+  const restore = saveRange();
+  const v = prompt("표 크기 (행x열)", "3x3");
+  restore();
+  if (v === null) return;
+  const m = v.match(/(\d+)\s*[x×*,\s]\s*(\d+)/i);
+  if (!m) { alert("예: 3x3 (3행 3열)"); return; }
+  const r = Math.min(50, +m[1]), c = Math.min(20, +m[2]);
+  if (r < 1 || c < 1) return;
+  exec("insertHTML", "<table><tbody>" + ("<tr>" + "<td><br></td>".repeat(c) + "</tr>").repeat(r) + "</tbody></table><br>");
+}
+const CMDS = {
+  h1: () => block("h1"), h2: () => block("h2"), h3: () => block("h3"),
+  ul: () => exec("insertUnorderedList"), ol: () => exec("insertOrderedList"),
+  bold: () => exec("bold"), italic: () => exec("italic"), strike: () => exec("strikeThrough"),
+  link, table
+};
+
+/* 눌린 상태 표시 (굵게/목록/제목 등) */
+function refreshTb() {
+  const s = getSelection();
+  if (!s.rangeCount || !ta.contains(s.anchorNode)) return;
+  let blk = ""; try { blk = (document.queryCommandValue("formatBlock") || "").toLowerCase().replace(/[<>]/g, ""); } catch (e) {}
+  const q = c => { try { return document.queryCommandState(c); } catch (e) { return false; } };
+  const on = {
+    h1: blk === "h1", h2: blk === "h2", h3: blk === "h3",
+    ul: q("insertUnorderedList"), ol: q("insertOrderedList"),
+    bold: q("bold"), italic: q("italic"), strike: q("strikeThrough"),
+    link: !!closestIn(s.anchorNode, "a")
+  };
+  tb.querySelectorAll("button[data-cmd]").forEach(b => { if (b.dataset.cmd in on) b.setAttribute("aria-pressed", String(on[b.dataset.cmd])); });
+}
+document.addEventListener("selectionchange", refreshTb);
+
+/* 툴바 버튼을 눌러도 메모의 커서/포커스를 유지 */
+tb.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
+tb.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.cmd) { closePop(); CMDS[b.dataset.cmd](); }
+  else if (b.dataset.exp) { closePop(); exportMemo(b.dataset.exp); }
+});
+
+/* 표 안에서 Tab / Shift+Tab 으로 칸 이동 (마지막 칸에서 Tab 이면 새 행 추가) */
+ta.addEventListener("keydown", e => {
+  if (e.key !== "Tab" || e.ctrlKey || e.altKey || e.metaKey) return;
+  const s = getSelection(); if (!s.rangeCount) return;
+  const td = closestIn(s.anchorNode, "td,th"); if (!td) return;
+  e.preventDefault();
+  let cells = Array.from(td.closest("table").querySelectorAll("td,th")), i = cells.indexOf(td) + (e.shiftKey ? -1 : 1);
+  if (i >= cells.length) {
+    const tr = td.closest("tr"), nr = document.createElement("tr");
+    for (let k = 0; k < tr.cells.length; k++) nr.appendChild(document.createElement("td")).innerHTML = "<br>";
+    tr.after(nr);
+    cells = Array.from(td.closest("table").querySelectorAll("td,th"));
+    ta.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  if (i < 0) return;
+  const r = document.createRange(); r.selectNodeContents(cells[i]); r.collapse(false);
+  s.removeAllRanges(); s.addRange(r);
+});
+
+/* Ctrl(⌘)+클릭으로 링크 열기 (편집 중에는 클릭만으로는 열리지 않아요) */
+ta.addEventListener("click", e => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  const a = closestIn(e.target, "a"), h = a && a.getAttribute("href");
+  if (h && /^(https?:|mailto:)/i.test(h)) { e.preventDefault(); window.open(h, "_blank", "noopener,noreferrer"); }
+});
+
+/* ===== 내보내기 (.html / .txt) ===== */
+function closePop() { pop.hidden = true; pop.classList.remove("r"); expBtn.setAttribute("aria-expanded", "false"); }
+expBtn.addEventListener("click", () => {
+  if (!pop.hidden) { closePop(); return; }
+  pop.hidden = false; expBtn.setAttribute("aria-expanded", "true");
+  if (pop.getBoundingClientRect().right > innerWidth - 8) pop.classList.add("r");   // 화면 밖으로 나가면 오른쪽 정렬
+});
+document.addEventListener("click", e => { if (!pop.hidden && !e.target.closest(".menu")) closePop(); });
+
+function exportMemo(kind) {
+  if (ta.value === "") { say("내보낼 메모가 없어요", "err"); return; }
+  const n = new Date(), p = x => String(x).padStart(2, "0");
+  const stamp = n.getFullYear() + p(n.getMonth() + 1) + p(n.getDate()) + "-" + p(n.getHours()) + p(n.getMinutes());
+  let body, type, name;
+  if (kind === "html") {
+    body = '<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>메모</title>\n<style>\n' +
+      'body{font:16px/1.6 system-ui,"Noto Sans KR",sans-serif;max-width:800px;margin:24px auto;padding:0 16px;color:#1c1b19;word-break:break-word}\n' +
+      'img{max-width:100%;height:auto}table{border-collapse:collapse}td,th{border:1px solid #d9d5cb;padding:2px 6px;vertical-align:top}\n' +
+      '</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n</body>\n</html>\n';
+    type = "text/html"; name = "메모_" + stamp + ".html";
+  } else {
+    body = "\ufeff" + ta.innerText.replace(/\u00a0/g, " ");   // BOM: 윈도우 앱에서도 한글이 깨지지 않게
+    type = "text/plain"; name = "메모_" + stamp + ".txt";
+  }
+  const url = URL.createObjectURL(new Blob([body], { type: type + ";charset=utf-8" }));
+  const a = document.createElement("a"); a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  say("내보냈어요: " + name, "ok");
+}
+
+/* ===== 불러오기 (.html / .txt): 내보낸 파일이나 다른 메모를 가져와요 ===== */
+const impBtn = document.getElementById("impBtn"), impFile = document.getElementById("impFile");
+impBtn.addEventListener("click", () => { closePop(); impFile.value = ""; impFile.click(); });
+impFile.addEventListener("change", async () => {
+  const f = impFile.files && impFile.files[0]; if (!f) return;
+  if (ta.disabled) { say("지금은 불러올 수 없어요. 잠시 후 다시 시도해 주세요", "err"); return; }
+  if (f.size > 8e6) { say("파일이 너무 커요 (8MB 이하만 가능)", "err"); return; }
+  let html = "";
+  try {
+    const txt = (await f.text()).replace(/^\ufeff/, "");
+    html = (/\.html?$/i.test(f.name) || f.type === "text/html") ? ta.sanitize(txt) : escH(txt).replace(/\r?\n/g, "<br>");
+  } catch (e) { say("파일을 읽지 못했어요", "err"); return; }
+  const probe = document.createElement("div"); probe.innerHTML = html;
+  if (!probe.textContent.trim() && !probe.querySelector("img,table")) { say("불러올 내용이 없어요", "err"); return; }
+  let append = false;
+  if (ta.value !== "") {
+    if (confirm("현재 메모 끝에 '" + f.name + "' 내용을 이어 붙일까요?\n\n[확인] 이어 붙이기\n[취소] 다른 방법 선택")) append = true;
+    else if (!confirm("현재 메모를 지우고 '" + f.name + "' 내용으로 바꿀까요?\n(되돌릴 수 없어요)\n\n[확인] 바꾸기\n[취소] 불러오기 취소")) { say("불러오기를 취소했어요"); return; }
+  }
+  if (append) {
+    ta.focus();
+    const s = getSelection(), r = document.createRange();
+    r.selectNodeContents(ta); r.collapse(false); s.removeAllRanges(); s.addRange(r);   // 맨 끝으로 이동
+    if (!document.execCommand("insertHTML", false, "<br>" + html)) { ta.insertAdjacentHTML("beforeend", "<br>" + html); ta.dispatchEvent(new Event("input", { bubbles: true })); }
+  } else {
+    ta.value = RICH_PREFIX + html;
+    ta.dispatchEvent(new Event("input", { bubbles: true }));   // 자동 저장 / DB 동기화가 이어서 동작
+  }
+  say("불러왔어요: " + f.name, "ok");
+});
+
 /* 확대/축소: 버튼 또는 Esc */
 const pane = document.getElementById("pane"), ex = document.getElementById("ex");
 function setMax(on) {
@@ -346,9 +570,12 @@ function setMax(on) {
   ex.textContent = on ? "✕" : "⤢";
   ex.setAttribute("aria-label", on ? "축소" : "확대");
 }
-ex.addEventListener("mousedown", e => e.preventDefault());   // 버튼을 눌러도 메모의 커서/포커스를 유지
-ex.addEventListener("click", () => setMax(!pane.classList.contains("max")));
-document.addEventListener("keydown", e => { if (e.key === "Escape" && pane.classList.contains("max")) setMax(false); });
+ex.addEventListener("click", () => setMax(!pane.classList.contains("max")));   // (포커스 유지는 툴바의 mousedown 처리가 담당)
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (!pop.hidden) { closePop(); return; }
+  if (pane.classList.contains("max")) setMax(false);
+});
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) { saveLocal(); if (useFb && dirty) save(true); } else poll();
 });
