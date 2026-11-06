@@ -26,15 +26,18 @@ main>*{flex:none}
 h1{font-size:24px;margin:0;letter-spacing:-.01em}
 .hd{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 16px;margin:0 0 14px}
 .tr{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.tm.off{visibility:hidden}   /* 끄면 색과 내용은 사라지고 빈 공간만 남아 버튼 위치가 움직이지 않음 */
+/* 슬라이드: 오른쪽 끝(버튼 쪽)을 기준으로 왼쪽으로 펼쳐지고, 접힐 때는 반대로 접힘 */
+.tmwrap{display:flex;justify-content:flex-end;overflow:hidden;flex:none;width:0;transition:width .5s cubic-bezier(.34,1.56,.64,1),visibility 0s}   /* 펼칠 때: 목표 너비를 살짝 넘었다가 돌아오는 스프링 */
+.tmwrap.off{visibility:hidden;transition:width .3s ease-in,visibility 0s .3s}
+@media (prefers-reduced-motion:reduce){.tmwrap,.tmwrap.off{transition:none}}
 .tmbtn{font-size:16px;padding:6px 16px}
-.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:16px;color:var(--ink)}
+.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:nowrap;white-space:nowrap;flex:none;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:16px;color:var(--ink)}
 .tm.pink{background:#ffe3ec;border-color:#f4a9c0;color:#3a1020}
 :root[data-theme="dark"] .tm.pink{background:#4a2332;border-color:#a8506d;color:#ffe3ec}
 .tm label{flex-direction:row;align-items:center;gap:6px;font-size:inherit;color:inherit;white-space:nowrap}
 .tm input{width:4.6em;text-align:center;font-weight:700;font-size:18px;padding:2px 6px;font-variant-numeric:tabular-nums;color:inherit;border-color:currentColor}
 .tm .rm{white-space:nowrap}
-#rem{display:inline-block;min-width:6.9em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
+#rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
 #rem.neg{color:var(--warn)}
 #kind{cursor:pointer;color:var(--link);font-weight:800;border-bottom:2px dashed var(--link);user-select:none;-webkit-user-select:none}
 #kind:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
@@ -109,9 +112,11 @@ p{margin:6px 0 0}
 <div class="hd">
 <h1>미니 <span id="kind" role="button" tabindex="0" title="클릭하면 바코드/QR 전환">바코드</span> 3×3</h1>
 <div class="tr">
+<div class="tmwrap" id="tmw">
 <div class="tm pink" id="tm" role="timer" aria-live="off">
 <label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label>
-<span class="rm">남은 시간 <span id="rem">--:--:--.---</span></span>
+<span class="rm">남은 시간 <span id="rem">--:--:--</span></span>
+</div>
 </div>
 <button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button>
 </div>
@@ -513,10 +518,23 @@ const TKEY="bc9-target";
 (function(){
   const tt=$("tt"),rem=$("rem");
   /* [타이머] 버튼: 켜면 연핑크 영역에 목표 시각·남은 시간 표시, 끄면 색 없는 빈 공간 */
-  const box=$("tm"),tb=$("tmBtn");let on=TIMER_ON;
-  function setOn(v){on=v;box.classList.toggle("pink",v);box.classList.toggle("off",!v);box.setAttribute("aria-hidden",String(!v));tb.setAttribute("aria-pressed",String(v))}
-  tb.addEventListener("click",()=>setOn(!on));
-  setOn(on);
+  const box=$("tm"),wrap=$("tmw"),tb=$("tmBtn");let on=TIMER_ON;
+  function setOn(v,anim){
+    on=v;tb.setAttribute("aria-pressed",String(v));box.setAttribute("aria-hidden",String(!v));
+    wrap.classList.toggle("off",!v);
+    if(!anim){wrap.style.width=v?"auto":"0px";return}
+    const w=box.offsetWidth+"px";
+    if(v){wrap.style.width=w;                                   /* 0 → 실제 너비로 펼침, 끝나면 auto */
+      const end=e=>{if(e.propertyName==="width"&&on){wrap.style.width="auto";wrap.removeEventListener("transitionend",end)}};
+      wrap.addEventListener("transitionend",end)}
+    else{wrap.style.width=w;void wrap.offsetWidth;wrap.style.width="0px"}   /* auto → 고정 너비 → 0 으로 접음 */
+  }
+  tb.addEventListener("click",()=>setOn(!on,true));
+  /* 처음 열 때: 접힌 상태에서 시작해 슬라이드로 펼쳐짐 (TIMER_ON=false 면 접힌 채로 시작) */
+  if(on){
+    wrap.style.width="0px";on=false;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>setOn(true,true)));
+  }else setOn(false,false);
   let target=TIMER_DEFAULT;
   try{const v=localStorage.getItem(TKEY);if(v)target=v}catch(e){}
   /* "17", "1730", "17:30" 형태를 [시,분,0] 으로 해석 (분 단위까지만, 예전에 저장된 "17:30:15" 는 초를 버림) */
@@ -540,8 +558,9 @@ const TKEY="bc9-target";
     const now=new Date(),t=new Date(now);t.setHours(tg[0],tg[1],tg[2],0);
     if(t<=now)t.setDate(t.getDate()+1);   /* 목표 시각이 이미 지났으면 다음날 그 시각으로 */
     const ms=t-now,neg=false;
-    const h=Math.floor(ms/3600000),m=Math.floor(ms/60000)%60,s=Math.floor(ms/1000)%60,f=ms%1000;
-    rem.textContent=(neg?"-":"")+p2(h)+":"+p2(m)+":"+p2(s)+"."+String(f).padStart(3,"0");
+    const tot=Math.ceil(ms/1000),h=Math.floor(tot/3600),m=Math.floor(tot/60)%60,s=tot%60;   /* 초 단위(올림): 0초가 되는 순간 목표 시각 */
+    const txt=(neg?"-":"")+p2(h)+":"+p2(m)+":"+p2(s);
+    if(rem.textContent!==txt)rem.textContent=txt;
     rem.classList.toggle("neg",neg);
     requestAnimationFrame(tick);
   }
