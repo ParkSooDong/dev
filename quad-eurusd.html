@@ -100,6 +100,7 @@
       to   { transform: translateX(-50%); }
     }
     .mq-item {
+      cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -114,6 +115,7 @@
     .mq-name  { font-size: 0.85rem; color: var(--muted); }
     .mq-price { font-size: 1.6rem; font-weight: 800; line-height: 1.1; }
     .mq-chg   { font-size: 0.95rem; font-weight: 700; }
+    .mq-item:hover .mq-code { text-decoration: underline; }
     .mq-item .up   { color: #089981; }
     .mq-item .down { color: #f23645; }
     .mq-item .flat { color: var(--muted); }
@@ -574,6 +576,15 @@
       el.setAttribute('symbol', it.sym);
       $mqSrc.appendChild(el);
       it.el = el;
+    });
+
+    // Clicking a ticker item sets the symbol of ALL charts (same as Apply). Hover still only pauses the scroll.
+    // Delegated on the track because the items are rebuilt on every render.
+    $mqTrack.addEventListener('click', e => {
+      const item = e.target.closest('.mq-item');
+      if (!item) return;
+      const it = MQ_ITEMS.find(x => x.code === item.dataset.code);
+      if (it) applySymbol(it.sym, 'ticker');
     });
 
     const mqNum = s => parseFloat(String(s).replace(/[,%\s]/g, '').replace('−', '-'));
