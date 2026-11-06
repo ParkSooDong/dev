@@ -74,7 +74,69 @@
     .slot-single  { flex: 0 0 calc((100% - var(--gap)) / 2); }
     .slot-readout { flex: 1 1 0; }
 
-    .pane.single { padding: 4px 8px; contain: size layout paint; }
+    .pane.single { padding: 0; contain: size layout paint; }
+
+    /* ---------- Right-to-left scrolling ticker ---------- */
+    .mq-viewport {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+    }
+    .mq-track {
+      display: flex;
+      flex: none;
+      width: max-content;
+      animation: mq-scroll var(--mq-dur, 40s) linear infinite;
+      will-change: transform;
+    }
+    .mq-viewport:hover .mq-track { animation-play-state: paused; }
+    .mq-group { display: flex; flex: none; }
+    @keyframes mq-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .mq-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      padding: 0 26px;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .mq-top  { display: flex; align-items: baseline; gap: 8px; }
+    .mq-code  { font-size: 1.05rem; font-weight: 800; }
+    .mq-name  { font-size: 0.85rem; color: var(--muted); }
+    .mq-price { font-size: 1.6rem; font-weight: 800; line-height: 1.1; }
+    .mq-chg   { font-size: 0.95rem; font-weight: 700; }
+    .mq-item .up   { color: #089981; }
+    .mq-item .down { color: #f23645; }
+    .mq-item .flat { color: var(--muted); }
+    @media (prefers-color-scheme: dark) {
+      .mq-item .up   { color: #22ab94; }
+      .mq-item .down { color: #f7525f; }
+    }
+    .mq-msg { padding: 0 26px; color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+    .mq-status {
+      position: absolute; left: 10px; bottom: 3px; z-index: 4;
+      font-size: 0.68rem; color: var(--muted);
+      max-width: calc(100% - 52px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      background: var(--card); padding: 0 4px; border-radius: 4px;
+    }
+    .pane.single.max .mq-price { font-size: clamp(2.5rem, 6vw, 6rem); }
+    .pane.single.max .mq-code  { font-size: clamp(1.5rem, 3vw, 3rem); }
+    .pane.single.max .mq-name  { font-size: clamp(1rem, 2vw, 2rem); }
+    .pane.single.max .mq-chg   { font-size: clamp(1.1rem, 2.4vw, 2.4rem); }
+
+    /* the old single ticker is removed from view; it only stays as an off-screen data source for the readout pane */
+    .mq-src { position: fixed; left: -10000px; top: 0; width: 320px; opacity: 0; pointer-events: none; }
+    .mq-src > * { display: block; width: 320px; height: 120px; }
+    .hidden-src { position: fixed; left: -10000px; top: 0; width: 320px; height: 120px; opacity: 0; pointer-events: none; }
 
     .cropbox { position: relative; width: 100%; height: 100%; overflow: hidden; }
     .cropee  { display: block; width: 100%; height: 100%; transform-origin: 0 0; }
@@ -220,9 +282,16 @@
     <div class="slot slot-single">
       <div class="pane single">
         <button class="expand" type="button" title="Expand / collapse (Esc)" aria-label="Expand">⤢</button>
-        <div class="cropbox" data-crop="50 100 0 50">
-          <tv-single-ticker class="cropee" symbol="FX:EURUSD"></tv-single-ticker>
+        <div class="mq-viewport" id="mqViewport" aria-label="Rates ticker">
+          <div class="mq-track" id="mqTrack"><div class="mq-msg">Loading prices…</div></div>
         </div>
+        <div class="mq-status" id="mqStatus"></div>
+      </div>
+    </div>
+    <div class="mq-src" id="mqSrc" aria-hidden="true"></div>
+    <div class="hidden-src" aria-hidden="true">
+      <div class="cropbox" data-crop="50 100 0 50">
+        <tv-single-ticker class="cropee" symbol="FX:EURUSD"></tv-single-ticker>
       </div>
     </div>
     <div class="slot slot-readout">
@@ -481,6 +550,180 @@
       e.preventDefault();
       applySymbol(symInput.value, 'input');
     });
+
+    // ---------- Scrolling rate ticker ----------
+    // src 'tv'   : read from hidden TradingView widgets (same symbols as wonforecast.com's rates table)
+    // src 'naver': Naver Finance JSON (KRX symbols are blocked in TradingView's free embed widgets)
+    const MQ_ITEMS = [
+      { code: 'USDKRW',   src: 'tv', sym: 'FX_IDC:USDKRW', name: '달러' },
+      { code: 'EURUSD',   src: 'tv', sym: 'FX_IDC:EURUSD', name: '유로 / 달러' },
+      { code: 'USDJPY',   src: 'tv', sym: 'FX_IDC:USDJPY', name: '달러 / 일본 엔' },
+      { code: 'XAUUSD',   src: 'tv', sym: 'FX_IDC:XAUUSD', name: '달러 골드 $' },
+      { code: 'USOIL',    src: 'tv', sym: 'TVC:USOIL',     name: '원유 WTI $' },
+      { code: 'KOSPI',    src: 'naver', naver: 'KOSPI',    name: '코스피' },
+      { code: 'KOSPI200', src: 'naver', naver: 'KPI200',   name: '코스피200' }
+    ];
+    const MQ_SPEED_PX_S = 70;
+    const MQ_NAVER_MS = 5000;
+    const MQ_RE = /(\d[\d,]*\.\d{2,6})\s*(?:[A-Z]{3})?\s*([+\-−]?\d[\d,]*\.\d+)\s*([+\-−]?\d+\.\d+)\s*%/;
+    // direct first; if the browser blocks it (CORS / file://), fall back to a public relay
+    const MQ_NAVER_ROUTES = [
+      u => u,
+      u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u)
+    ];
+    const $mqTrack = document.getElementById('mqTrack');
+    const $mqView = document.getElementById('mqViewport');
+    const $mqStatus = document.getElementById('mqStatus');
+    const $mqSrc = document.getElementById('mqSrc');
+    const mqStart = Date.now();
+    let mqData = {};            // code -> {price, chg, pct, dir}
+    let mqLastTv = '', mqLastNaver = '';
+    let mqNaverRoute = 0;       // index of the route that worked last
+    const mqNaverErr = {};      // code -> last error text
+
+    MQ_ITEMS.filter(it => it.src === 'tv').forEach(it => {
+      const el = document.createElement('tv-single-ticker');
+      el.setAttribute('symbol', it.sym);
+      $mqSrc.appendChild(el);
+      it.el = el;
+    });
+
+    const mqNum = s => parseFloat(String(s).replace(/[,%\s]/g, '').replace('−', '-'));
+    const mqNeg = s => /^\s*[\-−]/.test(String(s));
+    const mqAbs = s => String(s).replace(/^[+\-−]\s*/, '');
+    function mqMake(m) {
+      const dir = (mqNeg(m[3]) || mqNeg(m[2])) ? -1 : ((mqNum(m[3]) > 0 || mqNum(m[2]) > 0) ? 1 : 0);
+      return { price: m[1], chg: mqAbs(m[2]), pct: mqAbs(m[3]), dir };
+    }
+
+    function mqFill(el, it) {
+      const d = mqData[it.code];
+      el.querySelector('.mq-price').textContent = d ? d.price : '--';
+      const chg = el.querySelector('.mq-chg');
+      chg.className = 'mq-chg ' + (!d ? 'flat' : d.dir > 0 ? 'up' : d.dir < 0 ? 'down' : 'flat');
+      if (!d) { chg.textContent = '--'; return; }
+      const sg = d.dir > 0 ? '+' : d.dir < 0 ? '-' : '';
+      const arrow = d.dir > 0 ? '▲ ' : d.dir < 0 ? '▼ ' : '';
+      chg.textContent = `${arrow}${sg}${d.chg} (${sg}${d.pct}%)`;
+    }
+
+    function mqBuildItem(it) {
+      const el = document.createElement('div');
+      el.className = 'mq-item';
+      el.dataset.code = it.code;
+      const top = document.createElement('div'); top.className = 'mq-top';
+      const code = document.createElement('span'); code.className = 'mq-code'; code.textContent = it.code;
+      const name = document.createElement('span'); name.className = 'mq-name'; name.textContent = it.name;
+      top.append(code, name);
+      const price = document.createElement('div'); price.className = 'mq-price';
+      const chg = document.createElement('div'); chg.className = 'mq-chg flat';
+      el.append(top, price, chg);
+      mqFill(el, it);
+      return el;
+    }
+
+    function mqRender() {
+      const makeGroup = n => {
+        const g = document.createElement('div'); g.className = 'mq-group';
+        for (let i = 0; i < n; i++) MQ_ITEMS.forEach(it => g.appendChild(mqBuildItem(it)));
+        return g;
+      };
+      $mqTrack.replaceChildren(makeGroup(1));
+      const gw = $mqTrack.firstChild.offsetWidth || 1;
+      const vw = $mqView.clientWidth || 1;
+      const n = Math.max(1, Math.ceil(vw / gw) + 1);
+      const g1 = makeGroup(n), g2 = makeGroup(n);
+      $mqTrack.replaceChildren(g1, g2);
+      const w = g1.offsetWidth || gw;
+      $mqTrack.style.setProperty('--mq-dur', Math.max(15, w / MQ_SPEED_PX_S) + 's');
+    }
+
+    // store a new value; rebuild once when an item first appears (widths change), otherwise update text in place
+    function mqApply(it, d) {
+      const old = mqData[it.code];
+      if (old && old.price === d.price && old.chg === d.chg && old.pct === d.pct && old.dir === d.dir) return false;
+      mqData[it.code] = d;
+      if (!old) mqRender();
+      else $mqTrack.querySelectorAll(`.mq-item[data-code="${it.code}"]`).forEach(el => mqFill(el, it));
+      return true;
+    }
+
+    function mqStatusUpdate() {
+      const parts = [];
+      if (mqLastTv) parts.push('TradingView ' + mqLastTv);
+      if (mqLastNaver) parts.push('네이버 ' + mqLastNaver + (mqNaverRoute ? ' (relay)' : ''));
+      let msg = parts.length ? parts.join(' · ') + ' KST' : '';
+      const missing = MQ_ITEMS.filter(i => !mqData[i.code]);
+      if (missing.length && Date.now() - mqStart > 15000) {
+        const diag = missing.map(it => {
+          if (it.src === 'naver') return `${it.code}: ${mqNaverErr[it.code] || 'waiting'}`;
+          const out = { texts: [], iframe: false };
+          if (it.el.shadowRoot) collect(it.el.shadowRoot, out);
+          collect(it.el, out);
+          const raw = out.texts.join(' ').replace(/\s+/g, ' ').trim();
+          return `${it.code}: ${raw ? '"' + raw.slice(0, 70) + '"' : (it.el.shadowRoot ? 'empty' : 'widget not loaded')}${out.iframe ? ' [iframe]' : ''}`;
+        });
+        window.mqDiag = diag;
+        msg += (msg ? ' · ' : '') + 'No data → ' + diag.join(' | ');
+      }
+      if (msg !== $mqStatus.textContent) { $mqStatus.textContent = msg; $mqStatus.title = msg; }
+    }
+
+    // --- TradingView widgets (polled every second) ---
+    function mqPollTv() {
+      MQ_ITEMS.filter(it => it.src === 'tv').forEach(it => {
+        const out = { texts: [], iframe: false };
+        if (it.el.shadowRoot) collect(it.el.shadowRoot, out);
+        collect(it.el, out);
+        const m = out.texts.join(' ').match(MQ_RE);
+        if (m && mqApply(it, mqMake(m))) mqLastTv = fmtTime.format(new Date());
+      });
+      mqStatusUpdate();
+    }
+
+    // --- Naver Finance JSON ---
+    async function mqNaverOne(it) {
+      const url = 'https://m.stock.naver.com/api/index/' + it.naver + '/basic';
+      const errs = [];
+      for (let k = 0; k < MQ_NAVER_ROUTES.length; k++) {
+        const i = (mqNaverRoute + k) % MQ_NAVER_ROUTES.length;
+        const ctrl = new AbortController();
+        const to = setTimeout(() => ctrl.abort(), 8000);
+        try {
+          const r = await fetch(MQ_NAVER_ROUTES[i](url), { signal: ctrl.signal, cache: 'no-store' });
+          if (!r.ok) { errs.push(`route${i} HTTP ${r.status}`); continue; }
+          const j = await r.json();
+          if (!j || !j.closePrice) { errs.push(`route${i} no closePrice`); continue; }
+          const nm = j.compareToPreviousPrice && j.compareToPreviousPrice.name;
+          const dir = /RISING|UPPER/.test(nm) ? 1 : /FALLING|LOWER/.test(nm) ? -1
+                    : (mqNeg(j.fluctuationsRatio) ? -1 : (mqNum(j.fluctuationsRatio) > 0 ? 1 : 0));
+          mqNaverRoute = i;
+          delete mqNaverErr[it.code];
+          if (mqApply(it, { price: j.closePrice, chg: mqAbs(j.compareToPreviousClosePrice), pct: mqAbs(j.fluctuationsRatio), dir })) {
+            mqLastNaver = fmtTime.format(new Date());
+          }
+          return;
+        } catch (e) {
+          errs.push(`route${i} ${e.name === 'AbortError' ? 'timeout' : e.message}`);
+        } finally { clearTimeout(to); }
+      }
+      mqNaverErr[it.code] = errs.join(', ');
+    }
+    let mqNaverBusy = false;
+    async function mqNaverTick() {
+      if (mqNaverBusy) return;
+      mqNaverBusy = true;
+      try { await Promise.all(MQ_ITEMS.filter(it => it.src === 'naver').map(mqNaverOne)); }
+      finally { mqNaverBusy = false; }
+      mqStatusUpdate();
+    }
+
+    mqRender();
+    setInterval(mqPollTv, 1000);
+    mqNaverTick();
+    setInterval(mqNaverTick, MQ_NAVER_MS);
+    let mqResizeT;
+    window.addEventListener('resize', () => { clearTimeout(mqResizeT); mqResizeT = setTimeout(mqRender, 200); });
 
     // ---------- Shortcut help popover ----------
     const keysBtn = document.getElementById('keysBtn');
