@@ -63,7 +63,7 @@ button{flex:1;font:inherit;font-size:15px;font-weight:600;padding:5px 2px;border
 button:disabled{opacity:.35;cursor:default}
 .rich{display:block;overflow:auto;word-break:break-word;outline:none}
 .rich:empty::before{content:attr(data-ph);color:var(--mute);pointer-events:none}
-.rich img{display:block;max-width:100%;height:auto;margin:4px 0}
+.rich img{display:inline-block;vertical-align:middle;max-width:100%;height:auto;margin:2px 0}
 /* 이미지 크기 조절 / 글자 넣기 */
 .imgx-box{position:fixed;z-index:110;border:2px solid #339af0;box-sizing:border-box;pointer-events:none}
 .imgx-grip{position:absolute;right:-10px;bottom:-10px;width:20px;height:20px;border-radius:50%;background:#339af0;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);cursor:nwse-resize;pointer-events:auto;touch-action:none}
@@ -80,6 +80,9 @@ button:disabled{opacity:.35;cursor:default}
 .imgx-tbox textarea{display:block;box-sizing:border-box;margin:0;padding:2px 4px;border:1px dashed #339af0;border-radius:2px;background:transparent;font-family:inherit;line-height:1.3;white-space:pre;overflow:hidden;resize:none;outline:none;min-width:40px}
 .imgx-tgrip{position:absolute;left:-22px;top:-2px;width:20px;height:20px;border-radius:5px;background:#339af0;color:#fff;font-size:13px;line-height:20px;text-align:center;cursor:move;touch-action:none;user-select:none}
 .imgx-box[hidden],.imgx-bar[hidden],.imgx-row[hidden]{display:none}
+.imgx-ov{position:fixed;z-index:109;display:block;overflow:hidden;touch-action:none;cursor:crosshair}
+.imgx-bar textarea{width:150px;height:44px;margin:0;padding:4px 6px;font:inherit;font-size:13px;line-height:1.3;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);resize:none}
+.imgx-bar textarea[hidden]{display:none}
 .rich table{border-collapse:collapse;margin:4px 0}
 .rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em}
 .rich a{color:inherit}
@@ -406,7 +409,7 @@ function makeRich(el) {
   async function build(html, imgs, txt) {
     let h = "";
     if (/<table[\s>]/i.test(html) || (!imgs.length && html)) h = await fromHtml(html);
-    else for (const f of imgs) { try { h += '<img src="' + await imgToUrl(f) + '"><br>'; } catch (e) {} }
+    else for (const f of imgs) { try { h += '<img src="' + await imgToUrl(f) + '">'; } catch (e) {} }
     if (!h && txt) h = esc(txt).replace(/\r?\n/g, "<br>");
     return clean(h);
   }
@@ -416,7 +419,7 @@ function makeRich(el) {
   }
   el.insertImages = async files => {
     let h = "";
-    for (const f of files) { try { h += '<img src="' + await imgToUrl(f) + '"><br>'; } catch (e) {} }
+    for (const f of files) { try { h += '<img src="' + await imgToUrl(f) + '">'; } catch (e) {} }
     insert(clean(h));
   };
   el.addEventListener("paste", e => {
@@ -975,18 +978,23 @@ let imgBack = null;
    - 크기는 <img width> 로 저장돼서 저장/내보내기/불러오기에서도 유지돼요 */
 (function () {
   const MINW = 24;
-  let img = null, raf = 0, drag = null, tm = null;
+  let img = null, raf = 0, drag = null, tm = null, sh = null;
   const hist = new WeakMap();          // 이미지 → 글자 넣기 전 그림 목록 (되돌리기용, 이 화면을 닫기 전까지)
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const fire = () => ta.dispatchEvent(new Event("input", { bubbles: true }));
   const box = el("div", "imgx-box"), grip = el("div", "imgx-grip"), bar = el("div", "imgx-bar");
   const main = el("div", "imgx-row",
-    '<button type="button" data-w="25">25%</button><button type="button" data-w="50">50%</button><button type="button" data-w="75">75%</button><button type="button" data-w="100">100%</button><button type="button" data-w="0">원본 크기</button><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="undo">글자 되돌리기</button>');
+    '<button type="button" data-w="25">25%</button><button type="button" data-w="50">50%</button><button type="button" data-w="75">75%</button><button type="button" data-w="100">100%</button><button type="button" data-w="0">원본 크기</button><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="undo">되돌리기</button>');
   const ctl = el("div", "imgx-row",
     '<input type="color" data-c="color" value="#e03131" title="글자색" aria-label="글자색"><select data-c="size" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-c="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-c="outline" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><i class="sep"></i><button type="button" data-a="ok">적용</button><button type="button" data-a="cancel">취소</button>');
   ctl.hidden = true; box.hidden = bar.hidden = true;
-  box.appendChild(grip); bar.append(main, ctl); document.body.append(box, bar);
+  const shp = el("div", "imgx-row",
+    '<button type="button" data-s="arrow" aria-pressed="true">화살표</button><button type="button" data-s="callout" aria-pressed="false">말풍선</button><button type="button" data-s="vline" aria-pressed="false">수직선</button><button type="button" data-s="hline" aria-pressed="false">수평선</button><button type="button" data-s="trend" aria-pressed="false">추세선</button><button type="button" data-s="cross" aria-pressed="false">십자선</button><button type="button" data-s="circle" aria-pressed="false">원</button><button type="button" data-s="rect" aria-pressed="false">사각형</button><button type="button" data-s="tri" aria-pressed="false">삼각형</button><i class="sep"></i>' +
+    '<input type="color" data-q="color" value="#e03131" title="도형 색" aria-label="도형 색"><select data-q="lw" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><button type="button" data-q="dash" aria-pressed="false" title="점선">점선</button><button type="button" data-q="fill" aria-pressed="false" title="원·사각형·삼각형 안쪽 채우기">채움</button><select data-q="fs" title="말풍선 글자 크기" aria-label="말풍선 글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option></select>' +
+    '<textarea data-q="text" rows="2" placeholder="말풍선 글자" aria-label="말풍선 글자" hidden></textarea><i class="sep"></i><button type="button" data-sa="del">선택 삭제</button><button type="button" data-sa="ok">적용</button><button type="button" data-sa="cancel">취소</button>');
+  shp.hidden = true;
+  box.appendChild(grip); bar.append(main, ctl, shp); document.body.append(box, bar);
   const colorIn = ctl.querySelector('[data-c="color"]'), sizeSel = ctl.querySelector('[data-c="size"]');
   const undoBtn = main.querySelector('[data-a="undo"]');
   const isOn = b => b.getAttribute("aria-pressed") === "true";
@@ -997,9 +1005,9 @@ let imgBack = null;
     img.setAttribute("width", clamp(Math.round(px), MINW, Math.max(MINW, Math.floor(inner()))));
     img.removeAttribute("height"); place();
   }
-  function hide() { closeTxt(); img = null; box.hidden = bar.hidden = true; }
+  function hide() { closeTxt(); closeShp(); img = null; box.hidden = bar.hidden = true; }
   function show(i) {
-    if (img !== i) closeTxt();
+    if (img !== i) { closeTxt(); closeShp(); }
     img = i; box.hidden = bar.hidden = false;
     undoBtn.disabled = !(hist.get(img) || []).length;
     place();
@@ -1012,9 +1020,11 @@ let imgBack = null;
     const vis = r.bottom > t.top && r.top < t.bottom && r.right > t.left && r.left < t.right;
     box.style.display = bar.style.display = vis ? "" : "none";
     if (tm) tm.wrap.style.display = vis ? "" : "none";
+    if (sh) sh.ov.style.display = vis ? "" : "none";
     if (!vis) return;
     box.style.left = r.left + "px"; box.style.top = r.top + "px"; box.style.width = r.width + "px"; box.style.height = r.height + "px";
-    grip.style.display = tm ? "none" : "";
+    grip.style.display = (tm || sh) ? "none" : "";
+    if (sh) { const o = sh.ov.style; o.left = r.left + "px"; o.top = r.top + "px"; o.width = r.width + "px"; o.height = r.height + "px"; }
     const bw = bar.offsetWidth, bh = bar.offsetHeight;
     let top = r.top - bh - 8; if (top < 4) top = Math.min(r.bottom + 8, innerHeight - bh - 4);
     bar.style.left = clamp(r.left, 4, Math.max(4, innerWidth - bw - 4)) + "px"; bar.style.top = Math.max(4, top) + "px";
@@ -1031,12 +1041,18 @@ let imgBack = null;
       tm.tx = clamp(e.clientX - r.left, -2, r.width - 16); tm.ty = clamp(e.clientY - r.top - 8, -2, r.height - 12);
       place(); tm.t.focus(); return;
     }
-    if (t && t.tagName === "IMG") show(t);
+    if (t && t.tagName === "IMG") {
+      show(t);
+      /* 이미지를 글자처럼: 클릭하면 이미지 바로 뒤에 커서를 둬서, 정렬·글자 입력이 이미지가 있는 줄에 적용되게 함 */
+      const s = getSelection(), r = document.createRange(), rc = t.getBoundingClientRect();
+      if (e.clientX < rc.left + rc.width / 2) r.setStartBefore(t); else r.setStartAfter(t);
+      r.collapse(true); s.removeAllRanges(); s.addRange(r);
+    }
   });
   document.addEventListener("pointerdown", e => {
     if (!img) return;
     const t = e.target;
-    if (t === img || box.contains(t) || bar.contains(t) || (tm && tm.wrap.contains(t))) return;
+    if (t === img || box.contains(t) || bar.contains(t) || (tm && tm.wrap.contains(t)) || (sh && sh.ov.contains(t))) return;
     hide();
   }, true);
 
@@ -1052,6 +1068,7 @@ let imgBack = null;
   bar.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서/포커스 유지
   bar.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b || !img) return;
+    if (b.dataset.s || b.dataset.q || b.dataset.sa) { shpClick(b); return; }
     if (b.dataset.w !== undefined) {
       const p = +b.dataset.w;
       if (p) setW(inner() * p / 100); else { img.removeAttribute("width"); img.removeAttribute("height"); place(); }
@@ -1059,7 +1076,7 @@ let imgBack = null;
     }
     if (b.dataset.c) { b.setAttribute("aria-pressed", String(!isOn(b))); styleT(); return; }
     const a = b.dataset.a;
-    if (a === "txt") openTxt(); else if (a === "undo") undoTxt(); else if (a === "ok") applyTxt(); else if (a === "cancel") closeTxt();
+    if (a === "txt") openTxt(); else if (a === "shp") openShp(); else if (a === "undo") undoTxt(); else if (a === "ok") applyTxt(); else if (a === "cancel") closeTxt();
   });
   ctl.addEventListener("input", () => styleT());
 
@@ -1078,7 +1095,7 @@ let imgBack = null;
   }
   function lum(hex) { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255; }
   function openTxt() {
-    if (!img || tm) return;
+    if (!img || tm || sh) return;
     const r = img.getBoundingClientRect();
     const wrap = el("div", "imgx-tbox"), g = el("div", "imgx-tgrip", "✥"), t = el("textarea");
     g.title = "끌어서 글자 위치 옮기기 (이미지를 클릭해도 그 자리로 이동)";
@@ -1133,8 +1150,264 @@ let imgBack = null;
     } catch (e) { toast("이 이미지에는 글자를 넣을 수 없어요"); return; }
     const h = hist.get(img) || []; h.push(img.src); while (h.length > 3) h.shift(); hist.set(img, h);
     img.src = url; undoBtn.disabled = false;
-    closeTxt(); fire(); toast("글자를 넣었어요. 마음에 안 들면 [글자 되돌리기]를 눌러 주세요");
+    closeTxt(); fire(); toast("글자를 넣었어요. 마음에 안 들면 [되돌리기]를 눌러 주세요");
   }
+    /* ---- 도형 넣기: 화살표·말풍선·수직선·수평선·추세선·십자선·원·사각형·삼각형 ----
+     이미지 위에 겹친 SVG 에 도형을 놓고 → 손잡이로 늘이고 줄이고 옮긴 뒤 → [적용]하면 이미지에 새겨져요 */
+  const FONT = "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif";
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const sd = { tool: "arrow", color: "#e03131", lw: 3, dash: false, fill: false, fs: 21 };
+  const HM = [["x1", "y1"], ["y1"], ["x2", "y1"], ["x2"], ["x2", "y2"], ["y2"], ["x1", "y2"], ["x1"]];   // 상자형 도형의 8개 손잡이가 움직이는 좌표
+  const HLN = [["x1", "y1"], ["x2", "y2"]];                                                              // 선형 도형의 양 끝 손잡이
+  const HCUR = ["nwse-resize", "ns-resize", "nesw-resize", "ew-resize", "nwse-resize", "ns-resize", "nesw-resize", "ew-resize"];
+  const qc = k => shp.querySelector('[data-q="' + k + '"]');
+  const setP = (b, on) => b.setAttribute("aria-pressed", String(!!on));
+  const pstr = a => a.map(q => q[0] + "," + q[1]).join(" ");
+
+  /* 말풍선 상자 크기: 글자 크기와 내용에 맞춰 자동 */
+  function cBox(it) {
+    const lines = (it.text || "글자 입력").split("\n"), fs = it.fs, pad = 9;
+    mctx.font = fs + "px " + FONT;
+    const tw = Math.max(...lines.map(l => mctx.measureText(l).width));
+    return { lines, fs, pad, x: it.x1, y: it.y1, w: Math.max(40, Math.ceil(tw + pad * 2)), h: Math.ceil(lines.length * fs * 1.3 + pad * 2) };
+  }
+  /* 말풍선 꼬리: 상자 가장자리의 두 점 + 끝점 */
+  function tailOf(b, it, lw) {
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2, dx = it.tx - cx, dy = it.ty - cy;
+    if (Math.abs(dx) <= b.w / 2 && Math.abs(dy) <= b.h / 2) return null;
+    const s = Math.max(9, lw * 3), cl = (v, a, z) => a > z ? (a + z) / 2 : Math.max(a, Math.min(z, v));
+    let b1, b2, nx = 0, ny = 0;
+    if (Math.abs(dx) / (b.w / 2) > Math.abs(dy) / (b.h / 2)) {
+      const sg = dx > 0 ? 1 : -1, ex = cx + sg * b.w / 2, py = cl(cy + dy * (b.w / 2) / Math.abs(dx), b.y + s, b.y + b.h - s);
+      b1 = [ex, py - s]; b2 = [ex, py + s]; nx = sg;
+    } else {
+      const sg = dy > 0 ? 1 : -1, ey = cy + sg * b.h / 2, px = cl(cx + dx * (b.h / 2) / Math.abs(dy), b.x + s, b.x + b.w - s);
+      b1 = [px - s, ey]; b2 = [px + s, ey]; ny = sg;
+    }
+    return { b1, b2, nx, ny };
+  }
+  /* 도형 하나를 SVG 조각으로. exp=true 면 클릭 감지용 요소를 뺀 저장용 */
+  function itemSvg(it, W, H, exp) {
+    const c = it.color, lw = it.lw;
+    const sb = 'stroke="' + c + '" stroke-width="' + lw + '" stroke-linecap="round" stroke-linejoin="round"';
+    const st = sb + (it.dash ? ' stroke-dasharray="' + lw * 3 + " " + lw * 2 + '"' : "");
+    const fl = it.fill ? 'fill="' + c + '" fill-opacity=".3"' : 'fill="none"';
+    const ln = (x1, y1, x2, y2, a) => '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" ' + a + "/>";
+    const hit = (x1, y1, x2, y2) => exp ? "" : ln(x1, y1, x2, y2, 'stroke="rgba(0,0,0,0)" stroke-width="18" stroke-linecap="round" pointer-events="stroke"');
+    const x = Math.min(it.x1, it.x2), y = Math.min(it.y1, it.y2), w = Math.abs(it.x2 - it.x1), h = Math.abs(it.y2 - it.y1);
+    switch (it.t) {
+      case "vline": return hit(it.x1, 0, it.x1, H) + ln(it.x1, 0, it.x1, H, st);
+      case "hline": return hit(0, it.y1, W, it.y1) + ln(0, it.y1, W, it.y1, st);
+      case "cross": return hit(it.x1, 0, it.x1, H) + hit(0, it.y1, W, it.y1) + ln(it.x1, 0, it.x1, H, st) + ln(0, it.y1, W, it.y1, st);
+      case "trend": {
+        const r = Math.max(4, lw * 1.6), dot = (px, py) => '<circle cx="' + px + '" cy="' + py + '" r="' + r + '" fill="#fff" stroke="' + c + '" stroke-width="' + lw + '"/>';
+        return hit(it.x1, it.y1, it.x2, it.y2) + ln(it.x1, it.y1, it.x2, it.y2, st) + dot(it.x1, it.y1) + dot(it.x2, it.y2);
+      }
+      case "arrow": {
+        const dx = it.x2 - it.x1, dy = it.y2 - it.y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+        const hl = Math.min(L, Math.max(12, lw * 4.5)), hw = hl * 0.5, bx = it.x2 - ux * hl, by = it.y2 - uy * hl;
+        return hit(it.x1, it.y1, it.x2, it.y2) + ln(it.x1, it.y1, it.x2 - ux * hl * 0.8, it.y2 - uy * hl * 0.8, st) +
+          '<polygon points="' + pstr([[it.x2, it.y2], [bx - uy * hw, by + ux * hw], [bx + uy * hw, by - ux * hw]]) + '" fill="' + c + '" stroke="' + c + '" stroke-width="1" stroke-linejoin="round"/>';
+      }
+      case "circle": return '<ellipse cx="' + (x + w / 2) + '" cy="' + (y + h / 2) + '" rx="' + w / 2 + '" ry="' + h / 2 + '" ' + st + " " + fl + ' pointer-events="all"/>';
+      case "rect": return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2" ' + st + " " + fl + ' pointer-events="all"/>';
+      case "tri": return '<polygon points="' + pstr([[x + w / 2, y], [x + w, y + h], [x, y + h]]) + '" ' + st + " " + fl + ' pointer-events="all"/>';
+      case "callout": {
+        const b = cBox(it), tl = tailOf(b, it, lw);
+        let s = "";
+        if (tl) s += '<polygon points="' + pstr([tl.b1, [it.tx, it.ty], tl.b2]) + '" fill="#fff" ' + sb + ' pointer-events="all"/>';
+        s += '<rect x="' + b.x + '" y="' + b.y + '" width="' + b.w + '" height="' + b.h + '" rx="6" fill="#fff" ' + sb + ' pointer-events="all"/>';
+        if (tl) {   // 꼬리가 붙는 자리의 상자 테두리를 흰색으로 덮어 꼬리와 자연스럽게 이어 줌
+          const ex = tl.ny ? 1 : 0, ey = tl.nx ? 1 : 0, k = lw * 0.8;
+          const c1 = [tl.b1[0] + ex * k, tl.b1[1] + ey * k], c2 = [tl.b2[0] - ex * k, tl.b2[1] - ey * k];
+          s += '<polygon points="' + pstr([[c1[0] - tl.nx * k, c1[1] - tl.ny * k], [c2[0] - tl.nx * k, c2[1] - tl.ny * k], [c2[0] + tl.nx * k, c2[1] + tl.ny * k], [c1[0] + tl.nx * k, c1[1] + tl.ny * k]]) + '" fill="#fff" stroke="none"/>';
+        }
+        b.lines.forEach((l, i) => {
+          const ty = b.y + b.pad + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35;
+          s += '<text x="' + (b.x + b.w / 2) + '" y="' + ty + '" text-anchor="middle" font-family="' + FONT + '" font-size="' + b.fs + '" fill="' + c + '"' + (it.text ? "" : ' fill-opacity=".4"') + ">" + escH(l) + "</text>";
+        });
+        return s;
+      }
+    }
+    return "";
+  }
+  /* 선택한 도형의 손잡이 (끌어서 늘이고 줄임) */
+  function handlesOf(it) {
+    if (!it) return "";
+    const hn = (x, y, id, cur) => '<circle data-h="' + id + '" cx="' + x + '" cy="' + y + '" r="7" fill="#fff" stroke="#339af0" stroke-width="2" style="cursor:' + cur + '" pointer-events="all"/>';
+    let s = "";
+    if (it.t === "arrow" || it.t === "trend") s += hn(it.x1, it.y1, 0, "move") + hn(it.x2, it.y2, 1, "move");
+    else if (it.t === "circle" || it.t === "rect" || it.t === "tri") {
+      const xm = (it.x1 + it.x2) / 2, ym = (it.y1 + it.y2) / 2;
+      s += '<rect x="' + Math.min(it.x1, it.x2) + '" y="' + Math.min(it.y1, it.y2) + '" width="' + Math.abs(it.x2 - it.x1) + '" height="' + Math.abs(it.y2 - it.y1) + '" fill="none" stroke="#339af0" stroke-width="1" stroke-dasharray="4 3" pointer-events="none"/>';
+      [[it.x1, it.y1], [xm, it.y1], [it.x2, it.y1], [it.x2, ym], [it.x2, it.y2], [xm, it.y2], [it.x1, it.y2], [it.x1, ym]].forEach((q, i) => { s += hn(q[0], q[1], i, HCUR[i]); });
+    }
+    else if (it.t === "callout") s += hn(it.tx, it.ty, "t", "move");
+    else if (it.t === "vline") s += hn(it.x1, 16, "mv", "move");
+    else if (it.t === "hline") s += hn(16, it.y1, "mv", "move");
+    else if (it.t === "cross") s += hn(it.x1, it.y1, "mv", "move");
+    return s;
+  }
+  function render() {
+    const s = sh; if (!s) return;
+    let g = "";
+    s.items.forEach((it, i) => { g += '<g data-i="' + i + '" style="cursor:move">' + itemSvg(it, s.W, s.H, false) + "</g>"; });
+    s.ov.innerHTML = g + handlesOf(s.items[s.sel]);
+  }
+  function pt(e) {
+    const r = sh.ov.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * sh.W / (r.width || 1), y: (e.clientY - r.top) * sh.H / (r.height || 1) };
+  }
+  /* 선택한 도형의 값을 조절 막대에 반영 */
+  function syncCtl() {
+    if (!sh) return;
+    const it = sh.items[sh.sel], t = qc("text");
+    t.hidden = !(it && it.t === "callout");
+    if (it) {
+      qc("color").value = it.color; qc("lw").value = String(it.lw); qc("fs").value = String(it.fs);
+      setP(qc("dash"), it.dash); setP(qc("fill"), it.fill);
+      if (it.t === "callout") t.value = it.text;
+    }
+    sched();
+  }
+  function newItem(tool, p) {
+    return { t: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y, tx: p.x, ty: p.y, color: sd.color, lw: sd.lw, fs: sd.fs, fill: sd.fill, dash: tool === "cross" ? true : sd.dash, text: "" };
+  }
+  function onDown(e) {
+    const s = sh; if (!s || e.button > 0) return;
+    e.preventDefault();
+    const p = pt(e), hEl = e.target.closest("[data-h]"), iEl = e.target.closest("[data-i]"), cur = s.items[s.sel];
+    try { s.ov.setPointerCapture(e.pointerId); } catch (x) {}
+    if (hEl && cur) {
+      const h = hEl.getAttribute("data-h");
+      s.drag = h === "mv" ? { m: "move", sx: p.x, sy: p.y, o: { ...cur } } : { m: "h", h };
+    } else if (iEl) {
+      s.sel = +iEl.getAttribute("data-i");
+      s.drag = { m: "move", sx: p.x, sy: p.y, o: { ...s.items[s.sel] } };
+      syncCtl();
+    } else {   // 빈 곳: 새 도형 (클릭하면 기본 크기, 끌면 그 크기)
+      const it = newItem(sd.tool, p);
+      s.items.push(it); s.sel = s.items.length - 1;
+      if (it.t === "callout") {
+        const b = cBox(it); it.tx = it.x1 + b.w * 0.25; it.ty = it.y1 + b.h + 28;
+        s.drag = { m: "move", sx: p.x, sy: p.y, o: { ...it }, txt: true };
+      } else if (it.t === "vline" || it.t === "hline" || it.t === "cross") s.drag = { m: "move", sx: p.x, sy: p.y, o: { ...it } };
+      else s.drag = { m: "new", sx: p.x, sy: p.y };
+      syncCtl();
+    }
+    render();
+  }
+  function onMove(e) {
+    const s = sh, d = s && s.drag; if (!d) return;
+    const it = s.items[s.sel]; if (!it) return;
+    const p = pt(e);
+    if (d.m === "new") { it.x2 = p.x; it.y2 = p.y; }
+    else if (d.m === "move") {
+      const dx = p.x - d.sx, dy = p.y - d.sy;
+      ["x1", "x2", "tx"].forEach(k => { if (k in d.o) it[k] = d.o[k] + dx; });
+      ["y1", "y2", "ty"].forEach(k => { if (k in d.o) it[k] = d.o[k] + dy; });
+    } else if (d.m === "h") {
+      const set = k => { it[k] = k[0] === "x" ? p.x : p.y; };
+      if (it.t === "arrow" || it.t === "trend") HLN[+d.h].forEach(set);
+      else if (it.t === "callout") { it.tx = p.x; it.ty = p.y; }
+      else HM[+d.h].forEach(set);
+    }
+    render();
+  }
+  function onUp() {
+    const s = sh, d = s && s.drag; if (!d) return;
+    s.drag = null;
+    const it = s.items[s.sel];
+    if (d.m === "new" && it && Math.hypot(it.x2 - it.x1, it.y2 - it.y1) < 8) {   // 그냥 클릭: 기본 크기로
+      if (it.t === "arrow" || it.t === "trend") { it.x1 = d.sx - 45; it.y1 = d.sy + 25; it.x2 = d.sx + 45; it.y2 = d.sy - 25; }
+      else { it.x1 = d.sx - 45; it.y1 = d.sy - 35; it.x2 = d.sx + 45; it.y2 = d.sy + 35; }
+      render();
+    }
+    if (d.txt) qc("text").focus();
+  }
+  function openShp() {
+    if (!img || tm || sh) return;
+    const r = img.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    const ov = document.createElementNS(SVGNS, "svg");
+    ov.setAttribute("class", "imgx-ov"); ov.setAttribute("viewBox", "0 0 " + r.width + " " + r.height); ov.setAttribute("preserveAspectRatio", "none");
+    document.body.appendChild(ov);
+    sh = { ov, W: r.width, H: r.height, items: [], sel: -1, drag: null };
+    main.hidden = true; shp.hidden = false;
+    ov.addEventListener("pointerdown", onDown); ov.addEventListener("pointermove", onMove);
+    ov.addEventListener("pointerup", onUp); ov.addEventListener("pointercancel", onUp);
+    syncCtl(); render(); place();
+    toast("이미지 위를 클릭하거나 끌어서 도형을 넣으세요. 손잡이를 끌면 늘이고 줄일 수 있어요");
+  }
+  function closeShp() {
+    if (!sh) return;
+    sh.ov.remove(); sh = null; main.hidden = false; shp.hidden = true; sched();
+  }
+  function delSel() {
+    if (!sh || sh.sel < 0) return;
+    sh.items.splice(sh.sel, 1); sh.sel = sh.items.length - 1;
+    syncCtl(); render();
+  }
+  function shpClick(b) {
+    if (!sh) return;
+    const it = sh.items[sh.sel];
+    if (b.dataset.s) { sd.tool = b.dataset.s; shp.querySelectorAll("[data-s]").forEach(x => setP(x, x === b)); return; }
+    if (b.dataset.q === "dash" || b.dataset.q === "fill") {
+      const on = !isOn(b), k = b.dataset.q; setP(b, on); sd[k] = on; if (it) it[k] = on; render(); return;
+    }
+    const a = b.dataset.sa;
+    if (a === "del") delSel(); else if (a === "ok") applyShp(); else if (a === "cancel") closeShp();
+  }
+  /* 만든 이미지를 메모에 반영 (PNG, 너무 크면 JPEG) + 되돌리기용 기록 */
+  function commit(target, c, nw, nh) {
+    let url;
+    try {
+      url = c.toDataURL("image/png");
+      if (url.length > 300000) {
+        const c2 = document.createElement("canvas"); c2.width = nw; c2.height = nh;
+        const x2 = c2.getContext("2d"); x2.fillStyle = "#fff"; x2.fillRect(0, 0, nw, nh); x2.drawImage(c, 0, 0);
+        url = c2.toDataURL("image/jpeg", 0.85);
+      }
+    } catch (e) { toast("이 이미지에는 도형을 넣을 수 없어요"); return false; }
+    const h = hist.get(target) || []; h.push(target.src); while (h.length > 3) h.shift(); hist.set(target, h);
+    target.src = url; if (img === target) undoBtn.disabled = false;
+    fire(); return true;
+  }
+  function applyShp() {
+    if (!sh || !img) return;
+    const items = sh.items.filter(it => it.t !== "callout" || it.text.trim());   // 글자 없는 말풍선은 제외
+    if (!items.length) { closeShp(); return; }
+    const target = img, nw = target.naturalWidth, nh = target.naturalHeight, W = sh.W, H = sh.H;
+    if (!nw || !nh) { toast("이미지를 아직 읽는 중이에요. 잠시 뒤에 다시 눌러 주세요"); return; }
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + nw + '" height="' + nh + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none">' + items.map(it => itemSvg(it, W, H, true)).join("") + "</svg>";
+    const pic = new Image();
+    pic.onload = () => {
+      const c = document.createElement("canvas"); c.width = nw; c.height = nh;
+      const x = c.getContext("2d"); x.drawImage(target, 0, 0, nw, nh); x.drawImage(pic, 0, 0, nw, nh);
+      if (commit(target, c, nw, nh)) { closeShp(); toast("도형을 넣었어요. 마음에 안 들면 [되돌리기]를 눌러 주세요"); }
+    };
+    pic.onerror = () => toast("도형을 넣지 못했어요");
+    pic.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  }
+  shp.addEventListener("input", e => {
+    const q = e.target.getAttribute && e.target.getAttribute("data-q"); if (!q || !sh) return;
+    const it = sh.items[sh.sel], v = e.target.value;
+    if (q === "text") { if (it && it.t === "callout") it.text = v; }
+    else {
+      if (q === "color") sd.color = v; else if (q === "lw") sd.lw = +v; else if (q === "fs") sd.fs = +v; else return;
+      if (it) it[q] = q === "color" ? v : +v;
+    }
+    render();
+  });
+  document.addEventListener("keydown", e => {   // 도형 넣기 중: Esc 취소 / Delete 선택 삭제 / Ctrl+Enter 적용
+    if (!sh) return;
+    const typing = /^(TEXTAREA|INPUT|SELECT)$/.test(e.target.nodeName);
+    if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); closeShp(); }
+    else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); applyShp(); }
+    else if ((e.key === "Delete" || e.key === "Backspace") && !typing) { e.preventDefault(); delSel(); }
+  }, true);
+
+
   function undoTxt() {
     const h = img && hist.get(img); if (!h || !h.length) return;
     img.src = h.pop(); undoBtn.disabled = !h.length; fire(); sched();
