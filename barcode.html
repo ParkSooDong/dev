@@ -71,18 +71,21 @@ button:disabled{opacity:.35;cursor:default}
 .rich:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .rich[contenteditable=false]{opacity:.6}
 /* 메모 확대(expand): .mslot 이 원래 자리의 높이를 지키고 .mpane 이 확대 대상 */
-.mhead{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px}
+.mhead{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:6px 10px}
 .fbbtn{flex:none;width:auto;font-size:13px;font-weight:600;padding:2px 12px;border-radius:999px;background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .fbbtn[aria-pressed=true]{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
-#mst{font-size:12px;font-weight:400;text-align:right;color:var(--mute)}
+#mst{font-size:12px;font-weight:400;text-align:left;color:var(--mute)}
+#mst:empty{display:none}
+/* 제목 줄: 메모 | Firebase 버튼 | 상태 | DB 글자 수 — 왼쪽부터 차례로, 구분선만 둠 */
+.mhead>span:first-child::after{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px;margin-left:10px}
+#mst::before,#cnt::before{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px}
+body.has-max #mst::before,body.has-max #cnt::before{display:none}
 #mst.ok{color:#2e7d32}
 :root[data-theme="dark"] #mst.ok{color:#81c784}
 #mst.err{color:var(--warn)}
-.cntrow{text-align:right;margin:2px 0}
 #cnt{font-size:12px;font-weight:400;color:var(--mute);white-space:nowrap}
 #cnt.cw{color:#e8590c}
 #cnt.ce{color:var(--warn);font-weight:600}
-body.has-max .cntrow{margin:0}
 body.has-max #cnt{position:fixed;right:20px;bottom:calc(max(18px,env(safe-area-inset-bottom,0px)) + 34px);z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
 body.has-max #mst{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
 .mslot{position:relative}
@@ -192,7 +195,7 @@ p{margin:6px 0 0}
 <label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
 </div>
 <div class="grid" id="g"></div>
-<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="mst" role="status"></span></div><div class="cntrow"><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
+<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
   <button type="button" data-cmd="redo" title="다시 실행 (Ctrl+Y)" aria-label="다시 실행"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
