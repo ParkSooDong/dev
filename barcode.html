@@ -701,7 +701,7 @@ function table() {
   }
 }
 /* 글자색 / 배경색: 선택한 글자에 적용 (선택이 없으면 이어서 입력하는 글자에 적용)
-   - 배경색을 칠할 때는 어두운 테마에서도 읽히도록 글자색을 어두운 색으로 같이 지정해요 */
+   - 배경색(형광펜)은 글자색을 바꾸지 않고 배경만 칠해요 */
 const INK = "#1c1b19", MARK = "#010203";
 function clearProp(prop, rgb) {
   const s = getSelection(); if (!s.rangeCount) return;
@@ -722,7 +722,7 @@ function paint(kind, c) {
     if (c) exec("foreColor", c);
     else { exec("foreColor", MARK); clearProp("color", "rgb(1, 2, 3)"); }
   } else {
-    if (c) { exec("hiliteColor", c); exec("foreColor", INK); }
+    if (c) exec("hiliteColor", c);   // 글자색은 건드리지 않아요
     else { exec("hiliteColor", MARK); clearProp("backgroundColor", "rgb(1, 2, 3)"); clearProp("color", "rgb(28, 27, 25)"); }
   }
   document.execCommand("styleWithCSS", false, false);
