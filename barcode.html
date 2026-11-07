@@ -251,7 +251,7 @@ function makeRich(el) {
   }
   function walk(src, dst) {
     for (const n of Array.from(src.childNodes)) {
-      if (n.nodeType === 3) { dst.appendChild(document.createTextNode(n.nodeValue)); continue; }
+      if (n.nodeType === 3) { dst.appendChild(document.createTextNode(n.nodeValue.replace(/\u200b/g, ""))); continue; }
       if (n.nodeType !== 1) continue;
       const t = n.nodeName.toUpperCase();
       if (DROP.has(t)) continue;
@@ -280,7 +280,7 @@ function makeRich(el) {
   /* .value / .disabled 호환 (textarea 처럼 사용)
      ※ 빈 목록/제목(글자가 없어도 서식을 막 켠 상태)이 "빈 메모"로 오해돼 지워지지 않도록 ul,ol,h1~h3 도 내용으로 취급 */
   Object.defineProperty(el, "value", {
-    get() { return (!el.querySelector("img,table,ul,ol,h1,h2,h3,hr,pre,blockquote") && !el.textContent.trim()) ? "" : RICH_PREFIX + el.innerHTML; },
+    get() { return (!el.querySelector("img,table,ul,ol,h1,h2,h3,hr,pre,blockquote") && !el.textContent.replace(/\u200b/g, "").trim()) ? "" : RICH_PREFIX + el.innerHTML; },
     set(v) { v = String(v || ""); el.innerHTML = v.startsWith(RICH_PREFIX) ? clean(v.slice(RICH_PREFIX.length)) : esc(v).replace(/\r?\n/g, "<br>"); }
   });
   Object.defineProperty(el, "disabled", {
@@ -726,12 +726,44 @@ function paint(kind, c) {
 }
 /* 글자 크기: 선택한 글자를 px 단위로 지정 (execCommand 는 1~7 단계만 지원해서, 만든 뒤 px 로 바꿔 줘요) */
 function unspan(sp) { while (sp.firstChild) sp.before(sp.firstChild); sp.remove(); }
+/* 선택 없이 크기만 고른 경우: 커서 자리에 보이지 않는 글자(ZWSP)가 든 span 을 만들고 그 안에 커서를 둬서,
+   이어서 입력하는 글자에 크기가 적용되게 해요. 아무것도 입력하지 않고 커서를 옮기면 이 span 은 자동으로 치워요 */
+let ghost = null;
+function dropGhost() {
+  if (!ghost) return;
+  const g = ghost; ghost = null;
+  if (!g.isConnected) return;
+  const w = document.createTreeWalker(g, NodeFilter.SHOW_TEXT), ns = [];
+  while (w.nextNode()) ns.push(w.currentNode);
+  ns.forEach(n => { n.nodeValue = n.nodeValue.replace(/\u200b/g, ""); });
+  if (!g.textContent && !g.querySelector("img,br")) g.remove();
+}
+document.addEventListener("selectionchange", () => {
+  if (!ghost) return;
+  const s = getSelection();
+  if (!s.rangeCount || !ghost.contains(s.anchorNode)) dropGhost();
+});
+function sizeAtCaret(px) {
+  const s = getSelection();
+  const size = (px || Math.round(parseFloat(getComputedStyle(ta).fontSize)) || 16) + "px";   // 기본 크기: 메모의 기본 글자 크기
+  if (ghost && ghost.isConnected && ghost.contains(s.anchorNode) && ghost.textContent === "\u200b") {   // 같은 자리에서 다시 고르면 크기만 바꿈
+    ghost.style.fontSize = size; ta.dispatchEvent(new Event("input", { bubbles: true })); return;
+  }
+  dropGhost();
+  if (!s.rangeCount || !ta.contains(s.anchorNode)) return;
+  const r = s.getRangeAt(0), sp = document.createElement("span"), tn = document.createTextNode("\u200b");
+  sp.style.fontSize = size; sp.appendChild(tn); r.insertNode(sp);
+  const nr = document.createRange(); nr.setStart(tn, 1); nr.collapse(true);
+  s.removeAllRanges(); s.addRange(nr);
+  ghost = sp;
+  ta.dispatchEvent(new Event("input", { bubbles: true }));
+}
 function setSize(px) {
   if (ta.disabled) return;
   ta.focus();
   const s = getSelection();
   if (!s.rangeCount || !ta.contains(s.anchorNode)) return;
-  if (s.isCollapsed) { say("크기를 바꿀 글자를 먼저 선택해 주세요"); return; }
+  if (s.isCollapsed) { sizeAtCaret(px); return; }   // 선택이 없으면 이어서 입력하는 글자에 적용
   document.execCommand("styleWithCSS", false, false);
   document.execCommand("fontSize", false, "7");
   const first = [], last = [];
@@ -1047,7 +1079,7 @@ function exportMemo(kind) {
       '</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n</body>\n</html>\n';
     type = "text/html"; name = "메모_" + stamp + ".html";
   } else {
-    body = "\ufeff" + ta.innerText.replace(/\u00a0/g, " ");   // BOM: 윈도우 앱에서도 한글이 깨지지 않게
+    body = "\ufeff" + ta.innerText.replace(/\u00a0/g, " ").replace(/\u200b/g, "");   // BOM: 윈도우 앱에서도 한글이 깨지지 않게
     type = "text/plain"; name = "메모_" + stamp + ".txt";
   }
   const url = URL.createObjectURL(new Blob([body], { type: type + ";charset=utf-8" }));
