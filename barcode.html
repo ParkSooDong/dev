@@ -64,6 +64,22 @@ button:disabled{opacity:.35;cursor:default}
 .rich{display:block;overflow:auto;word-break:break-word;outline:none}
 .rich:empty::before{content:attr(data-ph);color:var(--mute);pointer-events:none}
 .rich img{display:block;max-width:100%;height:auto;margin:4px 0}
+/* 이미지 크기 조절 / 글자 넣기 */
+.imgx-box{position:fixed;z-index:110;border:2px solid #339af0;box-sizing:border-box;pointer-events:none}
+.imgx-grip{position:absolute;right:-10px;bottom:-10px;width:20px;height:20px;border-radius:50%;background:#339af0;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);cursor:nwse-resize;pointer-events:auto;touch-action:none}
+.imgx-bar{position:fixed;z-index:111;max-width:calc(100vw - 8px);padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.2);color:var(--ink)}
+.imgx-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.imgx-bar button{flex:none;width:auto;height:auto;margin:0;font:inherit;font-size:13px;font-weight:400;padding:4px 9px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap}
+.imgx-bar button:hover{background:var(--line)}
+.imgx-bar button:disabled{opacity:.4;cursor:default;background:transparent}
+.imgx-bar button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.imgx-bar .sep{width:1px;align-self:stretch;background:var(--line);margin:2px 2px}
+.imgx-bar input[type=color]{width:34px;height:28px;padding:1px;margin:0;border:1px solid var(--line);border-radius:7px;background:transparent;cursor:pointer}
+.imgx-bar select{width:auto;height:28px;margin:0;padding:0 4px;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
+.imgx-tbox{position:fixed;z-index:112}
+.imgx-tbox textarea{display:block;box-sizing:border-box;margin:0;padding:2px 4px;border:1px dashed #339af0;border-radius:2px;background:transparent;font-family:inherit;line-height:1.3;white-space:pre;overflow:hidden;resize:none;outline:none;min-width:40px}
+.imgx-tgrip{position:absolute;left:-22px;top:-2px;width:20px;height:20px;border-radius:5px;background:#339af0;color:#fff;font-size:13px;line-height:20px;text-align:center;cursor:move;touch-action:none;user-select:none}
+.imgx-box[hidden],.imgx-bar[hidden],.imgx-row[hidden]{display:none}
 .rich table{border-collapse:collapse;margin:4px 0}
 .rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em}
 .rich a{color:inherit}
@@ -273,6 +289,8 @@ function makeRich(el) {
         const s = n.getAttribute("src") || ""; if (!IMG.test(s)) continue;
         const im = document.createElement("img"); im.src = s;
         const a = n.getAttribute("alt"); if (a) im.alt = a.slice(0, 200);
+        const wv = n.getAttribute("width");   // 크기 조절한 이미지의 가로 크기(px)는 유지
+        if (/^\d+(\.\d+)?(px)?$/i.test(wv || "")) { const w = Math.round(parseFloat(wv)); if (w >= 16 && w <= 4000) im.setAttribute("width", w); }
         dst.appendChild(im); continue;
       }
       const e = document.createElement(t.toLowerCase());
@@ -951,6 +969,178 @@ function tbl(op) {   // 표 편집: 커서가 있는 칸 기준
 }
 const imgFile = document.getElementById("imgFile"), tblWrap = document.getElementById("tblWrap");
 let imgBack = null;
+/* ===== 이미지: 크기 조절 / 글자 넣기 =====
+   - 이미지를 클릭하면 파란 테두리와 모서리 손잡이(끌어서 크기 조절), 그리고 25%·50%·75%·100%·원본 크기 버튼이 나와요
+   - [글자 넣기]: 이미지 위에 글자 상자를 놓고 위치·색·크기를 정해 [적용]하면 글자가 이미지에 새겨져요(저장되는 이미지가 바뀜)
+   - 크기는 <img width> 로 저장돼서 저장/내보내기/불러오기에서도 유지돼요 */
+(function () {
+  const MINW = 24;
+  let img = null, raf = 0, drag = null, tm = null;
+  const hist = new WeakMap();          // 이미지 → 글자 넣기 전 그림 목록 (되돌리기용, 이 화면을 닫기 전까지)
+  const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const fire = () => ta.dispatchEvent(new Event("input", { bubbles: true }));
+  const box = el("div", "imgx-box"), grip = el("div", "imgx-grip"), bar = el("div", "imgx-bar");
+  const main = el("div", "imgx-row",
+    '<button type="button" data-w="25">25%</button><button type="button" data-w="50">50%</button><button type="button" data-w="75">75%</button><button type="button" data-w="100">100%</button><button type="button" data-w="0">원본 크기</button><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="undo">글자 되돌리기</button>');
+  const ctl = el("div", "imgx-row",
+    '<input type="color" data-c="color" value="#e03131" title="글자색" aria-label="글자색"><select data-c="size" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-c="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-c="outline" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><i class="sep"></i><button type="button" data-a="ok">적용</button><button type="button" data-a="cancel">취소</button>');
+  ctl.hidden = true; box.hidden = bar.hidden = true;
+  box.appendChild(grip); bar.append(main, ctl); document.body.append(box, bar);
+  const colorIn = ctl.querySelector('[data-c="color"]'), sizeSel = ctl.querySelector('[data-c="size"]');
+  const undoBtn = main.querySelector('[data-a="undo"]');
+  const isOn = b => b.getAttribute("aria-pressed") === "true";
+  try { document.execCommand("enableObjectResizing", false, false); } catch (e) {}   // 파이어폭스 기본 손잡이는 끔
+
+  const inner = () => { const cs = getComputedStyle(ta); return ta.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); };
+  function setW(px) {
+    img.setAttribute("width", clamp(Math.round(px), MINW, Math.max(MINW, Math.floor(inner()))));
+    img.removeAttribute("height"); place();
+  }
+  function hide() { closeTxt(); img = null; box.hidden = bar.hidden = true; }
+  function show(i) {
+    if (img !== i) closeTxt();
+    img = i; box.hidden = bar.hidden = false;
+    undoBtn.disabled = !(hist.get(img) || []).length;
+    place();
+  }
+  function place() {
+    raf = 0;
+    if (!img) return;
+    if (!img.isConnected) { hide(); return; }
+    const r = img.getBoundingClientRect(), t = ta.getBoundingClientRect();
+    const vis = r.bottom > t.top && r.top < t.bottom && r.right > t.left && r.left < t.right;
+    box.style.display = bar.style.display = vis ? "" : "none";
+    if (tm) tm.wrap.style.display = vis ? "" : "none";
+    if (!vis) return;
+    box.style.left = r.left + "px"; box.style.top = r.top + "px"; box.style.width = r.width + "px"; box.style.height = r.height + "px";
+    grip.style.display = tm ? "none" : "";
+    const bw = bar.offsetWidth, bh = bar.offsetHeight;
+    let top = r.top - bh - 8; if (top < 4) top = Math.min(r.bottom + 8, innerHeight - bh - 4);
+    bar.style.left = clamp(r.left, 4, Math.max(4, innerWidth - bw - 4)) + "px"; bar.style.top = Math.max(4, top) + "px";
+    if (tm) { tm.wrap.style.left = r.left + tm.tx + "px"; tm.wrap.style.top = r.top + tm.ty + "px"; }
+  }
+  const sched = () => { if (img && !raf) raf = requestAnimationFrame(place); };
+  window.addEventListener("scroll", sched, true); window.addEventListener("resize", sched);
+  ta.addEventListener("input", sched);
+
+  ta.addEventListener("click", e => {
+    const t = e.target;
+    if (tm && t === img) {   // 글자 넣기 중: 클릭한 자리로 글자 상자를 옮김
+      const r = img.getBoundingClientRect();
+      tm.tx = clamp(e.clientX - r.left, -2, r.width - 16); tm.ty = clamp(e.clientY - r.top - 8, -2, r.height - 12);
+      place(); tm.t.focus(); return;
+    }
+    if (t && t.tagName === "IMG") show(t);
+  });
+  document.addEventListener("pointerdown", e => {
+    if (!img) return;
+    const t = e.target;
+    if (t === img || box.contains(t) || bar.contains(t) || (tm && tm.wrap.contains(t))) return;
+    hide();
+  }, true);
+
+  /* 모서리 손잡이로 크기 조절 (마우스·터치 모두) */
+  grip.addEventListener("pointerdown", e => {
+    e.preventDefault(); grip.setPointerCapture(e.pointerId);
+    drag = { x: e.clientX, w: img.getBoundingClientRect().width };
+  });
+  grip.addEventListener("pointermove", e => { if (drag && img) setW(drag.w + (e.clientX - drag.x)); });
+  const endDrag = () => { if (!drag) return; drag = null; fire(); };
+  grip.addEventListener("pointerup", endDrag); grip.addEventListener("pointercancel", endDrag);
+
+  bar.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서/포커스 유지
+  bar.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b || !img) return;
+    if (b.dataset.w !== undefined) {
+      const p = +b.dataset.w;
+      if (p) setW(inner() * p / 100); else { img.removeAttribute("width"); img.removeAttribute("height"); place(); }
+      fire(); sched(); return;
+    }
+    if (b.dataset.c) { b.setAttribute("aria-pressed", String(!isOn(b))); styleT(); return; }
+    const a = b.dataset.a;
+    if (a === "txt") openTxt(); else if (a === "undo") undoTxt(); else if (a === "ok") applyTxt(); else if (a === "cancel") closeTxt();
+  });
+  ctl.addEventListener("input", () => styleT());
+
+  /* ---- 글자 넣기 ---- */
+  const mctx = document.createElement("canvas").getContext("2d");
+  function styleT() {
+    if (!tm) return;
+    const fs = +sizeSel.value, bold = isOn(ctl.querySelector('[data-c="bold"]')), ol = isOn(ctl.querySelector('[data-c="outline"]'));
+    const t = tm.t, c = colorIn.value, edge = lum(c) > 0.55 ? "#000" : "#fff";
+    t.style.color = c; t.style.fontSize = fs + "px"; t.style.fontWeight = bold ? "700" : "400";
+    t.style.textShadow = ol ? [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(d => d[0] + "px " + d[1] + "px 0 " + edge).join(",") : "none";
+    const lines = (t.value || t.placeholder).split("\n");
+    mctx.font = (bold ? "700 " : "") + fs + "px " + getComputedStyle(t).fontFamily;
+    t.style.width = Math.ceil(Math.max(...lines.map(l => mctx.measureText(l).width)) + 14) + "px";
+    t.style.height = Math.ceil(lines.length * fs * 1.3 + 6) + "px";
+  }
+  function lum(hex) { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255; }
+  function openTxt() {
+    if (!img || tm) return;
+    const r = img.getBoundingClientRect();
+    const wrap = el("div", "imgx-tbox"), g = el("div", "imgx-tgrip", "✥"), t = el("textarea");
+    g.title = "끌어서 글자 위치 옮기기 (이미지를 클릭해도 그 자리로 이동)";
+    t.rows = 1; t.wrap = "off"; t.spellcheck = false; t.placeholder = "글자 입력"; t.setAttribute("aria-label", "이미지에 넣을 글자");
+    wrap.append(g, t); document.body.appendChild(wrap);
+    tm = { wrap, g, t, tx: Math.round(r.width * 0.08), ty: Math.round(r.height * 0.4), d: null };
+    main.hidden = true; ctl.hidden = false;
+    g.addEventListener("pointerdown", e => { e.preventDefault(); g.setPointerCapture(e.pointerId); tm.d = { x: e.clientX, y: e.clientY, tx: tm.tx, ty: tm.ty }; });
+    g.addEventListener("pointermove", e => {
+      if (!tm || !tm.d) return; const q = img.getBoundingClientRect();
+      tm.tx = clamp(tm.d.tx + e.clientX - tm.d.x, -2, q.width - 16); tm.ty = clamp(tm.d.ty + e.clientY - tm.d.y, -2, q.height - 12); place();
+    });
+    g.addEventListener("pointerup", () => { if (tm) tm.d = null; });
+    t.addEventListener("input", styleT);
+    t.addEventListener("keydown", e => {
+      e.stopPropagation();   // Esc 가 메모 확대/축소로 번지지 않게
+      if (e.key === "Escape") { e.preventDefault(); closeTxt(); }
+      else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); applyTxt(); }
+    });
+    styleT(); place(); t.focus();
+  }
+  function closeTxt() {
+    if (!tm) return;
+    tm.wrap.remove(); tm = null; main.hidden = false; ctl.hidden = true; sched();
+  }
+  function applyTxt() {
+    if (!tm || !img) return;
+    const text = tm.t.value.replace(/\s+$/, "");
+    if (!text.trim()) { closeTxt(); return; }
+    const nw = img.naturalWidth, nh = img.naturalHeight, r = img.getBoundingClientRect();
+    if (!nw || !nh || !r.width) { toast("이미지를 아직 읽는 중이에요. 잠시 뒤에 다시 눌러 주세요"); return; }
+    const k = nw / r.width, fs = +sizeSel.value * k, lh = fs * 1.3;
+    const bold = isOn(ctl.querySelector('[data-c="bold"]')), ol = isOn(ctl.querySelector('[data-c="outline"]'));
+    const c = document.createElement("canvas"); c.width = nw; c.height = nh;
+    const x = c.getContext("2d"); x.drawImage(img, 0, 0, nw, nh);
+    x.font = (bold ? "700 " : "") + fs + "px " + getComputedStyle(tm.t).fontFamily;
+    x.textBaseline = "middle"; x.textAlign = "left"; x.lineJoin = "round";
+    const ox = (tm.tx + 5) * k, oy = (tm.ty + 3) * k;   // 상자 테두리 1 + 안쪽 여백(좌우 4, 위아래 2)
+    text.split("\n").forEach((ln, i) => {
+      const y = oy + (i + 0.5) * lh;
+      if (ol) { x.lineWidth = Math.max(2, fs * 0.18); x.strokeStyle = lum(colorIn.value) > 0.55 ? "#000" : "#fff"; x.strokeText(ln, ox, y); }
+      x.fillStyle = colorIn.value; x.fillText(ln, ox, y);
+    });
+    let url;
+    try {
+      url = c.toDataURL("image/png");
+      if (url.length > 300000) {   // 너무 크면 JPEG 로 (저장 용량 절약, 메모에 넣을 때와 같은 기준)
+        const c2 = document.createElement("canvas"); c2.width = nw; c2.height = nh;
+        const x2 = c2.getContext("2d"); x2.fillStyle = "#fff"; x2.fillRect(0, 0, nw, nh); x2.drawImage(c, 0, 0);
+        url = c2.toDataURL("image/jpeg", 0.85);
+      }
+    } catch (e) { toast("이 이미지에는 글자를 넣을 수 없어요"); return; }
+    const h = hist.get(img) || []; h.push(img.src); while (h.length > 3) h.shift(); hist.set(img, h);
+    img.src = url; undoBtn.disabled = false;
+    closeTxt(); fire(); toast("글자를 넣었어요. 마음에 안 들면 [글자 되돌리기]를 눌러 주세요");
+  }
+  function undoTxt() {
+    const h = img && hist.get(img); if (!h || !h.length) return;
+    img.src = h.pop(); undoBtn.disabled = !h.length; fire(); sched();
+  }
+})();
+
 function pickImage() {
   if (ta.disabled) return;
   imgBack = saveRange(); imgFile.value = ""; imgFile.click();
