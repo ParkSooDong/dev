@@ -11,12 +11,16 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;display:flex;flex-direction:column;padding:12px;gap:8px}
-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 8px}
+header{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:6px 10px}
 .fbbtn{flex:none;font:inherit;font-size:13px;font-weight:600;padding:2px 12px;border-radius:999px;background:transparent;color:var(--ink);border:1.5px solid var(--line);cursor:pointer}
 .fbbtn[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .fbbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 h1{font-size:17px;margin:0;letter-spacing:-.01em}
 #st{font-size:12px;color:var(--mute)}
+#st:empty{display:none}
+/* 제목 줄: 메모장 | Firebase 버튼 | 상태 | DB 글자 수 — 왼쪽부터 차례로, 구분선만 둠 */
+header h1::after{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px;margin-left:10px}
+#st::before,#cnt::before{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px}
 #st.ok{color:var(--ok)}
 #st.err{color:var(--err)}
 #cnt{font-size:12px;color:var(--mute);white-space:nowrap}
