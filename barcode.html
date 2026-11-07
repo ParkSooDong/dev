@@ -78,6 +78,12 @@ button:disabled{opacity:.35;cursor:default}
 #mst.ok{color:#2e7d32}
 :root[data-theme="dark"] #mst.ok{color:#81c784}
 #mst.err{color:var(--warn)}
+.cntrow{text-align:right;margin:2px 0}
+#cnt{font-size:12px;font-weight:400;color:var(--mute);white-space:nowrap}
+#cnt.cw{color:#e8590c}
+#cnt.ce{color:var(--warn);font-weight:600}
+body.has-max .cntrow{margin:0}
+body.has-max #cnt{position:fixed;right:20px;bottom:calc(max(18px,env(safe-area-inset-bottom,0px)) + 34px);z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
 body.has-max #mst{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
 .mslot{position:relative}
 .mpane{position:relative}
@@ -186,7 +192,7 @@ p{margin:6px 0 0}
 <label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
 </div>
 <div class="grid" id="g"></div>
-<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="mst" role="status"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
+<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="mst" role="status"></span></div><div class="cntrow"><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
   <button type="button" data-cmd="redo" title="다시 실행 (Ctrl+Y)" aria-label="다시 실행"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
@@ -544,6 +550,26 @@ const MAX_CHARS=3000000,POLL_MS=3000,IDLE_MS=3000,MAX_WAIT_MS=30000;
 const BASE=DB_URL.replace(/\/+$/,""),URL_MEMO=BASE+"/memo.json",URL_AT=BASE+"/memo/updatedAt.json";
 const dbSet=!DB_URL.includes("YOUR-PROJECT");
 const memoEl=$("memo"),mst=$("mst"),fbBtn=$("fbBtn");
+
+/* ===== DB 저장 글자 수 표시 =====
+   Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 글자 수를 한도(MAX_CHARS)와 함께 보여줘요.
+   - 입력·붙여넣기·불러오기·서식 변경 등 메모 내용이 바뀔 때마다 갱신 (MutationObserver)
+   - 글자를 칠 때마다 계산하지 않고, 계산에 걸린 시간의 10배 이상 간격을 둬서 입력 속도에 영향을 주지 않아요 */
+const cnt = document.getElementById("cnt");
+let cntT = null;
+function updateCnt() {
+  cntT = null;
+  const t0 = performance.now();
+  const v = memoEl.value, n = v.length, vis = memoEl.textContent.replace(/\u200b/g, "").length, pct = n / MAX_CHARS * 100;
+  cnt.textContent = "DB " + n.toLocaleString("ko-KR") + " / " + MAX_CHARS.toLocaleString("ko-KR") + "자";
+  cnt.className = n > MAX_CHARS ? "ce" : pct >= 80 ? "cw" : "";
+  cnt.title = "Firebase 에 저장되는 글자 수 (서식·이미지 데이터 포함, 한도의 " + (pct < 0.1 && n ? "0.1% 미만" : pct.toFixed(1) + "%") + ")\n눈에 보이는 글자: " + vis.toLocaleString("ko-KR") + "자";
+  cntDelay = Math.max(250, (performance.now() - t0) * 10);
+}
+let cntDelay = 250;
+new MutationObserver(() => { if (!cntT) cntT = setTimeout(updateCnt, cntDelay); })
+  .observe(memoEl, { childList: true, subtree: true, characterData: true, attributes: true });
+updateCnt();
 let useFb=false,dirty=false,knownAt=0,ready=false,saving=false,connecting=false,firstTry=false,idleT=null,maxT=null;
 const hhmm=()=>new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});
 const say=(t,c)=>{mst.textContent=t;mst.className=c||""};
