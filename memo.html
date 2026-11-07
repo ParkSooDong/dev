@@ -19,6 +19,9 @@ h1{font-size:17px;margin:0;letter-spacing:-.01em}
 #st{font-size:12px;color:var(--mute)}
 #st.ok{color:var(--ok)}
 #st.err{color:var(--err)}
+#cnt{font-size:12px;color:var(--mute);white-space:nowrap}
+#cnt.cw{color:#e8590c}
+#cnt.ce{color:var(--err);font-weight:600}
 /* .slot 이 자리를 지키고 .pane(확대 대상)이 그 안을 채움 → 확대해도 원래 레이아웃은 그대로 */
 .slot{flex:1;min-height:0;position:relative}
 .pane{position:absolute;inset:0;display:flex;flex-direction:column;gap:6px}
@@ -88,7 +91,7 @@ body.has-max header h1{display:none}
 </style>
 </head>
 <body>
-<header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="st" role="status"></span></header>
+<header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="st" role="status"></span><span id="cnt"></span></header>
 <div class="slot"><div class="pane" id="pane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
@@ -445,6 +448,26 @@ ta.addEventListener("input", () => {
   clearTimeout(localT); localT = setTimeout(saveLocal, 300);   // 이 PC 사본은 입력을 멈추면 바로 저장
 });
 setInterval(() => { if (useFb && dbSet) ready ? poll() : connect(); }, POLL_MS);
+
+/* ===== DB 저장 글자 수 표시 =====
+   Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 글자 수를 한도(MAX_CHARS)와 함께 보여줘요.
+   - 입력·붙여넣기·불러오기·서식 변경 등 메모 내용이 바뀔 때마다 갱신 (MutationObserver)
+   - 글자를 칠 때마다 계산하지 않고, 계산에 걸린 시간의 10배 이상 간격을 둬서 입력 속도에 영향을 주지 않아요 */
+const cnt = document.getElementById("cnt");
+let cntT = null;
+function updateCnt() {
+  cntT = null;
+  const t0 = performance.now();
+  const v = ta.value, n = v.length, vis = ta.textContent.replace(/\u200b/g, "").length, pct = n / MAX_CHARS * 100;
+  cnt.textContent = "DB " + n.toLocaleString("ko-KR") + " / " + MAX_CHARS.toLocaleString("ko-KR") + "자";
+  cnt.className = n > MAX_CHARS ? "ce" : pct >= 80 ? "cw" : "";
+  cnt.title = "Firebase 에 저장되는 글자 수 (서식·이미지 데이터 포함, 한도의 " + (pct < 0.1 && n ? "0.1% 미만" : pct.toFixed(1) + "%") + ")\n눈에 보이는 글자: " + vis.toLocaleString("ko-KR") + "자";
+  cntDelay = Math.max(250, (performance.now() - t0) * 10);
+}
+let cntDelay = 250;
+new MutationObserver(() => { if (!cntT) cntT = setTimeout(updateCnt, cntDelay); })
+  .observe(ta, { childList: true, subtree: true, characterData: true, attributes: true });
+updateCnt();
 
 /* ===== 서식 툴바 ===== */
 const tb = document.getElementById("tb"), pop = document.getElementById("pop"), expBtn = document.getElementById("expBtn");
