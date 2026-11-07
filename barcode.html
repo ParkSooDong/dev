@@ -188,10 +188,6 @@ p{margin:6px 0 0}
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
   <button type="button" data-cmd="redo" title="다시 실행 (Ctrl+Y)" aria-label="다시 실행"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
   <i class="sep"></i>
-  <button type="button" data-cmd="ul" title="글머리 기호 목록" aria-label="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg></button>
-  <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
-  <button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)" aria-label="체크리스트"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
-  <i class="sep"></i>
   <button type="button" data-cmd="bold" title="굵게 (Ctrl+B)" aria-label="굵게" aria-pressed="false"><b>B</b></button>
   <button type="button" data-cmd="italic" title="기울임 (Ctrl+I)" aria-label="기울임" aria-pressed="false"><i style="font-family:serif;font-size:16px">I</i></button>
   <button type="button" data-cmd="underline" title="밑줄 (Ctrl+U)" aria-label="밑줄" aria-pressed="false"><u>U</u></button>
@@ -208,12 +204,15 @@ p{margin:6px 0 0}
   <button type="button" data-cmd="image" title="이미지 삽입" aria-label="이미지 삽입"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg></button>
   <input type="file" id="imgFile" accept="image/*" multiple hidden>
   <button type="button" data-cmd="find" title="찾기" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
+  <button type="button" data-cmd="ul" title="글머리 기호 목록" aria-label="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg></button>
+  <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
+  <button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)" aria-label="체크리스트"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
   <div class="menu"><button type="button" data-pal title="더보기" aria-label="더보기" aria-haspopup="true" aria-expanded="false">⋯</button><div class="pop" hidden><button type="button" data-cmd="indent">들여쓰기</button><button type="button" data-cmd="outdent">내어쓰기</button><button type="button" data-cmd="hr">구분선</button><button type="button" data-cmd="quote" aria-pressed="false">인용</button><button type="button" data-cmd="code" aria-pressed="false">코드 블록</button></div></div>
   <i class="sep"></i>
-  <button type="button" id="impBtn" title="불러오기 (.html / .txt)" aria-label="불러오기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>불러오기</span></button>
+  <button type="button" id="impBtn" title="열기 (.html / .txt)" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
   <input type="file" id="impFile" accept=".html,.htm,.txt,text/html,text/plain" hidden>
   <div class="menu">
-    <button type="button" id="expBtn" title="내보내기" aria-label="내보내기" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span>내보내기</span></button>
+    <button type="button" id="expBtn" title="저장" aria-label="저장" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span>저장</span></button>
     <div class="pop" id="pop" hidden>
       <button type="button" data-exp="html">HTML (.html)</button>
       <button type="button" data-exp="txt">텍스트 (.txt)</button>
@@ -487,7 +486,7 @@ function init(){
   const g=$("g"),d=defs();
   for(let i=0;i<9;i++){
     const el=document.createElement("div");el.className="cell"+(i===3?" wk":"");
-    el.innerHTML=`<div class="view"></div><input aria-label="바코드 ${i+1}번 내용${i===3?" (작업자)":""}" placeholder="${i+1}번" autocomplete="off"><div class="btns"><button>저장</button></div>`;
+    el.innerHTML=`<div class="view"></div><input aria-label="바코드 ${i+1}번 내용${i===3?" (작업자)":""}" placeholder="${i+1}번" autocomplete="off"><div class="btns"><button>이미지 저장</button></div>`;
     const c={inp:el.querySelector("input"),view:el.querySelector(".view"),bl:el.querySelector("button")};
     c.inp.value=d[i];
     c.inp.addEventListener("input",()=>{draw(i);saveState()});
@@ -1037,7 +1036,7 @@ expBtn.addEventListener("click", () => {
 });
 
 function exportMemo(kind) {
-  if (ta.value === "") { say("내보낼 메모가 없어요", "err"); return; }
+  if (ta.value === "") { say("저장할 메모가 없어요", "err"); return; }
   const n = new Date(), p = x => String(x).padStart(2, "0");
   const stamp = n.getFullYear() + p(n.getMonth() + 1) + p(n.getDate()) + "-" + p(n.getHours()) + p(n.getMinutes());
   let body, type, name;
@@ -1055,7 +1054,7 @@ function exportMemo(kind) {
   const a = document.createElement("a"); a.href = url; a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-  say("내보냈어요: " + name, "ok");
+  say("저장했어요: " + name, "ok");
 }
 
 /* ===== 불러오기 (.html / .txt): 내보낸 파일이나 다른 메모를 가져와요 ===== */
@@ -1063,7 +1062,7 @@ const impBtn = document.getElementById("impBtn"), impFile = document.getElementB
 impBtn.addEventListener("click", () => { closePop(); impFile.value = ""; impFile.click(); });
 impFile.addEventListener("change", async () => {
   const f = impFile.files && impFile.files[0]; if (!f) return;
-  if (ta.disabled) { say("지금은 불러올 수 없어요. 잠시 후 다시 시도해 주세요", "err"); return; }
+  if (ta.disabled) { say("지금은 열 수 없어요. 잠시 후 다시 시도해 주세요", "err"); return; }
   if (f.size > 8e6) { say("파일이 너무 커요 (8MB 이하만 가능)", "err"); return; }
   let html = "";
   try {
@@ -1071,11 +1070,11 @@ impFile.addEventListener("change", async () => {
     html = (/\.html?$/i.test(f.name) || f.type === "text/html") ? ta.sanitize(txt) : escH(txt).replace(/\r?\n/g, "<br>");
   } catch (e) { say("파일을 읽지 못했어요", "err"); return; }
   const probe = document.createElement("div"); probe.innerHTML = html;
-  if (!probe.textContent.trim() && !probe.querySelector("img,table")) { say("불러올 내용이 없어요", "err"); return; }
+  if (!probe.textContent.trim() && !probe.querySelector("img,table")) { say("열 내용이 없어요", "err"); return; }
   let append = false;
   if (ta.value !== "") {
     if (confirm("현재 메모 끝에 '" + f.name + "' 내용을 이어 붙일까요?\n\n[확인] 이어 붙이기\n[취소] 다른 방법 선택")) append = true;
-    else if (!confirm("현재 메모를 지우고 '" + f.name + "' 내용으로 바꿀까요?\n(되돌릴 수 없어요)\n\n[확인] 바꾸기\n[취소] 불러오기 취소")) { say("불러오기를 취소했어요"); return; }
+    else if (!confirm("현재 메모를 지우고 '" + f.name + "' 내용으로 바꿀까요?\n(되돌릴 수 없어요)\n\n[확인] 바꾸기\n[취소] 열기 취소")) { say("열기를 취소했어요"); return; }
   }
   if (append) {
     ta.focus();
@@ -1086,7 +1085,7 @@ impFile.addEventListener("change", async () => {
     ta.value = RICH_PREFIX + html;
     ta.dispatchEvent(new Event("input", { bubbles: true }));   // 자동 저장 / DB 동기화가 이어서 동작
   }
-  say("불러왔어요: " + f.name, "ok");
+  say("열었어요: " + f.name, "ok");
 });
 
 /* Esc: 열린 팝업 → 찾기 창 순서로 닫음 (메모 확대 해제는 팝업/찾기 창이 없을 때만) */
