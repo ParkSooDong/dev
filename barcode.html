@@ -64,7 +64,7 @@ button:disabled{opacity:.35;cursor:default}
 .rich{display:block;overflow:auto;word-break:break-word;outline:none}
 .rich:empty::before{content:attr(data-ph);color:var(--mute);pointer-events:none}
 .rich img{display:inline-block;vertical-align:middle;max-width:100%;height:auto;margin:2px 0}
-/* 이미지 크기 조절 / 글자 넣기 */
+/* 이미지 크기 조절 / 도형 넣기 */
 .imgx-box{position:fixed;z-index:110;border:2px solid #339af0;box-sizing:border-box;pointer-events:none}
 .imgx-grip{position:absolute;right:-10px;bottom:-10px;width:20px;height:20px;border-radius:50%;background:#339af0;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);cursor:nwse-resize;pointer-events:auto;touch-action:none}
 .imgx-bar{position:fixed;z-index:111;max-width:calc(100vw - 8px);padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.2);color:var(--ink)}
@@ -74,13 +74,18 @@ button:disabled{opacity:.35;cursor:default}
 .imgx-bar button:disabled{opacity:.4;cursor:default;background:transparent}
 .imgx-bar button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .imgx-bar .sep{width:1px;align-self:stretch;background:var(--line);margin:2px 2px}
+.imgx-bar button.ic{padding:3px 5px;line-height:0}.imgx-bar button.ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.imgx-bar button.ic[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.imgx-bar [hidden]{display:none}
 .imgx-bar input[type=color]{width:34px;height:28px;padding:1px;margin:0;border:1px solid var(--line);border-radius:7px;background:transparent;cursor:pointer}
 .imgx-bar select{width:auto;height:28px;margin:0;padding:0 4px;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
 .imgx-tbox{position:fixed;z-index:112}
 .imgx-tbox textarea{display:block;box-sizing:border-box;margin:0;padding:2px 4px;border:1px dashed #339af0;border-radius:2px;background:transparent;font-family:inherit;line-height:1.3;white-space:pre;overflow:hidden;resize:none;outline:none;min-width:40px}
 .imgx-tgrip{position:absolute;left:-22px;top:-2px;width:20px;height:20px;border-radius:5px;background:#339af0;color:#fff;font-size:13px;line-height:20px;text-align:center;cursor:move;touch-action:none;user-select:none}
 .imgx-box[hidden],.imgx-bar[hidden],.imgx-row[hidden]{display:none}
-.imgx-ov{position:fixed;z-index:109;display:block;overflow:hidden;touch-action:none;cursor:crosshair}
+.imgx-ov{position:fixed;z-index:109;display:block;overflow:hidden;touch-action:none;cursor:crosshair;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/16px 16px}
+.imgx-ov.er{cursor:none}
+.imgx-ov>canvas,.imgx-ov>svg{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
 .imgx-bar textarea{width:150px;height:44px;margin:0;padding:4px 6px;font:inherit;font-size:13px;line-height:1.3;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);resize:none}
 .imgx-bar textarea[hidden]{display:none}
 .rich table{border-collapse:collapse;margin:4px 0}
@@ -148,7 +153,7 @@ body.has-max #mst{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-
 .tbar button.del{color:var(--warn)}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);max-width:88vw;padding:9px 16px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:14px;line-height:1.4;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:60;pointer-events:none}
 .toast[hidden]{display:none}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(224,49,49,.0)}50%{box-shadow:0 0 0 4px rgba(224,49,49,.55)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(240,101,149,.0)}50%{box-shadow:0 0 0 4px rgba(240,101,149,.55)}}
 .tb .menu.pulse>button{animation:pulse .9s ease-in-out 3}
 .tb .pop{position:absolute;top:calc(100% + 4px);left:0;z-index:10;display:flex;flex-direction:column;min-width:150px;padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
 .tb .pop[hidden]{display:none}
@@ -224,7 +229,7 @@ p{margin:6px 0 0}
   <button type="button" data-cmd="underline" title="밑줄 (Ctrl+U)" aria-label="밑줄" aria-pressed="false"><u>U</u></button>
   <button type="button" data-cmd="strike" title="취소선" aria-label="취소선" aria-pressed="false"><s>S</s></button>
   <div class="menu"><button type="button" data-pal title="글자 크기" aria-label="글자 크기" aria-haspopup="true" aria-expanded="false"><span style="font-size:11px">가</span><span style="font-size:17px;font-weight:600">가</span></button><div class="pop" hidden style="min-width:110px;max-height:50vh;overflow:auto"><button type="button" data-fs="8">8</button><button type="button" data-fs="13">13</button><button type="button" data-fs="21">21</button><button type="button" data-fs="34">34</button><button type="button" data-fs="55">55</button><button type="button" data-fs="89">89</button><button type="button" data-fs="144">144</button><button type="button" data-fs="238">238</button><button type="button" data-fs="" style="font-size:13px">기본 크기</button></div></div>
-  <div class="menu"><button type="button" data-pal title="글자색" aria-label="글자색" aria-haspopup="true" aria-expanded="false"><b style="border-bottom:3px solid #e03131;line-height:1.1">A</b></button><div class="pop pal wide" hidden><button type="button" class="sw" data-fc="#000000" style="background:#000000" title="#000000" aria-label="#000000"></button><button type="button" class="sw" data-fc="#212529" style="background:#212529" title="#212529" aria-label="#212529"></button><button type="button" class="sw" data-fc="#343a40" style="background:#343a40" title="#343a40" aria-label="#343a40"></button><button type="button" class="sw" data-fc="#495057" style="background:#495057" title="#495057" aria-label="#495057"></button><button type="button" class="sw" data-fc="#6c757d" style="background:#6c757d" title="#6c757d" aria-label="#6c757d"></button><button type="button" class="sw" data-fc="#868e96" style="background:#868e96" title="#868e96" aria-label="#868e96"></button><button type="button" class="sw" data-fc="#adb5bd" style="background:#adb5bd" title="#adb5bd" aria-label="#adb5bd"></button><button type="button" class="sw" data-fc="#ced4da" style="background:#ced4da" title="#ced4da" aria-label="#ced4da"></button><button type="button" class="sw" data-fc="#dee2e6" style="background:#dee2e6" title="#dee2e6" aria-label="#dee2e6"></button><button type="button" class="sw" data-fc="#e9ecef" style="background:#e9ecef" title="#e9ecef" aria-label="#e9ecef"></button><button type="button" class="sw" data-fc="#f1f3f5" style="background:#f1f3f5" title="#f1f3f5" aria-label="#f1f3f5"></button><button type="button" class="sw" data-fc="#ffffff" style="background:#ffffff" title="#ffffff" aria-label="#ffffff"></button><button type="button" class="sw" data-fc="#c92a2a" style="background:#c92a2a" title="#c92a2a" aria-label="#c92a2a"></button><button type="button" class="sw" data-fc="#a61e4d" style="background:#a61e4d" title="#a61e4d" aria-label="#a61e4d"></button><button type="button" class="sw" data-fc="#862e9c" style="background:#862e9c" title="#862e9c" aria-label="#862e9c"></button><button type="button" class="sw" data-fc="#5f3dc4" style="background:#5f3dc4" title="#5f3dc4" aria-label="#5f3dc4"></button><button type="button" class="sw" data-fc="#364fc7" style="background:#364fc7" title="#364fc7" aria-label="#364fc7"></button><button type="button" class="sw" data-fc="#1864ab" style="background:#1864ab" title="#1864ab" aria-label="#1864ab"></button><button type="button" class="sw" data-fc="#0b7285" style="background:#0b7285" title="#0b7285" aria-label="#0b7285"></button><button type="button" class="sw" data-fc="#087f5b" style="background:#087f5b" title="#087f5b" aria-label="#087f5b"></button><button type="button" class="sw" data-fc="#2b8a3e" style="background:#2b8a3e" title="#2b8a3e" aria-label="#2b8a3e"></button><button type="button" class="sw" data-fc="#5c940d" style="background:#5c940d" title="#5c940d" aria-label="#5c940d"></button><button type="button" class="sw" data-fc="#e67700" style="background:#e67700" title="#e67700" aria-label="#e67700"></button><button type="button" class="sw" data-fc="#d9480f" style="background:#d9480f" title="#d9480f" aria-label="#d9480f"></button><button type="button" class="sw" data-fc="#f03e3e" style="background:#f03e3e" title="#f03e3e" aria-label="#f03e3e"></button><button type="button" class="sw" data-fc="#d6336c" style="background:#d6336c" title="#d6336c" aria-label="#d6336c"></button><button type="button" class="sw" data-fc="#ae3ec9" style="background:#ae3ec9" title="#ae3ec9" aria-label="#ae3ec9"></button><button type="button" class="sw" data-fc="#7048e8" style="background:#7048e8" title="#7048e8" aria-label="#7048e8"></button><button type="button" class="sw" data-fc="#4263eb" style="background:#4263eb" title="#4263eb" aria-label="#4263eb"></button><button type="button" class="sw" data-fc="#1c7ed6" style="background:#1c7ed6" title="#1c7ed6" aria-label="#1c7ed6"></button><button type="button" class="sw" data-fc="#1098ad" style="background:#1098ad" title="#1098ad" aria-label="#1098ad"></button><button type="button" class="sw" data-fc="#0ca678" style="background:#0ca678" title="#0ca678" aria-label="#0ca678"></button><button type="button" class="sw" data-fc="#37b24d" style="background:#37b24d" title="#37b24d" aria-label="#37b24d"></button><button type="button" class="sw" data-fc="#74b816" style="background:#74b816" title="#74b816" aria-label="#74b816"></button><button type="button" class="sw" data-fc="#f59f00" style="background:#f59f00" title="#f59f00" aria-label="#f59f00"></button><button type="button" class="sw" data-fc="#f76707" style="background:#f76707" title="#f76707" aria-label="#f76707"></button><button type="button" class="sw" data-fc="#ff6b6b" style="background:#ff6b6b" title="#ff6b6b" aria-label="#ff6b6b"></button><button type="button" class="sw" data-fc="#f06595" style="background:#f06595" title="#f06595" aria-label="#f06595"></button><button type="button" class="sw" data-fc="#cc5de8" style="background:#cc5de8" title="#cc5de8" aria-label="#cc5de8"></button><button type="button" class="sw" data-fc="#845ef7" style="background:#845ef7" title="#845ef7" aria-label="#845ef7"></button><button type="button" class="sw" data-fc="#5c7cfa" style="background:#5c7cfa" title="#5c7cfa" aria-label="#5c7cfa"></button><button type="button" class="sw" data-fc="#339af0" style="background:#339af0" title="#339af0" aria-label="#339af0"></button><button type="button" class="sw" data-fc="#22b8cf" style="background:#22b8cf" title="#22b8cf" aria-label="#22b8cf"></button><button type="button" class="sw" data-fc="#20c997" style="background:#20c997" title="#20c997" aria-label="#20c997"></button><button type="button" class="sw" data-fc="#51cf66" style="background:#51cf66" title="#51cf66" aria-label="#51cf66"></button><button type="button" class="sw" data-fc="#94d82d" style="background:#94d82d" title="#94d82d" aria-label="#94d82d"></button><button type="button" class="sw" data-fc="#fcc419" style="background:#fcc419" title="#fcc419" aria-label="#fcc419"></button><button type="button" class="sw" data-fc="#ff922b" style="background:#ff922b" title="#ff922b" aria-label="#ff922b"></button><button type="button" class="sw" data-fc="#ffa8a8" style="background:#ffa8a8" title="#ffa8a8" aria-label="#ffa8a8"></button><button type="button" class="sw" data-fc="#faa2c1" style="background:#faa2c1" title="#faa2c1" aria-label="#faa2c1"></button><button type="button" class="sw" data-fc="#e599f7" style="background:#e599f7" title="#e599f7" aria-label="#e599f7"></button><button type="button" class="sw" data-fc="#b197fc" style="background:#b197fc" title="#b197fc" aria-label="#b197fc"></button><button type="button" class="sw" data-fc="#91a7ff" style="background:#91a7ff" title="#91a7ff" aria-label="#91a7ff"></button><button type="button" class="sw" data-fc="#74c0fc" style="background:#74c0fc" title="#74c0fc" aria-label="#74c0fc"></button><button type="button" class="sw" data-fc="#66d9e8" style="background:#66d9e8" title="#66d9e8" aria-label="#66d9e8"></button><button type="button" class="sw" data-fc="#63e6be" style="background:#63e6be" title="#63e6be" aria-label="#63e6be"></button><button type="button" class="sw" data-fc="#8ce99a" style="background:#8ce99a" title="#8ce99a" aria-label="#8ce99a"></button><button type="button" class="sw" data-fc="#c0eb75" style="background:#c0eb75" title="#c0eb75" aria-label="#c0eb75"></button><button type="button" class="sw" data-fc="#ffe066" style="background:#ffe066" title="#ffe066" aria-label="#ffe066"></button><button type="button" class="sw" data-fc="#ffc078" style="background:#ffc078" title="#ffc078" aria-label="#ffc078"></button><button type="button" class="rs" data-fc="">기본 글자색</button><button type="button" class="rs" data-fcpick>직접 선택…</button></div></div>
+  <div class="menu"><button type="button" data-pal title="글자색" aria-label="글자색" aria-haspopup="true" aria-expanded="false"><b style="border-bottom:3px solid #f06595;line-height:1.1">A</b></button><div class="pop pal wide" hidden><button type="button" class="sw" data-fc="#000000" style="background:#000000" title="#000000" aria-label="#000000"></button><button type="button" class="sw" data-fc="#212529" style="background:#212529" title="#212529" aria-label="#212529"></button><button type="button" class="sw" data-fc="#343a40" style="background:#343a40" title="#343a40" aria-label="#343a40"></button><button type="button" class="sw" data-fc="#495057" style="background:#495057" title="#495057" aria-label="#495057"></button><button type="button" class="sw" data-fc="#6c757d" style="background:#6c757d" title="#6c757d" aria-label="#6c757d"></button><button type="button" class="sw" data-fc="#868e96" style="background:#868e96" title="#868e96" aria-label="#868e96"></button><button type="button" class="sw" data-fc="#adb5bd" style="background:#adb5bd" title="#adb5bd" aria-label="#adb5bd"></button><button type="button" class="sw" data-fc="#ced4da" style="background:#ced4da" title="#ced4da" aria-label="#ced4da"></button><button type="button" class="sw" data-fc="#dee2e6" style="background:#dee2e6" title="#dee2e6" aria-label="#dee2e6"></button><button type="button" class="sw" data-fc="#e9ecef" style="background:#e9ecef" title="#e9ecef" aria-label="#e9ecef"></button><button type="button" class="sw" data-fc="#f1f3f5" style="background:#f1f3f5" title="#f1f3f5" aria-label="#f1f3f5"></button><button type="button" class="sw" data-fc="#ffffff" style="background:#ffffff" title="#ffffff" aria-label="#ffffff"></button><button type="button" class="sw" data-fc="#c92a2a" style="background:#c92a2a" title="#c92a2a" aria-label="#c92a2a"></button><button type="button" class="sw" data-fc="#a61e4d" style="background:#a61e4d" title="#a61e4d" aria-label="#a61e4d"></button><button type="button" class="sw" data-fc="#862e9c" style="background:#862e9c" title="#862e9c" aria-label="#862e9c"></button><button type="button" class="sw" data-fc="#5f3dc4" style="background:#5f3dc4" title="#5f3dc4" aria-label="#5f3dc4"></button><button type="button" class="sw" data-fc="#364fc7" style="background:#364fc7" title="#364fc7" aria-label="#364fc7"></button><button type="button" class="sw" data-fc="#1864ab" style="background:#1864ab" title="#1864ab" aria-label="#1864ab"></button><button type="button" class="sw" data-fc="#0b7285" style="background:#0b7285" title="#0b7285" aria-label="#0b7285"></button><button type="button" class="sw" data-fc="#087f5b" style="background:#087f5b" title="#087f5b" aria-label="#087f5b"></button><button type="button" class="sw" data-fc="#2b8a3e" style="background:#2b8a3e" title="#2b8a3e" aria-label="#2b8a3e"></button><button type="button" class="sw" data-fc="#5c940d" style="background:#5c940d" title="#5c940d" aria-label="#5c940d"></button><button type="button" class="sw" data-fc="#e67700" style="background:#e67700" title="#e67700" aria-label="#e67700"></button><button type="button" class="sw" data-fc="#d9480f" style="background:#d9480f" title="#d9480f" aria-label="#d9480f"></button><button type="button" class="sw" data-fc="#f03e3e" style="background:#f03e3e" title="#f03e3e" aria-label="#f03e3e"></button><button type="button" class="sw" data-fc="#d6336c" style="background:#d6336c" title="#d6336c" aria-label="#d6336c"></button><button type="button" class="sw" data-fc="#ae3ec9" style="background:#ae3ec9" title="#ae3ec9" aria-label="#ae3ec9"></button><button type="button" class="sw" data-fc="#7048e8" style="background:#7048e8" title="#7048e8" aria-label="#7048e8"></button><button type="button" class="sw" data-fc="#4263eb" style="background:#4263eb" title="#4263eb" aria-label="#4263eb"></button><button type="button" class="sw" data-fc="#1c7ed6" style="background:#1c7ed6" title="#1c7ed6" aria-label="#1c7ed6"></button><button type="button" class="sw" data-fc="#1098ad" style="background:#1098ad" title="#1098ad" aria-label="#1098ad"></button><button type="button" class="sw" data-fc="#0ca678" style="background:#0ca678" title="#0ca678" aria-label="#0ca678"></button><button type="button" class="sw" data-fc="#37b24d" style="background:#37b24d" title="#37b24d" aria-label="#37b24d"></button><button type="button" class="sw" data-fc="#74b816" style="background:#74b816" title="#74b816" aria-label="#74b816"></button><button type="button" class="sw" data-fc="#f59f00" style="background:#f59f00" title="#f59f00" aria-label="#f59f00"></button><button type="button" class="sw" data-fc="#f76707" style="background:#f76707" title="#f76707" aria-label="#f76707"></button><button type="button" class="sw" data-fc="#ff6b6b" style="background:#ff6b6b" title="#ff6b6b" aria-label="#ff6b6b"></button><button type="button" class="sw" data-fc="#f06595" style="background:#f06595" title="#f06595" aria-label="#f06595"></button><button type="button" class="sw" data-fc="#cc5de8" style="background:#cc5de8" title="#cc5de8" aria-label="#cc5de8"></button><button type="button" class="sw" data-fc="#845ef7" style="background:#845ef7" title="#845ef7" aria-label="#845ef7"></button><button type="button" class="sw" data-fc="#5c7cfa" style="background:#5c7cfa" title="#5c7cfa" aria-label="#5c7cfa"></button><button type="button" class="sw" data-fc="#339af0" style="background:#339af0" title="#339af0" aria-label="#339af0"></button><button type="button" class="sw" data-fc="#22b8cf" style="background:#22b8cf" title="#22b8cf" aria-label="#22b8cf"></button><button type="button" class="sw" data-fc="#20c997" style="background:#20c997" title="#20c997" aria-label="#20c997"></button><button type="button" class="sw" data-fc="#51cf66" style="background:#51cf66" title="#51cf66" aria-label="#51cf66"></button><button type="button" class="sw" data-fc="#94d82d" style="background:#94d82d" title="#94d82d" aria-label="#94d82d"></button><button type="button" class="sw" data-fc="#fcc419" style="background:#fcc419" title="#fcc419" aria-label="#fcc419"></button><button type="button" class="sw" data-fc="#ff922b" style="background:#ff922b" title="#ff922b" aria-label="#ff922b"></button><button type="button" class="sw" data-fc="#ffa8a8" style="background:#ffa8a8" title="#ffa8a8" aria-label="#ffa8a8"></button><button type="button" class="sw" data-fc="#faa2c1" style="background:#faa2c1" title="#faa2c1" aria-label="#faa2c1"></button><button type="button" class="sw" data-fc="#e599f7" style="background:#e599f7" title="#e599f7" aria-label="#e599f7"></button><button type="button" class="sw" data-fc="#b197fc" style="background:#b197fc" title="#b197fc" aria-label="#b197fc"></button><button type="button" class="sw" data-fc="#91a7ff" style="background:#91a7ff" title="#91a7ff" aria-label="#91a7ff"></button><button type="button" class="sw" data-fc="#74c0fc" style="background:#74c0fc" title="#74c0fc" aria-label="#74c0fc"></button><button type="button" class="sw" data-fc="#66d9e8" style="background:#66d9e8" title="#66d9e8" aria-label="#66d9e8"></button><button type="button" class="sw" data-fc="#63e6be" style="background:#63e6be" title="#63e6be" aria-label="#63e6be"></button><button type="button" class="sw" data-fc="#8ce99a" style="background:#8ce99a" title="#8ce99a" aria-label="#8ce99a"></button><button type="button" class="sw" data-fc="#c0eb75" style="background:#c0eb75" title="#c0eb75" aria-label="#c0eb75"></button><button type="button" class="sw" data-fc="#ffe066" style="background:#ffe066" title="#ffe066" aria-label="#ffe066"></button><button type="button" class="sw" data-fc="#ffc078" style="background:#ffc078" title="#ffc078" aria-label="#ffc078"></button><button type="button" class="rs" data-fc="">기본 글자색</button><button type="button" class="rs" data-fcpick>직접 선택…</button></div></div>
   <div class="menu"><button type="button" data-pal title="배경색(형광펜)" aria-label="배경색" aria-haspopup="true" aria-expanded="false"><b style="background:#fff3a3;color:#1c1b19;padding:0 4px;border-radius:3px;line-height:1.3">A</b></button><div class="pop pal" hidden><button type="button" class="sw" data-bg="#fff3a3" style="background:#fff3a3" title="#fff3a3" aria-label="#fff3a3"></button><button type="button" class="sw" data-bg="#ffd8a8" style="background:#ffd8a8" title="#ffd8a8" aria-label="#ffd8a8"></button><button type="button" class="sw" data-bg="#ffd0e0" style="background:#ffd0e0" title="#ffd0e0" aria-label="#ffd0e0"></button><button type="button" class="sw" data-bg="#c3f0ca" style="background:#c3f0ca" title="#c3f0ca" aria-label="#c3f0ca"></button><button type="button" class="sw" data-bg="#bfe0ff" style="background:#bfe0ff" title="#bfe0ff" aria-label="#bfe0ff"></button><button type="button" class="sw" data-bg="#e0d4ff" style="background:#e0d4ff" title="#e0d4ff" aria-label="#e0d4ff"></button><button type="button" class="sw" data-bg="#e3e1db" style="background:#e3e1db" title="#e3e1db" aria-label="#e3e1db"></button><button type="button" class="sw" data-bg="#ffc9c9" style="background:#ffc9c9" title="#ffc9c9" aria-label="#ffc9c9"></button><button type="button" class="rs" data-bg="">배경색 없음</button></div></div>
   <div class="menu"><button type="button" data-pal title="정렬" aria-label="정렬" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h14"/></svg></button><div class="pop" hidden><button type="button" data-cmd="alL">왼쪽 정렬</button><button type="button" data-cmd="alC">가운데 정렬</button><button type="button" data-cmd="alR">오른쪽 정렬</button></div></div>
   <button type="button" data-cmd="clear" title="서식 지우기 (선택한 글자)" aria-label="서식 지우기"><svg viewBox="0 0 24 24"><path d="M4 5h10M9 5l-2.5 14M13 19h6M15.5 12.5l4 4M19.5 12.5l-4 4"/></svg></button>
@@ -233,13 +238,13 @@ p{margin:6px 0 0}
   <button type="button" data-cmd="table" title="표 삽입" aria-label="표 삽입"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg></button>
   <div class="menu dim" id="tblWrap"><button type="button" data-pal data-needtbl title="표 편집 (표 안의 칸을 클릭하면 사용할 수 있어요)" aria-label="표 편집" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M9.5 5v14"/></svg><span>표 편집</span></button><div class="pop" hidden><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div>
   <button type="button" data-cmd="image" title="이미지 삽입" aria-label="이미지 삽입"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg></button>
-  <input type="color" id="fcPick" value="#e03131" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
+  <input type="color" id="fcPick" value="#f06595" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="file" id="imgFile" accept="image/*" multiple hidden>
   <button type="button" data-cmd="find" title="찾기" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
   <button type="button" data-cmd="ul" title="글머리 기호 목록" aria-label="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg></button>
   <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
   <button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)" aria-label="체크리스트"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
-  <div class="menu"><button type="button" data-pal title="더보기" aria-label="더보기" aria-haspopup="true" aria-expanded="false">⋯</button><div class="pop" hidden><button type="button" data-cmd="indent">들여쓰기</button><button type="button" data-cmd="outdent">내어쓰기</button><button type="button" data-cmd="hr">구분선</button><button type="button" data-cmd="quote" aria-pressed="false">인용</button><button type="button" data-cmd="code" aria-pressed="false">코드 블록</button></div></div>
+  <div class="menu"><button type="button" data-pal title="더보기" aria-label="더보기" aria-haspopup="true" aria-expanded="false">⋯</button><div class="pop" hidden><button type="button" data-cmd="indent">들여쓰기</button><button type="button" data-cmd="outdent">내어쓰기</button><button type="button" data-cmd="hr">구분선</button><button type="button" data-cmd="quote" aria-pressed="false">인용</button><button type="button" data-cmd="code" aria-pressed="false">코드 블록</button><button type="button" data-cmd="clearall" title="메모 전체의 글자 서식을 기본값으로 되돌려요 (글자·이미지·표는 그대로)">전체 서식 초기화</button></div></div>
   <i class="sep"></i>
   <button type="button" id="impBtn" title="열기 (.html / .txt)" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
   <input type="file" id="impFile" accept=".html,.htm,.txt,text/html,text/plain" hidden>
@@ -257,7 +262,7 @@ p{margin:6px 0 0}
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
 <div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div></div></div></div>
 <p>Code 128 / QR(오류정정 M) · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 4번은 작업자 코드, 나머지는 직접 입력도 가능해요. 사업장 코드(앞 3자리-)와 년도(○○○-XX 뒤 2자리)를 바꾸면 1~9번 전체에 일괄 적용돼요.</p>
-<p class="warn" role="alert">입력하거나 수정한 내용은 이 기기의 브라우저에 자동 저장되므로, 웹페이지를 닫았다가 다시 열어도 직전 상태가 다시 보입니다.<span id="memoMsg"></span></p>
+<p class="warn" role="alert">입력하거나 수정한 내용은 이 기기의 브라우저에 자동 저장되므로, 웹페이지를 닫았다가 다시 열어도 직전 상태가 다시 보입니다.<span id="memoMsg"></span> <button type="button" id="resetAll" style="flex:none;width:auto;display:inline-block;margin-left:8px;padding:3px 12px;font-size:14px;vertical-align:middle" title="작업자·사업장 코드, 년도, 모드, 저장 형식, 바코드/QR, 1~9번 내용, 타이머 시각을 기본값으로 되돌려요">기본값으로 초기화</button></p>
 </main>
 <script>
 /* ===== 리치 메모: 엑셀 표 / 캡처 이미지 붙여넣기 지원 =====
@@ -270,6 +275,32 @@ function makeRich(el) {
   const PROPS = new Set("font-weight font-style font-size margin-left text-decoration color background-color text-align vertical-align border border-top border-right border-bottom border-left".split(" "));
   const IMG = /^data:image\/(png|jpe?g|gif|webp|bmp);base64,[A-Za-z0-9+\/=]+$/i;
   const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  /* 이미지 레이어: 원본은 data-base, 그 위에 얹은 글자·도형·선은 data-layers(JSON)에 따로 보관. 값은 모두 검증해서 정리 */
+  const LT = new Set("ctext cround coval cthink circle rect tri cloud poly free arrow darrow trend vline hline cross".split(" "));
+  const HEX = /^#[0-9a-f]{6}$/i;
+  function cleanLayers(str) {
+    let o; try { o = JSON.parse(str); } catch (e) { return ""; }
+    if (!o || !Array.isArray(o.items) || o.items.length > 300) return "";
+    const num = (v, a, b, d) => { v = +v; return isFinite(v) ? Math.min(b, Math.max(a, v)) : d; };
+    const W = num(o.W, 10, 20000, 0), H = num(o.H, 10, 20000, 0); if (!W || !H) return "";
+    const items = [];
+    for (const it of o.items) {
+      if (!it || !LT.has(it.t)) continue;
+      const r = { t: it.t };
+      for (const k of ["x1", "y1", "x2", "y2", "tx", "ty"]) r[k] = num(it[k], -1e5, 1e5, 0);
+      r.color = HEX.test(it.color) ? it.color : "#f06595"; r.bgc = HEX.test(it.bgc) ? it.bgc : null;
+      r.lw = num(it.lw, 1, 40, 3); r.fs = num(it.fs, 6, 400, 21); r.op = num(it.op, 0, 1, 1);
+      r.bold = !!it.bold; r.ol = !!it.ol; r.fill = !!it.fill; r.dash = !!it.dash; r.auto = it.auto !== false;
+      r.text = typeof it.text === "string" ? it.text.slice(0, 500) : "";
+      if (it.t === "poly" || it.t === "free") {
+        if (!Array.isArray(it.pts)) continue;
+        r.pts = it.pts.slice(0, 3000).map(q => [num(q && q[0], -1e5, 1e5, 0), num(q && q[1], -1e5, 1e5, 0)]);
+      }
+      items.push(r);
+    }
+    return JSON.stringify({ W, H, items });
+  }
 
   /* 허용된 스타일만 남김 (url(), expression 등은 차단) */
   function cleanStyle(s) {
@@ -294,6 +325,8 @@ function makeRich(el) {
         const a = n.getAttribute("alt"); if (a) im.alt = a.slice(0, 200);
         const wv = n.getAttribute("width");   // 크기 조절한 이미지의 가로 크기(px)는 유지
         if (/^\d+(\.\d+)?(px)?$/i.test(wv || "")) { const w = Math.round(parseFloat(wv)); if (w >= 16 && w <= 4000) im.setAttribute("width", w); }
+        const lay = n.getAttribute("data-layers"), bs = n.getAttribute("data-base");   // 레이어 정보(원본 + 추가 요소)
+        if (lay && bs && IMG.test(bs)) { const L = cleanLayers(lay); if (L) { im.setAttribute("data-base", bs); im.setAttribute("data-layers", L); } }
         dst.appendChild(im); continue;
       }
       const e = document.createElement(t.toLowerCase());
@@ -852,7 +885,7 @@ const CMDS = {
   check, indent: () => indent(1), outdent: () => indent(-1),
   alL: () => align("justifyLeft"), alC: () => align("justifyCenter"), alR: () => align("justifyRight"),
   hr: () => exec("insertHorizontalRule"), quote: () => block("blockquote"), code: () => block("pre"),
-  clear: clearFmt, image: pickImage, find: openFind
+  clear: clearFmt, clearall: clearAll, image: pickImage, find: openFind
 };
 
 /* ===== 추가 서식: 블록 찾기 / 들여쓰기 / 체크리스트 / 정렬 / 서식 지우기 / 표 편집 / 이미지 / 찾기 ===== */
@@ -946,6 +979,27 @@ function clearFmt() {
   leafBlocks().forEach(b => { b.style.textAlign = ""; b.style.marginLeft = ""; if (!b.getAttribute("style")) b.removeAttribute("style"); });
   fire(); refreshTb();
 }
+/* 메모 전체 서식을 기본값으로: 글자 크기·색·배경색·굵게/기울임/밑줄/취소선, 정렬·들여쓰기, 제목 → 본문.
+   글자·이미지(레이어 포함)·표·링크·목록·인용·코드는 그대로예요. 실행 취소(Ctrl+Z)로 되돌릴 수 있어요. */
+function clearAll() {
+  if (ta.disabled) return;
+  if (ta.value === "") { say("초기화할 내용이 없어요"); return; }
+  if (!confirm("메모 전체의 글자 서식(크기·색·배경색·굵게 등), 정렬, 제목을 기본값으로 되돌릴까요?\n\n글자·이미지·표는 그대로이고, Ctrl+Z 로 되돌릴 수 있어요.")) return;
+  ta.focus();
+  const s = getSelection(), all = document.createRange();
+  all.selectNodeContents(ta); s.removeAllRanges(); s.addRange(all);
+  document.execCommand("removeFormat");
+  ta.querySelectorAll("span[style]").forEach(unspan);
+  ta.querySelectorAll("h1,h2,h3").forEach(h => {   // 제목 → 본문
+    const r = document.createRange(); r.selectNodeContents(h); s.removeAllRanges(); s.addRange(r);
+    document.execCommand("formatBlock", false, "div");
+  });
+  ta.querySelectorAll("div,p,li,blockquote,pre,ul,ol,h1,h2,h3").forEach(b => {
+    b.style.textAlign = ""; b.style.marginLeft = ""; if (!b.getAttribute("style")) b.removeAttribute("style");
+  });
+  const end = document.createRange(); end.selectNodeContents(ta); end.collapse(false); s.removeAllRanges(); s.addRange(end);
+  fire(); refreshTb(); say("글자 서식을 기본값으로 되돌렸어요", "ok");
+}
 function tbl(op) {   // 표 편집: 커서가 있는 칸 기준
   const s = getSelection(), td = s.rangeCount && closestIn(s.anchorNode, "td,th");
   if (!td) { say("표 안의 칸을 먼저 클릭해 주세요", "err"); return; }
@@ -972,31 +1026,34 @@ function tbl(op) {   // 표 편집: 커서가 있는 칸 기준
 }
 const imgFile = document.getElementById("imgFile"), tblWrap = document.getElementById("tblWrap");
 let imgBack = null;
-/* ===== 이미지: 크기 조절 / 글자 넣기 =====
+/* ===== 이미지: 크기 조절 / 도형 넣기 =====
    - 이미지를 클릭하면 파란 테두리와 모서리 손잡이(끌어서 크기 조절), 그리고 25%·50%·75%·100%·원본 크기 버튼이 나와요
-   - [글자 넣기]: 이미지 위에 글자 상자를 놓고 위치·색·크기를 정해 [적용]하면 글자가 이미지에 새겨져요(저장되는 이미지가 바뀜)
+   - [글자 넣기] 글자·말풍선 3종, [도형 넣기] 도형 6종, [선 넣기] 선 6종: 아이콘을 골라 이미지 위에 놓고 손잡이로 조절한 뒤 [적용]하면 레이어로 저장돼요(원본 이미지는 그대로 두고, 글자·도형·선은 따로 보관 → 다시 열어 옮기거나 지울 수 있음)
+   - [지우개]는 원본 이미지 레이어를 지우고, [올가미]는 둘러싼 영역에 걸친 글자·도형·선(추가 요소 레이어)을 삭제해요. 그릴 때 선 굵기와 지울 때 굵기는 따로 정해요
    - 크기는 <img width> 로 저장돼서 저장/내보내기/불러오기에서도 유지돼요 */
 (function () {
   const MINW = 24;
-  let img = null, raf = 0, drag = null, tm = null, sh = null;
-  const hist = new WeakMap();          // 이미지 → 글자 넣기 전 그림 목록 (되돌리기용, 이 화면을 닫기 전까지)
+  let img = null, raf = 0, drag = null, sh = null;
+  const hist = new WeakMap();          // 이미지 → 넣기 전 그림 목록 (되돌리기용, 이 화면을 닫기 전까지)
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const fire = () => ta.dispatchEvent(new Event("input", { bubbles: true }));
   const box = el("div", "imgx-box"), grip = el("div", "imgx-grip"), bar = el("div", "imgx-bar");
   const main = el("div", "imgx-row",
-    '<button type="button" data-w="25">25%</button><button type="button" data-w="50">50%</button><button type="button" data-w="75">75%</button><button type="button" data-w="100">100%</button><button type="button" data-w="0">원본 크기</button><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="undo">되돌리기</button>');
-  const ctl = el("div", "imgx-row",
-    '<input type="color" data-c="color" value="#e03131" title="글자색" aria-label="글자색"><select data-c="size" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><select data-c="alpha" title="글자 뒤 배경 투명도" aria-label="글자 배경 투명도"><option value="0" selected>배경 없음</option><option value="0.25">배경 25%</option><option value="0.5">배경 50%</option><option value="0.75">배경 75%</option><option value="1">배경 100%</option></select><input type="color" data-c="bg" value="#ffffff" title="글자 배경색" aria-label="글자 배경색"><button type="button" data-c="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-c="outline" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><i class="sep"></i><button type="button" data-a="ok">적용</button><button type="button" data-a="cancel">취소</button>');
-  ctl.hidden = true; box.hidden = bar.hidden = true;
+    '<button type="button" data-w="25">25%</button><button type="button" data-w="50">50%</button><button type="button" data-w="75">75%</button><button type="button" data-w="100">100%</button><button type="button" data-w="0">원본 크기</button><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="lin">선 넣기</button><button type="button" class="ic" data-a="era" aria-label="지우개" title="지우개: 원본 이미지를 지워요"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button type="button" class="ic" data-a="las" aria-label="올가미" title="올가미: 둘러싼 영역에 걸친 글자·도형·선을 삭제해요"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><button type="button" data-a="undo">되돌리기</button>');
+
+  box.hidden = bar.hidden = true;
   const shp = el("div", "imgx-row",
-    '<button type="button" data-s="arrow" aria-pressed="true">화살표</button><button type="button" data-s="callout" aria-pressed="false">말풍선</button><button type="button" data-s="vline" aria-pressed="false">수직선</button><button type="button" data-s="hline" aria-pressed="false">수평선</button><button type="button" data-s="trend" aria-pressed="false">추세선</button><button type="button" data-s="cross" aria-pressed="false">십자선</button><button type="button" data-s="circle" aria-pressed="false">원</button><button type="button" data-s="rect" aria-pressed="false">사각형</button><button type="button" data-s="tri" aria-pressed="false">삼각형</button><i class="sep"></i>' +
-    '<input type="color" data-q="color" value="#e03131" title="도형 색" aria-label="도형 색"><select data-q="lw" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><button type="button" data-q="dash" aria-pressed="false" title="점선">점선</button><button type="button" data-q="fill" aria-pressed="false" title="원·사각형·삼각형 안쪽 채우기">채움</button><input type="color" data-q="bg" value="#ffffff" title="배경(채움)색" aria-label="도형 배경색"><button type="button" data-sa="bgauto" title="배경색을 기본값으로 (채움은 선 색, 말풍선은 흰색)">배경 기본</button><select data-q="op" title="도형 투명도 (말풍선은 배경만 적용, 글자·테두리는 선명)" aria-label="도형 투명도"><option value="1" selected>불투명</option><option value="0.75">75%</option><option value="0.5">50%</option><option value="0.25">25%</option></select><select data-q="fs" title="말풍선 글자 크기" aria-label="말풍선 글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option></select>' +
-    '<textarea data-q="text" rows="2" placeholder="말풍선 글자" aria-label="말풍선 글자" hidden></textarea><i class="sep"></i><button type="button" data-sa="del">선택 삭제</button><button type="button" data-sa="ok">적용</button><button type="button" data-sa="cancel">취소</button>');
+    '<button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/><circle cx="5" cy="18" r="2" fill="var(--card)"/><circle cx="19" cy="6" r="2" fill="var(--card)"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
+    '<input type="color" data-q="color" data-m="text shape line" value="#f06595" title="색" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><select data-m="text" data-q="fs" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><button type="button" data-m="shape" data-q="fill" aria-pressed="false" title="안쪽 채우기">채움</button><input type="color" data-m="text shape" data-q="bg" value="#ffffff" title="배경색" aria-label="배경색"><button type="button" data-m="text shape" data-sa="bgauto" title="배경색을 기본값으로 (채움은 선 색, 글자·말풍선은 흰색)">배경 기본</button><select data-q="op" data-m="text shape line" title="투명도" aria-label="투명도"></select><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button>' +
+    '<textarea data-q="text" rows="2" placeholder="글자 입력" aria-label="글자" hidden></textarea><i class="sep" data-m="text shape line"></i>' +
+    '<button type="button" class="ic" data-s="eraser" aria-label="지우개" title="지우개: 원본 이미지를 끌어서 지워요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>' +
+    '<select data-q="ew" title="지우개 굵기" aria-label="지우개 굵기"><option value="8">가늘게 (8)</option><option value="16" selected>보통 (16)</option><option value="32">굵게 (32)</option><option value="64">아주 굵게 (64)</option></select>' +
+    '<button type="button" class="ic" data-s="lasso" aria-label="올가미" title="올가미: 감싼 영역에 걸친 글자·도형·선을 모두 삭제해요" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><i class="sep"></i>' +
+    '<button type="button" data-sa="vbase" aria-pressed="true" title="원본 이미지 레이어 보기/숨기기">원본</button><button type="button" data-sa="vitems" aria-pressed="true" title="추가 요소(글자·도형·선) 레이어 보기/숨기기">추가 요소</button><button type="button" data-sa="eundo" disabled title="지우개·올가미로 지운 것을 되돌려요 (Ctrl+Z)">지움 취소</button><i class="sep"></i><button type="button" data-sa="reset" title="색·선 굵기·글자 크기·지우개 굵기 등 도구 설정을 기본값으로 되돌려요 (이미 넣은 요소는 그대로)">설정 초기화</button><button type="button" data-sa="ok">적용</button><button type="button" data-sa="cancel">취소</button>');
   shp.hidden = true;
-  box.appendChild(grip); bar.append(main, ctl, shp); document.body.append(box, bar);
-  const colorIn = ctl.querySelector('[data-c="color"]'), sizeSel = ctl.querySelector('[data-c="size"]'), alphaSel = ctl.querySelector('[data-c="alpha"]'), bgIn = ctl.querySelector('[data-c="bg"]');
-  const undoBtn = main.querySelector('[data-a="undo"]');
+  box.appendChild(grip); bar.append(main, shp); document.body.append(box, bar);
+  const undoBtn = main.querySelector('[data-a="undo"]'), eundoBtn = shp.querySelector('[data-sa="eundo"]');
   const isOn = b => b.getAttribute("aria-pressed") === "true";
   try { document.execCommand("enableObjectResizing", false, false); } catch (e) {}   // 파이어폭스 기본 손잡이는 끔
 
@@ -1005,9 +1062,9 @@ let imgBack = null;
     img.setAttribute("width", clamp(Math.round(px), MINW, Math.max(MINW, Math.floor(inner()))));
     img.removeAttribute("height"); place();
   }
-  function hide() { closeTxt(); closeShp(); img = null; box.hidden = bar.hidden = true; }
+  function hide() { closeShp(); img = null; box.hidden = bar.hidden = true; }
   function show(i) {
-    if (img !== i) { closeTxt(); closeShp(); }
+    if (img !== i) closeShp();
     img = i; box.hidden = bar.hidden = false;
     undoBtn.disabled = !(hist.get(img) || []).length;
     place();
@@ -1019,16 +1076,14 @@ let imgBack = null;
     const r = img.getBoundingClientRect(), t = ta.getBoundingClientRect();
     const vis = r.bottom > t.top && r.top < t.bottom && r.right > t.left && r.left < t.right;
     box.style.display = bar.style.display = vis ? "" : "none";
-    if (tm) tm.wrap.style.display = vis ? "" : "none";
-    if (sh) sh.ov.style.display = vis ? "" : "none";
+    if (sh) sh.wrap.style.display = vis ? "" : "none";
     if (!vis) return;
     box.style.left = r.left + "px"; box.style.top = r.top + "px"; box.style.width = r.width + "px"; box.style.height = r.height + "px";
-    grip.style.display = (tm || sh) ? "none" : "";
-    if (sh) { const o = sh.ov.style; o.left = r.left + "px"; o.top = r.top + "px"; o.width = r.width + "px"; o.height = r.height + "px"; }
+    grip.style.display = sh ? "none" : "";
+    if (sh) { const o = sh.wrap.style; o.left = r.left + "px"; o.top = r.top + "px"; o.width = r.width + "px"; o.height = r.height + "px"; }
     const bw = bar.offsetWidth, bh = bar.offsetHeight;
     let top = r.top - bh - 8; if (top < 4) top = Math.min(r.bottom + 8, innerHeight - bh - 4);
     bar.style.left = clamp(r.left, 4, Math.max(4, innerWidth - bw - 4)) + "px"; bar.style.top = Math.max(4, top) + "px";
-    if (tm) { tm.wrap.style.left = r.left + tm.tx + "px"; tm.wrap.style.top = r.top + tm.ty + "px"; }
   }
   const sched = () => { if (img && !raf) raf = requestAnimationFrame(place); };
   window.addEventListener("scroll", sched, true); window.addEventListener("resize", sched);
@@ -1036,11 +1091,6 @@ let imgBack = null;
 
   ta.addEventListener("click", e => {
     const t = e.target;
-    if (tm && t === img) {   // 글자 넣기 중: 클릭한 자리로 글자 상자를 옮김
-      const r = img.getBoundingClientRect();
-      tm.tx = clamp(e.clientX - r.left, -2, r.width - 16); tm.ty = clamp(e.clientY - r.top - 8, -2, r.height - 12);
-      place(); tm.t.focus(); return;
-    }
     if (t && t.tagName === "IMG") {
       show(t);
       /* 이미지를 글자처럼: 클릭하면 이미지 바로 뒤에 커서를 둬서, 정렬·글자 입력이 이미지가 있는 줄에 적용되게 함 */
@@ -1052,7 +1102,7 @@ let imgBack = null;
   document.addEventListener("pointerdown", e => {
     if (!img) return;
     const t = e.target;
-    if (t === img || box.contains(t) || bar.contains(t) || (tm && tm.wrap.contains(t)) || (sh && sh.ov.contains(t))) return;
+    if (t === img || box.contains(t) || bar.contains(t) || (sh && sh.wrap.contains(t))) return;
     hide();
   }, true);
 
@@ -1074,110 +1124,45 @@ let imgBack = null;
       if (p) setW(inner() * p / 100); else { img.removeAttribute("width"); img.removeAttribute("height"); place(); }
       fire(); sched(); return;
     }
-    if (b.dataset.c) { b.setAttribute("aria-pressed", String(!isOn(b))); styleT(); return; }
     const a = b.dataset.a;
-    if (a === "txt") openTxt(); else if (a === "shp") openShp(); else if (a === "undo") undoTxt(); else if (a === "ok") applyTxt(); else if (a === "cancel") closeTxt();
+    if (a === "txt") openShp("text"); else if (a === "shp") openShp("shape"); else if (a === "lin") openShp("line"); else if (a === "era") openShp("edit", "eraser"); else if (a === "las") openShp("edit", "lasso"); else if (a === "undo") undoTxt();
   });
-  ctl.addEventListener("input", () => styleT());
 
-  /* ---- 글자 넣기 ---- */
   const mctx = document.createElement("canvas").getContext("2d");
-  function styleT() {
-    if (!tm) return;
-    const fs = +sizeSel.value, bold = isOn(ctl.querySelector('[data-c="bold"]')), ol = isOn(ctl.querySelector('[data-c="outline"]'));
-    const t = tm.t, c = colorIn.value, edge = lum(c) > 0.55 ? "#000" : "#fff";
-    t.style.background = +alphaSel.value ? rgbaOf(bgIn.value, alphaSel.value) : "transparent"; t.style.color = c; t.style.fontSize = fs + "px"; t.style.fontWeight = bold ? "700" : "400";
-    t.style.textShadow = ol ? [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(d => d[0] + "px " + d[1] + "px 0 " + edge).join(",") : "none";
-    const lines = (t.value || t.placeholder).split("\n");
-    mctx.font = (bold ? "700 " : "") + fs + "px " + getComputedStyle(t).fontFamily;
-    t.style.width = Math.ceil(Math.max(...lines.map(l => mctx.measureText(l).width)) + 14) + "px";
-    t.style.height = Math.ceil(lines.length * fs * 1.3 + 6) + "px";
-  }
-  function rgbaOf(hex, a) { const n = parseInt(hex.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
-  function lum(hex) { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255; }
-  function openTxt() {
-    if (!img || tm || sh) return;
-    const r = img.getBoundingClientRect();
-    const wrap = el("div", "imgx-tbox"), g = el("div", "imgx-tgrip", "✥"), t = el("textarea");
-    g.title = "끌어서 글자 위치 옮기기 (이미지를 클릭해도 그 자리로 이동)";
-    t.rows = 1; t.wrap = "off"; t.spellcheck = false; t.placeholder = "글자 입력"; t.setAttribute("aria-label", "이미지에 넣을 글자");
-    wrap.append(g, t); document.body.appendChild(wrap);
-    tm = { wrap, g, t, tx: Math.round(r.width * 0.08), ty: Math.round(r.height * 0.4), d: null };
-    main.hidden = true; ctl.hidden = false;
-    g.addEventListener("pointerdown", e => { e.preventDefault(); g.setPointerCapture(e.pointerId); tm.d = { x: e.clientX, y: e.clientY, tx: tm.tx, ty: tm.ty }; });
-    g.addEventListener("pointermove", e => {
-      if (!tm || !tm.d) return; const q = img.getBoundingClientRect();
-      tm.tx = clamp(tm.d.tx + e.clientX - tm.d.x, -2, q.width - 16); tm.ty = clamp(tm.d.ty + e.clientY - tm.d.y, -2, q.height - 12); place();
-    });
-    g.addEventListener("pointerup", () => { if (tm) tm.d = null; });
-    t.addEventListener("input", styleT);
-    t.addEventListener("keydown", e => {
-      e.stopPropagation();   // Esc 가 메모 확대/축소로 번지지 않게
-      if (e.key === "Escape") { e.preventDefault(); closeTxt(); }
-      else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); applyTxt(); }
-    });
-    styleT(); place(); t.focus();
-  }
-  function closeTxt() {
-    if (!tm) return;
-    tm.wrap.remove(); tm = null; main.hidden = false; ctl.hidden = true; sched();
-  }
-  function applyTxt() {
-    if (!tm || !img) return;
-    const text = tm.t.value.replace(/\s+$/, "");
-    if (!text.trim()) { closeTxt(); return; }
-    const nw = img.naturalWidth, nh = img.naturalHeight, r = img.getBoundingClientRect();
-    if (!nw || !nh || !r.width) { toast("이미지를 아직 읽는 중이에요. 잠시 뒤에 다시 눌러 주세요"); return; }
-    const k = nw / r.width, fs = +sizeSel.value * k, lh = fs * 1.3;
-    const bold = isOn(ctl.querySelector('[data-c="bold"]')), ol = isOn(ctl.querySelector('[data-c="outline"]'));
-    const c = document.createElement("canvas"); c.width = nw; c.height = nh;
-    const base = c.getContext("2d"); base.drawImage(img, 0, 0, nw, nh);
-    const lay = document.createElement("canvas"); lay.width = nw; lay.height = nh;   // 글자는 따로 그린 뒤 투명도를 줘서 합침(외곽선·글자가 겹쳐 진해지지 않게)
-    const x = lay.getContext("2d");
-    const ba = +alphaSel.value;   // 글자 뒤 배경(반투명): 글자는 그대로 선명하게, 배경만 투명도 적용
-    if (ba) { const q = tm.t.getBoundingClientRect(); base.fillStyle = rgbaOf(bgIn.value, ba); base.fillRect((q.left - r.left) * k, (q.top - r.top) * k, q.width * k, q.height * k); }
-    x.font = (bold ? "700 " : "") + fs + "px " + getComputedStyle(tm.t).fontFamily;
-    x.textBaseline = "middle"; x.textAlign = "left"; x.lineJoin = "round";
-    const ox = (tm.tx + 5) * k, oy = (tm.ty + 3) * k;   // 상자 테두리 1 + 안쪽 여백(좌우 4, 위아래 2)
-    text.split("\n").forEach((ln, i) => {
-      const y = oy + (i + 0.5) * lh;
-      if (ol) { x.lineWidth = Math.max(2, fs * 0.18); x.strokeStyle = lum(colorIn.value) > 0.55 ? "#000" : "#fff"; x.strokeText(ln, ox, y); }
-      x.fillStyle = colorIn.value; x.fillText(ln, ox, y);
-    });
-    base.drawImage(lay, 0, 0);
-    let url;
-    try {
-      url = c.toDataURL("image/png");
-      if (url.length > 300000) {   // 너무 크면 JPEG 로 (저장 용량 절약, 메모에 넣을 때와 같은 기준)
-        const c2 = document.createElement("canvas"); c2.width = nw; c2.height = nh;
-        const x2 = c2.getContext("2d"); x2.fillStyle = "#fff"; x2.fillRect(0, 0, nw, nh); x2.drawImage(c, 0, 0);
-        url = c2.toDataURL("image/jpeg", 0.85);
-      }
-    } catch (e) { toast("이 이미지에는 글자를 넣을 수 없어요"); return; }
-    const h = hist.get(img) || []; h.push(img.src); while (h.length > 3) h.shift(); hist.set(img, h);
-    img.src = url; undoBtn.disabled = false;
-    closeTxt(); fire(); toast("글자를 넣었어요. 마음에 안 들면 [되돌리기]를 눌러 주세요");
-  }
-    /* ---- 도형 넣기: 화살표·말풍선·수직선·수평선·추세선·십자선·원·사각형·삼각형 ----
+  /* ---- 글자 넣기(글자·말풍선 4종) / 도형 넣기(6종) / 선 넣기(6종): 같은 편집 화면, 들어가는 요소만 다름 ----
      이미지 위에 겹친 SVG 에 도형을 놓고 → 손잡이로 늘이고 줄이고 옮긴 뒤 → [적용]하면 이미지에 새겨져요 */
   const FONT = "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif";
   const SVGNS = "http://www.w3.org/2000/svg";
-  const sd = { tool: "arrow", color: "#e03131", lw: 3, dash: false, fill: false, fs: 21, op: 1, bgc: null };
+  const CALL = new Set(["ctext", "cround", "coval", "cthink"]), isCall = t => CALL.has(t);
+  const BOXT = new Set(["circle", "rect", "tri", "cloud"]);
+  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, ol: false, top: null, color: "#f06595", lw: 3, dash: false, fill: false, fs: 21, op: 1, bgc: null, ew: 16 };
   const HM = [["x1", "y1"], ["y1"], ["x2", "y1"], ["x2"], ["x2", "y2"], ["y2"], ["x1", "y2"], ["x1"]];   // 상자형 도형의 8개 손잡이가 움직이는 좌표
   const HLN = [["x1", "y1"], ["x2", "y2"]];                                                              // 선형 도형의 양 끝 손잡이
   const HCUR = ["nwse-resize", "ns-resize", "nesw-resize", "ew-resize", "nwse-resize", "ns-resize", "nesw-resize", "ew-resize"];
   const qc = k => shp.querySelector('[data-q="' + k + '"]');
   const setP = (b, on) => b.setAttribute("aria-pressed", String(!!on));
   const pstr = a => a.map(q => q[0] + "," + q[1]).join(" ");
+  const snap = it => ({ ...it, pts: it.pts && it.pts.map(q => q.slice()) });
 
-  /* 말풍선 상자 크기: 글자 크기와 내용에 맞춰 자동 */
-  function cBox(it) {
-    const lines = (it.text || "글자 입력").split("\n"), fs = it.fs, pad = 9;
-    mctx.font = fs + "px " + FONT;
-    const tw = Math.max(...lines.map(l => mctx.measureText(l).width));
-    return { lines, fs, pad, x: it.x1, y: it.y1, w: Math.max(40, Math.ceil(tw + pad * 2)), h: Math.ceil(lines.length * fs * 1.3 + pad * 2) };
+  /* 말풍선 크기: 글자 크기와 내용에 맞춰 자동 (종류마다 여백이 달라요) */
+  function callBox(it) {
+    const lines = (it.text || "글자 입력").split("\n"), fs = it.fs, pad = it.t === "ctext" ? 6 : 9;
+    mctx.font = (it.bold ? "700 " : "") + fs + "px " + FONT;
+    const tw = Math.max(...lines.map(l => mctx.measureText(l).width)), th = lines.length * fs * 1.3;
+    let w, h;
+    if (it.t === "coval") { w = tw * 1.45 + pad * 2; h = th * 1.55 + pad * 2; }
+    else if (it.t === "cthink") { w = tw * 1.4 + pad * 3; h = th * 1.7 + pad * 3; }
+    else { w = tw + pad * 2; h = th + pad * 2; }
+    return { lines, fs, pad, tw, th, x: it.x1, y: it.y1, w: Math.max(40, Math.ceil(w)), h: Math.ceil(h) };
   }
-  /* 말풍선 꼬리: 상자 가장자리의 두 점 + 끝점 */
+  const lum = hex => { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255; };
+  const callText = (b, c, has, it) => {
+    const edge = lum(c) > 0.55 ? "#000" : "#fff";
+    const ex = (it && it.bold ? ' font-weight="700"' : "") + (it && it.ol ? ' stroke="' + edge + '" stroke-width="' + Math.max(2, b.fs * 0.18) + '" stroke-linejoin="round" paint-order="stroke"' : "");
+    return b.lines.map((l, i) =>
+      '<text x="' + (b.x + b.w / 2) + '" y="' + (b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35) + '" text-anchor="middle" font-family="' + FONT + '" font-size="' + b.fs + '" fill="' + c + '"' + (has ? "" : ' fill-opacity=".4"') + ex + ">" + escH(l) + "</text>").join("");
+  };
+  /* 둥근 사각형 말풍선 꼬리: 상자 가장자리의 두 점 + 끝점 */
   function tailOf(b, it, lw) {
     const cx = b.x + b.w / 2, cy = b.y + b.h / 2, dx = it.tx - cx, dy = it.ty - cy;
     if (Math.abs(dx) <= b.w / 2 && Math.abs(dy) <= b.h / 2) return null;
@@ -1192,11 +1177,23 @@ let imgBack = null;
     }
     return { b1, b2, nx, ny };
   }
+  /* 구름 윤곽: 타원 둘레의 점들을 바깥쪽으로 볼록한 호로 이음 (도형 '구름'과 '생각풍선'이 같이 씀) */
+  function cloudD(x, y, w, h) {
+    const a = w / 2, bb = h / 2, per = Math.PI * (3 * (a + bb) - Math.sqrt((3 * a + bb) * (a + 3 * bb)));
+    const tc = Math.max(14, Math.min(42, Math.min(w, h) / 3)), n = Math.max(7, Math.min(30, Math.round(per / tc))), bump = per / n / 2 * 0.6;
+    const rx = Math.max(4, a - bump), ry = Math.max(4, bb - bump), cx = x + a, cy = y + bb, P = [];
+    for (let i = 0; i < n; i++) { const t = -Math.PI / 2 + 2 * Math.PI * i / n; P.push([cx + rx * Math.cos(t), cy + ry * Math.sin(t)]); }
+    let d = "M" + P[0][0] + "," + P[0][1];
+    for (let i = 1; i <= n; i++) {
+      const p = P[i - 1], q = P[i % n], r = Math.hypot(q[0] - p[0], q[1] - p[1]) / 2 * 1.12;
+      d += " A" + r + "," + r + " 0 0 1 " + q[0] + "," + q[1];
+    }
+    return d + " Z";
+  }
   /* 도형 하나를 SVG 조각으로. exp=true 면 클릭 감지용 요소를 뺀 저장용 */
-  /* 도형 전체(선·채움·글자)를 한 덩어리로 투명하게 */
   function itemSvg(it, W, H, exp) {
     const s = itemSvg0(it, W, H, exp);
-    return it.op < 1 && it.t !== "callout" ? '<g opacity="' + it.op + '">' + s + "</g>" : s;
+    return it.op < 1 && !isCall(it.t) ? '<g opacity="' + it.op + '">' + s + "</g>" : s;   // 말풍선은 배경에만 투명도(글자·테두리는 선명)
   }
   function itemSvg0(it, W, H, exp) {
     const c = it.color, lw = it.lw;
@@ -1206,7 +1203,15 @@ let imgBack = null;
     const ln = (x1, y1, x2, y2, a) => '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" ' + a + "/>";
     const hit = (x1, y1, x2, y2) => exp ? "" : ln(x1, y1, x2, y2, 'stroke="rgba(0,0,0,0)" stroke-width="18" stroke-linecap="round" pointer-events="stroke"');
     const x = Math.min(it.x1, it.x2), y = Math.min(it.y1, it.y2), w = Math.abs(it.x2 - it.x1), h = Math.abs(it.y2 - it.y1);
+    const cfill = 'fill="' + (it.bgc || "#fff") + '" fill-opacity="' + it.op + '"';
     switch (it.t) {
+      case "arrow": case "darrow": {
+        const two = it.t === "darrow", dx = it.x2 - it.x1, dy = it.y2 - it.y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+        const hl = Math.min(two ? L / 2 : L, Math.max(12, lw * 4.5)), hw = hl * 0.5;
+        const hd = (tx, ty, vx, vy) => { const bx = tx - vx * hl, by = ty - vy * hl; return '<polygon points="' + pstr([[tx, ty], [bx - vy * hw, by + vx * hw], [bx + vy * hw, by - vx * hw]]) + '" fill="' + c + '" stroke="' + c + '" stroke-width="1" stroke-linejoin="round"/>'; };
+        const sx = it.x1 + (two ? ux * hl * 0.8 : 0), sy = it.y1 + (two ? uy * hl * 0.8 : 0);
+        return hit(it.x1, it.y1, it.x2, it.y2) + ln(sx, sy, it.x2 - ux * hl * 0.8, it.y2 - uy * hl * 0.8, st) + hd(it.x2, it.y2, ux, uy) + (two ? hd(it.x1, it.y1, -ux, -uy) : "");
+      }
       case "vline": return hit(it.x1, 0, it.x1, H) + ln(it.x1, 0, it.x1, H, st);
       case "hline": return hit(0, it.y1, W, it.y1) + ln(0, it.y1, W, it.y1, st);
       case "cross": return hit(it.x1, 0, it.x1, H) + hit(0, it.y1, W, it.y1) + ln(it.x1, 0, it.x1, H, st) + ln(0, it.y1, W, it.y1, st);
@@ -1214,19 +1219,29 @@ let imgBack = null;
         const r = Math.max(4, lw * 1.6), dot = (px, py) => '<circle cx="' + px + '" cy="' + py + '" r="' + r + '" fill="#fff" stroke="' + c + '" stroke-width="' + lw + '"/>';
         return hit(it.x1, it.y1, it.x2, it.y2) + ln(it.x1, it.y1, it.x2, it.y2, st) + dot(it.x1, it.y1) + dot(it.x2, it.y2);
       }
-      case "arrow": {
-        const dx = it.x2 - it.x1, dy = it.y2 - it.y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
-        const hl = Math.min(L, Math.max(12, lw * 4.5)), hw = hl * 0.5, bx = it.x2 - ux * hl, by = it.y2 - uy * hl;
-        return hit(it.x1, it.y1, it.x2, it.y2) + ln(it.x1, it.y1, it.x2 - ux * hl * 0.8, it.y2 - uy * hl * 0.8, st) +
-          '<polygon points="' + pstr([[it.x2, it.y2], [bx - uy * hw, by + ux * hw], [bx + uy * hw, by - ux * hw]]) + '" fill="' + c + '" stroke="' + c + '" stroke-width="1" stroke-linejoin="round"/>';
-      }
       case "circle": return '<ellipse cx="' + (x + w / 2) + '" cy="' + (y + h / 2) + '" rx="' + w / 2 + '" ry="' + h / 2 + '" ' + st + " " + fl + ' pointer-events="all"/>';
       case "rect": return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2" ' + st + " " + fl + ' pointer-events="all"/>';
       case "tri": return '<polygon points="' + pstr([[x + w / 2, y], [x + w, y + h], [x, y + h]]) + '" ' + st + " " + fl + ' pointer-events="all"/>';
-      case "callout": {
-        const b = cBox(it), tl = tailOf(b, it, lw);
-        let s = "";
-        const r = 6, x0 = b.x, y0 = b.y, x1 = b.x + b.w, y1 = b.y + b.h, T = [it.tx, it.ty];   // 상자+꼬리를 하나의 윤곽선으로 그려서, 반투명이어도 겹쳐 진해지는 곳이 없음
+      case "cloud": return '<path d="' + cloudD(x, y, Math.max(w, 6), Math.max(h, 6)) + '" ' + st + " " + fl + ' pointer-events="all"/>';
+      case "poly": {   // 자유형: 도형 (점을 차례로 찍어 닫힌 도형)
+        const P = it.pts.slice();
+        if (it.drawing) { if (it.cur) P.push([it.cur.x, it.cur.y]); return '<polyline points="' + pstr(P) + '" fill="none" ' + st + "/>"; }
+        return '<path d="M' + P.map(q => q[0] + "," + q[1]).join(" L") + ' Z" ' + st + " " + fl + ' pointer-events="all"/>';
+      }
+      case "free": {   // 자유형: 자유곡선 (끌어서 그린 선)
+        const P = it.pts; if (P.length < 2) return "";
+        let d = "M" + P[0][0] + "," + P[0][1];
+        for (let i = 1; i < P.length - 1; i++) d += " Q" + P[i][0] + "," + P[i][1] + " " + (P[i][0] + P[i + 1][0]) / 2 + "," + (P[i][1] + P[i + 1][1]) / 2;
+        d += " L" + P[P.length - 1][0] + "," + P[P.length - 1][1];
+        return (exp ? "" : '<path d="' + d + '" fill="none" stroke="rgba(0,0,0,0)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" pointer-events="stroke"/>') + '<path d="' + d + '" fill="none" ' + st + "/>";
+      }
+      case "ctext": {   // 글자: 테두리 없는 글자 상자
+        const b = callBox(it);
+        return '<rect x="' + b.x + '" y="' + b.y + '" width="' + b.w + '" height="' + b.h + '" rx="3" ' + cfill + ' pointer-events="all"/>' + callText(b, c, !!it.text, it);
+      }
+      case "cround": {   // 말풍선: 모서리가 둥근 사각형
+        const b = callBox(it), tl = tailOf(b, it, lw), T = [it.tx, it.ty];
+        const r = 6, x0 = b.x, y0 = b.y, x1 = b.x + b.w, y1 = b.y + b.h;   // 상자+꼬리를 하나의 윤곽선으로 그려서, 반투명이어도 겹쳐 진해지는 곳이 없음
         const L = q => " L" + q[0] + "," + q[1];
         const ins = (nx, ny, a, z) => tl && tl.nx === nx && tl.ny === ny ? L(a) + L(T) + L(z) : "";
         const d = "M" + (x0 + r) + "," + y0 + ins(0, -1, tl && tl.b1, tl && tl.b2)
@@ -1234,12 +1249,29 @@ let imgBack = null;
           + " L" + x1 + "," + (y1 - r) + " A" + r + "," + r + " 0 0 1 " + (x1 - r) + "," + y1 + ins(0, 1, tl && tl.b2, tl && tl.b1)
           + " L" + (x0 + r) + "," + y1 + " A" + r + "," + r + " 0 0 1 " + x0 + "," + (y1 - r) + ins(-1, 0, tl && tl.b2, tl && tl.b1)
           + " L" + x0 + "," + (y0 + r) + " A" + r + "," + r + " 0 0 1 " + (x0 + r) + "," + y0 + " Z";
-        s += '<path d="' + d + '" fill="' + (it.bgc || "#fff") + '" fill-opacity="' + it.op + '" ' + sb + ' pointer-events="all"/>';
-        b.lines.forEach((l, i) => {
-          const ty = b.y + b.pad + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35;
-          s += '<text x="' + (b.x + b.w / 2) + '" y="' + ty + '" text-anchor="middle" font-family="' + FONT + '" font-size="' + b.fs + '" fill="' + c + '"' + (it.text ? "" : ' fill-opacity=".4"') + ">" + escH(l) + "</text>";
-        });
-        return s;
+        return '<path d="' + d + '" ' + cfill + " " + sb + ' pointer-events="all"/>' + callText(b, c, !!it.text, it);
+      }
+      case "coval": {   // 말풍선: 타원형
+        const b = callBox(it), cx = b.x + b.w / 2, cy = b.y + b.h / 2, rx = b.w / 2, ry = b.h / 2, dx = it.tx - cx, dy = it.ty - cy;
+        let d;
+        if ((dx / rx) * (dx / rx) + (dy / ry) * (dy / ry) <= 1) d = "M" + (cx - rx) + "," + cy + " A" + rx + "," + ry + " 0 1 1 " + (cx + rx) + "," + cy + " A" + rx + "," + ry + " 0 1 1 " + (cx - rx) + "," + cy + " Z";
+        else {
+          const t = Math.atan2(dy / ry, dx / rx), de = 0.3, P = a => [cx + rx * Math.cos(a), cy + ry * Math.sin(a)], p1 = P(t + de), p2 = P(t - de);
+          d = "M" + p1[0] + "," + p1[1] + " A" + rx + "," + ry + " 0 1 1 " + p2[0] + "," + p2[1] + " L" + it.tx + "," + it.ty + " Z";
+        }
+        return '<path d="' + d + '" ' + cfill + " " + sb + ' pointer-events="all"/>' + callText(b, c, !!it.text, it);
+      }
+      case "cthink": {   // 생각풍선: 구름 모양 + 꼬리 쪽으로 작아지는 방울
+        const b = callBox(it), cx = b.x + b.w / 2, cy = b.y + b.h / 2, rx = b.w / 2, ry = b.h / 2, dx = it.tx - cx, dy = it.ty - cy;
+        let s = '<path d="' + cloudD(b.x, b.y, b.w, b.h) + '" ' + cfill + " " + sb + ' pointer-events="all"/>';
+        if ((dx / rx) * (dx / rx) + (dy / ry) * (dy / ry) > 1) {
+          const t = Math.atan2(dy / ry, dx / rx), ex = cx + rx * Math.cos(t), ey = cy + ry * Math.sin(t), L = Math.hypot(it.tx - ex, it.ty - ey);
+          const base = Math.max(3, Math.min(b.fs * 0.45, L / 6));
+          [[0.22, 1], [0.58, 0.7], [0.93, 0.5]].forEach(q => {
+            s += '<circle cx="' + (ex + (it.tx - ex) * q[0]) + '" cy="' + (ey + (it.ty - ey) * q[0]) + '" r="' + base * q[1] + '" ' + cfill + " " + sb + ' pointer-events="all"/>';
+          });
+        }
+        return s + callText(b, c, !!it.text, it);
       }
     }
     return "";
@@ -1247,15 +1279,21 @@ let imgBack = null;
   /* 선택한 도형의 손잡이 (끌어서 늘이고 줄임) */
   function handlesOf(it) {
     if (!it) return "";
-    const hn = (x, y, id, cur) => '<circle data-h="' + id + '" cx="' + x + '" cy="' + y + '" r="7" fill="#fff" stroke="#339af0" stroke-width="2" style="cursor:' + cur + '" pointer-events="all"/>';
+    const hn = (x, y, id, cur, r) => '<circle data-h="' + id + '" cx="' + x + '" cy="' + y + '" r="' + (r || 7) + '" fill="#fff" stroke="#339af0" stroke-width="2" style="cursor:' + cur + '" pointer-events="all"/>';
+    const dbox = (x, y, w, h) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" fill="none" stroke="#339af0" stroke-width="1" stroke-dasharray="4 3" pointer-events="none"/>';
     let s = "";
-    if (it.t === "arrow" || it.t === "trend") s += hn(it.x1, it.y1, 0, "move") + hn(it.x2, it.y2, 1, "move");
-    else if (it.t === "circle" || it.t === "rect" || it.t === "tri") {
+    if (it.t === "arrow" || it.t === "darrow" || it.t === "trend") s += hn(it.x1, it.y1, 0, "move") + hn(it.x2, it.y2, 1, "move");
+    else if (BOXT.has(it.t)) {
       const xm = (it.x1 + it.x2) / 2, ym = (it.y1 + it.y2) / 2;
-      s += '<rect x="' + Math.min(it.x1, it.x2) + '" y="' + Math.min(it.y1, it.y2) + '" width="' + Math.abs(it.x2 - it.x1) + '" height="' + Math.abs(it.y2 - it.y1) + '" fill="none" stroke="#339af0" stroke-width="1" stroke-dasharray="4 3" pointer-events="none"/>';
+      s += dbox(Math.min(it.x1, it.x2), Math.min(it.y1, it.y2), Math.abs(it.x2 - it.x1), Math.abs(it.y2 - it.y1));
       [[it.x1, it.y1], [xm, it.y1], [it.x2, it.y1], [it.x2, ym], [it.x2, it.y2], [xm, it.y2], [it.x1, it.y2], [it.x1, ym]].forEach((q, i) => { s += hn(q[0], q[1], i, HCUR[i]); });
     }
-    else if (it.t === "callout") s += hn(it.tx, it.ty, "t", "move");
+    else if (it.t === "poly") it.pts.forEach((q, i) => { s += hn(q[0], q[1], "p" + i, "move", i === 0 && it.drawing ? 9 : 6); });
+    else if (it.t === "free" && it.pts.length) {
+      const xs = it.pts.map(q => q[0]), ys = it.pts.map(q => q[1]), x0 = Math.min(...xs), y0 = Math.min(...ys);
+      s += dbox(x0, y0, Math.max(...xs) - x0, Math.max(...ys) - y0);
+    }
+    else if (isCall(it.t) && it.t !== "ctext") s += hn(it.tx, it.ty, "t", "move");
     else if (it.t === "vline") s += hn(it.x1, 16, "mv", "move");
     else if (it.t === "hline") s += hn(16, it.y1, "mv", "move");
     else if (it.t === "cross") s += hn(it.x1, it.y1, "mv", "move");
@@ -1264,8 +1302,74 @@ let imgBack = null;
   function render() {
     const s = sh; if (!s) return;
     let g = "";
-    s.items.forEach((it, i) => { g += '<g data-i="' + i + '" style="cursor:move">' + itemSvg(it, s.W, s.H, false) + "</g>"; });
-    s.ov.innerHTML = g + handlesOf(s.items[s.sel]);
+    if (s.showItems) {   // 추가 요소 레이어를 숨기면 요소도 손잡이도 그리지 않음
+      s.items.forEach((it, i) => { g += '<g data-i="' + i + '" style="cursor:move">' + itemSvg(it, s.W, s.H, false) + "</g>"; });
+      g += handlesOf(s.items[s.sel]);
+    }
+    s.gi.innerHTML = g;
+  }
+  /* 지우개 크기 표시(원) / 올가미 선 */
+  function drawCur() {
+    const s = sh; if (!s) return;
+    const on = sd.tool === "eraser" && s.showBase && s.cur;
+    s.wrap.classList.toggle("er", !!on);
+    if (on) { s.cc.setAttribute("cx", s.cur.x); s.cc.setAttribute("cy", s.cur.y); s.cc.setAttribute("r", sd.ew / 2); s.cc.style.display = ""; }
+    else s.cc.style.display = "none";
+  }
+  function drawLasso(pts) {
+    sh.lp.setAttribute("d", pts && pts.length > 1 ? "M" + pts.map(q => q[0] + "," + q[1]).join(" L") + (pts.length > 2 ? " Z" : "") : "");
+  }
+  /* 지우개: 원본 이미지 레이어만 투명하게 지움 (굵기는 그리기 굵기와 별개) */
+  function eraseSeg(a, b, dot) {
+    const s = sh, kx = s.nw / s.W, ky = s.nh / s.H, x = s.ctx;
+    x.save(); x.globalCompositeOperation = "destination-out"; x.fillStyle = x.strokeStyle = "#000";
+    x.lineCap = x.lineJoin = "round"; x.lineWidth = sd.ew * kx;
+    x.beginPath(); x.moveTo(a.x * kx, a.y * ky); x.lineTo(b.x * kx, b.y * ky); x.stroke();
+    if (dot) { x.beginPath(); x.arc(b.x * kx, b.y * ky, sd.ew * kx / 2, 0, 6.2832); x.fill(); }
+    x.restore();
+  }
+  /* 지운 것 되돌리기 기록 (지우개 = 이미지, 올가미 = 요소 목록) */
+  function pushUndo(kind) {
+    const s = sh;
+    s.undo.push(kind === "img" ? { k: "img", img: s.ctx.getImageData(0, 0, s.nw, s.nh), alpha: s.alpha, erased: s.erased } : { k: "items", items: JSON.stringify(s.items) });
+    if (s.undo.length > 6) s.undo.shift();
+    eundoBtn.disabled = false;
+  }
+  function popUndo() {
+    const s = sh, e = s && s.undo.pop(); if (!e) return;
+    if (e.k === "img") { s.ctx.putImageData(e.img, 0, 0); s.alpha = e.alpha; s.erased = e.erased; }
+    else { s.items = JSON.parse(e.items); s.sel = -1; syncCtl(); }
+    eundoBtn.disabled = !s.undo.length; render();
+  }
+  /* 올가미: 감싼 영역과 조금이라도 겹치는 글자·도형·선을 모두 찾아 삭제 (실제로 보이는 픽셀 기준으로 겹침을 확인) */
+  async function lassoDelete(poly) {
+    const s = sh; if (!s) return;
+    if (!s.items.length) { toast("지울 글자·도형·선이 없어요"); return; }
+    const k = Math.min(1, 900 / Math.max(s.W, s.H)), cw = Math.max(1, Math.round(s.W * k)), ch = Math.max(1, Math.round(s.H * k));
+    const mk = () => { const c = document.createElement("canvas"); c.width = cw; c.height = ch; return c; };
+    const mx = mk().getContext("2d", { willReadFrequently: true });
+    mx.beginPath(); poly.forEach((q, i) => i ? mx.lineTo(q[0] * k, q[1] * k) : mx.moveTo(q[0] * k, q[1] * k)); mx.closePath();
+    mx.fillStyle = mx.strokeStyle = "#000"; mx.lineWidth = 6; mx.lineJoin = "round"; mx.fill(); mx.stroke();   // 가장자리 6px 여유
+    const m = mx.getImageData(0, 0, cw, ch).data;
+    const items = s.items;
+    const hits = await Promise.all(items.map(it => new Promise(ok => {
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + cw + '" height="' + ch + '" viewBox="0 0 ' + s.W + " " + s.H + '" preserveAspectRatio="none">' + itemSvg(it, s.W, s.H, true) + "</svg>";
+      const im = new Image();
+      im.onload = () => {
+        const x = mk().getContext("2d", { willReadFrequently: true }); x.drawImage(im, 0, 0, cw, ch);
+        const d = x.getImageData(0, 0, cw, ch).data;
+        for (let i = 3; i < d.length; i += 4) if (d[i] > 20 && m[i] > 0) { ok(true); return; }
+        ok(false);
+      };
+      im.onerror = () => ok(false);
+      im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    })));
+    if (sh !== s || s.items !== items) return;
+    const n = hits.filter(Boolean).length;
+    if (!n) { toast("올가미에 걸친 글자·도형·선이 없어요"); return; }
+    pushUndo("items");
+    s.items = items.filter((_, i) => !hits[i]); s.sel = -1;
+    syncCtl(); render(); toast(n + "개를 삭제했어요 (되돌리려면 [지움 취소])");
   }
   function pt(e) {
     const r = sh.ov.getBoundingClientRect();
@@ -1275,158 +1379,297 @@ let imgBack = null;
   function syncCtl() {
     if (!sh) return;
     const it = sh.items[sh.sel], t = qc("text");
-    t.hidden = !(it && it.t === "callout");
+    t.hidden = !(it && isCall(it.t));
     if (it) {
-      qc("color").value = it.color; qc("lw").value = String(it.lw); qc("fs").value = String(it.fs); qc("op").value = String(it.op); qc("bg").value = it.bgc || (it.t === "callout" ? "#ffffff" : it.color);
-      setP(qc("dash"), it.dash); setP(qc("fill"), it.fill);
-      if (it.t === "callout") t.value = it.text;
+      qc("color").value = it.color; qc("lw").value = String(it.lw); qc("fs").value = String(it.fs); qc("op").value = String(it.op); qc("bg").value = it.bgc || (isCall(it.t) ? "#ffffff" : it.color);
+      setP(qc("dash"), it.dash); setP(qc("fill"), it.fill); setP(qc("bold"), it.bold); setP(qc("ol"), it.ol);
+      if (isCall(it.t)) t.value = it.text;
     }
     sched();
   }
   /* 말풍선 꼬리: 직접 옮기기 전에는 글자(상자 크기)가 바뀔 때마다 상자 아래쪽에 자동으로 맞춤 */
-  function autoTail(it) { const b = cBox(it); it.tx = it.x1 + b.w * 0.25; it.ty = it.y1 + b.h + 28; }
+  function autoTail(it) { const b = callBox(it); it.tx = it.x1 + b.w * 0.25; it.ty = it.y1 + b.h + (it.t === "cthink" ? 44 : 28); }
   function newItem(tool, p) {
-    return { t: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y, tx: p.x, ty: p.y, color: sd.color, lw: sd.lw, fs: sd.fs, op: tool === "callout" ? 0.5 : sd.op, bgc: sd.bgc, fill: sd.fill, dash: tool === "cross" ? true : sd.dash, text: "", auto: true };
+    return { t: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y, tx: p.x, ty: p.y, color: sd.color, lw: sd.lw, fs: sd.fs, op: isCall(tool) ? (sd.top != null ? sd.top : tool === "ctext" ? 0 : 0.5) : sd.op, bold: sd.bold, ol: sd.ol, bgc: sd.bgc, fill: sd.fill, dash: tool === "cross" ? true : sd.dash, text: "", auto: true };
+  }
+  /* 자유형 도형 마치기 (점이 3개 미만이면 버림) */
+  function finishPoly() {
+    const s = sh; if (!s) return;
+    const it = s.items[s.sel];
+    if (!it || !it.drawing) return;
+    it.drawing = false; it.cur = null;
+    if (it.pts.length < 3) { s.items.splice(s.sel, 1); s.sel = s.items.length - 1; } else it.closed = true;
+    syncCtl(); render();
   }
   function onDown(e) {
     const s = sh; if (!s || e.button > 0) return;
     e.preventDefault();
-    const p = pt(e), hEl = e.target.closest("[data-h]"), iEl = e.target.closest("[data-i]"), cur = s.items[s.sel];
-    try { s.ov.setPointerCapture(e.pointerId); } catch (x) {}
+    const p = pt(e), hEl = e.target.closest("[data-h]"), iEl = e.target.closest("[data-i]"), cur = s.items[s.sel], now = performance.now();
+    try { s.wrap.setPointerCapture(e.pointerId); } catch (x) {}
+    if (sd.tool === "eraser") {   // 지우개: 원본 이미지 레이어를 지움
+      if (!s.ready) return;
+      if (!s.showBase) { toast("원본 이미지 레이어가 숨겨져 있어요. [원본] 버튼으로 다시 보이게 하세요"); return; }
+      pushUndo("img"); s.erased = true; s.alpha = true; s.cur = p; s.drag = { m: "erase", lx: p.x, ly: p.y };
+      eraseSeg(p, p, true); drawCur(); return;
+    }
+    if (sd.tool === "lasso") {    // 올가미: 끌어서 영역을 그림
+      if (!s.showItems) { toast("추가 요소 레이어가 숨겨져 있어요. [추가 요소] 버튼으로 다시 보이게 하세요"); return; }
+      s.sel = -1; render(); s.drag = { m: "lasso", pts: [[p.x, p.y]] }; return;
+    }
+    if (cur && cur.drawing) {   // 자유형 도형 그리는 중: 클릭마다 점 추가 / 첫 점 클릭·더블클릭으로 마침
+      const last = s.lastDown; s.lastDown = { t: now, x: p.x, y: p.y };
+      if (hEl && hEl.getAttribute("data-h") === "p0" && cur.pts.length >= 3) { finishPoly(); return; }
+      if (last && now - last.t < 350 && Math.hypot(p.x - last.x, p.y - last.y) < 10) { finishPoly(); return; }
+      cur.pts.push([p.x, p.y]); render(); return;
+    }
     if (hEl && cur) {
       const h = hEl.getAttribute("data-h");
-      s.drag = h === "mv" ? { m: "move", sx: p.x, sy: p.y, o: { ...cur } } : { m: "h", h };
+      s.drag = h === "mv" ? { m: "move", sx: p.x, sy: p.y, o: snap(cur) } : { m: "h", h };
     } else if (iEl) {
       s.sel = +iEl.getAttribute("data-i");
-      s.drag = { m: "move", sx: p.x, sy: p.y, o: { ...s.items[s.sel] } };
+      s.drag = { m: "move", sx: p.x, sy: p.y, o: snap(s.items[s.sel]) };
       syncCtl();
     } else {   // 빈 곳: 새 도형 (클릭하면 기본 크기, 끌면 그 크기)
+      if (sd.tool && !s.showItems) { toast("추가 요소 레이어가 숨겨져 있어요. [추가 요소] 버튼으로 다시 보이게 하세요"); return; }
+      if (!sd.tool) { s.sel = -1; syncCtl(); render(); return; }   // 아이콘을 고르지 않았으면 선택만 해제
       const it = newItem(sd.tool, p);
+      endTool();   // 한 번 놓으면 아이콘 선택이 풀려요 (다음 클릭은 선택/해제용)
       s.items.push(it); s.sel = s.items.length - 1;
-      if (it.t === "callout") {
+      if (isCall(it.t)) {
         autoTail(it);
-        s.drag = { m: "move", sx: p.x, sy: p.y, o: { ...it }, txt: true };
-      } else if (it.t === "vline" || it.t === "hline" || it.t === "cross") s.drag = { m: "move", sx: p.x, sy: p.y, o: { ...it } };
-      else s.drag = { m: "new", sx: p.x, sy: p.y };
+        s.drag = { m: "move", sx: p.x, sy: p.y, o: snap(it), txt: true };
+      } else if (it.t === "vline" || it.t === "hline" || it.t === "cross") s.drag = { m: "move", sx: p.x, sy: p.y, o: snap(it) };
+      else if (it.t === "poly") {
+        it.pts = [[p.x, p.y]]; it.drawing = true; s.lastDown = { t: now, x: p.x, y: p.y };
+      } else if (it.t === "free") {
+        it.pts = [[p.x, p.y]]; s.drag = { m: "free" };
+      } else s.drag = { m: "new", sx: p.x, sy: p.y };
       syncCtl();
     }
     render();
   }
   function onMove(e) {
-    const s = sh, d = s && s.drag; if (!d) return;
-    const it = s.items[s.sel]; if (!it) return;
+    const s = sh; if (!s) return;
+    const d = s.drag, it = s.items[s.sel];
+    if (sd.tool === "eraser" || (d && (d.m === "erase" || d.m === "lasso"))) {
+      const p = pt(e);
+      if (d && d.m === "erase") { eraseSeg({ x: d.lx, y: d.ly }, p); d.lx = p.x; d.ly = p.y; }
+      else if (d && d.m === "lasso") { const q = d.pts[d.pts.length - 1]; if (Math.hypot(p.x - q[0], p.y - q[1]) > 2) d.pts.push([p.x, p.y]); drawLasso(d.pts); }
+      s.cur = p; drawCur(); return;
+    }
+    if (!d) { if (it && it.drawing) { it.cur = pt(e); render(); } return; }   // 그리는 중인 선분 미리보기
+    if (!it) return;
     const p = pt(e);
     if (d.m === "new") { it.x2 = p.x; it.y2 = p.y; }
+    else if (d.m === "free") {
+      const q = it.pts[it.pts.length - 1];
+      if (Math.hypot(p.x - q[0], p.y - q[1]) > 2) it.pts.push([p.x, p.y]);
+    }
     else if (d.m === "move") {
       const dx = p.x - d.sx, dy = p.y - d.sy;
       ["x1", "x2", "tx"].forEach(k => { if (k in d.o) it[k] = d.o[k] + dx; });
       ["y1", "y2", "ty"].forEach(k => { if (k in d.o) it[k] = d.o[k] + dy; });
+      if (d.o.pts) it.pts = d.o.pts.map(q => [q[0] + dx, q[1] + dy]);
     } else if (d.m === "h") {
-      const set = k => { it[k] = k[0] === "x" ? p.x : p.y; };
-      if (it.t === "arrow" || it.t === "trend") HLN[+d.h].forEach(set);
-      else if (it.t === "callout") { it.tx = p.x; it.ty = p.y; it.auto = false; }
-      else HM[+d.h].forEach(set);
+      const hh = String(d.h), set = k => { it[k] = k[0] === "x" ? p.x : p.y; };
+      if (hh[0] === "p") it.pts[+hh.slice(1)] = [p.x, p.y];
+      else if (it.t === "arrow" || it.t === "darrow" || it.t === "trend") HLN[+hh].forEach(set);
+      else if (isCall(it.t)) { it.tx = p.x; it.ty = p.y; it.auto = false; }
+      else HM[+hh].forEach(set);
     }
     render();
   }
   function onUp() {
     const s = sh, d = s && s.drag; if (!d) return;
     s.drag = null;
+    if (d.m === "erase") return;
+    if (d.m === "lasso") { drawLasso(null); if (d.pts.length >= 3) lassoDelete(d.pts); return; }
     const it = s.items[s.sel];
+    if (d.m === "free" && it && it.pts.length < 3) { s.items.splice(s.sel, 1); s.sel = s.items.length - 1; syncCtl(); render(); return; }   // 그냥 클릭은 버림
     if (d.m === "new" && it && Math.hypot(it.x2 - it.x1, it.y2 - it.y1) < 8) {   // 그냥 클릭: 기본 크기로
-      if (it.t === "arrow" || it.t === "trend") { it.x1 = d.sx - 45; it.y1 = d.sy + 25; it.x2 = d.sx + 45; it.y2 = d.sy - 25; }
+      if (it.t === "arrow" || it.t === "darrow" || it.t === "trend") { it.x1 = d.sx - 45; it.y1 = d.sy + 25; it.x2 = d.sx + 45; it.y2 = d.sy - 25; }
       else { it.x1 = d.sx - 45; it.y1 = d.sy - 35; it.x2 = d.sx + 45; it.y2 = d.sy + 35; }
       render();
     }
     if (d.txt) qc("text").focus();
   }
-  function openShp() {
-    if (!img || tm || sh) return;
+  function hasAlpha(x, w, h) {
+    try { const d = x.getImageData(0, 0, w, h).data; for (let i = 3; i < d.length; i += 4) if (d[i] < 250) return true; } catch (e) {}
+    return false;
+  }
+  function openShp(mode, tool) {
+    if (!img || sh) return;
     const r = img.getBoundingClientRect();
     if (!r.width || !r.height) return;
-    const ov = document.createElementNS(SVGNS, "svg");
-    ov.setAttribute("class", "imgx-ov"); ov.setAttribute("viewBox", "0 0 " + r.width + " " + r.height); ov.setAttribute("preserveAspectRatio", "none");
-    document.body.appendChild(ov);
-    sh = { ov, W: r.width, H: r.height, items: [], sel: -1, drag: null };
+    let L = null;   // 이미 레이어가 있으면 그대로 불러와서 이어서 편집
+    try { L = JSON.parse(img.getAttribute("data-layers") || "null"); } catch (e) {}
+    if (!L || !Array.isArray(L.items) || !(L.W > 0) || !(L.H > 0)) L = null;
+    const W = L ? L.W : r.width, H = L ? L.H : r.height;
+    const wrap = document.createElement("div"), cv = document.createElement("canvas"), ov = document.createElementNS(SVGNS, "svg");
+    wrap.className = "imgx-ov";
+    ov.setAttribute("viewBox", "0 0 " + W + " " + H); ov.setAttribute("preserveAspectRatio", "none");
+    const gi = document.createElementNS(SVGNS, "g"), cc = document.createElementNS(SVGNS, "circle"), lp = document.createElementNS(SVGNS, "path");
+    [["fill", "rgba(255,255,255,.3)"], ["stroke", "#339af0"], ["stroke-width", "1.5"], ["vector-effect", "non-scaling-stroke"], ["pointer-events", "none"]].forEach(a => cc.setAttribute(a[0], a[1]));
+    [["fill", "rgba(51,154,240,.12)"], ["stroke", "#339af0"], ["stroke-width", "1.5"], ["stroke-dasharray", "5 4"], ["vector-effect", "non-scaling-stroke"], ["pointer-events", "none"]].forEach(a => lp.setAttribute(a[0], a[1]));
+    cc.style.display = "none";
+    ov.append(gi, cc, lp); wrap.append(cv, ov); document.body.appendChild(wrap);   // 아래층: 원본 이미지(canvas), 위층: 추가 요소(svg)
+    const items = L ? L.items.map(it => ({ ...it, pts: it.pts && it.pts.map(q => q.slice()) })) : [];
+    const mine = sh = { wrap, ov, gi, cc, lp, cv, ctx: null, nw: 0, nh: 0, ready: false, alpha: false, erased: false, baseUrl: img.getAttribute("data-base") || img.src, W, H, items, orig: JSON.stringify(items), sel: -1, drag: null, lastDown: null, mode, undo: [], showBase: true, showItems: true, cur: null };
+    const bi = new Image();   // 원본(=지우개가 지울 대상)을 불러와 canvas 에 올림
+    bi.onload = () => {
+      if (sh !== mine) return;
+      mine.nw = cv.width = bi.naturalWidth; mine.nh = cv.height = bi.naturalHeight;
+      const x = mine.ctx = cv.getContext("2d", { willReadFrequently: true });
+      x.drawImage(bi, 0, 0); mine.alpha = hasAlpha(x, cv.width, cv.height); mine.ready = true;
+    };
+    bi.onerror = () => { if (sh === mine) { closeShp(); toast("이미지를 읽지 못했어요"); } };
+    bi.src = mine.baseUrl;
+    sd.tool = tool || null;   // 처음에는 아무 아이콘도 선택하지 않음 (실수로 요소가 들어가지 않게)
+    shp.querySelectorAll("[data-m]").forEach(x => { x.hidden = !x.dataset.m.split(" ").includes(mode); });
+    shp.querySelectorAll("[data-sa=vbase],[data-sa=vitems]").forEach(b => setP(b, true));
+    eundoBtn.disabled = true;
+    const op = qc("op"), ops = mode === "text" ? [["0", "배경 없음"], ["0.25", "배경 25%"], ["0.5", "배경 50%"], ["0.75", "배경 75%"], ["1", "배경 100%"]] : [["1", "불투명"], ["0.75", "75%"], ["0.5", "50%"], ["0.25", "25%"]];
+    op.innerHTML = ops.map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
+    op.value = mode === "text" ? String(sd.top != null ? sd.top : sd.tool === "ctext" ? 0 : 0.5) : String(sd.op);
+    qc("ew").value = String(sd.ew);
+    shp.querySelectorAll("[data-s]").forEach(x => setP(x, x.dataset.s === sd.tool));
     main.hidden = true; shp.hidden = false;
-    ov.addEventListener("pointerdown", onDown); ov.addEventListener("pointermove", onMove);
-    ov.addEventListener("pointerup", onUp); ov.addEventListener("pointercancel", onUp);
-    syncCtl(); render(); place();
-    toast("이미지 위를 클릭하거나 끌어서 도형을 넣으세요. 손잡이를 끌면 늘이고 줄일 수 있어요");
+    wrap.addEventListener("pointerdown", onDown); wrap.addEventListener("pointermove", onMove);
+    wrap.addEventListener("pointerup", onUp); wrap.addEventListener("pointercancel", onUp);
+    wrap.addEventListener("pointerleave", () => { if (sh && !sh.drag) { sh.cur = null; drawCur(); } });
+    syncCtl(); render(); drawCur(); place();
+    toast(mode === "edit" ? (tool === "lasso" ? "올가미: 지울 글자·도형·선을 감싸듯 끌어서 그리면, 걸친 요소가 모두 삭제돼요" : "지우개: 이미지 위를 끌어서 원본 이미지를 지워요. 굵기는 오른쪽에서 골라요")
+      : mode === "text" ? "글자: 이미지 위를 클릭해 놓고 글자를 입력하세요. 말풍선은 꼬리 손잡이를 끌어 방향을 정해요" : mode === "line" ? "아이콘을 고른 뒤 이미지 위를 클릭하세요. 손잡이를 끌면 위치를 옮길 수 있어요" : "아이콘을 고른 뒤 이미지 위를 클릭하거나 끌어서 넣으세요 (자유형 도형: 점을 차례로 클릭하고 더블클릭으로 마침)");
   }
   function closeShp() {
     if (!sh) return;
-    sh.ov.remove(); sh = null; main.hidden = false; shp.hidden = true; sched();
+    sh.wrap.remove(); sh = null; main.hidden = false; shp.hidden = true; sched();
   }
+  function endTool() { sd.tool = null; shp.querySelectorAll("[data-s]").forEach(x => setP(x, false)); drawCur(); }
   function delSel() {
     if (!sh || sh.sel < 0) return;
-    sh.items.splice(sh.sel, 1); sh.sel = sh.items.length - 1;
+    sh.items.splice(sh.sel, 1); sh.sel = -1;
     syncCtl(); render();
+  }
+  /* 도구 설정을 기본값으로: 색 빨강, 선 굵기 보통, 글자 크기 21, 투명도·배경·점선·채움·굵게·외곽선 해제, 지우개 보통 (이미 넣은 요소는 건드리지 않음) */
+  function resetSd() {
+    if (!sh) return;
+    Object.assign(sd, { color: "#f06595", lw: 3, dash: false, fill: false, fs: 21, op: 1, bgc: null, bold: false, ol: false, top: null, ew: 16 });
+    qc("color").value = "#f06595"; qc("lw").value = "3"; qc("fs").value = "21"; qc("ew").value = "16"; qc("bg").value = "#ffffff";
+    qc("op").value = sh.mode === "text" ? String(sd.tool === "ctext" ? 0 : 0.5) : "1";
+    ["dash", "fill", "bold", "ol"].forEach(k => setP(qc(k), false));
+    drawCur(); toast("도구 설정을 기본값으로 되돌렸어요");
   }
   function shpClick(b) {
     if (!sh) return;
+    if (b.dataset.s) {
+      finishPoly();
+      if (sd.tool === b.dataset.s) { endTool(); return; }   // 같은 아이콘을 다시 누르면 선택 해제
+      sd.tool = b.dataset.s;
+      const tool2 = sd.tool === "eraser" || sd.tool === "lasso";
+      if (!tool2) sd.last[sh.mode] = sd.tool;
+      if (sh.mode === "text" && sd.top == null && isCall(sd.tool) && !(sh.items[sh.sel])) qc("op").value = sd.tool === "ctext" ? "0" : "0.5";
+      shp.querySelectorAll("[data-s]").forEach(x => setP(x, x === b));
+      if (tool2) { sh.sel = -1; syncCtl(); render(); }
+      drawCur(); return;
+    }
     const it = sh.items[sh.sel];
-    if (b.dataset.s) { sd.tool = b.dataset.s; shp.querySelectorAll("[data-s]").forEach(x => setP(x, x === b)); return; }
-    if (b.dataset.q === "dash" || b.dataset.q === "fill") {
+    if (/^(dash|fill|bold|ol)$/.test(b.dataset.q)) {
       const on = !isOn(b), k = b.dataset.q; setP(b, on); sd[k] = on; if (it) it[k] = on; render(); return;
     }
     const a = b.dataset.sa;
-    if (a === "bgauto") { sd.bgc = null; if (it) it.bgc = null; syncCtl(); render(); } else if (a === "del") delSel(); else if (a === "ok") applyShp(); else if (a === "cancel") closeShp();
+    if (a === "bgauto") { sd.bgc = null; if (it) it.bgc = null; syncCtl(); render(); }
+    else if (a === "ok") applyShp(); else if (a === "cancel") closeShp(); else if (a === "eundo") popUndo(); else if (a === "reset") resetSd();
+    else if (a === "vbase") { sh.showBase = !sh.showBase; setP(b, sh.showBase); sh.cv.style.visibility = sh.showBase ? "" : "hidden"; drawCur(); }   // 레이어 보기/숨기기 (편집 화면에서만, 저장되는 내용은 그대로)
+    else if (a === "vitems") { sh.showItems = !sh.showItems; setP(b, sh.showItems); if (!sh.showItems) sh.sel = -1; syncCtl(); render(); }
   }
-  /* 만든 이미지를 메모에 반영 (PNG, 너무 크면 JPEG) + 되돌리기용 기록 */
-  function commit(target, c, nw, nh) {
-    let url;
-    try {
-      url = c.toDataURL("image/png");
-      if (url.length > 300000) {
-        const c2 = document.createElement("canvas"); c2.width = nw; c2.height = nh;
-        const x2 = c2.getContext("2d"); x2.fillStyle = "#fff"; x2.fillRect(0, 0, nw, nh); x2.drawImage(c, 0, 0);
-        url = c2.toDataURL("image/jpeg", 0.85);
+  /* 이미지의 레이어 상태: 화면에 보이는 그림(src, 합성본) + 원본(data-base) + 추가 요소(data-layers) */
+  const stateOf = t => ({ src: t.src, base: t.getAttribute("data-base"), layers: t.getAttribute("data-layers") });
+  function putState(t, st) {
+    t.src = st.src;
+    if (st.base) t.setAttribute("data-base", st.base); else t.removeAttribute("data-base");
+    if (st.layers) t.setAttribute("data-layers", st.layers); else t.removeAttribute("data-layers");
+  }
+  /* 그림 → 데이터 주소. 투명한 부분(지운 곳)이 있으면 투명도를 지원하는 형식으로, 너무 크면 줄여서 저장 */
+  function encodeCv(c, alpha) {
+    if (!alpha) {
+      let u = c.toDataURL("image/png");
+      if (u.length > 300000) {
+        const c2 = document.createElement("canvas"); c2.width = c.width; c2.height = c.height;
+        const x2 = c2.getContext("2d"); x2.fillStyle = "#fff"; x2.fillRect(0, 0, c.width, c.height); x2.drawImage(c, 0, 0);
+        u = c2.toDataURL("image/jpeg", 0.85);
       }
-    } catch (e) { toast("이 이미지에는 도형을 넣을 수 없어요"); return false; }
-    const h = hist.get(target) || []; h.push(target.src); while (h.length > 3) h.shift(); hist.set(target, h);
-    target.src = url; if (img === target) undoBtn.disabled = false;
-    fire(); return true;
+      return { url: u, c };
+    }
+    let cv = c;
+    for (let k = 0; ; k++) {
+      let u = cv.toDataURL("image/webp", 0.9);
+      if (u.indexOf("data:image/webp") !== 0) u = cv.toDataURL("image/png");
+      if (u.length <= 1200000 || k >= 3) return { url: u, c: cv };
+      const n = document.createElement("canvas"); n.width = Math.max(1, Math.round(cv.width * 0.75)); n.height = Math.max(1, Math.round(cv.height * 0.75));
+      n.getContext("2d").drawImage(cv, 0, 0, n.width, n.height); cv = n;
+    }
   }
   function applyShp() {
     if (!sh || !img) return;
-    const items = sh.items.filter(it => it.t !== "callout" || it.text.trim());   // 글자 없는 말풍선은 제외
-    if (!items.length) { closeShp(); return; }
-    const target = img, nw = target.naturalWidth, nh = target.naturalHeight, W = sh.W, H = sh.H;
-    if (!nw || !nh) { toast("이미지를 아직 읽는 중이에요. 잠시 뒤에 다시 눌러 주세요"); return; }
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + nw + '" height="' + nh + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none">' + items.map(it => itemSvg(it, W, H, true)).join("") + "</svg>";
+    finishPoly();
+    const s = sh, target = img;
+    if (!s.ready) { toast("이미지를 아직 읽는 중이에요. 잠시 뒤에 다시 눌러 주세요"); return; }
+    const items = s.items.filter(it => !isCall(it.t) || it.text.trim()).map(it => { const o = snap(it); delete o.drawing; delete o.cur; return o; });   // 글자 없는 말풍선은 제외
+    if (!s.erased && JSON.stringify(items) === s.orig) { closeShp(); return; }   // 바뀐 게 없음
+    let base = s.baseUrl, bc = s.cv, alpha = s.alpha;
+    try {
+      if (s.erased) { const e = encodeCv(s.cv, true); base = e.url; bc = e.c; alpha = true; }   // 지운 흔적은 원본 레이어에 반영
+    } catch (e) { toast("이 이미지에는 적용할 수 없어요"); return; }
+    const finish = st => {
+      if (st.src.length + (st.base ? st.base.length : 0) > 2600000) { toast("이미지 용량이 너무 커서 적용하지 못했어요. 이미지를 줄이거나 요소를 줄여 주세요"); return; }
+      const r0 = target.getBoundingClientRect().width;
+      const h = hist.get(target) || []; h.push(stateOf(target)); while (h.length > 3) h.shift(); hist.set(target, h);
+      putState(target, st);
+      if (bc.width !== s.nw && r0 > 0 && !target.getAttribute("width")) target.setAttribute("width", Math.round(r0));   // 용량 때문에 줄였어도 보이는 크기는 그대로
+      if (img === target) undoBtn.disabled = false;
+      fire(); closeShp(); toast("적용했어요. 마음에 안 들면 [되돌리기]를 눌러 주세요");
+    };
+    if (!items.length) { finish({ src: base, base: null, layers: null }); return; }   // 추가 요소가 없으면 레이어 정보도 없앰
+    const W = s.W, H = s.H;
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + bc.width + '" height="' + bc.height + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none">' + items.map(it => itemSvg(it, W, H, true)).join("") + "</svg>";
     const pic = new Image();
     pic.onload = () => {
-      const c = document.createElement("canvas"); c.width = nw; c.height = nh;
-      const x = c.getContext("2d"); x.drawImage(target, 0, 0, nw, nh); x.drawImage(pic, 0, 0, nw, nh);
-      if (commit(target, c, nw, nh)) { closeShp(); toast("도형을 넣었어요. 마음에 안 들면 [되돌리기]를 눌러 주세요"); }
+      if (sh !== s) return;
+      const c = document.createElement("canvas"); c.width = bc.width; c.height = bc.height;
+      const x = c.getContext("2d"); x.drawImage(bc, 0, 0); x.drawImage(pic, 0, 0, c.width, c.height);   // 원본 위에 추가 요소를 합성 (화면·내보내기용)
+      let enc; try { enc = encodeCv(c, alpha); } catch (e) { toast("이 이미지에는 적용할 수 없어요"); return; }
+      if (enc.c.width < bc.width) bc = enc.c;
+      finish({ src: enc.url, base, layers: JSON.stringify({ W, H, items }) });
     };
-    pic.onerror = () => toast("도형을 넣지 못했어요");
+    pic.onerror = () => toast("적용하지 못했어요");
     pic.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
   }
   shp.addEventListener("input", e => {
     const q = e.target.getAttribute && e.target.getAttribute("data-q"); if (!q || !sh) return;
     const it = sh.items[sh.sel], v = e.target.value;
-    if (q === "text") { if (it && it.t === "callout") { it.text = v; if (it.auto) autoTail(it); } }
+    if (q === "text") { if (it && isCall(it.t)) { it.text = v; if (it.auto) autoTail(it); } }
     else {
       if (q === "bg") { sd.bgc = v; if (it) it.bgc = v; render(); return; }
-      if (q === "color") sd.color = v; else if (q === "lw") sd.lw = +v; else if (q === "fs") sd.fs = +v; else if (q === "op") { if (!(it && it.t === "callout")) sd.op = +v; } else return;
-      if (it) { it[q] = q === "color" ? v : +v; if (q === "fs" && it.t === "callout" && it.auto) autoTail(it); }
+      if (q === "color") sd.color = v; else if (q === "lw") sd.lw = +v; else if (q === "fs") sd.fs = +v; else if (q === "op") { if (sh.mode === "text") sd.top = +v; else sd.op = +v; } else if (q === "ew") { sd.ew = +v; drawCur(); return; } else return;
+      if (it) { it[q] = q === "color" ? v : +v; if (q === "fs" && isCall(it.t) && it.auto) autoTail(it); }
     }
     render();
   });
-  document.addEventListener("keydown", e => {   // 도형 넣기 중: Esc 취소 / Delete 선택 삭제 / Ctrl+Enter 적용
+  document.addEventListener("keydown", e => {   // Esc 취소 / Ctrl+Enter 적용 / Enter 자유형 도형 마침 / Delete 선택 삭제 / Ctrl+Z 지움 취소
     if (!sh) return;
     const typing = /^(TEXTAREA|INPUT|SELECT)$/.test(e.target.nodeName);
     if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); closeShp(); }
     else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); applyShp(); }
+    else if (e.key === "Enter" && !typing) { e.preventDefault(); finishPoly(); }
     else if ((e.key === "Delete" || e.key === "Backspace") && !typing) { e.preventDefault(); delSel(); }
+    else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === "z" && !typing) { e.preventDefault(); popUndo(); }
   }, true);
 
 
   function undoTxt() {
     const h = img && hist.get(img); if (!h || !h.length) return;
-    img.src = h.pop(); undoBtn.disabled = !h.length; fire(); sched();
+    putState(img, h.pop()); undoBtn.disabled = !h.length; fire(); sched();
   }
 })();
 
@@ -1710,6 +1953,19 @@ if(!useFb)localNote();
 else if(!dbSet)say("DB_URL을 먼저 설정해 주세요","err");
 else{say("불러오는 중…");firstTry=true;connect()}
 saveState();
+
+/* ===== 기본값으로 초기화: 이 브라우저에 저장된 설정을 지우고 처음 상태로 ===== */
+$("resetAll").addEventListener("click",()=>{
+  if(!confirm("작업자 코드·사업장 코드·년도·모드·저장 형식·바코드/QR 전환·1~9번 내용·타이머 시각을 모두 기본값으로 되돌릴까요?\n\n(되돌릴 수 없어요)"))return;
+  const keep=memoEl.value!==""&&!confirm("메모도 함께 비울까요?\n\n[확인] 메모도 비우기\n[취소] 메모는 그대로 두기");
+  const memo=keep?memoEl.value:"";
+  useFb=false;dirty=false;clearTimers();   /* DB 사용은 끔 (DB 안의 메모는 건드리지 않아요) */
+  try{
+    localStorage.removeItem(KEY);localStorage.removeItem(TKEY);
+    if(memo)localStorage.setItem(KEY,JSON.stringify({memo:memo}));
+  }catch(e){}
+  location.reload();
+});
 </script>
 </body>
 </html>
