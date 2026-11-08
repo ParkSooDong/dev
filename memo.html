@@ -133,7 +133,8 @@ body.has-max header .tr{display:none}
 #rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
 #rem.neg{color:var(--err)}
 </style>
-</head>
+<script type="text/javascript" nonce="472d4fe041444a2d947bd85cc00" src="//local.adguard.org?ts=1794132916038&amp;type=content-script&amp;dmn=fs.mybox.naver.com&amp;url=https%3A%2F%2Ffs.mybox.naver.com%2Ffile%2Fdownload.api%3FsvcType%3DMYBOX-WEB%26resourceKey%3DcGVzZGVlMDB8MzQ3MjYwMDMzNjg4MjM0MTk3NnxGfDA%26time%3D1794142698752&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="472d4fe041444a2d947bd85cc00" src="//local.adguard.org?ts=1794132916038&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -206,7 +207,7 @@ function makeRich(el) {
       for (const k of ["x1", "y1", "x2", "y2", "tx", "ty"]) r[k] = num(it[k], -1e5, 1e5, 0);
       r.color = HEX.test(it.color) ? it.color : "#f06595"; r.bgc = HEX.test(it.bgc) ? it.bgc : null;
       r.lw = num(it.lw, 1, 40, 3); r.fs = num(it.fs, 6, 400, 21); r.op = num(it.op, 0, 1, 1);
-      r.bold = !!it.bold; r.ol = !!it.ol; r.fill = !!it.fill; r.dash = !!it.dash; r.auto = it.auto !== false;
+      r.bold = !!it.bold; r.ol = !!it.ol; r.fill = !!it.fill; r.fo = it.fo ? 1 : 0; r.dash = !!it.dash; r.auto = it.auto !== false;
       r.text = typeof it.text === "string" ? it.text.slice(0, 500) : "";
       if (it.t === "poly" || it.t === "free") {
         if (!Array.isArray(it.pts)) continue;
@@ -871,8 +872,8 @@ let imgBack = null;
 
   box.hidden = bar.hidden = true;
   const shp = el("div", "imgx-row",
-    '<button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/><circle cx="5" cy="18" r="2" fill="var(--card)"/><circle cx="19" cy="6" r="2" fill="var(--card)"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
-    '<input type="color" data-q="color" data-m="text shape line" value="#f06595" title="색" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><select data-m="text" data-q="fs" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><button type="button" data-m="shape" data-q="fill" aria-pressed="false" title="안쪽 채우기">채움</button><input type="color" data-m="text shape" data-q="bg" value="#ffffff" title="배경색" aria-label="배경색"><button type="button" data-m="text shape" data-sa="bgauto" title="배경색을 기본값으로 (채움은 선 색, 글자·말풍선은 흰색)">배경 기본</button><select data-q="op" data-m="text shape line" title="투명도" aria-label="투명도"></select><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button>' +
+    '<button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
+    '<input type="color" data-q="color" data-m="text shape line" value="#f06595" title="색" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><select data-m="text" data-q="fs" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><button type="button" data-m="shape" data-q="fill" aria-pressed="true" title="안쪽 채우기">채움</button><input type="color" data-m="text shape" data-q="bg" value="#fff3a3" title="배경색" aria-label="배경색"><button type="button" data-m="text shape" data-sa="bgauto" title="배경색을 기본값(연한 노랑)으로">배경 기본</button><select data-q="op" data-m="text shape line" title="투명도" aria-label="투명도"></select><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button>' +
     '<textarea data-q="text" rows="2" placeholder="글자 입력" aria-label="글자" hidden></textarea><i class="sep" data-m="text shape line"></i>' +
     '<button type="button" class="ic" data-s="eraser" aria-label="지우개" title="지우개: 원본 이미지를 끌어서 지워요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>' +
     '<select data-q="ew" title="지우개 굵기" aria-label="지우개 굵기"><option value="8">가늘게 (8)</option><option value="16" selected>보통 (16)</option><option value="32">굵게 (32)</option><option value="64">아주 굵게 (64)</option></select>' +
@@ -962,7 +963,9 @@ let imgBack = null;
   const SVGNS = "http://www.w3.org/2000/svg";
   const CALL = new Set(["ctext", "cround", "coval", "cthink"]), isCall = t => CALL.has(t);
   const BOXT = new Set(["circle", "rect", "tri", "cloud"]);
-  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, ol: false, top: null, color: "#f06595", lw: 3, dash: false, fill: false, fs: 21, op: 1, bgc: null, ew: 16 };
+  const DEF_BG = "#fff3a3";   // 배경·채움 기본색(연한 노랑)
+  const LINEM = new Set("arrow darrow trend vline hline cross".split(" "));   // 선 넣기 도구(도형 넣기와 투명도 기본값을 따로 둠)
+  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, ol: false, top: null, color: "#f06595", lw: 3, dash: false, fill: true, fs: 21, op: 1, sop: 0.5, bgc: DEF_BG, ew: 16 };
   const HM = [["x1", "y1"], ["y1"], ["x2", "y1"], ["x2"], ["x2", "y2"], ["y2"], ["x1", "y2"], ["x1"]];   // 상자형 도형의 8개 손잡이가 움직이는 좌표
   const HLN = [["x1", "y1"], ["x2", "y2"]];                                                              // 선형 도형의 양 끝 손잡이
   const HCUR = ["nwse-resize", "ns-resize", "nesw-resize", "ew-resize", "nwse-resize", "ns-resize", "nesw-resize", "ew-resize"];
@@ -1026,7 +1029,7 @@ let imgBack = null;
     const c = it.color, lw = it.lw;
     const sb = 'stroke="' + c + '" stroke-width="' + lw + '" stroke-linecap="round" stroke-linejoin="round"';
     const st = sb + (it.dash ? ' stroke-dasharray="' + lw * 3 + " " + lw * 2 + '"' : "");
-    const fl = it.fill ? 'fill="' + (it.bgc || c) + '" fill-opacity=".3"' : 'fill="none"';
+    const fl = it.fill ? 'fill="' + (it.bgc || c) + '" fill-opacity="' + (it.fo ? 1 : .3) + '"' : 'fill="none"';
     const ln = (x1, y1, x2, y2, a) => '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" ' + a + "/>";
     const hit = (x1, y1, x2, y2) => exp ? "" : ln(x1, y1, x2, y2, 'stroke="rgba(0,0,0,0)" stroke-width="18" stroke-linecap="round" pointer-events="stroke"');
     const x = Math.min(it.x1, it.x2), y = Math.min(it.y1, it.y2), w = Math.abs(it.x2 - it.x1), h = Math.abs(it.y2 - it.y1);
@@ -1042,10 +1045,7 @@ let imgBack = null;
       case "vline": return hit(it.x1, 0, it.x1, H) + ln(it.x1, 0, it.x1, H, st);
       case "hline": return hit(0, it.y1, W, it.y1) + ln(0, it.y1, W, it.y1, st);
       case "cross": return hit(it.x1, 0, it.x1, H) + hit(0, it.y1, W, it.y1) + ln(it.x1, 0, it.x1, H, st) + ln(0, it.y1, W, it.y1, st);
-      case "trend": {
-        const r = Math.max(4, lw * 1.6), dot = (px, py) => '<circle cx="' + px + '" cy="' + py + '" r="' + r + '" fill="#fff" stroke="' + c + '" stroke-width="' + lw + '"/>';
-        return hit(it.x1, it.y1, it.x2, it.y2) + ln(it.x1, it.y1, it.x2, it.y2, st) + dot(it.x1, it.y1) + dot(it.x2, it.y2);
-      }
+      case "trend": return hit(it.x1, it.y1, it.x2, it.y2) + ln(it.x1, it.y1, it.x2, it.y2, st);
       case "circle": return '<ellipse cx="' + (x + w / 2) + '" cy="' + (y + h / 2) + '" rx="' + w / 2 + '" ry="' + h / 2 + '" ' + st + " " + fl + ' pointer-events="all"/>';
       case "rect": return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="2" ' + st + " " + fl + ' pointer-events="all"/>';
       case "tri": return '<polygon points="' + pstr([[x + w / 2, y], [x + w, y + h], [x, y + h]]) + '" ' + st + " " + fl + ' pointer-events="all"/>';
@@ -1217,7 +1217,7 @@ let imgBack = null;
   /* 말풍선 꼬리: 직접 옮기기 전에는 글자(상자 크기)가 바뀔 때마다 상자 아래쪽에 자동으로 맞춤 */
   function autoTail(it) { const b = callBox(it); it.tx = it.x1 + b.w * 0.25; it.ty = it.y1 + b.h + (it.t === "cthink" ? 44 : 28); }
   function newItem(tool, p) {
-    return { t: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y, tx: p.x, ty: p.y, color: sd.color, lw: sd.lw, fs: sd.fs, op: isCall(tool) ? (sd.top != null ? sd.top : tool === "ctext" ? 0 : 0.5) : sd.op, bold: sd.bold, ol: sd.ol, bgc: sd.bgc, fill: sd.fill, dash: tool === "cross" ? true : sd.dash, text: "", auto: true };
+    return { t: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y, tx: p.x, ty: p.y, color: sd.color, lw: sd.lw, fs: sd.fs, op: isCall(tool) ? (sd.top != null ? sd.top : tool === "ctext" ? 0 : 0.5) : (LINEM.has(tool) ? sd.op : sd.sop), bold: sd.bold, ol: sd.ol, bgc: sd.bgc, fill: sd.fill, fo: 1, dash: tool === "cross" ? true : sd.dash, text: "", auto: true };
   }
   /* 자유형 도형 마치기 (점이 3개 미만이면 버림) */
   function finishPoly() {
@@ -1357,7 +1357,7 @@ let imgBack = null;
     eundoBtn.disabled = true;
     const op = qc("op"), ops = mode === "text" ? [["0", "배경 없음"], ["0.25", "배경 25%"], ["0.5", "배경 50%"], ["0.75", "배경 75%"], ["1", "배경 100%"]] : [["1", "불투명"], ["0.75", "75%"], ["0.5", "50%"], ["0.25", "25%"]];
     op.innerHTML = ops.map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
-    op.value = mode === "text" ? String(sd.top != null ? sd.top : sd.tool === "ctext" ? 0 : 0.5) : String(sd.op);
+    op.value = mode === "text" ? String(sd.top != null ? sd.top : sd.tool === "ctext" ? 0 : 0.5) : String(mode === "shape" ? sd.sop : sd.op);
     qc("ew").value = String(sd.ew);
     shp.querySelectorAll("[data-s]").forEach(x => setP(x, x.dataset.s === sd.tool));
     main.hidden = true; shp.hidden = false;
@@ -1378,13 +1378,13 @@ let imgBack = null;
     sh.items.splice(sh.sel, 1); sh.sel = -1;
     syncCtl(); render();
   }
-  /* 도구 설정을 기본값으로: 색 빨강, 선 굵기 보통, 글자 크기 21, 투명도·배경·점선·채움·굵게·외곽선 해제, 지우개 보통 (이미 넣은 요소는 건드리지 않음) */
+  /* 도구 설정을 기본값으로: 색 빨강, 선 굵기 보통, 글자 크기 21, 배경·채움 연한 노랑(도형 투명도 50%), 점선·굵게·외곽선 해제, 지우개 보통 (이미 넣은 요소는 건드리지 않음) */
   function resetSd() {
     if (!sh) return;
-    Object.assign(sd, { color: "#f06595", lw: 3, dash: false, fill: false, fs: 21, op: 1, bgc: null, bold: false, ol: false, top: null, ew: 16 });
-    qc("color").value = "#f06595"; qc("lw").value = "3"; qc("fs").value = "21"; qc("ew").value = "16"; qc("bg").value = "#ffffff";
-    qc("op").value = sh.mode === "text" ? String(sd.tool === "ctext" ? 0 : 0.5) : "1";
-    ["dash", "fill", "bold", "ol"].forEach(k => setP(qc(k), false));
+    Object.assign(sd, { color: "#f06595", lw: 3, dash: false, fill: true, fs: 21, op: 1, sop: 0.5, bgc: DEF_BG, bold: false, ol: false, top: null, ew: 16 });
+    qc("color").value = "#f06595"; qc("lw").value = "3"; qc("fs").value = "21"; qc("ew").value = "16"; qc("bg").value = DEF_BG;
+    qc("op").value = sh.mode === "text" ? String(sd.tool === "ctext" ? 0 : 0.5) : sh.mode === "shape" ? "0.5" : "1";
+    ["dash", "bold", "ol"].forEach(k => setP(qc(k), false)); setP(qc("fill"), true);
     drawCur(); toast("도구 설정을 기본값으로 되돌렸어요");
   }
   function shpClick(b) {
@@ -1405,7 +1405,7 @@ let imgBack = null;
       const on = !isOn(b), k = b.dataset.q; setP(b, on); sd[k] = on; if (it) it[k] = on; render(); return;
     }
     const a = b.dataset.sa;
-    if (a === "bgauto") { sd.bgc = null; if (it) it.bgc = null; syncCtl(); render(); }
+    if (a === "bgauto") { sd.bgc = DEF_BG; qc("bg").value = DEF_BG; if (it) it.bgc = DEF_BG; syncCtl(); render(); }
     else if (a === "ok") applyShp(); else if (a === "cancel") closeShp(); else if (a === "eundo") popUndo(); else if (a === "reset") resetSd();
     else if (a === "vbase") { sh.showBase = !sh.showBase; setP(b, sh.showBase); sh.cv.style.visibility = sh.showBase ? "" : "hidden"; drawCur(); }   // 레이어 보기/숨기기 (편집 화면에서만, 저장되는 내용은 그대로)
     else if (a === "vitems") { sh.showItems = !sh.showItems; setP(b, sh.showItems); if (!sh.showItems) sh.sel = -1; syncCtl(); render(); }
@@ -1478,7 +1478,7 @@ let imgBack = null;
     if (q === "text") { if (it && isCall(it.t)) { it.text = v; if (it.auto) autoTail(it); } }
     else {
       if (q === "bg") { sd.bgc = v; if (it) it.bgc = v; render(); return; }
-      if (q === "color") sd.color = v; else if (q === "lw") sd.lw = +v; else if (q === "fs") sd.fs = +v; else if (q === "op") { if (sh.mode === "text") sd.top = +v; else sd.op = +v; } else if (q === "ew") { sd.ew = +v; drawCur(); return; } else return;
+      if (q === "color") sd.color = v; else if (q === "lw") sd.lw = +v; else if (q === "fs") sd.fs = +v; else if (q === "op") { if (sh.mode === "text") sd.top = +v; else if (sh.mode === "shape") sd.sop = +v; else sd.op = +v; } else if (q === "ew") { sd.ew = +v; drawCur(); return; } else return;
       if (it) { it[q] = q === "color" ? v : +v; if (q === "fs" && isCall(it.t) && it.auto) autoTail(it); }
     }
     render();
