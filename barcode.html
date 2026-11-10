@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko" data-theme="light">
 <head>
@@ -480,12 +481,12 @@ function makeRich(el) {
     r.onerror = rej; r.readAsDataURL(f);
   });
   el.insertFiles = async (files, back) => {
-    let used = el.value.length, h = "", n = 0; const bad = [];
+    let used = utf8Len(el.value), h = "", n = 0; const bad = [];
     for (const f of files) {
       const nm = (f.name || "file").replace(/[\u0000-\u001f\u007f]/g, "").slice(0, 150) || "file";
       if (!f.size) { bad.push(nm + " (빈 파일)"); continue; }
       const need = Math.ceil(f.size / 3) * 4 + 500;
-      if (used + need > MAX_CHARS) { bad.push(nm + " (" + fmtSize(f.size) + ", 남은 용량 부족)"); continue; }
+      if (used + need > MAX_BYTES) { bad.push(nm + " (" + fmtSize(f.size) + ", 남은 용량 부족)"); continue; }
       try {
         const b64 = await readB64(f);
         h += '<span data-att="1" data-name="' + escH(nm) + '" data-mime="' + escH(f.type || "application/octet-stream") + '" data-b64="' + b64 + '"></span>\u00a0';
@@ -656,13 +657,14 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.con
 /* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이) ▼▼ */
 const DB_URL = "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app";
 /* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
-const MAX_CHARS=3000000,POLL_MS=3000,IDLE_MS=3000,MAX_WAIT_MS=30000;
+const MAX_BYTES=10000000,POLL_MS=3000,IDLE_MS=3000,MAX_WAIT_MS=30000;   /* 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요 */
+const utf8Len = s => new Blob([s]).size;   // 실제 UTF-8 바이트 수 (한글 3바이트, 영문·숫자·base64 1바이트)
 const BASE=DB_URL.replace(/\/+$/,""),URL_MEMO=BASE+"/memo.json",URL_AT=BASE+"/memo/updatedAt.json";
 const dbSet=!DB_URL.includes("YOUR-PROJECT");
 const memoEl=$("memo"),mst=$("mst"),fbBtn=$("fbBtn");
 
-/* ===== DB 저장 글자 수 표시 =====
-   Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 글자 수를 한도(MAX_CHARS)와 함께 보여줘요.
+/* ===== DB 저장 크기(바이트) 표시 =====
+   Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 크기(UTF-8 바이트)를 한도(MAX_BYTES)와 함께 보여줘요.
    - 입력·붙여넣기·불러오기·서식 변경 등 메모 내용이 바뀔 때마다 갱신 (MutationObserver)
    - 글자를 칠 때마다 계산하지 않고, 계산에 걸린 시간의 10배 이상 간격을 둬서 입력 속도에 영향을 주지 않아요 */
 const cnt = document.getElementById("cnt");
@@ -670,10 +672,10 @@ let cntT = null;
 function updateCnt() {
   cntT = null;
   const t0 = performance.now();
-  const v = memoEl.value, n = v.length, vis = memoEl.textContent.replace(/\u200b/g, "").length, pct = n / MAX_CHARS * 100;
-  cnt.textContent = "DB " + n.toLocaleString("ko-KR") + " / " + MAX_CHARS.toLocaleString("ko-KR") + "자";
-  cnt.className = n > MAX_CHARS ? "ce" : pct >= 80 ? "cw" : "";
-  cnt.title = "Firebase 에 저장되는 글자 수 (서식·이미지·첨부 파일 데이터 포함, 한도의 " + (pct < 0.1 && n ? "0.1% 미만" : pct.toFixed(1) + "%") + ")\n눈에 보이는 글자: " + vis.toLocaleString("ko-KR") + "자";
+  const v = memoEl.value, n = utf8Len(v), vis = memoEl.textContent.replace(/\u200b/g, "").length, pct = n / MAX_BYTES * 100;
+  cnt.textContent = "DB " + n.toLocaleString("ko-KR") + " / " + MAX_BYTES.toLocaleString("ko-KR") + "바이트";
+  cnt.className = n > MAX_BYTES ? "ce" : pct >= 80 ? "cw" : "";
+  cnt.title = "Firebase 에 저장되는 크기 (UTF-8 바이트, 서식·이미지·첨부 파일 데이터 포함, 한도의 " + (pct < 0.1 && n ? "0.1% 미만" : pct.toFixed(1) + "%") + ")\n= " + (n / 1048576).toFixed(2) + " MB / 글자 수: " + v.length.toLocaleString("ko-KR") + "자 / 눈에 보이는 글자: " + vis.toLocaleString("ko-KR") + "자";
   cntDelay = Math.max(250, (performance.now() - t0) * 10);
 }
 let cntDelay = 250;
@@ -694,7 +696,7 @@ async function saveRemote(unloading){
   if(!useFb||!ready||!dirty)return;
   if(saving){schedule();return}
   const v=memoEl.value;
-  if(v.length>MAX_CHARS){say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지를 줄여 주세요","err");return}
+  if(utf8Len(v)>MAX_BYTES){say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지·첨부 파일을 줄여 주세요","err");return}
   const at=Math.max(Date.now(),knownAt+1);                 /* 기기 시계가 달라도 항상 더 큰 값 */
   const body=JSON.stringify({text:v,updatedAt:at}),small=body.length<20000;   /* 창 닫는 중 전송은 작은 메모만 가능 */
   saving=true;say("저장 중…");
