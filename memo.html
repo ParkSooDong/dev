@@ -59,6 +59,13 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .rich table{border-collapse:collapse;margin:4px 0}
 .rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em}
 .rich a{color:inherit}
+/* 파일 첨부 칩 */
+.rich .att{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);font-size:.95em;line-height:1.5;cursor:pointer;user-select:none}
+.rich .att:hover{background:var(--line)}
+.tb .pop#attPop{max-width:min(380px,80vw)}
+#attPop .row{display:flex;gap:2px;align-items:center}
+#attPop .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;display:block;text-align:left;line-height:32px}
+#attPop .row .rm{min-width:32px;flex:none;padding:0}
 .rich h1{font-size:1.6em;line-height:1.3;margin:.5em 0 .25em;letter-spacing:-.01em}
 .rich h2{font-size:1.3em;line-height:1.3;margin:.5em 0 .25em}
 .rich h3{font-size:1.1em;line-height:1.3;margin:.5em 0 .25em}
@@ -133,8 +140,7 @@ body.has-max header .tr{display:none}
 #rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
 #rem.neg{color:var(--err)}
 </style>
-<script type="text/javascript" nonce="472d4fe041444a2d947bd85cc00" src="//local.adguard.org?ts=1794132916038&amp;type=content-script&amp;dmn=fs.mybox.naver.com&amp;url=https%3A%2F%2Ffs.mybox.naver.com%2Ffile%2Fdownload.api%3FsvcType%3DMYBOX-WEB%26resourceKey%3DcGVzZGVlMDB8MzQ3MjYwMDMzNjg4MjM0MTk3NnxGfDA%26time%3D1794142698752&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="472d4fe041444a2d947bd85cc00" src="//local.adguard.org?ts=1794132916038&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
+</head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -158,6 +164,9 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="image" title="이미지 삽입" aria-label="이미지 삽입"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg></button>
   <input type="color" id="fcPick" value="#f06595" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="file" id="imgFile" accept="image/*" multiple hidden>
+  <button type="button" data-cmd="attach" title="파일 첨부 저장 (엑셀·문서·이미지 등 — 메모 안에 포함돼요)" aria-label="파일 첨부 저장"><svg viewBox="0 0 24 24"><path d="M20 11.5l-7.6 7.6a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.3-7.3"/></svg></button>
+  <input type="file" id="attFile" multiple hidden>
+  <div class="menu" id="attMenu"><button type="button" data-pal id="attListBtn" title="파일 첨부 읽기 (첨부된 파일을 다시 파일로 저장)" aria-label="첨부 파일 목록" aria-haspopup="true" aria-expanded="false"><span id="attN">첨부 목록</span></button><div class="pop" id="attPop" hidden></div></div>
   <button type="button" data-cmd="find" title="찾기" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
   <button type="button" data-cmd="ul" title="글머리 기호 목록" aria-label="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg></button>
   <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
@@ -189,6 +198,8 @@ function makeRich(el) {
   const TAGS = new Set("A B STRONG I EM U S STRIKE SUB SUP BR P DIV SPAN UL OL LI H1 H2 H3 H4 H5 H6 TABLE THEAD TBODY TFOOT TR TD TH CAPTION IMG PRE CODE BLOCKQUOTE HR".split(" "));
   const DROP = new Set("SCRIPT STYLE META LINK TITLE HEAD XML O:P NOSCRIPT IFRAME OBJECT EMBED FORM INPUT BUTTON SELECT TEXTAREA SVG MATH AUDIO VIDEO CANVAS".split(" "));
   const PROPS = new Set("font-weight font-style font-size margin-left text-decoration color background-color text-align vertical-align border border-top border-right border-bottom border-left".split(" "));
+  const B64 = /^[A-Za-z0-9+\/]+={0,2}$/, MIME = /^[a-z0-9][a-z0-9.+-]{0,60}\/[a-z0-9][a-z0-9.+-]{0,100}$/i;
+  const fmtSize = n => n >= 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
   const IMG = /^data:image\/(png|jpe?g|gif|webp|bmp);base64,[A-Za-z0-9+\/=]+$/i;
   const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -235,6 +246,17 @@ function makeRich(el) {
       const t = n.nodeName.toUpperCase();
       if (DROP.has(t)) continue;
       if (!TAGS.has(t)) { walk(n, dst); continue; }
+      if (t === "SPAN" && n.hasAttribute("data-att")) {   /* 첨부 파일 칩: 값을 모두 검증해서 다시 만듦 */
+        const b = n.getAttribute("data-b64") || ""; if (!b || !B64.test(b)) continue;
+        const nm = (n.getAttribute("data-name") || "file").replace(/[\u0000-\u001f\u007f]/g, "").slice(0, 150) || "file";
+        const mt = n.getAttribute("data-mime") || "", sz = Math.floor(b.length * 3 / 4) - (b.endsWith("==") ? 2 : b.endsWith("=") ? 1 : 0);
+        const c = document.createElement("span");
+        c.className = "att"; c.setAttribute("contenteditable", "false"); c.setAttribute("data-att", "1");
+        c.setAttribute("data-name", nm); c.setAttribute("data-mime", MIME.test(mt) ? mt : "application/octet-stream");
+        c.setAttribute("data-size", sz); c.setAttribute("data-b64", b);
+        c.title = "클릭하면 파일로 저장돼요"; c.textContent = "📎 " + nm + " (" + fmtSize(sz) + ")";
+        dst.appendChild(c); continue;
+      }
       if (t === "IMG") {
         const s = n.getAttribute("src") || ""; if (!IMG.test(s)) continue;
         const im = document.createElement("img"); im.src = s;
@@ -366,6 +388,30 @@ function makeRich(el) {
     const s = getSelection(), r = s.rangeCount ? s.getRangeAt(0).cloneRange() : null;
     return () => { el.focus(); if (r && el.contains(r.commonAncestorContainer)) { s.removeAllRanges(); s.addRange(r); } };
   }
+  /* 파일 첨부: 파일을 base64 로 바꿔 메모 안에 칩으로 넣음 (남은 DB 용량 안에서만) */
+  const readB64 = f => new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => { const u = String(r.result); res(u.slice(u.indexOf(",") + 1)); };
+    r.onerror = rej; r.readAsDataURL(f);
+  });
+  el.insertFiles = async (files, back) => {
+    let used = el.value.length, h = "", n = 0; const bad = [];
+    for (const f of files) {
+      const nm = (f.name || "file").replace(/[\u0000-\u001f\u007f]/g, "").slice(0, 150) || "file";
+      if (!f.size) { bad.push(nm + " (빈 파일)"); continue; }
+      const need = Math.ceil(f.size / 3) * 4 + 500;
+      if (used + need > MAX_CHARS) { bad.push(nm + " (" + fmtSize(f.size) + ", 남은 용량 부족)"); continue; }
+      try {
+        const b64 = await readB64(f);
+        h += '<span data-att="1" data-name="' + escH(nm) + '" data-mime="' + escH(f.type || "application/octet-stream") + '" data-b64="' + b64 + '"></span>\u00a0';
+        used += need; n++;
+      } catch (e) { bad.push(nm + " (읽기 실패)"); }
+    }
+    if (h) { if (back) back(); insert(clean(h)); }
+    if (bad.length) toast("첨부하지 못한 파일: " + bad.join(", "));
+    else if (n) say("파일 " + n + "개를 첨부했어요", "ok");
+    return n;
+  };
   el.insertImages = async files => {
     let h = "";
     for (const f of files) { try { h += '<img src="' + await imgToUrl(f) + '">'; } catch (e) {} }
@@ -375,6 +421,8 @@ function makeRich(el) {
     const cd = e.clipboardData; if (!cd) return;
     const html = cd.getData("text/html"), txt = cd.getData("text/plain");
     const imgs = Array.from(cd.files || []).filter(f => /^image\//.test(f.type));
+    const others = Array.from(cd.files || []).filter(f => !/^image\//.test(f.type));
+    if (!html && !imgs.length && others.length) { e.preventDefault(); el.insertFiles(others, keepCaret()); return; }   /* 파일 붙여넣기 → 첨부 */
     if (!html && !imgs.length) return;            /* 글자만 있으면 기본 붙여넣기 */
     e.preventDefault();
     const back = keepCaret();
@@ -382,10 +430,14 @@ function makeRich(el) {
   });
   el.addEventListener("dragover", e => { if (e.dataTransfer && Array.from(e.dataTransfer.types).includes("Files")) e.preventDefault(); });
   el.addEventListener("drop", e => {
-    const imgs = Array.from((e.dataTransfer && e.dataTransfer.files) || []).filter(f => /^image\//.test(f.type));
-    if (!imgs.length) return;
+    const all = Array.from((e.dataTransfer && e.dataTransfer.files) || []);
+    const imgs = all.filter(f => /^image\//.test(f.type)), others = all.filter(f => !/^image\//.test(f.type));
+    if (!imgs.length && !others.length) return;
     e.preventDefault();
-    build("", imgs, "").then(h => insert(h));
+    (async () => {
+      if (imgs.length) insert(await build("", imgs, ""));
+      if (others.length) await el.insertFiles(others);   /* 이미지가 아닌 파일은 첨부로 */
+    })();
   });
 }
 
@@ -536,7 +588,7 @@ function updateCnt() {
   const v = ta.value, n = v.length, vis = ta.textContent.replace(/\u200b/g, "").length, pct = n / MAX_CHARS * 100;
   cnt.textContent = "DB " + n.toLocaleString("ko-KR") + " / " + MAX_CHARS.toLocaleString("ko-KR") + "자";
   cnt.className = n > MAX_CHARS ? "ce" : pct >= 80 ? "cw" : "";
-  cnt.title = "Firebase 에 저장되는 글자 수 (서식·이미지 데이터 포함, 한도의 " + (pct < 0.1 && n ? "0.1% 미만" : pct.toFixed(1) + "%") + ")\n눈에 보이는 글자: " + vis.toLocaleString("ko-KR") + "자";
+  cnt.title = "Firebase 에 저장되는 글자 수 (서식·이미지·첨부 파일 데이터 포함, 한도의 " + (pct < 0.1 && n ? "0.1% 미만" : pct.toFixed(1) + "%") + ")\n눈에 보이는 글자: " + vis.toLocaleString("ko-KR") + "자";
   cntDelay = Math.max(250, (performance.now() - t0) * 10);
 }
 let cntDelay = 250;
@@ -713,7 +765,7 @@ const CMDS = {
   check, indent: () => indent(1), outdent: () => indent(-1),
   alL: () => align("justifyLeft"), alC: () => align("justifyCenter"), alR: () => align("justifyRight"),
   hr: () => exec("insertHorizontalRule"), quote: () => block("blockquote"), code: () => block("pre"),
-  clear: clearFmt, clearall: clearAll, image: pickImage, find: openFind
+  clear: clearFmt, clearall: clearAll, image: pickImage, attach: pickAttach, find: openFind
 };
 
 /* ===== 추가 서식: 블록 찾기 / 들여쓰기 / 체크리스트 / 정렬 / 서식 지우기 / 표 편집 / 이미지 / 찾기 ===== */
@@ -1666,7 +1718,8 @@ function exportMemo(kind) {
     body = '<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>메모</title>\n<style>\n' +
       'body{font:16px/1.6 system-ui,"Noto Sans KR",sans-serif;max-width:800px;margin:24px auto;padding:0 16px;color:#1c1b19;word-break:break-word}\n' +
       'img{max-width:100%;height:auto}table{border-collapse:collapse}td,th{border:1px solid #d9d5cb;padding:2px 6px;vertical-align:top}\n' +
-      '</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n</body>\n</html>\n';
+      '[data-att]{display:inline-block;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid #d9d5cb;border-radius:999px;cursor:pointer}\n' +
+      '</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
     type = "text/html"; name = "메모_" + stamp + ".html";
   } else {
     body = "\ufeff" + ta.innerText.replace(/\u00a0/g, " ").replace(/\u200b/g, "");   // BOM: 윈도우 앱에서도 한글이 깨지지 않게
@@ -1803,6 +1856,69 @@ document.getElementById("resetAll").addEventListener("click",()=>{
   saveLocal();
   location.reload();
 });
+
+/* ===== 파일 첨부: 저장(첨부) / 읽기(다시 파일로 저장) =====
+   - 📎 버튼: 파일을 골라 메모 안에 넣어요 (엑셀·문서·압축 파일 등 아무 파일). 파일을 메모로 끌어놓거나 붙여넣어도 돼요.
+   - 파일은 base64 로 메모 본문에 들어가므로 "DB n / 3,000,000자" 용량을 함께 써요 (파일 크기의 약 1.33배).
+   - 칩을 클릭하거나 '첨부 목록'에서 고르면 원래 파일로 저장돼요. */
+let attBack = null;
+const attFile = document.getElementById("attFile"), attPop = document.getElementById("attPop"), attN = document.getElementById("attN");
+const attFmt = n => n >= 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
+const attNodes = () => Array.from(ta.querySelectorAll(".att"));
+function pickAttach() {
+  if (ta.disabled) return;
+  attBack = saveRange(); attFile.value = ""; attFile.click();
+}
+attFile.addEventListener("change", async () => {
+  const fs = Array.from(attFile.files || []); if (!fs.length) return;
+  if (attBack) attBack();
+  say("파일을 넣는 중…"); await ta.insertFiles(fs);
+});
+function attDownload(c) {
+  try {
+    const bin = atob(c.getAttribute("data-b64")), u = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    const name = c.getAttribute("data-name") || "file";
+    const url = URL.createObjectURL(new Blob([u], { type: c.getAttribute("data-mime") || "application/octet-stream" }));
+    const a = document.createElement("a"); a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    say("파일로 저장했어요: " + name, "ok");
+  } catch (e) { say("첨부 파일을 읽지 못했어요", "err"); }
+}
+ta.addEventListener("click", e => {   // 칩 클릭 → 파일로 저장
+  const c = e.target.closest && e.target.closest(".att");
+  if (!c || !ta.contains(c)) return;
+  e.preventDefault(); attDownload(c);
+});
+function fillAttPop() {
+  const L = attNodes(); attPop.textContent = "";
+  if (!L.length) {
+    const b = document.createElement("button"); b.type = "button"; b.disabled = true; b.textContent = "첨부된 파일이 없어요";
+    attPop.appendChild(b); return;
+  }
+  L.forEach((c, i) => {
+    const row = document.createElement("div"); row.className = "row";
+    const d = document.createElement("button"); d.type = "button"; d.className = "nm"; d.dataset.attDl = i;
+    d.textContent = "⬇ " + c.dataset.name + " (" + attFmt(+c.dataset.size || 0) + ")"; d.title = "클릭하면 파일로 저장돼요";
+    const x = document.createElement("button"); x.type = "button"; x.className = "rm"; x.dataset.attDel = i;
+    x.textContent = "🗑"; x.title = "메모에서 이 첨부 삭제";
+    row.append(d, x); attPop.appendChild(row);
+  });
+}
+tb.addEventListener("click", e => { if (e.target.closest("#attListBtn")) fillAttPop(); }, true);   // 열기 직전에 목록을 새로 채움
+attPop.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const L = attNodes();
+  if ("attDl" in b.dataset) { const c = L[+b.dataset.attDl]; closePop(); if (c) attDownload(c); }
+  else if ("attDel" in b.dataset) {
+    const c = L[+b.dataset.attDel]; closePop();
+    if (c && confirm("'" + c.dataset.name + "' 첨부를 메모에서 삭제할까요?")) { c.remove(); fire(); say("첨부를 삭제했어요", "ok"); }
+  }
+});
+function updateAttN() { const n = attNodes().length; attN.textContent = n ? "첨부 " + n : "첨부 목록"; }
+new MutationObserver(updateAttN).observe(ta, { childList: true, subtree: true });
+updateAttN();
 </script>
 </body>
 </html>
