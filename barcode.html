@@ -124,12 +124,12 @@ body.has-max #mst{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-
 .edsplit{display:grid;grid-template-rows:minmax(0,70fr) 10px minmax(0,30fr);min-height:0}
 .edwrap{display:flex;gap:6px;min-height:0}
 .edsplit{flex:1;min-width:0}
-.edgut{flex:none;width:26px;display:grid;grid-template-rows:minmax(28px,70fr) 10px minmax(28px,30fr);min-height:0}
+.edgut{flex:none;width:34px;display:grid;grid-template-rows:minmax(28px,70fr) 10px minmax(28px,30fr);min-height:0}
 .edwrap.c1 #memo,.edwrap.c2 #memo2{padding:0;border-width:0;overflow:hidden;visibility:hidden}
-.lb{display:flex;align-items:center;justify-content:center;gap:3px;min-height:0;padding:0;writing-mode:vertical-rl;font:inherit;font-size:12px;font-weight:600;letter-spacing:.08em;line-height:1;border:1.5px solid var(--line);border-radius:7px;background:transparent;color:var(--mute);cursor:pointer;width:auto}
+.lb{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;min-height:0;padding:0;white-space:nowrap;font:inherit;font-size:12px;font-weight:600;line-height:1;border:1.5px solid var(--line);border-radius:7px;background:transparent;color:var(--mute);cursor:pointer;width:auto}
 .lb:hover{background:var(--line)}
 .lb.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.lb.has::after{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;flex:none;opacity:.8}
+.lb.has::after{content:"";position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:currentColor;flex:none;opacity:.8}
 .lb:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
 .splitter{position:relative;cursor:row-resize;touch-action:none;outline:none}
 .splitter::after{content:"";position:absolute;left:35%;right:35%;top:3px;height:4px;border-radius:2px;background:var(--mute);opacity:.45;transition:opacity .15s}
@@ -304,7 +304,7 @@ p{margin:6px 0 0}
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
-<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div>
+<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 위쪽을 70%로)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 아래쪽을 70%로)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div>
 <div class="splitter" id="spl" role="separator" aria-orientation="horizontal" aria-label="메모 영역 크기 조절 (위아래로 드래그, 더블클릭: 70:30)" aria-valuemin="10" aria-valuemax="90" aria-valuenow="70" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 70:30)"></div>
 <div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="두 번째 메모 영역" aria-label="메모 (아래)"></div></div></div></div></div></div>
 <p>Code 128 / QR(오류정정 M) · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 4번은 작업자 코드, 나머지는 직접 입력도 가능해요. 사업장 코드(앞 3자리-)와 년도(○○○-XX 뒤 2자리)를 바꾸면 1~9번 전체에 일괄 적용돼요.</p>
@@ -611,7 +611,7 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
   });
   const end = e => { if (spl.hasPointerCapture(e.pointerId)) spl.releasePointerCapture(e.pointerId); spl.classList.remove("drag"); keep(); };
   spl.addEventListener("pointerup", end); spl.addEventListener("pointercancel", end);
-  spl.addEventListener("dblclick", () => { split = 70; apply(); keep(); });   // 더블클릭 → 70 : 30 으로 되돌림
+  spl.addEventListener("dblclick", () => { split = 70; apply(); keep(); });   // 구분선 더블클릭 → 70 : 30 (위 70%)
   spl.addEventListener("keydown", e => {
     const k = e.key; if (k !== "ArrowUp" && k !== "ArrowDown" && k !== "Home" && k !== "End") return;
     e.preventDefault(); split = k === "Home" ? 0 : k === "End" ? 100 : clamp(split + (k === "ArrowUp" ? -5 : 5)); apply(); keep();
@@ -630,6 +630,7 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
       else if (ed.offsetParent === null) { split = def; apply(); keep(); }   // (barcode) 숨겨진 쪽 → 바로 가기
       ed.focus();
     });
+    lb.addEventListener("dblclick", () => { split = def; apply(); keep(); ed.focus(); });   // 더블클릭한 쪽 메모를 70% 로
   }
 })();
 
