@@ -1417,7 +1417,7 @@ let imgBack = null;
 
   box.hidden = bar.hidden = true;
   const shp = el("div", "imgx-row",
-    '<button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
+    '<button type="button" class="ic" data-none aria-label="선택 해제" title="선택 해제: 고른 글자·도형·선(지우개·올가미 포함) 아이콘을 풀어서 새로 고를 수 있어요" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M5 3l5.5 15 2.3-6.2L19 9.5z"/><path d="m13.5 13.5 5 5"/></svg></button><button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
     '<input type="color" data-q="color" data-m="text shape line" value="#f06595" title="색" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><select data-m="text" data-q="fs" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><button type="button" data-m="shape" data-q="fill" aria-pressed="true" title="안쪽 채우기">채움</button><input type="color" data-m="text shape" data-q="bg" value="#fff3a3" title="배경색" aria-label="배경색"><button type="button" data-m="text shape" data-sa="bgauto" title="배경색을 기본값(연한 노랑)으로">배경 기본</button><select data-q="op" data-m="text shape line" title="투명도" aria-label="투명도"></select><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button>' +
     '<textarea data-q="text" rows="2" placeholder="글자 입력" aria-label="글자" hidden></textarea><i class="sep" data-m="text shape line"></i>' +
     '<button type="button" class="ic" data-s="eraser" aria-label="지우개" title="지우개: 원본 이미지를 끌어서 지워요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>' +
@@ -1491,7 +1491,7 @@ let imgBack = null;
   bar.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서/포커스 유지
   bar.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b || !img) return;
-    if (b.dataset.s || b.dataset.q || b.dataset.sa) { shpClick(b); return; }
+    if (b.dataset.s || b.dataset.q || b.dataset.sa || b.hasAttribute("data-none")) { shpClick(b); return; }
     if (b.dataset.w !== undefined) {
       const p = +b.dataset.w;
       if (p) setW(inner() * p / 100); else { img.removeAttribute("width"); img.removeAttribute("height"); place(); }
@@ -1805,7 +1805,7 @@ let imgBack = null;
       if (sd.tool && !s.showItems) { toast("추가 요소 레이어가 숨겨져 있어요. [추가 요소] 버튼으로 다시 보이게 하세요"); return; }
       if (!sd.tool) { s.sel = -1; syncCtl(); render(); return; }   // 아이콘을 고르지 않았으면 선택만 해제
       const it = newItem(sd.tool, p);
-      endTool();   // 한 번 놓으면 아이콘 선택이 풀려요 (다음 클릭은 선택/해제용)
+      // 아이콘 선택은 그대로 유지돼요 (계속 넣을 수 있고, 맨 왼쪽 [선택 해제] 아이콘이나 같은 아이콘을 다시 누르면 풀려요)
       s.items.push(it); s.sel = s.items.length - 1;
       if (isCall(it.t)) {
         autoTail(it);
@@ -1904,20 +1904,21 @@ let imgBack = null;
     op.innerHTML = ops.map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
     op.value = mode === "text" ? String(sd.top != null ? sd.top : sd.tool === "ctext" ? 0 : 0.5) : String(mode === "shape" ? sd.sop : sd.op);
     qc("ew").value = String(sd.ew);
-    shp.querySelectorAll("[data-s]").forEach(x => setP(x, x.dataset.s === sd.tool));
+    shp.querySelectorAll("[data-s]").forEach(x => setP(x, x.dataset.s === sd.tool)); syncNone();
     main.hidden = true; shp.hidden = false;
     wrap.addEventListener("pointerdown", onDown); wrap.addEventListener("pointermove", onMove);
     wrap.addEventListener("pointerup", onUp); wrap.addEventListener("pointercancel", onUp);
     wrap.addEventListener("pointerleave", () => { if (sh && !sh.drag) { sh.cur = null; drawCur(); } });
     syncCtl(); render(); drawCur(); place();
     toast(mode === "edit" ? (tool === "lasso" ? "올가미: 지울 글자·도형·선을 감싸듯 끌어서 그리면, 걸친 요소가 모두 삭제돼요" : "지우개: 이미지 위를 끌어서 원본 이미지를 지워요. 굵기는 오른쪽에서 골라요")
-      : mode === "text" ? "글자: 이미지 위를 클릭해 놓고 글자를 입력하세요. 말풍선은 꼬리 손잡이를 끌어 방향을 정해요" : mode === "line" ? "아이콘을 고른 뒤 이미지 위를 클릭하세요. 손잡이를 끌면 위치를 옮길 수 있어요" : "아이콘을 고른 뒤 이미지 위를 클릭하거나 끌어서 넣으세요 (자유형 도형: 점을 차례로 클릭하고 더블클릭으로 마침)");
+      : mode === "text" ? "글자: 이미지 위를 클릭해 놓고 글자를 입력하세요. 말풍선은 꼬리 손잡이를 끌어 방향을 정해요 (고른 아이콘은 유지돼요. 맨 왼쪽 아이콘을 누르면 선택이 풀려요)" : mode === "line" ? "아이콘을 고른 뒤 이미지 위를 클릭하세요. 손잡이를 끌면 위치를 옮길 수 있어요 (고른 아이콘은 유지돼요. 맨 왼쪽 아이콘을 누르면 선택이 풀려요)" : "아이콘을 고른 뒤 이미지 위를 클릭하거나 끌어서 넣으세요 (자유형 도형: 점을 차례로 클릭하고 더블클릭으로 마침. 고른 아이콘은 유지돼요. 맨 왼쪽 아이콘을 누르면 선택이 풀려요)");
   }
   function closeShp() {
     if (!sh) return;
     sh.wrap.remove(); sh = null; main.hidden = false; shp.hidden = true; sched();
   }
-  function endTool() { sd.tool = null; shp.querySelectorAll("[data-s]").forEach(x => setP(x, false)); drawCur(); }
+  function syncNone() { shp.querySelectorAll("[data-none]").forEach(x => setP(x, !sd.tool)); }   // 맨 왼쪽 아이콘: 아무것도 고르지 않은 상태일 때 눌린 모양
+  function endTool() { sd.tool = null; shp.querySelectorAll("[data-s]").forEach(x => setP(x, false)); syncNone(); drawCur(); }
   function delSel() {
     if (!sh || sh.sel < 0) return;
     sh.items.splice(sh.sel, 1); sh.sel = -1;
@@ -1934,6 +1935,7 @@ let imgBack = null;
   }
   function shpClick(b) {
     if (!sh) return;
+    if (b.hasAttribute("data-none")) { finishPoly(); endTool(); return; }   // 맨 왼쪽 아이콘: 고른 글자·도형·선 아이콘을 모두 풀어 새로 고를 수 있는 상태로
     if (b.dataset.s) {
       finishPoly();
       if (sd.tool === b.dataset.s) { endTool(); return; }   // 같은 아이콘을 다시 누르면 선택 해제
@@ -1941,7 +1943,7 @@ let imgBack = null;
       const tool2 = sd.tool === "eraser" || sd.tool === "lasso";
       if (!tool2) sd.last[sh.mode] = sd.tool;
       if (sh.mode === "text" && sd.top == null && isCall(sd.tool) && !(sh.items[sh.sel])) qc("op").value = sd.tool === "ctext" ? "0" : "0.5";
-      shp.querySelectorAll("[data-s]").forEach(x => setP(x, x === b));
+      shp.querySelectorAll("[data-s]").forEach(x => setP(x, x === b)); syncNone();
       if (tool2) { sh.sel = -1; syncCtl(); render(); }
       drawCur(); return;
     }
