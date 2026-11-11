@@ -122,6 +122,44 @@ body.has-max #mst{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-
 .mslot{position:relative}
 .mpane{position:relative}
 .edsplit{display:grid;grid-template-rows:minmax(0,80fr) 10px minmax(0,20fr);min-height:0}
+/* 비교 모드: 위/아래 → 왼쪽(원본)/오른쪽(변경본), 스크롤바는 하나(두 영역이 함께 스크롤) */
+.cmphd{display:none}
+.edwrap.cmpm .edgut{display:none}
+.edwrap.cmpm .edsplit{display:grid;grid-template-columns:minmax(0,1fr) 10px minmax(0,1fr);grid-template-rows:auto 1fr!important;overflow:auto}
+.edwrap.cmpm .cmphd{display:block;position:sticky;top:0;z-index:3;padding:3px 10px;font-size:12px;font-weight:700;color:var(--mute);background:var(--bg);border-bottom:1.5px solid var(--line)}
+.edwrap.cmpm .cmphd.l{grid-column:1;grid-row:1}
+.edwrap.cmpm .cmphd.r{grid-column:3;grid-row:1}
+.edwrap.cmpm #memo{grid-column:1;grid-row:2}
+.edwrap.cmpm #memo2{grid-column:3;grid-row:2}
+.edwrap.cmpm .splitter{grid-column:2;grid-row:1/3;pointer-events:none;cursor:default}
+.edwrap.cmpm .splitter::after{left:3px;right:3px;top:0;bottom:0;height:auto}
+.edwrap.cmpm .edsplit>.rich{overflow:visible;height:auto;min-height:auto}
+/* 비교: 위(원본) 기준으로 아래(변경본)의 다른 부분을 찾아 표시 */
+::highlight(cmp-del){background:rgba(224,49,49,.28)}
+::highlight(cmp-add){background:rgba(47,158,68,.30)}
+::highlight(cmp-chg){background:rgba(250,176,5,.40)}
+::highlight(cmp-cur){background:rgba(51,154,240,.50)}
+.cmp{position:fixed;right:12px;bottom:12px;z-index:115;width:min(580px,94vw);max-height:48vh;display:flex;flex-direction:column;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.3);font-size:13px;line-height:1.45}
+.cmp[hidden]{display:none}
+.cmp .cmph{flex:none;display:flex;align-items:center;gap:10px;padding:8px 10px}
+.cmp .cmph b{font-size:14px}
+.cmp .cmps{flex:1;min-width:0;color:var(--mute)}
+.cmp .cmps.ok{color:#2e7d32;font-weight:600}
+.cmp .cmps.stale{color:#e8590c;font-weight:600}
+.cmp button{flex:none;width:auto;height:auto;margin:0;font:inherit;font-size:14px;font-weight:400;padding:2px 9px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer}
+.cmp button:hover{background:var(--line)}
+.cmp .cmpl{flex:1;min-height:0;overflow:auto;border-top:1px solid var(--line)}
+.cmp .ci{padding:6px 10px;border-bottom:1px solid var(--line);cursor:pointer}
+.cmp .ci:hover{background:var(--line)}
+.cmp .ci.on{outline:2px solid #339af0;outline-offset:-2px}
+.cmp .cb{display:inline-block;font-size:11px;font-weight:700;padding:0 7px;border-radius:999px;margin-right:6px;color:#1c1b19}
+.cmp .cb.chg{background:#ffd43b}.cmp .cb.del{background:#ff8787}.cmp .cb.add{background:#8ce99a}
+.cmp .cn{color:var(--mute);font-size:12px}
+.cmp .cr{display:flex;gap:6px;margin-top:2px;font-family:ui-monospace,Consolas,"D2Coding",monospace;font-size:12.5px;white-space:pre-wrap;word-break:break-word;tab-size:4}
+.cmp .cr>i{flex:none;font-style:normal;color:var(--mute);width:2.2em}
+.cmp .cr del{background:rgba(224,49,49,.28);text-decoration:none}
+.cmp .cr ins{background:rgba(47,158,68,.32);text-decoration:none}
+.cmp .cmm{padding:6px 10px;color:var(--mute);font-size:12px}
 .edwrap{display:flex;gap:6px;min-height:0}
 .edsplit{flex:1;min-width:0}
 .edgut{flex:none;width:34px;display:grid;grid-template-rows:minmax(28px,80fr) 10px minmax(28px,20fr);min-height:0}
@@ -288,6 +326,7 @@ p{margin:6px 0 0}
   <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
   <button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)" aria-label="체크리스트"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
   <div class="menu"><button type="button" data-pal title="더보기" aria-label="더보기" aria-haspopup="true" aria-expanded="false">⋯</button><div class="pop" hidden><button type="button" data-cmd="indent">들여쓰기</button><button type="button" data-cmd="outdent">내어쓰기</button><button type="button" data-cmd="hr">구분선</button><button type="button" data-cmd="quote" aria-pressed="false">인용</button><button type="button" data-cmd="code" aria-pressed="false">코드 블록</button><button type="button" data-cmd="clearall" title="메모 전체의 글자 서식을 기본값으로 되돌려요 (글자·이미지·표는 그대로)">전체 서식 초기화</button></div></div>
+  <button type="button" id="cmpBtn" title="비교: 위 메모(원본)를 기준으로 아래 메모(변경본)가 일치하는지 확인" aria-label="비교"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 8h5M15 16h5M4 16l3-3M20 8l-3 3"/></svg><span>비교</span></button>
   <i class="sep"></i>
   <button type="button" id="impBtn" title="열기 (.html / .txt)" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
   <input type="file" id="impFile" accept=".html,.htm,.txt,text/html,text/plain" hidden>
@@ -304,7 +343,7 @@ p{margin:6px 0 0}
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
-<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 위쪽을 80%로)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 아래쪽을 80%로)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="첫 번째 메모 영역입니다. 이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div>
+<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 위쪽을 80%로)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 아래쪽을 80%로)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div class="cmphd l">◀ 원본 (왼쪽)</div><div class="cmphd r">변경본 (오른쪽) ▶</div><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="첫 번째 메모 영역입니다. 이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div>
 <div class="splitter" id="spl" role="separator" aria-orientation="horizontal" aria-label="메모 영역 크기 조절 (위아래로 드래그, 더블클릭: 80:20)" aria-valuemin="10" aria-valuemax="90" aria-valuenow="80" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 80:20)"></div>
 <div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="두 번째 메모 영역입니다. 위쪽과 아래쪽 사이의 구분선을 끌어서 크기를 조절할 수 있어요. (왼쪽 이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (아래)"></div></div></div></div></div></div>
 <p>Code 128 / QR(오류정정 M) · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 4번은 작업자 코드, 나머지는 직접 입력도 가능해요. 사업장 코드(앞 3자리-)와 년도(○○○-XX 뒤 2자리)를 바꾸면 1~9번 전체에 일괄 적용돼요.</p>
@@ -599,6 +638,7 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
     wrap.classList.toggle("sb", split < 50);   // (barcode 확대 전) 더 큰 쪽 메모를 보여줌
     spl.setAttribute("aria-valuenow", String(Math.round(split)));
   };
+  window.refreshSplit = apply;
   const keep = () => { try { localStorage.setItem(SK, String(split)); } catch (e) {} };
   const clamp = v => { v = Math.min(100, Math.max(0, v)); return v < 3 ? 0 : v > 97 ? 100 : v; };   // 끝에 가까우면 0 / 100 에 붙임
   apply();
@@ -742,6 +782,7 @@ $("f").addEventListener("change",saveState);
 /* 메모 확대/축소: 버튼 또는 Esc. CSS 만 바꾸므로 입력 내용·커서·저장 상태는 그대로이고, 나머지 화면 레이아웃도 변하지 않음 */
 const mpane=$("mpane"),mslot=$("mslot"),mex=$("mex");
 function setMemoMax(on){
+  if(!on&&window.closeCmp)window.closeCmp();   /* 축소하면 비교 모드도 끝냄 */
   if(on)mslot.style.height=mpane.getBoundingClientRect().height+"px";   /* 확대 중에도 원래 자리의 높이 유지 */
   else mslot.style.height="";
   mpane.classList.toggle("max",on);
@@ -2196,6 +2237,148 @@ if(!useFb)localNote();
 else if(!dbSet)say("DB_URL을 먼저 설정해 주세요","err");
 else{say("불러오는 중…");firstTry=true;connect()}
 saveState();
+
+/* ===== 비교: 위 메모(원본)를 기준으로 아래 메모(변경본)와 다른 곳을 찾아요 =====
+   - 줄 단위로 비교하고(빈 줄은 건너뜀, 앞뒤 공백·연속 공백은 무시, 표는 한 행이 한 줄·칸 사이는 탭), 바뀐 줄은 단어 단위로 다시 비교해요
+   - 결과는 내용을 바꾸지 않고 색으로만 표시: 주황=변경, 빨강=위에만 있음(삭제), 초록=아래에만 있음(추가) */
+(() => {
+  const CH = !!(window.CSS && CSS.highlights && typeof Highlight !== "undefined");
+  const BLKT = /^(DIV|P|LI|TR|H[1-6]|BLOCKQUOTE|PRE|UL|OL|TABLE|HR)$/;
+  function linesOf(ed) {   // 메모 영역 → 줄 목록 [{t: 원문, n: 비교용 글자, nodes: [글자 노드]}]
+    const out = []; let cur = { t: "", nodes: [] };
+    const flush = () => { if (cur.t.replace(/[\s​]/g, "")) out.push(cur); cur = { t: "", nodes: [] }; };
+    (function walk(n) {
+      for (const c of n.childNodes) {
+        if (c.nodeType === 3) { if (c.nodeValue) { cur.t += c.nodeValue; cur.nodes.push(c); } }
+        else if (c.nodeType === 1) {
+          const tg = c.nodeName.toUpperCase();
+          if (tg === "BR") { flush(); continue; }
+          if (tg === "TD" || tg === "TH") { if (c.previousElementSibling) cur.t += "\t"; walk(c); continue; }
+          if (tg === "STYLE" || tg === "SCRIPT" || tg === "SVG") continue;
+          const blk = BLKT.test(tg); if (blk) flush();
+          walk(c); if (blk) flush();
+        }
+      }
+    })(ed);
+    flush();
+    for (const L of out) L.n = L.t.replace(/[​]/g, "").replace(/ /g, " ").split("\t").map(x => x.replace(/\s+/g, " ").trim()).join("\t");
+    return out.filter(L => L.n.replace(/\t/g, "") !== "");
+  }
+  function seqDiff(a, b) {   // 같음(e) / 위에만(d) / 아래에만(i) 목록. [종류, 위 번호, 아래 번호]
+    let s = 0; while (s < a.length && s < b.length && a[s] === b[s]) s++;
+    let ea = a.length, eb = b.length; while (ea > s && eb > s && a[ea - 1] === b[eb - 1]) { ea--; eb--; }
+    const ops = []; for (let i = 0; i < s; i++) ops.push(["e", i, i]);
+    const n = ea - s, m = eb - s; let approx = false;
+    if (n || m) {
+      if ((n + 1) * (m + 1) <= 25e6) {
+        const w = m + 1, L = new Uint16Array((n + 1) * w);
+        for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--)
+          L[i * w + j] = a[s + i] === b[s + j] ? L[(i + 1) * w + j + 1] + 1 : Math.max(L[(i + 1) * w + j], L[i * w + j + 1]);
+        let i = 0, j = 0;
+        while (i < n || j < m) {
+          if (i < n && j < m && a[s + i] === b[s + j]) { ops.push(["e", s + i, s + j]); i++; j++; }
+          else if (j >= m || (i < n && L[(i + 1) * w + j] >= L[i * w + j + 1])) { ops.push(["d", s + i, -1]); i++; }
+          else { ops.push(["i", -1, s + j]); j++; }
+        }
+      } else {   // 너무 크면 순서를 무시하고 "있다/없다"만 비교
+        approx = true;
+        const sa = new Set(a.slice(s, ea)), sb = new Set(b.slice(s, eb));
+        for (let i = s; i < ea; i++) if (!sb.has(a[i])) ops.push(["d", i, -1]);
+        for (let j = s; j < eb; j++) if (!sa.has(b[j])) ops.push(["i", -1, j]);
+      }
+    }
+    for (let k = 0; k < a.length - ea; k++) ops.push(["e", ea + k, eb + k]);
+    ops.approx = approx; return ops;
+  }
+  function hunks(A, B) {
+    const ops = seqDiff(A.map(l => l.n), B.map(l => l.n)), hs = [];
+    for (let k = 0; k < ops.length;) {
+      if (ops[k][0] === "e") { k++; continue; }
+      const ds = [], is = [];
+      while (k < ops.length && ops[k][0] !== "e") { (ops[k][0] === "d" ? ds : is).push(ops[k]); k++; }
+      const p = Math.min(ds.length, is.length);
+      for (let q = 0; q < p; q++) hs.push({ k: "chg", a: ds[q][1], b: is[q][2] });
+      for (let q = p; q < ds.length; q++) hs.push({ k: "del", a: ds[q][1], b: -1 });
+      for (let q = p; q < is.length; q++) hs.push({ k: "add", a: -1, b: is[q][2] });
+    }
+    return { hs, approx: ops.approx };
+  }
+  const tok = s => s.match(/[^\s]+|\s+/g) || [];
+  function wordDiff(x, y) {   // 바뀐 줄 안에서 달라진 단어(칸)만 찾기
+    const a = tok(x), b = tok(y), ops = seqDiff(a, b), ra = [], rb = [];
+    for (const [t, i, j] of ops) { if (t === "e") { ra.push([a[i], 0]); rb.push([b[j], 0]); } else if (t === "d") ra.push([a[i], 1]); else rb.push([b[j], 1]); }
+    return [ra, rb];
+  }
+  const mk = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  const fill = (el, parts, tag) => { for (const [t, d] of parts) { if (d) el.appendChild(mk(tag, "", t)); else el.appendChild(document.createTextNode(t)); } };
+
+  let panel = null, st = null, listEl = null, sumEl = null, cur = null;
+  const rng = L => { const f = L.nodes[0], l = L.nodes[L.nodes.length - 1], r = document.createRange(); r.setStart(f, 0); r.setEnd(l, l.nodeValue.length); return r; };
+  function clearHl() { if (CH) for (const k of ["cmp-del", "cmp-add", "cmp-chg", "cmp-cur"]) CSS.highlights.delete(k); }
+  const wrapEl = document.getElementById("edwrap");
+  function closeCmp() {   // 비교 종료: 위/아래 배치로 복귀
+    clearHl(); st = null; if (panel) panel.hidden = true;
+    if (wrapEl.classList.contains("cmpm")) { wrapEl.classList.remove("cmpm"); document.getElementById("edsplit").scrollTop = 0; window.refreshSplit(); }
+  }
+  window.closeCmp = closeCmp;
+  function ensurePanel() {
+    if (panel) return;
+    panel = mk("div", "cmp"); panel.id = "cmp"; panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "비교 결과"); panel.hidden = true;
+    const h = mk("div", "cmph"); h.appendChild(mk("b", "", "비교"));
+    sumEl = mk("span", "cmps"); h.appendChild(sumEl);
+    const x = mk("button", "", "✕"); x.type = "button"; x.title = "닫기 (Esc)"; x.setAttribute("aria-label", "닫기"); x.addEventListener("click", closeCmp); h.appendChild(x);
+    listEl = mk("div", "cmpl"); panel.append(h, listEl); document.body.appendChild(panel);
+    panel.addEventListener("keydown", e => { if (e.key === "Escape") { e.stopPropagation(); closeCmp(); } });
+  }
+  function goTo(it, el) {
+    if (!st) return;
+    listEl.querySelectorAll(".ci.on").forEach(e => e.classList.remove("on")); el.classList.add("on");
+    const ls = []; if (it.a >= 0) ls.push(st.A[it.a]); if (it.b >= 0) ls.push(st.B[it.b]);
+    if (CH) CSS.highlights.set("cmp-cur", new Highlight(...ls.map(rng)));
+    for (const L of ls) { const p = L.nodes[0].parentElement; if (p) p.scrollIntoView({ block: "center", behavior: "smooth" }); }
+  }
+  function run() {
+    ensurePanel(); clearHl();
+    // barcode 는 확대해야 두 영역이 모두 보여요
+    if (typeof setMemoMax === "function" && !document.getElementById("mpane").classList.contains("max")) setMemoMax(true);
+    wrapEl.classList.remove("c1", "c2"); wrapEl.classList.add("cmpm"); document.getElementById("edsplit").scrollTop = 0;   // 왼쪽(원본) / 오른쪽(변경본) 으로 나란히, 스크롤바는 하나
+    const A = linesOf(ed1), B = linesOf(ed2); st = { A, B };
+    panel.hidden = false; listEl.textContent = ""; sumEl.className = "cmps";
+    if (!A.length && !B.length) { sumEl.textContent = "비교할 내용이 없어요 (위·아래 메모가 모두 비어 있어요)"; return; }
+    const { hs, approx } = hunks(A, B);
+    const c = { chg: 0, del: 0, add: 0 }; hs.forEach(h => c[h.k]++);
+    if (!hs.length) { sumEl.className = "cmps ok"; sumEl.textContent = "✔ 일치해요 (위 " + A.length + "행 = 아래 " + B.length + "행)"; return; }
+    sumEl.textContent = "다른 곳 " + hs.length + "건 — 변경 " + c.chg + " · 삭제(위에만) " + c.del + " · 추가(아래에만) " + c.add;
+    if (approx) listEl.appendChild(mk("div", "cmm", "※ 내용이 너무 많아 순서는 무시하고 '있다/없다'만 비교했어요."));
+    const hl = { "cmp-del": [], "cmp-add": [], "cmp-chg": [] };
+    hs.forEach((it, idx) => {
+      if (it.k === "chg") { hl["cmp-chg"].push(rng(A[it.a]), rng(B[it.b])); }
+      else if (it.k === "del") hl["cmp-del"].push(rng(A[it.a]));
+      else hl["cmp-add"].push(rng(B[it.b]));
+      if (idx >= 300) return;   // 목록은 300건까지만
+      const el = mk("div", "ci"), badge = mk("span", "cb " + it.k, it.k === "chg" ? "변경" : it.k === "del" ? "삭제" : "추가");
+      el.appendChild(badge);
+      el.appendChild(mk("span", "cn", it.k === "chg" ? "위 " + (it.a + 1) + "행 → 아래 " + (it.b + 1) + "행" : it.k === "del" ? "위 " + (it.a + 1) + "행 (아래에 없음)" : "아래 " + (it.b + 1) + "행 (위에 없음)"));
+      if (it.k === "chg") {
+        const [ra, rb] = wordDiff(A[it.a].n, B[it.b].n);
+        const r1 = mk("div", "cr"), r2 = mk("div", "cr"); r1.appendChild(mk("i", "", "위")); r2.appendChild(mk("i", "", "아래"));
+        const s1 = mk("span"), s2 = mk("span"); fill(s1, ra, "del"); fill(s2, rb, "ins"); r1.appendChild(s1); r2.appendChild(s2); el.append(r1, r2);
+      } else {
+        const r = mk("div", "cr"); r.appendChild(mk("i", "", it.k === "del" ? "위" : "아래")); r.appendChild(mk("span", "", (it.k === "del" ? A[it.a] : B[it.b]).n)); el.appendChild(r);
+      }
+      el.addEventListener("click", () => goTo(it, el)); listEl.appendChild(el);
+    });
+    if (hs.length > 300) listEl.appendChild(mk("div", "cmm", "목록에는 처음 300건만 보여요. (색 표시는 전부 적용돼요)"));
+    if (CH) for (const k in hl) if (hl[k].length) CSS.highlights.set(k, new Highlight(...hl[k]));
+    st.hs = hs;
+  }
+  document.getElementById("cmpBtn").addEventListener("mousedown", e => e.preventDefault());
+  document.getElementById("cmpBtn").addEventListener("click", run);
+  onEd("input", () => {   // 내용을 고치면 이전 비교 결과(색 표시)는 더 이상 맞지 않으므로 지움
+    if (!st) return;
+    clearHl(); st = null; sumEl.className = "cmps stale"; sumEl.textContent = "내용이 바뀌었어요. [비교]를 다시 눌러 주세요."; listEl.textContent = "";
+  });
+})();
 
 /* ===== 기본값으로 초기화: 이 브라우저에 저장된 설정을 지우고 처음 상태로 ===== */
 $("resetAll").addEventListener("click",()=>{
