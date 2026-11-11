@@ -59,6 +59,9 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .err{color:#b3261e}
 .cell input{font-size:16px;padding:5px 7px}
 .btns{display:flex;gap:4px}
+.inrow{display:flex;gap:4px;min-width:0}
+.inrow input{flex:1 1 0;min-width:0;width:auto}
+.inrow button{flex:none;width:auto;padding:5px 12px;font-size:14px;white-space:nowrap}
 button{flex:1;font:inherit;font-size:15px;font-weight:600;padding:5px 2px;border-radius:6px;border:1.5px solid var(--acc);background:var(--acc);color:var(--accfg);cursor:pointer}
 button:disabled{opacity:.35;cursor:default}
 .rich{display:block;overflow:auto;word-break:break-word;outline:none}
@@ -832,7 +835,7 @@ function init(){
   const g=$("g"),d=defs();
   for(let i=0;i<9;i++){
     const el=document.createElement("div");el.className="cell"+(i===3?" wk":"");
-    el.innerHTML=`<div class="view"></div><input aria-label="바코드 ${i+1}번 내용${i===3?" (작업자)":""}" placeholder="${i+1}번" autocomplete="off"><div class="btns"><button>이미지 저장</button></div>`;
+    el.innerHTML=`<div class="view"></div><div class="inrow"><input aria-label="바코드 ${i+1}번 내용${i===3?" (작업자)":""}" placeholder="${i+1}번" autocomplete="off"><button type="button" title="이미지 저장" aria-label="바코드 ${i+1}번 이미지 저장">저장</button></div>`;
     const c={inp:el.querySelector("input"),view:el.querySelector(".view"),bl:el.querySelector("button")};
     c.inp.value=d[i];
     c.inp.addEventListener("input",()=>{draw(i);saveState()});
