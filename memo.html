@@ -96,7 +96,7 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .edwrap.cmpm #memo{grid-column:1;grid-row:2}
 .edwrap.cmpm #memo2{grid-column:3;grid-row:2}
 .edwrap.cmpm .splitter{display:none}
-/* 비교 모드 3분할: [원본 | 변경본] (하나의 스크롤바로 함께 이동) | [비교 결과] (별도 스크롤바). 폭은 구분선을 끌어서 조절 (기본 30 : 30 : 40) */
+/* 비교 모드 3분할: [원본 | 변경본] (하나의 스크롤바로 함께 이동) | [비교 결과] (별도 스크롤바). 폭은 구분선을 끌어서 조절 (기본 35 : 35 : 30) */
 .edwrap.cmpm{display:grid;grid-template-columns:minmax(0,60fr) 10px minmax(0,40fr);grid-template-rows:minmax(0,1fr);gap:0}
 .edwrap.cmpm .edsplit{grid-column:1;grid-row:1;min-width:0;min-height:0}
 .vsp{display:none}
@@ -2156,8 +2156,8 @@ let resetting=false;
   const rng = L => { const f = L.nodes[0], l = L.nodes[L.nodes.length - 1], r = document.createRange(); r.setStart(f, 0); r.setEnd(l, l.nodeValue.length); return r; };
   function clearHl() { if (CH) for (const k of ["cmp-del", "cmp-add", "cmp-chg", "cmp-cur"]) CSS.highlights.delete(k); }
   const wrapEl = document.getElementById("edwrap"), spEl = document.getElementById("edsplit");
-  /* ----- 3분할 폭 (원본 / 변경본 / 비교 결과), 단위 %, 기본 30 : 30 : 40 ----- */
-  const DEF = [30, 30, 40], MINW = 8;
+  /* ----- 3분할 폭 (원본 / 변경본 / 비교 결과), 단위 %, 기본 35 : 35 : 30 ----- */
+  const DEF = [35, 35, 30], MINW = 8;
   let W = DEF.slice(), vsp1 = null, vsp2 = null;
   function layout() {   // 비교 모드일 때만 열 폭을 적용하고, 끝나면 원래대로(위/아래 배치) 돌려놓음
     if (wrapEl.classList.contains("cmpm")) {
@@ -2177,7 +2177,7 @@ let resetting=false;
   function mkHandle(cls, label, which) {
     const h = mk("div", "vsp " + cls); h.setAttribute("role", "separator"); h.setAttribute("aria-orientation", "vertical");
     h.setAttribute("aria-label", label); h.setAttribute("aria-valuemin", "0"); h.setAttribute("aria-valuemax", "100");
-    h.tabIndex = 0; h.title = "좌우로 드래그해서 폭 조절 (더블클릭: 30 : 30 : 40)";
+    h.tabIndex = 0; h.title = "좌우로 드래그해서 폭 조절 (더블클릭: 35 : 35 : 30)";
     h.addEventListener("pointerdown", e => { e.preventDefault(); h.setPointerCapture(e.pointerId); h.classList.add("drag"); });
     h.addEventListener("pointermove", e => {
       if (!h.hasPointerCapture(e.pointerId)) return;
