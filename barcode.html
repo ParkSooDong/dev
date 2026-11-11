@@ -736,7 +736,7 @@ function askPw(mode, msg) {
     const box = $("pwBox"), form = $("pwForm"), p1 = $("pw1"), p2 = $("pw2"), err = $("pwE"), isNew = mode !== "enter";
     $("pwT").textContent = isNew ? "새 비밀번호 설정" : "비밀번호 입력";
     $("pwD").textContent = mode === "legacy" ? "DB 의 메모가 암호화되어 있지 않아요. 비밀번호를 정하면 암호화해서 다시 저장해요. 분실하면 복구할 수 없어요."
-      : isNew ? "이 비밀번호로 메모를 암호화해서 DB 에 저장해요. 분실하면 복구할 수 없어요 (8자 이상)." : "DB 의 메모를 열려면 비밀번호가 필요해요.";
+      : isNew ? "이 비밀번호로 메모를 암호화해서 DB 에 저장해요. 분실하면 복구할 수 없어요 (6자 이상)." : "DB 의 메모를 열려면 비밀번호가 필요해요.";
     p1.value = p2.value = ""; p2.hidden = !isNew; err.textContent = msg || "";
     p1.autocomplete = isNew ? "new-password" : "current-password";
     box.hidden = false; setTimeout(() => p1.focus(), 0);
@@ -745,7 +745,7 @@ function askPw(mode, msg) {
       e.preventDefault();
       if (!p1.value) { err.textContent = "비밀번호를 입력해 주세요"; return; }
       if (isNew) {
-        if (p1.value.length < 8) { err.textContent = "8자 이상으로 정해 주세요"; return; }
+        if (p1.value.length < 6) { err.textContent = "6자 이상으로 정해 주세요"; return; }
         if (p1.value !== p2.value) { err.textContent = "두 비밀번호가 달라요"; return; }
       }
       done(p1.value);
