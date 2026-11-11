@@ -121,6 +121,29 @@ body.has-max #cnt{position:fixed;right:20px;bottom:calc(max(18px,env(safe-area-i
 body.has-max #mst{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
 .mslot{position:relative}
 .mpane{position:relative}
+.edsplit{display:grid;grid-template-rows:minmax(0,70fr) 10px minmax(0,30fr);min-height:0}
+.edwrap{display:flex;gap:6px;min-height:0}
+.edsplit{flex:1;min-width:0}
+.edgut{flex:none;width:26px;display:grid;grid-template-rows:minmax(28px,70fr) 10px minmax(28px,30fr);min-height:0}
+.edwrap.c1 #memo,.edwrap.c2 #memo2{padding:0;border-width:0;overflow:hidden;visibility:hidden}
+.lb{display:flex;align-items:center;justify-content:center;gap:3px;min-height:0;padding:0;writing-mode:vertical-rl;font:inherit;font-size:12px;font-weight:600;letter-spacing:.08em;line-height:1;border:1.5px solid var(--line);border-radius:7px;background:transparent;color:var(--mute);cursor:pointer;width:auto}
+.lb:hover{background:var(--line)}
+.lb.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.lb.has::after{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;flex:none;opacity:.8}
+.lb:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.splitter{position:relative;cursor:row-resize;touch-action:none;outline:none}
+.splitter::after{content:"";position:absolute;left:35%;right:35%;top:3px;height:4px;border-radius:2px;background:var(--mute);opacity:.45;transition:opacity .15s}
+.splitter:hover::after,.splitter:focus-visible::after,.splitter.drag::after{opacity:1}
+/* 확대하지 않았을 때는 더 큰 쪽(기본: 위) 메모 하나만 세 줄 높이로 보이고, 확대하면 두 영역이 나뉘어 모두 보여요 */
+.mpane.max .edwrap{flex:1;min-height:0}
+.mpane:not(.max) .edsplit{display:block}
+.mpane:not(.max) #memo2,.mpane:not(.max) .splitter{display:none}
+.mpane:not(.max) .edwrap.sb #memo{display:none}
+.mpane:not(.max) .edwrap.sb #memo2{display:block}
+.mpane:not(.max) .edgut{display:flex;flex-direction:column}
+.mpane:not(.max) .edgut .sp{display:none}
+.mpane:not(.max) .lb{flex:1}
+.mpane:not(.max) .edwrap:not(.sb) .lb.b,.mpane:not(.max) .edwrap.sb .lb.t{display:none}
 .mpane .rich{padding-right:44px}
 .expand{flex:none;position:absolute;top:6px;right:8px;z-index:5;width:28px;height:28px;padding:0;display:grid;place-items:center;font-size:15px;font-weight:400;line-height:1;color:var(--ink);opacity:.55;background:var(--card);border:1.5px solid var(--line);border-radius:7px;cursor:pointer}
 .expand:hover,.expand:focus-visible{opacity:1}
@@ -281,7 +304,9 @@ p{margin:6px 0 0}
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
-<div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div></div></div></div>
+<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div>
+<div class="splitter" id="spl" role="separator" aria-orientation="horizontal" aria-label="메모 영역 크기 조절 (위아래로 드래그, 더블클릭: 70:30)" aria-valuemin="10" aria-valuemax="90" aria-valuenow="70" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 70:30)"></div>
+<div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="두 번째 메모 영역" aria-label="메모 (아래)"></div></div></div></div></div></div>
 <p>Code 128 / QR(오류정정 M) · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 4번은 작업자 코드, 나머지는 직접 입력도 가능해요. 사업장 코드(앞 3자리-)와 년도(○○○-XX 뒤 2자리)를 바꾸면 1~9번 전체에 일괄 적용돼요.</p>
 <p class="warn" role="alert">입력하거나 수정한 내용은 이 기기의 브라우저에 자동 저장되므로, 웹페이지를 닫았다가 다시 열어도 직전 상태가 다시 보입니다.<span id="memoMsg"></span> <button type="button" id="resetAll" style="flex:none;width:auto;display:inline-block;margin-left:8px;padding:3px 12px;font-size:14px;vertical-align:middle" title="작업자·사업장 코드, 년도, 모드, 저장 형식, 바코드/QR, 1~9번 내용, 타이머 시각을 기본값으로 되돌려요">기본값으로 초기화</button></p>
 </main>
@@ -491,7 +516,7 @@ function makeRich(el) {
     r.onerror = rej; r.readAsDataURL(f);
   });
   el.insertFiles = async (files, back) => {
-    let used = utf8Len(el.value), h = "", n = 0; const bad = [];
+    let used = utf8Len(typeof memoAll !== "undefined" ? memoAll.value : el.value), h = "", n = 0; const bad = [];
     for (const f of files) {
       const nm = (f.name || "file").replace(/[\u0000-\u001f\u007f]/g, "").slice(0, 150) || "file";
       if (!f.size) { bad.push(nm + " (빈 파일)"); continue; }
@@ -543,7 +568,71 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 const P="212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 114131 311141 411131 211412 211214 211232 2331112".split(" ");
 const $=id=>document.getElementById(id);
-makeRich($("memo"));
+const ed1 = $("memo");
+makeRich(ed1);
+/* ===== 메모 영역 2분할: 위(memo) / 아래(memo2). 툴바는 하나이고, 마지막으로 클릭한 영역(ta)에 적용돼요 ===== */
+const ed2 = document.getElementById("memo2"), EDS = [ed1, ed2];
+makeRich(ed2);
+const S2 = "<!--s2-->";   // DB·이 PC 에는 두 영역을 한 문자열로 저장 (아래 영역이 비어 있으면 예전 형식 그대로)
+const memoAll = {
+  get value() { const a = ed1.value, b = ed2.value; return b ? S2 + JSON.stringify([a, b]) : a; },
+  set value(v) {
+    v = String(v || "");
+    if (v.startsWith(S2)) { try { const p = JSON.parse(v.slice(S2.length)); ed1.value = p[0] || ""; ed2.value = p[1] || ""; return; } catch (e) {} }
+    ed1.value = v; ed2.value = "";
+  },
+  get disabled() { return ed1.disabled; },
+  set disabled(b) { ed1.disabled = ed2.disabled = b; },
+  get textContent() { return ed1.textContent + ed2.textContent; }
+};
+const onEd = (t, fn) => EDS.forEach(e => e.addEventListener(t, fn));
+const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach(e => mo.observe(e, o)); return mo; };
+(() => {   // 두 영역 사이 구분선: 마우스(터치) 드래그 / 방향키로 비율 조절 (0:100 ~ 100:0). 처음 70 : 30
+  const box = document.getElementById("edsplit"), spl = document.getElementById("spl"), wrap = document.getElementById("edwrap"), gut = document.getElementById("edgut"), SK = "memo-split";
+  const lbT = document.getElementById("lbT"), lbB = document.getElementById("lbB");
+  let split = 70;
+  try { const v = parseFloat(localStorage.getItem(SK)); if (v >= 0 && v <= 100) split = v; } catch (e) {}
+  const apply = () => {
+    box.style.gridTemplateRows = "minmax(0," + split + "fr) 10px minmax(0," + (100 - split) + "fr)";
+    gut.style.gridTemplateRows = "minmax(28px," + split + "fr) 10px minmax(28px," + (100 - split) + "fr)";   // 왼쪽 이름표: 영역이 0 이어도 보이도록 최소 높이를 둠
+    wrap.classList.toggle("c1", split === 0); wrap.classList.toggle("c2", split === 100);   // 0 / 100 이면 접힌 쪽을 완전히 숨김
+    wrap.classList.toggle("sb", split < 50);   // (barcode 확대 전) 더 큰 쪽 메모를 보여줌
+    spl.setAttribute("aria-valuenow", String(Math.round(split)));
+  };
+  const keep = () => { try { localStorage.setItem(SK, String(split)); } catch (e) {} };
+  const clamp = v => { v = Math.min(100, Math.max(0, v)); return v < 3 ? 0 : v > 97 ? 100 : v; };   // 끝에 가까우면 0 / 100 에 붙임
+  apply();
+  spl.addEventListener("pointerdown", e => { e.preventDefault(); spl.setPointerCapture(e.pointerId); spl.classList.add("drag"); });
+  spl.addEventListener("pointermove", e => {
+    if (!spl.hasPointerCapture(e.pointerId)) return;
+    const r = box.getBoundingClientRect(), total = r.height - spl.offsetHeight;
+    if (total <= 0) return;
+    split = clamp((e.clientY - r.top - spl.offsetHeight / 2) / total * 100); apply();
+  });
+  const end = e => { if (spl.hasPointerCapture(e.pointerId)) spl.releasePointerCapture(e.pointerId); spl.classList.remove("drag"); keep(); };
+  spl.addEventListener("pointerup", end); spl.addEventListener("pointercancel", end);
+  spl.addEventListener("dblclick", () => { split = 70; apply(); keep(); });   // 더블클릭 → 70 : 30 으로 되돌림
+  spl.addEventListener("keydown", e => {
+    const k = e.key; if (k !== "ArrowUp" && k !== "ArrowDown" && k !== "Home" && k !== "End") return;
+    e.preventDefault(); split = k === "Home" ? 0 : k === "End" ? 100 : clamp(split + (k === "ArrowUp" ? -5 : 5)); apply(); keep();
+  });
+  /* 왼쪽 이름표(위 / 아래): 지금 입력 중인 메모를 표시하고, 내용이 있으면 점을 붙여요. 누르면 그 메모로 이동 (접혀 있으면 펼침) */
+  let rl = null;
+  window.refreshLabels = () => {
+    lbT.classList.toggle("on", ta === ed1); lbB.classList.toggle("on", ta === ed2);
+    lbT.classList.toggle("has", ed1.value !== ""); lbB.classList.toggle("has", ed2.value !== "");
+  };
+  observeEds(() => { clearTimeout(rl); rl = setTimeout(window.refreshLabels, 200); }, { childList: true, subtree: true, characterData: true });
+  for (const [lb, ed, def] of [[lbT, ed1, 70], [lbB, ed2, 30]]) {
+    lb.addEventListener("mousedown", e => e.preventDefault());
+    lb.addEventListener("click", () => {
+      if (ed.offsetHeight < 24 && ed.offsetParent !== null) { split = def; apply(); keep(); }
+      else if (ed.offsetParent === null) { split = def; apply(); keep(); }   // (barcode) 숨겨진 쪽 → 바로 가기
+      ed.focus();
+    });
+  }
+})();
+
 const THEME={light:{fg:"#000",bg:"#fff"},dark:{fg:"#fff",bg:"#111111"}};
 function encode(s){
   const c=[104];
@@ -580,12 +669,12 @@ if(saved){
   if(saved.y){$("y").value=saved.y;yEdited=true}
   if(["light","dark"].includes(saved.m))$("m").value=saved.m;
   if(["png","svg"].includes(saved.f))$("f").value=saved.f;
-  if(typeof saved.memo==="string")$("memo").value=saved.memo;
+  if(typeof saved.memo==="string")memoAll.value=saved.memo;
 }
 function applyTheme(){const m=$("m").value;document.documentElement.setAttribute("data-theme",m);
   document.querySelector('meta[name="color-scheme"]').setAttribute("content",m==="dark"?"dark":"only light");
   document.querySelector('meta[name="supported-color-schemes"]').setAttribute("content",m==="dark"?"dark":"light")}
-function saveState(){try{localStorage.setItem(KEY,JSON.stringify({w:$("w").value,s:$("s").value,y:yEdited?$("y").value:null,m:$("m").value,k:kind,f:$("f").value,memo:$("memo").value,fb:useFb,at:knownAt,d:dirty,cells:cells.map(c=>c.inp.value)}));$("memoMsg").textContent=""}catch(e){$("memoMsg").textContent=" ⚠ 브라우저 저장 공간이 가득 차서 저장하지 못했어요. 메모의 이미지를 줄여 주세요."}}
+function saveState(){try{localStorage.setItem(KEY,JSON.stringify({w:$("w").value,s:$("s").value,y:yEdited?$("y").value:null,m:$("m").value,k:kind,f:$("f").value,memo:memoAll.value,fb:useFb,at:knownAt,d:dirty,cells:cells.map(c=>c.inp.value)}));$("memoMsg").textContent=""}catch(e){$("memoMsg").textContent=" ⚠ 브라우저 저장 공간이 가득 차서 저장하지 못했어요. 메모의 이미지를 줄여 주세요."}}
 function save(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function fname(i,mode,ext){
   const safe=v=>v.replace(/[^\w-]+/g,"_");
@@ -655,6 +744,7 @@ function setMemoMax(on){
   if(on)mslot.style.height=mpane.getBoundingClientRect().height+"px";   /* 확대 중에도 원래 자리의 높이 유지 */
   else mslot.style.height="";
   mpane.classList.toggle("max",on);
+  if(!on){const sb=$("edwrap").classList.contains("sb");ta=sb?ed2:ed1;window.refreshLabels()}   /* 축소하면 보이는 쪽 메모가 툴바 대상 */
   document.body.classList.toggle("has-max",on);
   mex.textContent=on?"✕":"⤢";
   mex.setAttribute("aria-label",on?"메모 축소":"메모 확대");
@@ -682,15 +772,14 @@ let cntT = null;
 function updateCnt() {
   cntT = null;
   const t0 = performance.now();
-  const v = memoEl.value, n = Math.ceil((utf8Len(v) + 16) / 3) * 4, vis = memoEl.textContent.replace(/\u200b/g, "").length, pct = n / MAX_BYTES * 100;
+  const v = memoAll.value, n = Math.ceil((utf8Len(v) + 16) / 3) * 4, vis = memoAll.textContent.replace(/\u200b/g, "").length, pct = n / MAX_BYTES * 100;
   cnt.textContent = "DB " + n.toLocaleString("ko-KR") + " / " + MAX_BYTES.toLocaleString("ko-KR") + "바이트";
   cnt.className = n > MAX_BYTES ? "ce" : pct >= 80 ? "cw" : "";
   cnt.title = "Firebase 에 저장되는 크기 (암호화 후 약 1.33배, 바이트, 서식·이미지·첨부 파일 데이터 포함, 한도의 " + (pct < 0.1 && n ? "0.1% 미만" : pct.toFixed(1) + "%") + ")\n= " + (n / 1048576).toFixed(2) + " MB / 글자 수: " + v.length.toLocaleString("ko-KR") + "자 / 눈에 보이는 글자: " + vis.toLocaleString("ko-KR") + "자";
   cntDelay = Math.max(250, (performance.now() - t0) * 10);
 }
 let cntDelay = 250;
-new MutationObserver(() => { if (!cntT) cntT = setTimeout(updateCnt, cntDelay); })
-  .observe(memoEl, { childList: true, subtree: true, characterData: true, attributes: true });
+observeEds(() => { if (!cntT) cntT = setTimeout(updateCnt, cntDelay); }, { childList: true, subtree: true, characterData: true, attributes: true });
 updateCnt();
 let useFb=false,dirty=false,knownAt=0,ready=false,saving=false,connecting=false,firstTry=false,idleT=null,maxT=null;
 const hhmm=()=>new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});
@@ -770,7 +859,7 @@ async function saveRemote(unloading){
   clearTimers();
   if(!useFb||!ready||!dirty)return;
   if(saving){schedule();return}
-  const v=memoEl.value;
+  const v=memoAll.value;
   if(utf8Len(v)*4/3>MAX_BYTES){say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지·첨부 파일을 줄여 주세요","err");return}   /* 암호문(base64)은 약 1.33배 */
   saving=true;say("저장 중…");
   try{
@@ -781,7 +870,7 @@ async function saveRemote(unloading){
     const r=await fetch(URL_MEMO,{method:"PUT",keepalive:unloading===true&&small,headers:{"Content-Type":"application/json"},body});
     if(!r.ok)throw new Error("HTTP "+r.status);
     knownAt=at;
-    if(memoEl.value===v){dirty=false;say("저장됨 "+hhmm(),"ok")}else schedule();   /* 저장 중에 더 입력한 경우 */
+    if(memoAll.value===v){dirty=false;say("저장됨 "+hhmm(),"ok")}else schedule();   /* 저장 중에 더 입력한 경우 */
     saveState();
   }catch(e){say("저장 실패. 5초 뒤 다시 시도해요","err");clearTimeout(idleT);idleT=setTimeout(saveRemote,5000)}
   finally{saving=false}
@@ -800,7 +889,7 @@ async function poll(){
         try{t=await decryptMemo(d)}catch(e){say("다른 기기의 변경을 복호화하지 못했어요","err");return}
         if(!useFb||dirty)return;
         dbSalt=d.salt;knownAt=d.updatedAt;
-        if(memoEl.value!==t){memoEl.value=t;saveState();say("다른 기기의 변경을 반영했어요","ok")}else say("저장됨 "+hhmm(),"ok");
+        if(memoAll.value!==t){memoAll.value=t;saveState();say("다른 기기의 변경을 반영했어요","ok")}else say("저장됨 "+hhmm(),"ok");
       }
     }
   }catch(e){}
@@ -811,7 +900,7 @@ async function connect(){
   if(connecting||ready||!useFb||!dbSet)return;
   if(!(window.crypto&&crypto.subtle)){say("암호화를 쓸 수 없는 환경이에요 (https 주소에서 열어 주세요)","err");return}
   connecting=true;
-  if(firstTry)memoEl.disabled=true;
+  if(firstTry)memoAll.disabled=true;
   try{
     const d=await fetchRemote();
     if(!useFb)return;
@@ -829,20 +918,20 @@ async function connect(){
       if(plain)rt=d.text;
     }
     if(!useFb)return;
-    const local=memoEl.value,has=rt!==null;
+    const local=memoAll.value,has=rt!==null;
     if(!has){ if(local)dirty=true; }                              /* DB 가 비어 있음 → 이 PC 메모를 올림 */
     else if(rt===local){knownAt=Math.max(knownAt,d.updatedAt);dirty=false}
-    else if(!local){memoEl.value=rt;knownAt=d.updatedAt;dirty=false;saveState()}
-    else if(!dirty&&knownAt>0&&d.updatedAt>knownAt){memoEl.value=rt;knownAt=d.updatedAt;saveState()}   /* 다른 기기에서 수정됨 */
+    else if(!local){memoAll.value=rt;knownAt=d.updatedAt;dirty=false;saveState()}
+    else if(!dirty&&knownAt>0&&d.updatedAt>knownAt){memoAll.value=rt;knownAt=d.updatedAt;saveState()}   /* 다른 기기에서 수정됨 */
     else if(confirm("DB에 저장된 메모와 이 PC의 메모가 달라요.\n\n[확인] DB의 메모로 바꾸기\n[취소] 이 PC의 메모를 DB에 덮어쓰기")){
-      memoEl.value=rt;knownAt=d.updatedAt;dirty=false;saveState();
+      memoAll.value=rt;knownAt=d.updatedAt;dirty=false;saveState();
     }else{knownAt=Math.max(knownAt,d.updatedAt);dirty=true}
     if(plain)dirty=true;                                          /* 구버전(평문) DB → 암호화해서 다시 저장 */
     ready=true;say("불러옴","ok");
     if(dirty)saveRemote();
   }catch(e){
     if(useFb)say("불러오기 실패. DB 주소와 규칙을 확인해 주세요","err");
-  }finally{connecting=false;firstTry=false;memoEl.disabled=false}
+  }finally{connecting=false;firstTry=false;memoAll.disabled=false}
 }
 
 function setFb(on){
@@ -853,7 +942,7 @@ function setFb(on){
   say("불러오는 중…");firstTry=true;connect();
 }
 fbBtn.addEventListener("click",()=>setFb(!useFb));
-memoEl.addEventListener("input",()=>{
+onEd("input",()=>{
   if(useFb){dirty=true;if(ready){say("저장 대기 중…");schedule()}}
   saveState();
 });
@@ -868,7 +957,9 @@ function toast(msg) {   // 저장 상태줄과 별개로 잠깐 떠 있다 사�
   const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false;
   clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 4000);
 }
-const ta = memoEl, tb = document.getElementById("tb");
+let ta = ed1;   // 툴바가 적용되는 메모 영역
+document.addEventListener("focusin", e => { if (e.target === ed1 || e.target === ed2) { ta = e.target; window.refreshLabels(); } });   // 툴바는 마지막으로 선택한 메모 영역에 적용
+const tb = document.getElementById("tb");
 const escH = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const elOf = n => n && (n.nodeType === 1 ? n : n.parentElement);
 const closestIn = (n, sel) => { const e = elOf(n), r = e && e.closest(sel); return r && ta.contains(r) ? r : null; };
@@ -1086,7 +1177,7 @@ function check() {   // 줄 맨 앞에 ☐ 를 붙이거나 뗌 (글자라서 �
   if (caretNode && bl.length === 1) { const s = getSelection(); s.collapse(caretNode, caretNode.nodeValue.length); }
   fire(); refreshTb();
 }
-ta.addEventListener("click", e => {   // ☐ / ☑ 글자를 클릭하면 체크 전환
+onEd("click", e => {   // ☐ / ☑ 글자를 클릭하면 체크 전환
   if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || ta.disabled) return;
   let n, o;
   if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(e.clientX, e.clientY); if (p) { n = p.offsetNode; o = p.offset; } }
@@ -1099,7 +1190,7 @@ ta.addEventListener("click", e => {   // ☐ / ☑ 글자를 클릭하면 체크
   n.nodeValue = (n.nodeValue[0] === "☐" ? "☑" : "☐") + n.nodeValue.slice(1);
   getSelection().collapse(n, 1); fire();
 });
-ta.addEventListener("keydown", e => {   // 체크리스트 줄에서 Enter → 다음 줄도 ☐ / 빈 항목에서 Enter → 목록 끝내기
+onEd("keydown", e => {   // 체크리스트 줄에서 Enter → 다음 줄도 ☐ / 빈 항목에서 Enter → 목록 끝내기
   if (e.key !== "Enter" || e.shiftKey || e.isComposing || e.ctrlKey || e.altKey || e.metaKey) return;
   const s = getSelection(); if (!s.rangeCount || !s.isCollapsed) return;
   const b = blockOf(s.anchorNode); if (!b || !CHK.test(b.textContent)) return;
@@ -1238,9 +1329,9 @@ let imgBack = null;
   }
   const sched = () => { if (img && !raf) raf = requestAnimationFrame(place); };
   window.addEventListener("scroll", sched, true); window.addEventListener("resize", sched);
-  ta.addEventListener("input", sched);
+  onEd("input", sched);
 
-  ta.addEventListener("click", e => {
+  onEd("click", e => {
     const t = e.target;
     if (t && t.tagName === "IMG") {
       show(t);
@@ -1872,7 +1963,7 @@ fq.addEventListener("keydown", e => { if (e.key === "Enter" && !e.isComposing) {
 document.getElementById("fprev").addEventListener("click", () => goFind(-1));
 document.getElementById("fnext").addEventListener("click", () => goFind(1));
 document.getElementById("fclose").addEventListener("click", closeFind);
-ta.addEventListener("input", () => {   // 찾는 중에 메모를 고치면 결과를 다시 계산
+onEd("input", () => {   // 찾는 중에 메모를 고치면 결과를 다시 계산
   if (fbar.hidden) return;
   clearTimeout(findT); findT = setTimeout(() => { findAll(); fi = Math.min(fi, fm.length - 1); paintFind(); }, 250);
 });
@@ -1898,7 +1989,7 @@ tbar.addEventListener("click", e => { const b = e.target.closest("button"); if (
 document.addEventListener("selectionchange", placeTbar);
 window.addEventListener("scroll", placeTbar, true);
 window.addEventListener("resize", placeTbar);
-ta.addEventListener("input", placeTbar);
+onEd("input", placeTbar);
 
 /* 눌린 상태 표시 (굵게/목록/제목 등) */
 function refreshTb() {
@@ -1940,7 +2031,7 @@ tb.addEventListener("click", e => {
 });
 
 /* 표 안에서 Tab / Shift+Tab 으로 칸 이동 (마지막 칸에서 Tab 이면 새 행 추가) */
-ta.addEventListener("keydown", e => {
+onEd("keydown", e => {
   if (e.key !== "Tab" || e.ctrlKey || e.altKey || e.metaKey) return;
   const s = getSelection(); if (!s.rangeCount) return;
   const td = closestIn(s.anchorNode, "td,th"); if (!td) return;
@@ -1959,7 +2050,7 @@ ta.addEventListener("keydown", e => {
 });
 
 /* Ctrl(⌘)+클릭으로 링크 열기 (편집 중에는 클릭만으로는 열리지 않아요) */
-ta.addEventListener("click", e => {
+onEd("click", e => {
   if (!(e.ctrlKey || e.metaKey)) return;
   const a = closestIn(e.target, "a"), h = a && a.getAttribute("href");
   if (h && /^(https?:|mailto:)/i.test(h)) { e.preventDefault(); window.open(h, "_blank", "noopener,noreferrer"); }
@@ -2108,8 +2199,8 @@ saveState();
 /* ===== 기본값으로 초기화: 이 브라우저에 저장된 설정을 지우고 처음 상태로 ===== */
 $("resetAll").addEventListener("click",()=>{
   if(!confirm("작업자 코드·사업장 코드·년도·모드·저장 형식·바코드/QR 전환·1~9번 내용·타이머 시각을 모두 기본값으로 되돌릴까요?\n\n(되돌릴 수 없어요)"))return;
-  const keep=memoEl.value!==""&&!confirm("메모도 함께 비울까요?\n\n[확인] 메모도 비우기\n[취소] 메모는 그대로 두기");
-  const memo=keep?memoEl.value:"";
+  const keep=memoAll.value!==""&&!confirm("메모도 함께 비울까요?\n\n[확인] 메모도 비우기\n[취소] 메모는 그대로 두기");
+  const memo=keep?memoAll.value:"";
   useFb=false;dirty=false;clearTimers();   /* DB 사용은 끔 (DB 안의 메모는 건드리지 않아요) */
   try{
     localStorage.removeItem(KEY);localStorage.removeItem(TKEY);
@@ -2125,7 +2216,7 @@ $("resetAll").addEventListener("click",()=>{
 let attBack = null;
 const attFile = document.getElementById("attFile"), attPop = document.getElementById("attPop"), attN = document.getElementById("attN");
 const attFmt = n => n >= 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
-const attNodes = () => Array.from(ta.querySelectorAll(".att"));
+const attNodes = () => EDS.flatMap(e => Array.from(e.querySelectorAll(".att")));
 function pickAttach() {
   if (ta.disabled) return;
   attBack = saveRange(); attFile.value = ""; attFile.click();
@@ -2147,7 +2238,7 @@ function attDownload(c) {
     say("파일로 저장했어요: " + name, "ok");
   } catch (e) { say("첨부 파일을 읽지 못했어요", "err"); }
 }
-ta.addEventListener("click", e => {   // 칩 클릭 → 파일로 저장
+onEd("click", e => {   // 칩 클릭 → 파일로 저장
   const c = e.target.closest && e.target.closest(".att");
   if (!c || !ta.contains(c)) return;
   e.preventDefault(); attDownload(c);
@@ -2178,7 +2269,7 @@ attPop.addEventListener("click", e => {
   }
 });
 function updateAttN() { const n = attNodes().length; attN.textContent = n ? "첨부 " + n : "첨부 목록"; }
-new MutationObserver(updateAttN).observe(ta, { childList: true, subtree: true });
+observeEds(updateAttN, { childList: true, subtree: true });
 updateAttN();
 </script>
 </body>
