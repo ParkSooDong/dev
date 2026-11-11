@@ -85,10 +85,10 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .edwrap{flex:1}
 .rich{flex:1;min-height:0;width:100%;font:inherit;font-size:13px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
 /* 서식 툴바 */
-.edsplit{display:grid;grid-template-rows:minmax(0,70fr) 10px minmax(0,30fr);min-height:0}
+.edsplit{display:grid;grid-template-rows:minmax(0,80fr) 10px minmax(0,20fr);min-height:0}
 .edwrap{display:flex;gap:6px;min-height:0}
 .edsplit{flex:1;min-width:0}
-.edgut{flex:none;width:34px;display:grid;grid-template-rows:minmax(28px,70fr) 10px minmax(28px,30fr);min-height:0}
+.edgut{flex:none;width:34px;display:grid;grid-template-rows:minmax(28px,80fr) 10px minmax(28px,20fr);min-height:0}
 .edwrap.c1 #memo,.edwrap.c2 #memo2{padding:0;border-width:0;overflow:hidden;visibility:hidden}
 .lb{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;min-height:0;padding:0;white-space:nowrap;font:inherit;font-size:12px;font-weight:600;line-height:1;border:1.5px solid var(--line);border-radius:7px;background:transparent;color:var(--mute);cursor:pointer;width:auto}
 .lb:hover{background:var(--line)}
@@ -213,9 +213,9 @@ body.has-max header .tr{display:none}
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
-<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 위쪽을 70%로)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 아래쪽을 70%로)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="첫 번째 메모 영역입니다. 메모해 보세요. 자동으로 저장돼요. (엑셀 셀 범위·캡처 이미지도 붙여넣을 수 있어요)" aria-label="메모"></div>
-<div class="splitter" id="spl" role="separator" aria-orientation="horizontal" aria-label="메모 영역 크기 조절 (위아래로 드래그, 더블클릭: 70:30)" aria-valuemin="10" aria-valuemax="90" aria-valuenow="70" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 70:30)"></div>
-<div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="두 번째 메모 영역입니다. 위쪽과 아래쪽 사이의 구분선을 끌어서 크기를 조절할 수 있어요. (왼쪽 이름표 더블클릭: 그 메모를 70%로)" aria-label="메모 (아래)"></div></div></div>
+<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 위쪽을 80%로)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 아래쪽을 80%로)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="첫 번째 메모 영역입니다. 메모해 보세요. 자동으로 저장돼요. (엑셀 셀 범위·캡처 이미지도 붙여넣을 수 있어요)" aria-label="메모"></div>
+<div class="splitter" id="spl" role="separator" aria-orientation="horizontal" aria-label="메모 영역 크기 조절 (위아래로 드래그, 더블클릭: 80:20)" aria-valuemin="10" aria-valuemax="90" aria-valuenow="80" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 80:20)"></div>
+<div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="두 번째 메모 영역입니다. 위쪽과 아래쪽 사이의 구분선을 끌어서 크기를 조절할 수 있어요. (왼쪽 이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (아래)"></div></div></div>
 </div></div>
 <script>
 /* ===== 리치 메모: 엑셀 표 / 캡처 이미지 붙여넣기 지원 =====
@@ -499,10 +499,10 @@ const memoAll = {
 };
 const onEd = (t, fn) => EDS.forEach(e => e.addEventListener(t, fn));
 const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach(e => mo.observe(e, o)); return mo; };
-(() => {   // 두 영역 사이 구분선: 마우스(터치) 드래그 / 방향키로 비율 조절 (0:100 ~ 100:0). 처음 70 : 30
+(() => {   // 두 영역 사이 구분선: 마우스(터치) 드래그 / 방향키로 비율 조절 (0:100 ~ 100:0). 처음 80 : 20
   const box = document.getElementById("edsplit"), spl = document.getElementById("spl"), wrap = document.getElementById("edwrap"), gut = document.getElementById("edgut"), SK = "memo-split";
   const lbT = document.getElementById("lbT"), lbB = document.getElementById("lbB");
-  let split = 70;
+  let split = 80;
   try { const v = parseFloat(localStorage.getItem(SK)); if (v >= 0 && v <= 100) split = v; } catch (e) {}
   const apply = () => {
     box.style.gridTemplateRows = "minmax(0," + split + "fr) 10px minmax(0," + (100 - split) + "fr)";
@@ -523,7 +523,7 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
   });
   const end = e => { if (spl.hasPointerCapture(e.pointerId)) spl.releasePointerCapture(e.pointerId); spl.classList.remove("drag"); keep(); };
   spl.addEventListener("pointerup", end); spl.addEventListener("pointercancel", end);
-  spl.addEventListener("dblclick", () => { split = 70; apply(); keep(); });   // 구분선 더블클릭 → 70 : 30 (위 70%)
+  spl.addEventListener("dblclick", () => { split = 80; apply(); keep(); });   // 구분선 더블클릭 → 80 : 20 (위 80%)
   spl.addEventListener("keydown", e => {
     const k = e.key; if (k !== "ArrowUp" && k !== "ArrowDown" && k !== "Home" && k !== "End") return;
     e.preventDefault(); split = k === "Home" ? 0 : k === "End" ? 100 : clamp(split + (k === "ArrowUp" ? -5 : 5)); apply(); keep();
@@ -535,14 +535,14 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
     lbT.classList.toggle("has", ed1.value !== ""); lbB.classList.toggle("has", ed2.value !== "");
   };
   observeEds(() => { clearTimeout(rl); rl = setTimeout(window.refreshLabels, 200); }, { childList: true, subtree: true, characterData: true });
-  for (const [lb, ed, def] of [[lbT, ed1, 70], [lbB, ed2, 30]]) {
+  for (const [lb, ed, def] of [[lbT, ed1, 80], [lbB, ed2, 20]]) {
     lb.addEventListener("mousedown", e => e.preventDefault());
     lb.addEventListener("click", () => {
       if (ed.offsetHeight < 24 && ed.offsetParent !== null) { split = def; apply(); keep(); }
       else if (ed.offsetParent === null) { split = def; apply(); keep(); }   // (barcode) 숨겨진 쪽 → 바로 가기
       ed.focus();
     });
-    lb.addEventListener("dblclick", () => { split = def; apply(); keep(); ed.focus(); });   // 더블클릭한 쪽 메모를 70% 로
+    lb.addEventListener("dblclick", () => { split = def; apply(); keep(); ed.focus(); });   // 더블클릭한 쪽 메모를 80% 로
   }
 })();
 let ta = ed1;   // 툴바가 적용되는 메모 영역
