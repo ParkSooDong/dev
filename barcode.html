@@ -304,9 +304,9 @@ p{margin:6px 0 0}
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
-<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 위쪽을 70%로)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 아래쪽을 70%로)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div>
+<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 위쪽을 70%로)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 아래쪽을 70%로)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="첫 번째 메모 영역입니다. 이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div>
 <div class="splitter" id="spl" role="separator" aria-orientation="horizontal" aria-label="메모 영역 크기 조절 (위아래로 드래그, 더블클릭: 70:30)" aria-valuemin="10" aria-valuemax="90" aria-valuenow="70" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 70:30)"></div>
-<div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="두 번째 메모 영역" aria-label="메모 (아래)"></div></div></div></div></div></div>
+<div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="두 번째 메모 영역입니다. 위쪽과 아래쪽 사이의 구분선을 끌어서 크기를 조절할 수 있어요. (왼쪽 이름표 더블클릭: 그 메모를 70%로)" aria-label="메모 (아래)"></div></div></div></div></div></div>
 <p>Code 128 / QR(오류정정 M) · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 4번은 작업자 코드, 나머지는 직접 입력도 가능해요. 사업장 코드(앞 3자리-)와 년도(○○○-XX 뒤 2자리)를 바꾸면 1~9번 전체에 일괄 적용돼요.</p>
 <p class="warn" role="alert">입력하거나 수정한 내용은 이 기기의 브라우저에 자동 저장되므로, 웹페이지를 닫았다가 다시 열어도 직전 상태가 다시 보입니다.<span id="memoMsg"></span> <button type="button" id="resetAll" style="flex:none;width:auto;display:inline-block;margin-left:8px;padding:3px 12px;font-size:14px;vertical-align:middle" title="작업자·사업장 코드, 년도, 모드, 저장 형식, 바코드/QR, 1~9번 내용, 타이머 시각을 기본값으로 되돌려요">기본값으로 초기화</button></p>
 </main>
@@ -2204,7 +2204,7 @@ $("resetAll").addEventListener("click",()=>{
   const memo=keep?memoAll.value:"";
   useFb=false;dirty=false;clearTimers();   /* DB 사용은 끔 (DB 안의 메모는 건드리지 않아요) */
   try{
-    localStorage.removeItem(KEY);localStorage.removeItem(TKEY);
+    localStorage.removeItem(KEY);localStorage.removeItem(TKEY);localStorage.removeItem("memo-split");
     if(memo)localStorage.setItem(KEY,JSON.stringify({memo:memo}));
   }catch(e){}
   location.reload();
