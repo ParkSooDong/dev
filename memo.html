@@ -85,7 +85,7 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .edwrap{flex:1}
 .rich{flex:1;min-height:0;width:100%;font:inherit;font-size:13px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
 /* 서식 툴바 */
-.edsplit{display:grid;grid-template-rows:minmax(0,80fr) 10px minmax(0,20fr);min-height:0}
+.edsplit{display:grid;grid-template-rows:minmax(0,80fr) 10px minmax(0,10fr) 10px minmax(0,10fr);min-height:0}
 /* 비교 모드: 위/아래 → 왼쪽(원본)/오른쪽(변경본), 스크롤바는 하나(두 영역이 함께 스크롤) */
 .cmphd{display:none}
 .edwrap.cmpm .edgut{display:none}
@@ -95,7 +95,7 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .edwrap.cmpm .cmphd.r{grid-column:3;grid-row:1}
 .edwrap.cmpm #memo{grid-column:1;grid-row:2}
 .edwrap.cmpm #memo2{grid-column:3;grid-row:2}
-.edwrap.cmpm .splitter{display:none}
+.edwrap.cmpm .splitter,.edwrap.cmpm #memo3{display:none}
 /* 비교 모드 3분할: [원본 | 변경본] (하나의 스크롤바로 함께 이동) | [비교 결과] (별도 스크롤바). 폭은 구분선을 끌어서 조절 (기본 35 : 35 : 30) */
 .edwrap.cmpm{display:grid;grid-template-columns:minmax(0,60fr) 10px minmax(0,40fr);grid-template-rows:minmax(0,1fr);gap:0}
 .edwrap.cmpm .edsplit{grid-column:1;grid-row:1;min-width:0;min-height:0}
@@ -142,8 +142,8 @@ tr.cmpgap>td{padding:0;border:0;line-height:0;font-size:0;background:repeating-l
 .cmp .cmm{padding:6px 10px;color:var(--mute);font-size:12px}
 .edwrap{display:flex;gap:6px;min-height:0}
 .edsplit{flex:1;min-width:0}
-.edgut{flex:none;width:34px;display:grid;grid-template-rows:minmax(28px,80fr) 10px minmax(28px,20fr);min-height:0}
-.edwrap.c1 #memo,.edwrap.c2 #memo2{padding:0;border-width:0;overflow:hidden;visibility:hidden}
+.edgut{flex:none;width:34px;display:grid;grid-template-rows:minmax(28px,80fr) 10px minmax(28px,10fr) 10px minmax(28px,10fr);min-height:0}
+.edwrap.c1 #memo,.edwrap.c2 #memo2,.edwrap.c3 #memo3{padding:0;border-width:0;overflow:hidden;visibility:hidden}
 .lb{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;min-height:0;padding:0;white-space:nowrap;font:inherit;font-size:12px;font-weight:600;line-height:1;border:1.5px solid var(--line);border-radius:7px;background:transparent;color:var(--mute);cursor:pointer;width:auto}
 .lb:hover{background:var(--line)}
 .lb.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -153,6 +153,12 @@ tr.cmpgap>td{padding:0;border:0;line-height:0;font-size:0;background:repeating-l
 .splitter{position:relative;cursor:row-resize;touch-action:none;outline:none}
 .splitter::after{content:"";position:absolute;left:35%;right:35%;top:3px;height:4px;border-radius:2px;background:var(--mute);opacity:.45;transition:opacity .15s}
 .splitter:hover::after,.splitter:focus-visible::after,.splitter.drag::after{opacity:1}
+/* 가로 3분할: 이름표는 위쪽 한 줄, 영역은 왼쪽부터 가·나·다 (기본 35 : 35 : 30). 세로 3분할은 기본 80 : 10 : 10 */
+.edwrap.lh{flex-direction:column}
+.edwrap.lh .edgut{width:auto;height:26px;grid-auto-flow:column}
+.edwrap.lh:not(.cmpm) .edsplit{grid-auto-flow:column}
+.edwrap.lh .splitter{cursor:col-resize}
+.edwrap.lh .splitter::after{left:3px;right:3px;top:0;bottom:0;height:auto}
 .tb{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:4px;border:1.5px solid var(--line);border-radius:10px;background:var(--card)}
 .tb button{font:inherit;font-size:14px;min-width:32px;height:32px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer}
 .tb button:hover{background:var(--line)}
@@ -251,7 +257,9 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
   <button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)" aria-label="체크리스트"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
   <div class="menu"><button type="button" data-pal title="더보기" aria-label="더보기" aria-haspopup="true" aria-expanded="false">⋯</button><div class="pop" hidden><button type="button" data-cmd="indent">들여쓰기</button><button type="button" data-cmd="outdent">내어쓰기</button><button type="button" data-cmd="hr">구분선</button><button type="button" data-cmd="quote" aria-pressed="false">인용</button><button type="button" data-cmd="code" aria-pressed="false">코드 블록</button><button type="button" data-cmd="clearall" title="메모 전체의 글자 서식을 기본값으로 되돌려요 (글자·이미지·표는 그대로)">전체 서식 초기화</button></div></div>
-  <button type="button" id="cmpBtn" title="비교: 위 메모(원본)를 기준으로 아래 메모(변경본)가 일치하는지 확인" aria-label="비교"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 8h5M15 16h5M4 16l3-3M20 8l-3 3"/></svg><span>비교</span></button>
+  <button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 35 : 35 : 30 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button>
+  <button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 80 : 10 : 10 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button>
+  <button type="button" id="cmpBtn" title="비교: 가(원본)를 기준으로 나(변경본)가 일치하는지 확인하고, 비교 내역은 다 영역에 표시" aria-label="비교"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 8h5M15 16h5M4 16l3-3M20 8l-3 3"/></svg><span>비교</span></button>
   <i class="sep"></i>
   <button type="button" id="impBtn" title="열기 (.html / .txt)" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
   <input type="file" id="impFile" accept=".html,.htm,.txt,text/html,text/plain" hidden>
@@ -268,9 +276,11 @@ body.has-max header .tr{display:none}
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
-<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb t" id="lbT" title="위쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 위쪽을 80%로)" aria-label="위쪽 메모">위</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="아래쪽 메모 (클릭: 이 메모로 이동 / 더블클릭: 아래쪽을 80%로)" aria-label="아래쪽 메모">아래</button></div><div class="edsplit" id="edsplit"><div class="cmphd l">원본</div><div class="cmphd r">변경본</div><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="첫 번째 메모 영역입니다. 메모해 보세요. 자동으로 저장돼요. (엑셀 셀 범위·캡처 이미지도 붙여넣을 수 있어요)" aria-label="메모"></div>
-<div class="splitter" id="spl" role="separator" aria-orientation="horizontal" aria-label="메모 영역 크기 조절 (위아래로 드래그, 더블클릭: 80:20)" aria-valuemin="10" aria-valuemax="90" aria-valuenow="80" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 80:20)"></div>
-<div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="두 번째 메모 영역입니다. 위쪽과 아래쪽 사이의 구분선을 끌어서 크기를 조절할 수 있어요. (왼쪽 이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (아래)"></div></div></div>
+<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb a" id="lbA" title="가 영역 (클릭: 이 메모로 이동 / 더블클릭: 가를 80%로, 한 번 더 더블클릭: 기본 비율)" aria-label="가 영역">가</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="나 영역 (클릭: 이 메모로 이동 / 더블클릭: 나를 80%로, 한 번 더 더블클릭: 기본 비율)" aria-label="나 영역">나</button><div class="sp"></div><button type="button" class="lb c" id="lbC" title="다 영역 (클릭: 이 메모로 이동 / 더블클릭: 다를 80%로, 한 번 더 더블클릭: 기본 비율)" aria-label="다 영역">다</button></div><div class="edsplit" id="edsplit"><div class="cmphd l">가 · 원본</div><div class="cmphd r">나 · 변경본</div><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="가 영역(첫 번째 메모)입니다. 메모해 보세요. 자동으로 저장돼요. (엑셀 셀 범위·캡처 이미지도 붙여넣을 수 있어요)" aria-label="메모"></div>
+<div class="splitter" id="spl" role="separator" aria-orientation="horizontal" aria-label="가·나 영역 크기 조절 (드래그, 방향키, 더블클릭: 기본 비율)" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 기본 비율)"></div>
+<div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="나 영역(두 번째 메모)입니다. 구분선을 끌어서 크기를 조절할 수 있어요. (이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (나)"></div>
+<div class="splitter" id="spl2" role="separator" aria-orientation="horizontal" aria-label="나·다 영역 크기 조절 (드래그, 방향키, 더블클릭: 기본 비율)" aria-valuemin="0" aria-valuemax="100" aria-valuenow="90" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 기본 비율)"></div>
+<div id="memo3" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="다 영역(세 번째 메모)입니다. 비교를 누르면 이 자리에 비교 내역이 표시돼요. (이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (다)"></div></div></div>
 </div></div>
 <script>
 /* ===== 리치 메모: 엑셀 표 / 캡처 이미지 붙여넣기 지원 =====
@@ -543,71 +553,124 @@ const KEY = "memo-state";    // 이 PC(브라우저)에 저장되는 이름
 const ed1 = document.getElementById("memo"), st = document.getElementById("st"), fbBtn = document.getElementById("fbBtn");
 makeRich(ed1);
 /* ===== 메모 영역 2분할: 위(memo) / 아래(memo2). 툴바는 하나이고, 마지막으로 클릭한 영역(ta)에 적용돼요 ===== */
-const ed2 = document.getElementById("memo2"), EDS = [ed1, ed2];
-makeRich(ed2);
-const S2 = "<!--s2-->";   // DB·이 PC 에는 두 영역을 한 문자열로 저장 (아래 영역이 비어 있으면 예전 형식 그대로)
+const ed2 = document.getElementById("memo2"), ed3 = document.getElementById("memo3"), EDS = [ed1, ed2, ed3];
+makeRich(ed2); makeRich(ed3);
+const S2 = "<!--s2-->", S3 = "<!--s3-->";   // DB·이 PC 에는 세 영역을 한 문자열로 저장 (다가 비면 가·나 2칸 형식, 나·다가 모두 비면 예전 형식 그대로)
 const memoAll = {
-  get value() { const a = ed1.value, b = ed2.value; return b ? S2 + JSON.stringify([a, b]) : a; },
+  get value() { const a = ed1.value, b = ed2.value, c = ed3.value; return c ? S3 + JSON.stringify([a, b, c]) : b ? S2 + JSON.stringify([a, b]) : a; },
   set value(v) {
     v = String(v || "");
-    if (v.startsWith(S2)) { try { const p = JSON.parse(v.slice(S2.length)); ed1.value = p[0] || ""; ed2.value = p[1] || ""; return; } catch (e) {} }
-    ed1.value = v; ed2.value = "";
+    for (const P of [S3, S2]) if (v.startsWith(P)) { try { const p = JSON.parse(v.slice(P.length)); ed1.value = p[0] || ""; ed2.value = p[1] || ""; ed3.value = p[2] || ""; return; } catch (e) {} }
+    ed1.value = v; ed2.value = ed3.value = "";
   },
   get disabled() { return ed1.disabled; },
-  set disabled(b) { ed1.disabled = ed2.disabled = b; },
-  get textContent() { return ed1.textContent + ed2.textContent; }
+  set disabled(b) { ed1.disabled = ed2.disabled = ed3.disabled = b; },
+  get textContent() { return ed1.textContent + ed2.textContent + ed3.textContent; }
 };
 const onEd = (t, fn) => EDS.forEach(e => e.addEventListener(t, fn));
 const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach(e => mo.observe(e, o)); return mo; };
-(() => {   // 두 영역 사이 구분선: 마우스(터치) 드래그 / 방향키로 비율 조절 (0:100 ~ 100:0). 처음 80 : 20
-  const box = document.getElementById("edsplit"), spl = document.getElementById("spl"), wrap = document.getElementById("edwrap"), gut = document.getElementById("edgut"), SK = "memo-split";
-  const lbT = document.getElementById("lbT"), lbB = document.getElementById("lbB");
-  let split = 80;
-  try { const v = parseFloat(localStorage.getItem(SK)); if (v >= 0 && v <= 100) split = v; } catch (e) {}
+(() => {   /* 가·나·다 3분할. [세로 분할] 위→아래 기본 80 : 10 : 10 / [가로 분할] 왼쪽→오른쪽 기본 35 : 35 : 30. 둘 다 선택 사항이에요
+   - memo 파일: 화면 높이와 관계없이 세로 분할이 기본
+   - barcode 파일: 세 줄 모드(확대 전)는 가로 분할, 메모 확대 시는 세로 분할이 기본 (모드별로 고른 방식을 따로 기억)
+   - 비교 중에는 가(원본) | 나(변경본) | 다(비교 내역) 가로 배치로 보여요 */
+  const gid = id => document.getElementById(id);
+  const box = gid("edsplit"), wrap = gid("edwrap"), gut = gid("edgut"), mp = gid("mpane");
+  const SPL = [gid("spl"), gid("spl2")], LB = [gid("lbA"), gid("lbB"), gid("lbC")], ED = [ed1, ed2, ed3];
+  const layH = gid("layH"), layV = gid("layV");
+  const DEFV = [80, 10, 10], DEFH = [35, 35, 30], KV = "memo-split-v", KH = "memo-split-h", KL = "memo-layout-";
+  const ctx = () => mp ? (mp.classList.contains("max") ? "x" : "n") : "m";   // m: memo 파일 / n: barcode 세 줄 모드 / x: barcode 확대
+  const load = (k, d) => {
+    try { const a = JSON.parse(localStorage.getItem(k)); if (Array.isArray(a) && a.length === 3 && a.every(x => typeof x === "number" && x >= 0) && Math.abs(a[0] + a[1] + a[2] - 100) < 0.5) return a; } catch (e) {}
+    return d.slice();
+  };
+  const V = load(KV, DEFV), Hh = load(KH, DEFH);
+  const keep = () => { try { localStorage.setItem(KV, JSON.stringify(V)); localStorage.setItem(KH, JSON.stringify(Hh)); } catch (e) {} };
+  const compare = () => wrap.classList.contains("cmpm");
+  const pref = () => { let m = null; try { m = localStorage.getItem(KL + ctx()); } catch (e) {} return m === "h" || m === "v" ? m : (ctx() === "n" ? "h" : "v"); };
+  const mode = () => compare() ? "h" : pref();
+  const arr = () => mode() === "v" ? V : Hh;
+  const dflt = () => mode() === "v" ? DEFV : DEFH;
+  const trk = (a, min) => a.map(x => "minmax(" + min + "px," + x + "fr)").join(" 10px ");
+  const sync = () => {
+    const m = mode(), a = arr();
+    SPL[0].setAttribute("aria-valuenow", String(Math.round(a[0]))); SPL[1].setAttribute("aria-valuenow", String(Math.round(a[0] + a[1])));
+    SPL.forEach(s => { s.setAttribute("aria-orientation", m === "v" ? "horizontal" : "vertical"); });
+    layH.setAttribute("aria-pressed", String(pref() === "h")); layV.setAttribute("aria-pressed", String(pref() === "v"));
+  };
   const apply = () => {
-    box.style.gridTemplateRows = "minmax(0," + split + "fr) 10px minmax(0," + (100 - split) + "fr)";
-    gut.style.gridTemplateRows = "minmax(28px," + split + "fr) 10px minmax(28px," + (100 - split) + "fr)";   // 왼쪽 이름표: 영역이 0 이어도 보이도록 최소 높이를 둠
-    wrap.classList.toggle("c1", split === 0); wrap.classList.toggle("c2", split === 100);   // 0 / 100 이면 접힌 쪽을 완전히 숨김
-    wrap.classList.toggle("sb", split < 50);   // (barcode 확대 전) 더 큰 쪽 메모를 보여줌
-    spl.setAttribute("aria-valuenow", String(Math.round(split)));
+    if (compare()) { sync(); return; }   // 비교 중 배치는 비교 코드가 맡아요
+    const m = mode(), a = arr();
+    wrap.classList.toggle("lv", m === "v"); wrap.classList.toggle("lh", m === "h");
+    box.style.gridTemplateRows = m === "v" ? trk(a, 0) : "minmax(0,1fr)";
+    box.style.gridTemplateColumns = m === "h" ? trk(a, 0) : "minmax(0,1fr)";
+    gut.style.gridTemplateRows = m === "v" ? trk(a, 28) : "minmax(0,1fr)";   // 이름표: 영역이 0 이어도 보이도록 최소 28px
+    gut.style.gridTemplateColumns = m === "h" ? trk(a, 28) : "minmax(0,1fr)";
+    a.forEach((x, i) => wrap.classList.toggle("c" + (i + 1), x === 0));   // 0 이면 접힌 쪽을 완전히 숨김
+    const big = m === "v" ? a.indexOf(Math.max(...a)) : -1;   // (barcode 확대 전, 세로 분할) 가장 큰 쪽 메모를 보여줌
+    [0, 1, 2].forEach(i => wrap.classList.toggle("big" + i, i === big));
+    sync();
   };
   window.refreshSplit = apply;
-  const keep = () => { try { localStorage.setItem(SK, String(split)); } catch (e) {} };
-  const clamp = v => { v = Math.min(100, Math.max(0, v)); return v < 3 ? 0 : v > 97 ? 100 : v; };   // 끝에 가까우면 0 / 100 에 붙임
-  apply();
-  spl.addEventListener("pointerdown", e => { e.preventDefault(); spl.setPointerCapture(e.pointerId); spl.classList.add("drag"); });
-  spl.addEventListener("pointermove", e => {
-    if (!spl.hasPointerCapture(e.pointerId)) return;
-    const r = box.getBoundingClientRect(), total = r.height - spl.offsetHeight;
-    if (total <= 0) return;
-    split = clamp((e.clientY - r.top - spl.offsetHeight / 2) / total * 100); apply();
+  window.clearLayoutPrefs = () => { try { [KV, KH, KL + "m", KL + "n", KL + "x"].forEach(k => localStorage.removeItem(k)); } catch (e) {} };
+  const clamp = v => Math.min(100, Math.max(0, v));
+  const setB = (i, pct) => {   // i 0: 가|나 경계(가의 %), 1: 나|다 경계(가+나의 %). 끝에 가까우면 붙임
+    const a = arr();
+    if (i === 0) { const t = a[0] + a[1]; let w = clamp(Math.min(pct, t)); if (w < 3) w = 0; else if (t - w < 3) w = t; a[0] = w; a[1] = t - w; }
+    else { let t = clamp(Math.max(pct, a[0])); if (100 - t < 3) t = 100; else if (t - a[0] < 3) t = a[0]; a[1] = t - a[0]; a[2] = 100 - t; }
+    apply();
+  };
+  const reset = () => { arr().splice(0, 3, ...dflt()); apply(); keep(); };
+  SPL.forEach((s, i) => {
+    s.addEventListener("pointerdown", e => { e.preventDefault(); s.setPointerCapture(e.pointerId); s.classList.add("drag"); });
+    s.addEventListener("pointermove", e => {
+      if (!s.hasPointerCapture(e.pointerId)) return;
+      const r = box.getBoundingClientRect(), v = mode() === "v", total = (v ? r.height : r.width) - 20;   // 구분선 2개(20px)를 뺀 크기
+      if (total <= 0) return;
+      setB(i, ((v ? e.clientY - r.top : e.clientX - r.left) - (i ? 15 : 5)) / total * 100);
+    });
+    const end = e => { if (s.hasPointerCapture(e.pointerId)) s.releasePointerCapture(e.pointerId); s.classList.remove("drag"); keep(); };
+    s.addEventListener("pointerup", end); s.addEventListener("pointercancel", end);
+    s.addEventListener("dblclick", reset);   // 구분선 더블클릭 → 기본 비율 (세로 80:10:10 / 가로 35:35:30)
+    s.addEventListener("keydown", e => {
+      const v = mode() === "v", k = e.key;
+      if (k === "Home") { e.preventDefault(); reset(); return; }
+      const d = k === (v ? "ArrowUp" : "ArrowLeft") ? -5 : k === (v ? "ArrowDown" : "ArrowRight") ? 5 : 0;
+      if (!d) return;
+      e.preventDefault(); const a = arr(); setB(i, (i ? a[0] + a[1] : a[0]) + d); keep();
+    });
   });
-  const end = e => { if (spl.hasPointerCapture(e.pointerId)) spl.releasePointerCapture(e.pointerId); spl.classList.remove("drag"); keep(); };
-  spl.addEventListener("pointerup", end); spl.addEventListener("pointercancel", end);
-  spl.addEventListener("dblclick", () => { split = 80; apply(); keep(); });   // 구분선 더블클릭 → 80 : 20 (위 80%)
-  spl.addEventListener("keydown", e => {
-    const k = e.key; if (k !== "ArrowUp" && k !== "ArrowDown" && k !== "Home" && k !== "End") return;
-    e.preventDefault(); split = k === "Home" ? 0 : k === "End" ? 100 : clamp(split + (k === "ArrowUp" ? -5 : 5)); apply(); keep();
-  });
-  /* 왼쪽 이름표(위 / 아래): 지금 입력 중인 메모를 표시하고, 내용이 있으면 점을 붙여요. 누르면 그 메모로 이동 (접혀 있으면 펼침) */
+  /* 가로 분할 / 세로 분할 선택 (선택 사항). 지금 모드(memo / barcode 세 줄 / barcode 확대)에 대해 기억해요 */
+  for (const [b, m] of [[layH, "h"], [layV, "v"]]) {
+    b.addEventListener("mousedown", e => e.preventDefault());
+    b.addEventListener("click", () => {
+      try { localStorage.setItem(KL + ctx(), m); } catch (e) {}
+      if (compare()) toast("비교 중에는 가로로 나란히 보여요. 비교를 끝내면 " + (m === "h" ? "가로" : "세로") + " 분할로 바뀌어요");
+      apply();
+    });
+  }
+  /* 이름표(가 / 나 / 다): 지금 입력 중인 메모를 표시하고, 내용이 있으면 점을 붙여요. 누르면 그 메모로 이동 (접혀 있으면 펼침) */
   let rl = null;
   window.refreshLabels = () => {
-    lbT.classList.toggle("on", ta === ed1); lbB.classList.toggle("on", ta === ed2);
-    lbT.classList.toggle("has", ed1.value !== ""); lbB.classList.toggle("has", ed2.value !== "");
+    LB.forEach((lb, i) => { lb.classList.toggle("on", ta === ED[i]); lb.classList.toggle("has", ED[i].value !== ""); });
   };
   observeEds(() => { clearTimeout(rl); rl = setTimeout(window.refreshLabels, 200); }, { childList: true, subtree: true, characterData: true });
-  for (const [lb, ed, def] of [[lbT, ed1, 80], [lbB, ed2, 20]]) {
+  const lead = i => { const a = arr(); if (a[i] >= 79) a.splice(0, 3, ...dflt()); else a.splice(0, 3, ...[10, 10, 10].map((x, k) => k === i ? 80 : x)); apply(); keep(); };
+  LB.forEach((lb, i) => {
+    const ed = ED[i];
     lb.addEventListener("mousedown", e => e.preventDefault());
     lb.addEventListener("click", () => {
-      if (ed.offsetHeight < 24 && ed.offsetParent !== null) { split = def; apply(); keep(); }
-      else if (ed.offsetParent === null) { split = def; apply(); keep(); }   // (barcode) 숨겨진 쪽 → 바로 가기
+      if (!compare()) {
+        const small = (mode() === "v" ? ed.offsetHeight : ed.offsetWidth) < 24;
+        if (small || ed.offsetParent === null) { arr().splice(0, 3, ...[10, 10, 10].map((x, k) => k === i ? 80 : x)); apply(); keep(); }   // 접혀 있거나 숨겨진 쪽 → 바로 가기
+      }
       ed.focus();
     });
-    lb.addEventListener("dblclick", () => { split = def; apply(); keep(); ed.focus(); });   // 더블클릭한 쪽 메모를 80% 로
-  }
+    lb.addEventListener("dblclick", () => { if (!compare()) lead(i); ed.focus(); });   // 더블클릭한 쪽 메모를 80% 로 (이미 80% 이상이면 기본 비율로)
+  });
+  apply();
 })();
 let ta = ed1;   // 툴바가 적용되는 메모 영역
-document.addEventListener("focusin", e => { if (e.target === ed1 || e.target === ed2) { ta = e.target; window.refreshLabels(); } });   // 툴바는 마지막으로 선택한 메모 영역에 적용
+document.addEventListener("focusin", e => { if (EDS.includes(e.target)) { ta = e.target; window.refreshLabels(); } });   // 툴바는 마지막으로 선택한 메모 영역에 적용
    // 메모 칸을 표/이미지 붙여넣기가 되는 편집 영역으로
 const say = (t, c) => { st.textContent = t; st.className = c || ""; };
 const hhmm = () => new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
@@ -2272,7 +2335,7 @@ let resetting=false;
   function ensurePanel() {
     if (panel) return;
     panel = mk("div", "cmp"); panel.id = "cmp"; panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "비교 결과"); panel.hidden = true;
-    const h = mk("div", "cmph"); h.appendChild(mk("b", "", "비교"));
+    const h = mk("div", "cmph"); h.appendChild(mk("b", "", "다 · 비교"));
     sumEl = mk("span", "cmps"); h.appendChild(sumEl);
     const x = mk("button", "", "✕"); x.type = "button"; x.title = "닫기 (Esc)"; x.setAttribute("aria-label", "닫기"); x.addEventListener("click", closeCmp); h.appendChild(x);
     listEl = mk("div", "cmpl"); panel.append(h, listEl);
@@ -2293,16 +2356,16 @@ let resetting=false;
     ensurePanel(); clearHl(); clearGaps();
     // barcode 는 확대해야 두 영역이 모두 보여요
     if (typeof setMemoMax === "function" && !document.getElementById("mpane").classList.contains("max")) setMemoMax(true);
-    wrapEl.classList.remove("c1", "c2"); wrapEl.classList.add("cmpm"); layout(); document.getElementById("edsplit").scrollTop = 0;   // 왼쪽(원본) / 오른쪽(변경본) 으로 나란히, 스크롤바는 하나
+    wrapEl.classList.remove("c1", "c2", "c3"); wrapEl.classList.add("cmpm"); layout(); document.getElementById("edsplit").scrollTop = 0;   // 왼쪽(원본) / 오른쪽(변경본) 으로 나란히, 스크롤바는 하나
     const A = linesOf(ed1), B = linesOf(ed2); st = { A, B };
     panel.hidden = false; listEl.textContent = ""; sumEl.className = "cmps";
-    if (!A.length && !B.length) { sumEl.textContent = "비교할 내용이 없어요 (위·아래 메모가 모두 비어 있어요)"; return; }
+    if (!A.length && !B.length) { sumEl.textContent = "비교할 내용이 없어요 (가·나 메모가 모두 비어 있어요)"; return; }
     const { hs, rows, approx } = hunks(A, B);
     st.rows = rows; st.approx = approx;
     if (!approx) { align(A, B, rows); lw1 = ed1.clientWidth; lw2 = ed2.clientWidth; }   // 같은 줄이 좌우 같은 높이에 오도록 빈 칸 끼워 넣기
     const c = { chg: 0, del: 0, add: 0 }; hs.forEach(h => c[h.k]++);
-    if (!hs.length) { sumEl.className = "cmps ok"; sumEl.textContent = "✔ 일치해요 (위 " + A.length + "행 = 아래 " + B.length + "행)"; return; }
-    sumEl.textContent = "다른 곳 " + hs.length + "건 — 변경 " + c.chg + " · 삭제(위에만) " + c.del + " · 추가(아래에만) " + c.add;
+    if (!hs.length) { sumEl.className = "cmps ok"; sumEl.textContent = "✔ 일치해요 (가 " + A.length + "행 = 나 " + B.length + "행)"; return; }
+    sumEl.textContent = "다른 곳 " + hs.length + "건 — 변경 " + c.chg + " · 삭제(가에만) " + c.del + " · 추가(나에만) " + c.add;
     if (approx) listEl.appendChild(mk("div", "cmm", "※ 내용이 너무 많아 순서는 무시하고 '있다/없다'만 비교했어요."));
     const hl = { "cmp-del": [], "cmp-add": [], "cmp-chg": [] };
     hs.forEach((it, idx) => {
@@ -2312,13 +2375,13 @@ let resetting=false;
       if (idx >= 300) return;   // 목록은 300건까지만
       const el = mk("div", "ci"), badge = mk("span", "cb " + it.k, it.k === "chg" ? "변경" : it.k === "del" ? "삭제" : "추가");
       el.appendChild(badge);
-      el.appendChild(mk("span", "cn", it.k === "chg" ? "위 " + (it.a + 1) + "행 → 아래 " + (it.b + 1) + "행" : it.k === "del" ? "위 " + (it.a + 1) + "행 (아래에 없음)" : "아래 " + (it.b + 1) + "행 (위에 없음)"));
+      el.appendChild(mk("span", "cn", it.k === "chg" ? "가 " + (it.a + 1) + "행 → 나 " + (it.b + 1) + "행" : it.k === "del" ? "가 " + (it.a + 1) + "행 (나에 없음)" : "나 " + (it.b + 1) + "행 (가에 없음)"));
       if (it.k === "chg") {
         const [ra, rb] = wordDiff(A[it.a].n, B[it.b].n);
-        const r1 = mk("div", "cr"), r2 = mk("div", "cr"); r1.appendChild(mk("i", "", "위")); r2.appendChild(mk("i", "", "아래"));
+        const r1 = mk("div", "cr"), r2 = mk("div", "cr"); r1.appendChild(mk("i", "", "가")); r2.appendChild(mk("i", "", "나"));
         const s1 = mk("span"), s2 = mk("span"); fill(s1, ra, "del"); fill(s2, rb, "ins"); r1.appendChild(s1); r2.appendChild(s2); el.append(r1, r2);
       } else {
-        const r = mk("div", "cr"); r.appendChild(mk("i", "", it.k === "del" ? "위" : "아래")); r.appendChild(mk("span", "", (it.k === "del" ? A[it.a] : B[it.b]).n)); el.appendChild(r);
+        const r = mk("div", "cr"); r.appendChild(mk("i", "", it.k === "del" ? "가" : "나")); r.appendChild(mk("span", "", (it.k === "del" ? A[it.a] : B[it.b]).n)); el.appendChild(r);
       }
       el.addEventListener("click", () => goTo(it, el)); listEl.appendChild(el);
     });
@@ -2337,10 +2400,10 @@ let resetting=false;
 /* ===== 기본값으로 초기화: Firebase 사용 여부·타이머 시각·메모를 처음 상태로 ===== */
 document.getElementById("resetAll").addEventListener("click",()=>{
   if(!confirm("Firebase 사용 여부와 타이머 목표 시각을 기본값으로 되돌릴까요?\n\n(되돌릴 수 없어요)"))return;
-  if(memoAll.value!==""&&confirm("메모도 함께 비울까요?\n\n[확인] 메모도 비우기\n[취소] 메모는 그대로 두기"))ed1.innerHTML=ed2.innerHTML="";
+  if(memoAll.value!==""&&confirm("메모도 함께 비울까요?\n\n[확인] 메모도 비우기\n[취소] 메모는 그대로 두기"))ed1.innerHTML=ed2.innerHTML=ed3.innerHTML="";
   resetting=true;
   useFb=false;dirty=false;knownAt=0;clearTimers();   /* DB 사용은 끔 (DB 안의 메모는 건드리지 않아요) */
-  try{localStorage.removeItem(TKEY);localStorage.removeItem("memo-split")}catch(e){}
+  try{localStorage.removeItem(TKEY);localStorage.removeItem("memo-split");window.clearLayoutPrefs&&window.clearLayoutPrefs()}catch(e){}
   saveLocal();
   location.reload();
 });
