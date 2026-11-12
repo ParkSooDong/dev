@@ -254,7 +254,7 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
   <button type="button" data-cmd="table" title="표 삽입" aria-label="표 삽입"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg></button>
   <div class="menu dim" id="tblWrap"><button type="button" data-pal data-needtbl title="표 편집 (표 안의 칸을 클릭하면 사용할 수 있어요)" aria-label="표 편집" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M9.5 5v14"/></svg><span>표 편집</span></button><div class="pop" hidden><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div>
-  <button type="button" data-cmd="image" title="이미지 삽입" aria-label="이미지 삽입"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg></button>
+  <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg></button><div class="pop" hidden><button type="button" data-cmd="image">파일 열기</button><button type="button" data-cmd="blank" title="현재 메모 영역의 가로·세로 90% 크기의 흰색 바탕 이미지를 넣어요 (손글씨·도형으로 그리기용)">흰색 바탕 그리기 이미지</button></div></div>
   <input type="color" id="fcPick" value="#f06595" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="file" id="imgFile" accept="image/*" multiple hidden>
   <button type="button" data-cmd="attach" title="파일 첨부 저장 (엑셀·문서·이미지 등 — 메모 안에 포함돼요)" aria-label="파일 첨부 저장"><svg viewBox="0 0 24 24"><path d="M20 11.5l-7.6 7.6a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.3-7.3"/></svg></button>
@@ -265,8 +265,7 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
   <button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)" aria-label="체크리스트"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
   <div class="menu"><button type="button" data-pal title="더보기" aria-label="더보기" aria-haspopup="true" aria-expanded="false">⋯</button><div class="pop" hidden><button type="button" data-cmd="indent">들여쓰기</button><button type="button" data-cmd="outdent">내어쓰기</button><button type="button" data-cmd="hr">구분선</button><button type="button" data-cmd="quote" aria-pressed="false">인용</button><button type="button" data-cmd="code" aria-pressed="false">코드 블록</button><button type="button" data-cmd="clearall" title="메모 전체의 글자 서식을 기본값으로 되돌려요 (글자·이미지·표는 그대로)">전체 서식 초기화</button></div></div>
-  <button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 35 : 35 : 30 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button>
-  <button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 80 : 10 : 10 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button>
+  <div class="menu" id="layMenu"><button type="button" data-pal id="layBtn" title="분할: 가로 또는 세로로 가·나·다 영역을 나눠 보여요" aria-label="분할" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M12 5v14M3.5 12h17"/></svg><span>분할</span></button><div class="pop" hidden><button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 35 : 35 : 30 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button><button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 80 : 10 : 10 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button></div></div>
   <button type="button" id="cmpBtn" title="비교: 가(원본)를 기준으로 나(변경본)가 일치하는지 확인하고, 비교 내역은 다 영역에 표시" aria-label="비교"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 8h5M15 16h5M4 16l3-3M20 8l-3 3"/></svg><span>비교</span></button>
   <i class="sep"></i>
   <button type="button" id="impBtn" title="열기 (.html / .txt)" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
@@ -666,6 +665,18 @@ function makeRich(el) {
     else if (n) say("파일 " + n + "개를 첨부했어요", "ok");
     return n;
   };
+  /* 흰색 바탕 그리기용 이미지: 이 메모 영역의 안쪽 가로·세로 각각 90% (붙여넣는 이미지와 같은 기준) */
+  el.insertBlank = () => {
+    const cs = getComputedStyle(el);
+    const sb = el.scrollHeight > el.clientHeight + 1 ? 0 : (() => { const q = document.createElement("div"); q.style.cssText = "position:absolute;visibility:hidden;width:60px;height:60px;overflow:scroll"; document.body.appendChild(q); const w = q.offsetWidth - q.clientWidth; q.remove(); return w; })();
+    let W = Math.floor((el.clientWidth - sb - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.9);
+    let H = Math.floor((Math.min(el.clientHeight || innerHeight, innerHeight) - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) * 0.9);
+    if (!(W >= 24)) W = 400; if (!(H >= 24)) H = 300;
+    W = Math.min(W, 4000); H = Math.min(H, 4000);
+    const c = document.createElement("canvas"); c.width = W; c.height = H;
+    const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, W, H);
+    insert(clean('<img src="' + c.toDataURL("image/png") + '" width="' + W + '">'));
+  };
   el.insertImages = async files => {
     let h = "";
     for (const f of files) { try { h += await imgHtml(f); } catch (e) {} }
@@ -795,10 +806,11 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
       e.preventDefault(); const a = arr(); setB(i, (i ? a[0] + a[1] : a[0]) + d); keep();
     });
   });
-  /* 가로 분할 / 세로 분할 선택 (선택 사항). 지금 모드(memo / barcode 세 줄 / barcode 확대)에 대해 기억해요 */
+  /* [분할] 메뉴에서 가로 분할 / 세로 분할 선택 (선택 사항). 지금 모드(memo / barcode 세 줄 / barcode 확대)에 대해 기억해요 */
   for (const [b, m] of [[layH, "h"], [layV, "v"]]) {
     b.addEventListener("mousedown", e => e.preventDefault());
     b.addEventListener("click", () => {
+      closePop();   // [분할] 메뉴를 닫음
       try { localStorage.setItem(KL + ctx(), m); } catch (e) {}
       if (compare()) toast("비교 중에는 가로로 나란히 보여요. 비교를 끝내면 " + (m === "h" ? "가로" : "세로") + " 분할로 바뀌어요");
       apply();
@@ -1226,7 +1238,7 @@ const CMDS = {
   check, indent: () => indent(1), outdent: () => indent(-1),
   alL: () => align("justifyLeft"), alC: () => align("justifyCenter"), alR: () => align("justifyRight"),
   hr: () => exec("insertHorizontalRule"), quote: () => block("blockquote"), code: () => block("pre"),
-  clear: clearFmt, clearall: clearAll, image: pickImage, attach: pickAttach, find: openFind
+  clear: clearFmt, clearall: clearAll, image: pickImage, blank: blankImage, attach: pickAttach, find: openFind
 };
 
 /* ===== 추가 서식: 블록 찾기 / 들여쓰기 / 체크리스트 / 정렬 / 서식 지우기 / 표 편집 / 이미지 / 찾기 ===== */
@@ -2129,6 +2141,11 @@ let imgBack = null;
   }, true);
 })();
 
+function blankImage() {   // 이미지 ▸ 흰색 바탕 그리기 이미지: 마지막으로 선택한 메모 영역(ta)에 넣음
+  if (ta.disabled) return;
+  const back = saveRange(); back();
+  ta.insertBlank(); say("흰색 바탕 이미지를 넣었어요. 이미지를 클릭해 [글자 넣기]·[도형 넣기]로 그려 보세요", "ok");
+}
 function pickImage() {
   if (ta.disabled) return;
   imgBack = saveRange(); imgFile.value = ""; imgFile.click();
