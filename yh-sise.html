@@ -15,9 +15,15 @@
   .wrap { height: 100dvh; padding: 6px; display: flex; flex-direction: column; gap: 6px; }
   /* 최상단 시세 바: #top(자리 유지용 slot) > .top-pane > .cropbox > .top-view(내용) */
   /* --top-scale: 시세 바 글자 배율 (1 = 원래 크기, 3 = 3배). 바뀐 만큼 바 높이가 늘고 차트 영역은 줄어듦 */
-  #top { display: none; position: relative; --top-scale: 3; }
-  .top-pane { position: relative; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .top-pane .cropbox { height: auto; }
+  #top { display: block; position: relative; --top-scale: 3; }   /* 종목코드 입력칸이 항상 보이도록 처음부터 표시 */
+  .top-pane { position: relative; display: flex; align-items: center; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .top-pane .cropbox { height: auto; width: auto; flex: 1 1 0; min-width: 0; }
+  /* 종목코드 입력칸 (시세 바 오른쪽) */
+  .symform { flex: none; display: flex; flex-direction: column; gap: 4px; margin: 0 8px; }
+  .symform input { width: 112px; padding: 3px 6px; font-size: 16px; color: var(--text); background: var(--bg);
+    border: 1px solid var(--border); border-radius: 6px; text-transform: uppercase; }
+  .symform button { padding: 3px 6px; font-size: 13px; color: var(--text); background: var(--panel);
+    border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
   .top-pane .top-view { display: flex; flex-wrap: wrap; align-items: baseline; height: auto;
     gap: calc(4px * var(--top-scale)) calc(16px * var(--top-scale));
     padding: calc(5px * var(--top-scale)) calc(12px * var(--top-scale));
@@ -79,6 +85,10 @@
   <div id="top">
     <div class="top-pane">
       <div class="cropbox" data-crop="0 100 0 100"><div class="cropee top-view" id="topview"></div></div>
+      <form class="symform" id="symform" autocomplete="off">
+        <input id="syminput" type="text" placeholder="종목코드" maxlength="20" spellcheck="false" autocapitalize="characters" aria-label="종목코드">
+        <button type="submit">적용</button>
+      </form>
     </div>
   </div>
   <div class="grid">
@@ -119,9 +129,19 @@
 <script>
   // 배포한 Cloudflare Worker 주소로 바꾸세요 (끝에 / 없이, .workers.dev 까지만)
   const API_BASE = "https://kospi-proxy.pesdee00.workers.dev";
-  // 종목 코드: 비워두면(="") Cloudflare Worker의 SYMBOL 변수를 따름.
-  // 값을 넣으면(예: "005930.KS") 이 값이 Cloudflare 설정보다 우선함. 코드표는 worker.js 상단 주석 참고.
-  const SYMBOL = "";
+  // 종목 코드: 화면 오른쪽 위 입력칸에서 바꿀 수 있음. 시작할 때 쓰는 값의 우선순위:
+  //   ① 주소의 ?symbol=005930.KS  ② 마지막으로 입력한 값(브라우저에 저장)  ③ 아래 DEFAULT_SYMBOL  ④ 비어 있으면 worker.js 가 정함(AUTO_MODE 면 시간대별 자동 종목, 아니면 worker.js 의 DEFAULT_SYMBOL)
+  // 코드표는 worker.js 상단 주석 참고.
+  const DEFAULT_SYMBOL = "";
+  const SYM_KEY = "yh-symbol";
+  const SYM_RE = /^[A-Z0-9.^=-]{1,20}$/;   // worker.js 가 허용하는 문자와 동일
+  function initialSymbol() {
+    let v = new URLSearchParams(location.search).get("symbol");
+    if (v === null) { try { v = localStorage.getItem(SYM_KEY); } catch (_) {} }
+    v = (v || "").trim().toUpperCase();
+    return SYM_RE.test(v) ? v : DEFAULT_SYMBOL;
+  }
+  let SYMBOL = initialSymbol();
   // 화면에 보이는 캔들 수 = 차트 폭(px) / BAR_PX 를 MIN_BARS~MAX_BARS 로 제한 (좁으면 적게, 넓으면 많게)
   const BAR_PX = 12;          // 캔들 1개당 가로 px (클수록 캔들이 적게, 굵게 보임)
   const MIN_BARS = 20;        // 최소 캔들 수
@@ -294,19 +314,22 @@
 
     async function load() {
       if (API_BASE.includes("YOUR-SUBDOMAIN")) { return fail("API_BASE를 Worker 주소로 바꿔주세요."); }
-      const url = `${API_BASE}/api/candles?interval=${interval}` + (SYMBOL ? `&symbol=${encodeURIComponent(SYMBOL)}` : "");
+      const reqSym = SYMBOL;   // 요청 중에 종목이 바뀌면 늦게 온 이전 종목 응답은 버림
+      const url = `${API_BASE}/api/candles?interval=${interval}` + (reqSym ? `&symbol=${encodeURIComponent(reqSym)}` : "");
       try {
         const r = await fetch(url);
         const raw = await r.text();
+        if (reqSym !== SYMBOL) return;
         let d; try { d = JSON.parse(raw); } catch (_) { throw new Error("JSON이 아닌 응답 (HTTP " + r.status + "): " + raw.slice(0, 120)); }
         if (!r.ok || d.error) throw new Error(d.error || ("HTTP " + r.status));
         if (!Array.isArray(d.candles) || d.candles.length === 0) {
           return fail("서버 응답은 정상이나 캔들이 0개입니다. (Yahoo 데이터 없음: " + d.symbol + ")");
         }
 
-        // 종목이 바뀌었으면(Cloudflare에서 SYMBOL 변경) 화면 범위를 처음처럼 다시 잡음
+        // 종목이 바뀌었으면(입력칸에서 변경, 또는 worker.js 자동모드의 시간대 전환) 화면 범위를 처음처럼 다시 잡음
         if (curSymbol !== null && curSymbol !== d.symbol) first = true;
         curSymbol = d.symbol;
+        if (!SYMBOL) symInput.placeholder = d.symbol;   // 입력칸을 비워둔 경우 실제 적용 중인 코드를 안내로 표시
 
         // 가격 표시 자릿수 (Worker가 알려줌: 외환 5, 주식·지수 2)
         const dec = Number.isInteger(d.decimals) ? d.decimals : 2;
@@ -333,13 +356,49 @@
         msg.style.display = "none";
         reportTop(d, interval, dec);
       } catch (e) {
+        if (reqSym !== SYMBOL) return;
         console.error("[chart]", e);
         fail("데이터를 불러오지 못했습니다: " + e.message, `요청 주소: ${url}\n  페이지 주소: ${location.href}`);
       }
     }
+    // 종목이 바뀔 때: 이전 종목 캔들/문구를 지움
+    function reset() {
+      series.setData([]); barCount = 0; first = true; curSymbol = null;
+      info.textContent = "-"; msg.style.display = "none"; ttl.textContent = `차트 · ${label}`;
+    }
+    cells.push({ load, reset });
     load();
     setInterval(load, refresh);
   }
+
+  // ── 종목코드 입력 → 모든 차트 + 시세 바를 새 종목으로 다시 불러옴 (worker.js 에는 ?symbol= 로 전달) ──
+  const cells = [];
+  const symForm = document.getElementById("symform");
+  const symInput = document.getElementById("syminput");
+  symInput.value = SYMBOL;
+  symInput.addEventListener("input", () => symInput.setCustomValidity(""));
+  symForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const v = symInput.value.trim().toUpperCase();
+    if (v && !SYM_RE.test(v)) {
+      symInput.setCustomValidity("영문·숫자와 . ^ = - 만 사용할 수 있습니다 (예: 005930.KS, ^KS11, USDKRW=X)");
+      symInput.reportValidity();
+      return;
+    }
+    symInput.value = v;
+    symInput.blur();
+    SYMBOL = v;   // 비우면 worker.js 가 종목을 정함(자동모드/DEFAULT_SYMBOL)
+    try { localStorage.setItem(SYM_KEY, v); } catch (_) {}
+    try {
+      const u = new URL(location.href);
+      v ? u.searchParams.set("symbol", v) : u.searchParams.delete("symbol");
+      history.replaceState(null, "", u);
+    } catch (_) {}
+    Object.assign(topState, { symbol: null, name: "", prev: null, price: null, priceTime: -1, asOf: null });
+    topView.innerHTML = "";
+    logEl.textContent = ""; logEl.style.display = "none";
+    cells.forEach(c => { c.reset(); c.load(); });
+  });
 
   document.querySelectorAll(".cell").forEach(setup);
 </script>
