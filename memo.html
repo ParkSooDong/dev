@@ -577,6 +577,10 @@ function makeRich(el) {
           els.forEach(n => {
             const cs = w.getComputedStyle(n), pcs = n.parentElement ? w.getComputedStyle(n.parentElement) : cs, o = [];
             const tag = n.nodeName.toUpperCase(), cell = tag === "TD" || tag === "TH";
+            {   /* 글꼴: 붙여넣는 글자에 직접 지정된 글꼴(예: 이 메모에서 복사한 글자)만 가져옴. 엑셀 등 스타일시트로 정해진 글꼴은 그대로 무시 */
+              const ff = n.style && n.style.fontFamily, fn = ff && ff.split(",")[0].replace(/^[\s"']+|[\s"']+$/g, "");
+              if (fn && !/^(serif|sans-serif|monospace|cursive|fantasy|system-ui|ui-[a-z-]+|-apple-system|inherit|initial|unset)$/i.test(fn)) o.push("font-family:" + ff);
+            }
             if (parseInt(cs.fontWeight, 10) >= 600 && parseInt(pcs.fontWeight, 10) < 600) o.push("font-weight:700");
             if (cs.fontStyle === "italic" && pcs.fontStyle !== "italic") o.push("font-style:italic");
             const dl = cs.textDecorationLine || "";
