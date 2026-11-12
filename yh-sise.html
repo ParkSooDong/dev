@@ -13,14 +13,14 @@
   html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text);
     font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
   .wrap { height: 100dvh; padding: 6px; display: flex; flex-direction: column; gap: 6px; }
-  /* 최상단 시세 바: #top(자리 유지용 slot) > .top-pane(확대 대상) > .cropbox > .top-view(내용) */
+  /* 최상단 시세 바: #top(자리 유지용 slot) > .top-pane > .cropbox > .top-view(내용) */
   /* --top-scale: 시세 바 글자 배율 (1 = 원래 크기, 3 = 3배). 바뀐 만큼 바 높이가 늘고 차트 영역은 줄어듦 */
   #top { display: none; position: relative; --top-scale: 3; }
   .top-pane { position: relative; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .top-pane .cropbox { height: auto; }
   .top-pane .top-view { display: flex; flex-wrap: wrap; align-items: baseline; height: auto;
     gap: calc(4px * var(--top-scale)) calc(16px * var(--top-scale));
-    padding: calc(5px * var(--top-scale)) 38px calc(5px * var(--top-scale)) calc(12px * var(--top-scale));   /* 오른쪽 38px = 확대 버튼 자리 */
+    padding: calc(5px * var(--top-scale)) calc(12px * var(--top-scale));
     font-size: calc(15px * var(--top-scale)); }
   .top-view .nm { font-weight: 700; font-size: calc(17px * var(--top-scale)); }
   .top-view .px { font-weight: 700; font-size: calc(17px * var(--top-scale)); font-variant-numeric: tabular-nums; }
@@ -29,21 +29,15 @@
   .top-view .flat { opacity: .7; }
   .top-view .asof { margin-left: auto; font-size: calc(12px * var(--top-scale)); opacity: .6; }
   .top-view .asof.stale { color: #d97706; opacity: 1; }
-  /* 확대 시: 글자를 화면 크기에 맞춰 키움 */
-  .top-pane.max .cropbox { height: 100%; }
-  .top-pane.max .top-view { height: 100%; align-content: center; justify-content: center; gap: 1vh 4vw; padding: 2vh 4vw; font-size: clamp(1rem, 3vw, 3rem); }
-  .top-pane.max .nm { font-size: clamp(2rem, 7vw, 7rem); }
-  .top-pane.max .px { font-size: clamp(3rem, 12vw, 12rem); }
-  .top-pane.max .lb { font-size: .5em; }
-  .top-pane.max .asof { margin-left: 0; width: 100%; text-align: center; font-size: clamp(.9rem, 2vw, 2rem); }
-  .grid { flex: 1; min-height: 0; display: grid; gap: 6px;
+  .grid { position: relative; flex: 1; min-height: 0; display: grid; gap: 6px;   /* position: 확대된 차트가 이 영역(2~3행)을 덮는 기준 */
     grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
   /* .slot 이 grid 칸 자리를 지키고, .cell 은 그 안을 채움 → 하나를 확대해도 나머지 칸 크기/위치가 변하지 않음 */
   .slot { position: relative; min-width: 0; min-height: 0; }
   .cell { position: absolute; inset: 0; display: flex; flex-direction: column; min-width: 0; min-height: 0;
     background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  /* 확대: 화면 전체를 덮음 (CSS 만 바꾸므로 차트는 다시 만들어지지 않음) */
-  .cell.max, .top-pane.max { position: fixed; inset: 0; z-index: 1000; border-radius: 0; }
+  /* 확대: 1행(시세 바)은 그대로 두고 grid 영역(2~3행 전체)만 덮음 (CSS 만 바꾸므로 차트는 다시 만들어지지 않음) */
+  .slot.slot-max { position: static; }
+  .cell.max { position: absolute; inset: 0; z-index: 1000; }
 
   /* 확대/축소 버튼 */
   .expand { position: absolute; top: 4px; right: 6px; z-index: 30; width: 24px; height: 24px; padding: 0;
@@ -71,7 +65,7 @@
   /* 모바일/PC 모두 2x2 고정. 좁은 화면에서는 헤더만 작게 */
   @media (max-width: 800px), (orientation: portrait) {
     .wrap { padding: 3px; gap: 3px; }
-    .top-pane .top-view { padding: calc(3px * var(--top-scale)) 34px calc(3px * var(--top-scale)) calc(8px * var(--top-scale));
+    .top-pane .top-view { padding: calc(3px * var(--top-scale)) calc(8px * var(--top-scale));
       gap: calc(2px * var(--top-scale)) calc(10px * var(--top-scale)); font-size: calc(12px * var(--top-scale)); }
     .top-view .nm, .top-view .px { font-size: calc(14px * var(--top-scale)); }
     .grid { gap: 3px; }
@@ -84,7 +78,6 @@
   <!-- 영역 확대 data-crop = "x1 x2 y1 y2" (0~100 %, 왼→오 / 위→아래). 0 100 0 100 = 전체. data-crop-fit="contain" 을 같이 쓰면 비율 유지 -->
   <div id="top">
     <div class="top-pane">
-      <button class="expand" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
       <div class="cropbox" data-crop="0 100 0 100"><div class="cropee top-view" id="topview"></div></div>
     </div>
   </div>
@@ -185,27 +178,26 @@
 
   setInterval(renderTop, 30000);   // '몇 분 전' 표시 갱신
 
-  // ── 확대/축소: 5개 영역(시세 바 + 차트 4개) 어느 것이든 버튼으로 화면 전체로 확대, Esc 로 복귀 ──
+  // ── 확대/축소: 차트 4개 어느 것이든 버튼으로 2~3행 전체(grid 영역)로 확대, Esc 로 복귀. 1행(시세 바)은 확대 없음 ──
   function setMax(pane, on) {
-    document.querySelectorAll(".cell.max, .top-pane.max").forEach(p => {
+    document.querySelectorAll(".cell.max").forEach(p => {
       p.classList.remove("max");
+      p.parentElement.classList.remove("slot-max");
       p.querySelector(".expand").textContent = "⤢";
-      if (p.classList.contains("top-pane")) p.parentElement.style.minHeight = "";
     });
     if (on) {
-      // 시세 바는 높이가 내용에 따라 정해지므로, 확대 중에도 원래 자리의 높이를 유지
-      if (pane.classList.contains("top-pane")) pane.parentElement.style.minHeight = pane.offsetHeight + "px";
       pane.classList.add("max");
+      pane.parentElement.classList.add("slot-max");
       pane.querySelector(".expand").textContent = "✕";
     }
   }
   document.querySelectorAll(".expand").forEach(btn => btn.addEventListener("click", e => {
     e.stopPropagation();
-    const pane = btn.closest(".cell, .top-pane");
+    const pane = btn.closest(".cell");
     setMax(pane, !pane.classList.contains("max"));
   }));
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape") { const open = document.querySelector(".cell.max, .top-pane.max"); if (open) setMax(open, false); }
+    if (e.key === "Escape") { const open = document.querySelector(".cell.max"); if (open) setMax(open, false); }
   });
 
   // ── 영역 확대(crop): data-crop="x1 x2 y1 y2" (0~100 %) 영역이 상자 전체를 채우도록 .cropee 를 확대/이동 ──
