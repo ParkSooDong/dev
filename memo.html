@@ -459,6 +459,11 @@ function makeRich(el) {
       if (n.nodeType !== 1) continue;
       const t = n.nodeName.toUpperCase();
       if (DROP.has(t)) continue;
+      if (t === "FONT" && n.getAttribute("face")) {   /* 브라우저가 글꼴을 <font face> 로 만든 경우도 글꼴을 살려서 span 으로 바꿈 */
+        const e = document.createElement("span"), st = cleanStyle("font-family:" + n.getAttribute("face"));
+        if (st) e.setAttribute("style", st);
+        walk(n, e); dst.appendChild(e); continue;
+      }
       if (!TAGS.has(t)) { walk(n, dst); continue; }
       if (t === "SPAN" && n.hasAttribute("data-att")) {   /* 첨부 파일 칩: 값을 모두 검증해서 다시 만듦 */
         const b = n.getAttribute("data-b64") || ""; if (!b || !B64.test(b)) continue;
