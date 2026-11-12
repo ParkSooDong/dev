@@ -349,6 +349,25 @@ body.has-max header .tr{display:none}
   build();
   try { navigator.permissions.query({ name: "local-fonts" }).then(p => { if (p.state === "granted") loadAll(true); }).catch(() => {}); } catch (e) {}
 
+  let busy = false;   // 글꼴을 적용하는 동안은 커서 위치 글꼴 표시를 건드리지 않음
+  /* 툴바의 글꼴 표시를 커서(선택 시작) 위치의 실제 글꼴에 맞춤. 이미지 '글자 넣기'도 이 글꼴을 따라요 */
+  function syncFromCaret() {
+    if (busy) return;
+    const s = getSelection(); if (!s.rangeCount) return;
+    const n = s.anchorNode, el = n && (n.nodeType === 1 ? n : n.parentElement);
+    if (!el || !el.closest || !el.closest(".rich")) return;
+    let v = ""; try { v = document.queryCommandValue("fontName") || ""; } catch (e) {}
+    if (!v) v = getComputedStyle(el).fontFamily || "";
+    const name = clean(v.split(",")[0].replace(/^[\s"']+|[\s"']+$/g, ""));
+    if (!name || name.toLowerCase() === cur.toLowerCase()) return;
+    let o = Array.from(sel.options).find(x => x.value.toLowerCase() === name.toLowerCase());
+    if (!o) {   // 목록에 없는 글꼴(다른 기기에서 쓴 글꼴 등)도 표시
+      o = document.createElement("option"); o.value = name; o.textContent = label(name); o.style.fontFamily = "'" + name + "'," + FALL;
+      sel.insertBefore(o, sel.options[1] || null);
+    }
+    cur = o.value; sel.value = cur; apply();
+  }
+  document.addEventListener("selectionchange", syncFromCaret);
   let lastR = null;   // 메모 안에서 마지막으로 선택/커서가 있던 위치 (글꼴 선택을 눌러도 잃지 않게)
   document.addEventListener("selectionchange", () => {
     const s = getSelection(); if (!s.rangeCount) return;
@@ -360,11 +379,13 @@ body.has-max header .tr{display:none}
     if (!lastR) return;
     const n = lastR.commonAncestorContainer, el = n.nodeType === 1 ? n : n.parentElement, host = el && el.closest && el.closest(".rich");
     if (!host || !host.isConnected || host.getAttribute("contenteditable") === "false") return;
+    busy = true;
     host.focus();
     const s = getSelection(); s.removeAllRanges(); s.addRange(lastR);
     try { document.execCommand("styleWithCSS", false, true); document.execCommand("fontName", false, cur); }
     finally { try { document.execCommand("styleWithCSS", false, false); } catch (e) {} }
     host.dispatchEvent(new Event("input", { bubbles: true }));
+    sel.value = cur; setTimeout(() => { busy = false; }, 80);
   }
   sel.addEventListener("change", async () => {
     if (sel.value === ALL) { await loadAll(false); sel.value = cur; return; }
