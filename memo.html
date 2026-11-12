@@ -35,7 +35,7 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 /* 이미지 크기 조절 / 도형 넣기 */
 .imgx-box{position:fixed;z-index:110;border:2px solid #339af0;box-sizing:border-box;pointer-events:none}
 .imgx-grip{position:absolute;right:-10px;bottom:-10px;width:20px;height:20px;border-radius:50%;background:#339af0;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);cursor:nwse-resize;pointer-events:auto;touch-action:none}
-.imgx-bar{position:fixed;z-index:111;max-width:calc(100vw - 8px);padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.2);color:var(--ink)}
+.imgx-bar{flex:none;position:static;margin-bottom:6px;padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;color:var(--ink)}
 .imgx-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
 .imgx-bar button{flex:none;width:auto;height:auto;margin:0;font:inherit;font-size:13px;font-weight:400;padding:4px 9px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap}
 .imgx-bar button:hover{background:var(--line)}
@@ -1066,7 +1066,7 @@ const CMDS = {
   ul: () => exec("insertUnorderedList"), ol: () => exec("insertOrderedList"),
   bold: () => exec("bold"), italic: () => exec("italic"), strike: () => exec("strikeThrough"),
   link, table,
-  undo: () => exec("undo"), redo: () => exec("redo"), underline: () => exec("underline"),
+  undo: () => { if (!(window.imgHist && window.imgHist("undo"))) exec("undo"); }, redo: () => { if (!(window.imgHist && window.imgHist("redo"))) exec("redo"); }, underline: () => exec("underline"),
   check, indent: () => indent(1), outdent: () => indent(-1),
   alL: () => align("justifyLeft"), alC: () => align("justifyCenter"), alR: () => align("justifyRight"),
   hr: () => exec("insertHorizontalRule"), quote: () => block("blockquote"), code: () => block("pre"),
@@ -1219,26 +1219,38 @@ let imgBack = null;
 (function () {
   const MINW = 24;
   let img = null, raf = 0, drag = null, sh = null;
-  const hist = new WeakMap();          // 이미지 → 넣기 전 그림 목록 (되돌리기용, 이 화면을 닫기 전까지)
+  const hist = new WeakMap();          // 이미지 → {u: 이전 상태들, r: 다시 실행할 상태들} (이 화면을 닫기 전까지)
+  const HMAX = 20;
+  const hget = t => { let h = hist.get(t); if (!h) hist.set(t, h = { u: [], r: [] }); return h; };
+  function hpush(t, st) { const h = hget(t); h.u.push(st || stateOf(t)); while (h.u.length > HMAX) h.u.shift(); h.r.length = 0; }
+  /* 이미지가 선택된 상태의 Ctrl+Z / Ctrl+Y (기본 툴바의 실행 취소·다시 실행 버튼 포함): 메모 글자가 아니라 이미지에만 적용
+     - 편집(글자·도형·선·지우개) 중이면 편집 단계, 편집 밖이면 이미지에 반영된 단계(합성·크기 조절)를 되돌려요 */
+  window.imgHist = dir => {
+    if (!img) return false;
+    if (sh) { if (dir === "undo") popUndo(); else popRedo(); return true; }
+    const h = hget(img), from = dir === "undo" ? h.u : h.r, to = dir === "undo" ? h.r : h.u;
+    if (!from.length) { toast(dir === "undo" ? "되돌릴 이미지 작업이 없어요" : "다시 실행할 이미지 작업이 없어요"); return true; }
+    to.push(stateOf(img)); putState(img, from.pop()); fire(); sched(); return true;
+  };
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const fire = () => ta.dispatchEvent(new Event("input", { bubbles: true }));
   const box = el("div", "imgx-box"), grip = el("div", "imgx-grip"), bar = el("div", "imgx-bar");
   const main = el("div", "imgx-row",
-    '<button type="button" data-w="25">25%</button><button type="button" data-w="50">50%</button><button type="button" data-w="75">75%</button><button type="button" data-w="100">100%</button><button type="button" data-w="0">원본 크기</button><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="lin">선 넣기</button><button type="button" class="ic" data-a="era" aria-label="지우개" title="지우개: 원본 이미지를 지워요"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button type="button" class="ic" data-a="las" aria-label="올가미" title="올가미: 둘러싼 영역에 걸친 글자·도형·선을 삭제해요"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><button type="button" data-a="undo">되돌리기</button>');
+    '<button type="button" data-w="25">25%</button><button type="button" data-w="50">50%</button><button type="button" data-w="75">75%</button><button type="button" data-w="100">100%</button><button type="button" data-w="0">원본 크기</button><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="lin">선 넣기</button><button type="button" class="ic" data-a="era" aria-label="지우개" title="지우개: 원본 이미지를 지워요"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button type="button" class="ic" data-a="las" aria-label="올가미" title="올가미: 둘러싼 영역에 걸친 글자·도형·선을 삭제해요"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button>');
 
   box.hidden = bar.hidden = true;
   const shp = el("div", "imgx-row",
-    '<button type="button" class="ic" data-none aria-label="선택 해제" title="선택 해제: 고른 글자·도형·선(지우개·올가미 포함) 아이콘을 풀어서 새로 고를 수 있어요" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M5 3l5.5 15 2.3-6.2L19 9.5z"/><path d="m13.5 13.5 5 5"/></svg></button><button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
+    '<button type="button" class="ic" data-none aria-label="선택 해제" title="선택 해제: 지금까지 편집한 내용을 이미지에 반영하고, 고른 아이콘을 풀어요 (Esc, 이미지 밖 클릭도 같음)" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M5 3l5.5 15 2.3-6.2L19 9.5z"/><path d="m13.5 13.5 5 5"/></svg></button><button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
     '<input type="color" data-q="color" data-m="text shape line" value="#f06595" title="색" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><select data-m="text" data-q="fs" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><button type="button" data-m="shape" data-q="fill" aria-pressed="true" title="안쪽 채우기">채움</button><input type="color" data-m="text shape" data-q="bg" value="#fff3a3" title="배경색" aria-label="배경색"><button type="button" data-m="text shape" data-sa="bgauto" title="배경색을 기본값(연한 노랑)으로">배경 기본</button><select data-q="op" data-m="text shape line" title="투명도" aria-label="투명도"></select><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button>' +
     '<textarea data-q="text" rows="2" placeholder="글자 입력" aria-label="글자" hidden></textarea><i class="sep" data-m="text shape line"></i>' +
     '<button type="button" class="ic" data-s="eraser" aria-label="지우개" title="지우개: 원본 이미지를 끌어서 지워요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>' +
     '<select data-q="ew" title="지우개 굵기" aria-label="지우개 굵기"><option value="8">가늘게 (8)</option><option value="16" selected>보통 (16)</option><option value="32">굵게 (32)</option><option value="64">아주 굵게 (64)</option></select>' +
     '<button type="button" class="ic" data-s="lasso" aria-label="올가미" title="올가미: 감싼 영역에 걸친 글자·도형·선을 모두 삭제해요" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><i class="sep"></i>' +
-    '<button type="button" data-sa="vbase" aria-pressed="true" title="원본 이미지 레이어 보기/숨기기">원본</button><button type="button" data-sa="vitems" aria-pressed="true" title="추가 요소(글자·도형·선) 레이어 보기/숨기기">추가 요소</button><button type="button" data-sa="eundo" disabled title="지우개·올가미로 지운 것을 되돌려요 (Ctrl+Z)">지움 취소</button><i class="sep"></i><button type="button" data-sa="reset" title="색·선 굵기·글자 크기·지우개 굵기 등 도구 설정을 기본값으로 되돌려요 (이미 넣은 요소는 그대로)">설정 초기화</button><button type="button" data-sa="ok">적용</button><button type="button" data-sa="cancel">취소</button>');
+    '<button type="button" data-sa="vbase" aria-pressed="true" title="원본 이미지 레이어 보기/숨기기">원본</button><button type="button" data-sa="vitems" aria-pressed="true" title="추가 요소(글자·도형·선) 레이어 보기/숨기기">추가 요소</button><button type="button" data-sa="eundo" disabled title="편집 중인 글자·도형·선·지우개 실행 취소 (Ctrl+Z / 다시 실행 Ctrl+Y)">실행 취소</button><i class="sep"></i><button type="button" data-sa="reset" title="색·선 굵기·글자 크기·지우개 굵기 등 도구 설정을 기본값으로 되돌려요 (이미 넣은 요소는 그대로)">설정 초기화</button>');
   shp.hidden = true;
-  box.appendChild(grip); bar.append(main, shp); document.body.append(box, bar);
-  const undoBtn = main.querySelector('[data-a="undo"]'), eundoBtn = shp.querySelector('[data-sa="eundo"]');
+  box.appendChild(grip); bar.append(main, shp); document.body.append(box); document.getElementById("tb").after(bar);   // 이미지 툴바: 기본 툴바 바로 아래 2번째 행
+  const eundoBtn = shp.querySelector('[data-sa="eundo"]');
   const isOn = b => b.getAttribute("aria-pressed") === "true";
   try { document.execCommand("enableObjectResizing", false, false); } catch (e) {}   // 파이어폭스 기본 손잡이는 끔
 
@@ -1251,7 +1263,6 @@ let imgBack = null;
   function show(i) {
     if (img !== i) closeShp();
     img = i; box.hidden = bar.hidden = false;
-    undoBtn.disabled = !(hist.get(img) || []).length;
     place();
   }
   function place() {
@@ -1260,15 +1271,12 @@ let imgBack = null;
     if (!img.isConnected) { hide(); return; }
     const r = img.getBoundingClientRect(), t = ta.getBoundingClientRect();
     const vis = r.bottom > t.top && r.top < t.bottom && r.right > t.left && r.left < t.right;
-    box.style.display = bar.style.display = vis ? "" : "none";
+    box.style.display = vis ? "" : "none";
     if (sh) sh.wrap.style.display = vis ? "" : "none";
     if (!vis) return;
     box.style.left = r.left + "px"; box.style.top = r.top + "px"; box.style.width = r.width + "px"; box.style.height = r.height + "px";
     grip.style.display = sh ? "none" : "";
     if (sh) { const o = sh.wrap.style; o.left = r.left + "px"; o.top = r.top + "px"; o.width = r.width + "px"; o.height = r.height + "px"; }
-    const bw = bar.offsetWidth, bh = bar.offsetHeight;
-    let top = r.top - bh - 8; if (top < 4) top = Math.min(r.bottom + 8, innerHeight - bh - 4);
-    bar.style.left = clamp(r.left, 4, Math.max(4, innerWidth - bw - 4)) + "px"; bar.style.top = Math.max(4, top) + "px";
   }
   const sched = () => { if (img && !raf) raf = requestAnimationFrame(place); };
   window.addEventListener("scroll", sched, true); window.addEventListener("resize", sched);
@@ -1288,16 +1296,18 @@ let imgBack = null;
     if (!img) return;
     const t = e.target;
     if (t === img || box.contains(t) || bar.contains(t) || (sh && sh.wrap.contains(t))) return;
+    if (t.closest && t.closest('#tb [data-cmd="undo"],#tb [data-cmd="redo"]')) return;   // 실행 취소·다시 실행 버튼은 이미지 선택을 유지
+    if (sh) { finishPoly(); commit(); }   // 편집 중 밖을 눌러도 버리지 않고 이미지에 반영
     hide();
   }, true);
 
   /* 모서리 손잡이로 크기 조절 (마우스·터치 모두) */
   grip.addEventListener("pointerdown", e => {
     e.preventDefault(); grip.setPointerCapture(e.pointerId);
-    drag = { x: e.clientX, w: img.getBoundingClientRect().width };
+    drag = { x: e.clientX, w: img.getBoundingClientRect().width, pre: stateOf(img) };
   });
   grip.addEventListener("pointermove", e => { if (drag && img) setW(drag.w + (e.clientX - drag.x)); });
-  const endDrag = () => { if (!drag) return; drag = null; fire(); };
+  const endDrag = () => { if (!drag) return; const d = drag; drag = null; if (img && d.pre.w !== img.getAttribute("width")) hpush(img, d.pre); fire(); };
   grip.addEventListener("pointerup", endDrag); grip.addEventListener("pointercancel", endDrag);
 
   bar.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서/포커스 유지
@@ -1305,12 +1315,13 @@ let imgBack = null;
     const b = e.target.closest("button"); if (!b || !img) return;
     if (b.dataset.s || b.dataset.q || b.dataset.sa || b.hasAttribute("data-none")) { shpClick(b); return; }
     if (b.dataset.w !== undefined) {
-      const p = +b.dataset.w;
+      const p = +b.dataset.w, pre = stateOf(img);
       if (p) setW(inner() * p / 100); else { img.removeAttribute("width"); img.removeAttribute("height"); place(); }
+      if (pre.w !== img.getAttribute("width")) hpush(img, pre);
       fire(); sched(); return;
     }
     const a = b.dataset.a;
-    if (a === "txt") openShp("text"); else if (a === "shp") openShp("shape"); else if (a === "lin") openShp("line"); else if (a === "era") openShp("edit", "eraser"); else if (a === "las") openShp("edit", "lasso"); else if (a === "undo") undoTxt();
+    if (a === "txt") openShp("text"); else if (a === "shp") openShp("shape"); else if (a === "lin") openShp("line"); else if (a === "era") openShp("edit", "eraser"); else if (a === "las") openShp("edit", "lasso");
   });
 
   const mctx = document.createElement("canvas").getContext("2d");
@@ -1512,18 +1523,31 @@ let imgBack = null;
     if (dot) { x.beginPath(); x.arc(b.x * kx, b.y * ky, sd.ew * kx / 2, 0, 6.2832); x.fill(); }
     x.restore();
   }
-  /* 지운 것 되돌리기 기록 (지우개 = 이미지, 올가미 = 요소 목록) */
-  function pushUndo(kind) {
+  /* 편집 단계 실행 취소 / 다시 실행: 요소 목록(+지우개를 쓴 경우 원본 이미지 픽셀)의 스냅샷 */
+  const snapNow = (s, withImg) => ({ items: JSON.stringify(s.items), img: withImg ? s.ctx.getImageData(0, 0, s.nw, s.nh) : null, alpha: s.alpha });
+  function syncEundo() { eundoBtn.disabled = !(sh && sh.undo.length); }
+  function pushUndo(withImg, coal) {   // 바뀌기 "전" 상태를 기록. coal: 같은 값이 연속되면(글자 입력·색 조절 등) 한 번만 기록
+    const s = sh; if (!s) return;
+    const e = snapNow(s, withImg), top = s.undo[s.undo.length - 1];
+    if (!withImg && top && !top.img && top.items === e.items) return;
+    if (!withImg && coal && s.coal === coal) return;
+    s.coal = coal || null;
+    s.undo.push(e); if (s.undo.length > 40) s.undo.shift();
+    s.redo.length = 0; syncEundo();
+  }
+  function restoreSnap(e) {
     const s = sh;
-    s.undo.push(kind === "img" ? { k: "img", img: s.ctx.getImageData(0, 0, s.nw, s.nh), alpha: s.alpha, erased: s.erased } : { k: "items", items: JSON.stringify(s.items) });
-    if (s.undo.length > 6) s.undo.shift();
-    eundoBtn.disabled = false;
+    s.items = JSON.parse(e.items); s.sel = -1;
+    if (e.img) { s.ctx.putImageData(e.img, 0, 0); s.alpha = e.alpha; s.erased = true; }   // erased: 반영되지 않은 변경이 있다는 표시
+    syncCtl(); render(); syncEundo();
   }
   function popUndo() {
     const s = sh, e = s && s.undo.pop(); if (!e) return;
-    if (e.k === "img") { s.ctx.putImageData(e.img, 0, 0); s.alpha = e.alpha; s.erased = e.erased; }
-    else { s.items = JSON.parse(e.items); s.sel = -1; syncCtl(); }
-    eundoBtn.disabled = !s.undo.length; render();
+    s.redo.push(snapNow(s, !!e.img)); s.coal = null; restoreSnap(e);
+  }
+  function popRedo() {
+    const s = sh, e = s && s.redo.pop(); if (!e) return;
+    s.undo.push(snapNow(s, !!e.img)); s.coal = null; restoreSnap(e);
   }
   /* 올가미: 감싼 영역과 조금이라도 겹치는 글자·도형·선을 모두 찾아 삭제 (실제로 보이는 픽셀 기준으로 겹침을 확인) */
   async function lassoDelete(poly) {
@@ -1551,7 +1575,7 @@ let imgBack = null;
     if (sh !== s || s.items !== items) return;
     const n = hits.filter(Boolean).length;
     if (!n) { toast("올가미에 걸친 글자·도형·선이 없어요"); return; }
-    pushUndo("items");
+    pushUndo(false);
     s.items = items.filter((_, i) => !hits[i]); s.sel = -1;
     syncCtl(); render(); toast(n + "개를 삭제했어요 (되돌리려면 [지움 취소])");
   }
@@ -1588,12 +1612,13 @@ let imgBack = null;
   function onDown(e) {
     const s = sh; if (!s || e.button > 0) return;
     e.preventDefault();
+    s.pre = null; s.coal = null;
     const p = pt(e), hEl = e.target.closest("[data-h]"), iEl = e.target.closest("[data-i]"), cur = s.items[s.sel], now = performance.now();
     try { s.wrap.setPointerCapture(e.pointerId); } catch (x) {}
     if (sd.tool === "eraser") {   // 지우개: 원본 이미지 레이어를 지움
       if (!s.ready) return;
       if (!s.showBase) { toast("원본 이미지 레이어가 숨겨져 있어요. [원본] 버튼으로 다시 보이게 하세요"); return; }
-      pushUndo("img"); s.erased = true; s.alpha = true; s.cur = p; s.drag = { m: "erase", lx: p.x, ly: p.y };
+      pushUndo(true); s.erased = true; s.alpha = true; s.cur = p; s.drag = { m: "erase", lx: p.x, ly: p.y };
       eraseSeg(p, p, true); drawCur(); return;
     }
     if (sd.tool === "lasso") {    // 올가미: 끌어서 영역을 그림
@@ -1606,6 +1631,7 @@ let imgBack = null;
       if (last && now - last.t < 350 && Math.hypot(p.x - last.x, p.y - last.y) < 10) { finishPoly(); return; }
       cur.pts.push([p.x, p.y]); render(); return;
     }
+    s.pre = snapNow(s, false);
     if (hEl && cur) {
       const h = hEl.getAttribute("data-h");
       s.drag = h === "mv" ? { m: "move", sx: p.x, sy: p.y, o: snap(cur) } : { m: "h", h };
@@ -1664,6 +1690,10 @@ let imgBack = null;
     render();
   }
   function onUp() {
+    const s = sh; onUp0();
+    if (s && s.pre) { if (s.pre.items !== JSON.stringify(s.items)) { s.undo.push(s.pre); if (s.undo.length > 40) s.undo.shift(); s.redo.length = 0; syncEundo(); } s.pre = null; }
+  }
+  function onUp0() {
     const s = sh, d = s && s.drag; if (!d) return;
     s.drag = null;
     if (d.m === "erase") return;
@@ -1683,6 +1713,7 @@ let imgBack = null;
   }
   function openShp(mode, tool) {
     if (!img || sh) return;
+    if (pendingN) { pendingP.then(() => { if (img && !sh) openShp(mode, tool); }); return; }   // 앞선 반영이 끝난 뒤에 열기
     const r = img.getBoundingClientRect();
     if (!r.width || !r.height) return;
     let L = null;   // 이미 레이어가 있으면 그대로 불러와서 이어서 편집
@@ -1698,7 +1729,7 @@ let imgBack = null;
     cc.style.display = "none";
     ov.append(gi, cc, lp); wrap.append(cv, ov); document.body.appendChild(wrap);   // 아래층: 원본 이미지(canvas), 위층: 추가 요소(svg)
     const items = L ? L.items.map(it => ({ ...it, pts: it.pts && it.pts.map(q => q.slice()) })) : [];
-    const mine = sh = { wrap, ov, gi, cc, lp, cv, ctx: null, nw: 0, nh: 0, ready: false, alpha: false, erased: false, baseUrl: img.getAttribute("data-base") || img.src, W, H, items, orig: JSON.stringify(items), sel: -1, drag: null, lastDown: null, mode, undo: [], showBase: true, showItems: true, cur: null };
+    const mine = sh = { wrap, ov, gi, cc, lp, cv, ctx: null, nw: 0, nh: 0, ready: false, alpha: false, erased: false, baseUrl: img.getAttribute("data-base") || img.src, W, H, items, orig: JSON.stringify(items), sel: -1, drag: null, lastDown: null, mode, undo: [], redo: [], pre: null, coal: null, showBase: true, showItems: true, cur: null };
     const bi = new Image();   // 원본(=지우개가 지울 대상)을 불러와 canvas 에 올림
     bi.onload = () => {
       if (sh !== mine) return;
@@ -1723,7 +1754,7 @@ let imgBack = null;
     wrap.addEventListener("pointerleave", () => { if (sh && !sh.drag) { sh.cur = null; drawCur(); } });
     syncCtl(); render(); drawCur(); place();
     toast(mode === "edit" ? (tool === "lasso" ? "올가미: 지울 글자·도형·선을 감싸듯 끌어서 그리면, 걸친 요소가 모두 삭제돼요" : "지우개: 이미지 위를 끌어서 원본 이미지를 지워요. 굵기는 오른쪽에서 골라요")
-      : mode === "text" ? "글자: 이미지 위를 클릭해 놓고 글자를 입력하세요. 말풍선은 꼬리 손잡이를 끌어 방향을 정해요 (고른 아이콘은 유지돼요. 맨 왼쪽 아이콘을 누르면 선택이 풀려요)" : mode === "line" ? "아이콘을 고른 뒤 이미지 위를 클릭하세요. 손잡이를 끌면 위치를 옮길 수 있어요 (고른 아이콘은 유지돼요. 맨 왼쪽 아이콘을 누르면 선택이 풀려요)" : "아이콘을 고른 뒤 이미지 위를 클릭하거나 끌어서 넣으세요 (자유형 도형: 점을 차례로 클릭하고 더블클릭으로 마침. 고른 아이콘은 유지돼요. 맨 왼쪽 아이콘을 누르면 선택이 풀려요)");
+      : mode === "text" ? "글자: 이미지 위를 클릭해 놓고 글자를 입력하세요. 말풍선은 꼬리 손잡이를 끌어 방향을 정해요 (고른 아이콘은 유지돼요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "line" ? "아이콘을 고른 뒤 이미지 위를 클릭하세요. 손잡이를 끌면 위치를 옮길 수 있어요 (고른 아이콘은 유지돼요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : "아이콘을 고른 뒤 이미지 위를 클릭하거나 끌어서 넣으세요 (자유형 도형: 점을 차례로 클릭하고 더블클릭으로 마침. 고른 아이콘은 유지돼요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)");
   }
   function closeShp() {
     if (!sh) return;
@@ -1733,6 +1764,7 @@ let imgBack = null;
   function endTool() { sd.tool = null; shp.querySelectorAll("[data-s]").forEach(x => setP(x, false)); syncNone(); drawCur(); }
   function delSel() {
     if (!sh || sh.sel < 0) return;
+    pushUndo(false);
     sh.items.splice(sh.sel, 1); sh.sel = -1;
     syncCtl(); render();
   }
@@ -1747,9 +1779,9 @@ let imgBack = null;
   }
   function shpClick(b) {
     if (!sh) return;
-    if (b.hasAttribute("data-none")) { finishPoly(); endTool(); return; }   // 맨 왼쪽 아이콘: 고른 글자·도형·선 아이콘을 모두 풀어 새로 고를 수 있는 상태로
+    if (b.hasAttribute("data-none")) { finishPoly(); commit(); endTool(); return; }   // 맨 왼쪽 아이콘: 고른 글자·도형·선 아이콘을 모두 풀어 새로 고를 수 있는 상태로
     if (b.dataset.s) {
-      finishPoly();
+      finishPoly(); commit();   // 다른 아이콘을 고르면(같은 아이콘을 다시 눌러 풀 때도) 그때까지의 편집을 이미지에 반영
       if (sd.tool === b.dataset.s) { endTool(); return; }   // 같은 아이콘을 다시 누르면 선택 해제
       sd.tool = b.dataset.s;
       const tool2 = sd.tool === "eraser" || sd.tool === "lasso";
@@ -1761,20 +1793,22 @@ let imgBack = null;
     }
     const it = sh.items[sh.sel];
     if (/^(dash|fill|bold|ol)$/.test(b.dataset.q)) {
+      pushUndo(false, "b" + b.dataset.q + sh.sel);
       const on = !isOn(b), k = b.dataset.q; setP(b, on); sd[k] = on; if (it) it[k] = on; render(); return;
     }
     const a = b.dataset.sa;
-    if (a === "bgauto") { sd.bgc = DEF_BG; qc("bg").value = DEF_BG; if (it) it.bgc = DEF_BG; syncCtl(); render(); }
-    else if (a === "ok") applyShp(); else if (a === "cancel") closeShp(); else if (a === "eundo") popUndo(); else if (a === "reset") resetSd();
+    if (a === "bgauto") { pushUndo(false, "bgauto"); sd.bgc = DEF_BG; qc("bg").value = DEF_BG; if (it) it.bgc = DEF_BG; syncCtl(); render(); }
+    else if (a === "eundo") popUndo(); else if (a === "reset") resetSd();
     else if (a === "vbase") { sh.showBase = !sh.showBase; setP(b, sh.showBase); sh.cv.style.visibility = sh.showBase ? "" : "hidden"; drawCur(); }   // 레이어 보기/숨기기 (편집 화면에서만, 저장되는 내용은 그대로)
     else if (a === "vitems") { sh.showItems = !sh.showItems; setP(b, sh.showItems); if (!sh.showItems) sh.sel = -1; syncCtl(); render(); }
   }
   /* 이미지의 레이어 상태: 화면에 보이는 그림(src, 합성본) + 원본(data-base) + 추가 요소(data-layers) */
-  const stateOf = t => ({ src: t.src, base: t.getAttribute("data-base"), layers: t.getAttribute("data-layers") });
+  const stateOf = t => ({ src: t.src, base: t.getAttribute("data-base"), layers: t.getAttribute("data-layers"), w: t.getAttribute("width") });
   function putState(t, st) {
     t.src = st.src;
     if (st.base) t.setAttribute("data-base", st.base); else t.removeAttribute("data-base");
     if (st.layers) t.setAttribute("data-layers", st.layers); else t.removeAttribute("data-layers");
+    if ("w" in st) { if (st.w) t.setAttribute("width", st.w); else t.removeAttribute("width"); t.removeAttribute("height"); }
   }
   /* 그림 → 데이터 주소. 투명한 부분(지운 곳)이 있으면 투명도를 지원하는 형식으로, 너무 크면 줄여서 저장 */
   function encodeCv(c, alpha) {
@@ -1796,43 +1830,62 @@ let imgBack = null;
       n.getContext("2d").drawImage(cv, 0, 0, n.width, n.height); cv = n;
     }
   }
-  function applyShp() {
-    if (!sh || !img) return;
-    finishPoly();
+  const outItems = s => s.items.filter(it => !isCall(it.t) || it.text.trim()).map(it => { const o = snap(it); delete o.drawing; delete o.cur; return o; });   // 글자 없는 말풍선은 제외
+  let cseq = 0, applied = 0, pendingN = 0, pendingP = Promise.resolve();
+  function commit() {
+    const p = commitShp(); pendingN++;
+    pendingP = Promise.all([pendingP, p]).then(() => {});
+    p.then(() => { pendingN--; }, () => { pendingN--; });
+    return p;
+  }
+  /* 편집 내용을 이미지에 합성하고 data-layers 로 저장 (편집 화면은 그대로 유지). 바뀐 게 없으면 아무것도 하지 않음 */
+  function commitShp() {
     const s = sh, target = img;
-    if (!s.ready) { toast("이미지를 아직 읽는 중이에요. 잠시 뒤에 다시 눌러 주세요"); return; }
-    const items = s.items.filter(it => !isCall(it.t) || it.text.trim()).map(it => { const o = snap(it); delete o.drawing; delete o.cur; return o; });   // 글자 없는 말풍선은 제외
-    if (!s.erased && JSON.stringify(items) === s.orig) { closeShp(); return; }   // 바뀐 게 없음
-    let base = s.baseUrl, bc = s.cv, alpha = s.alpha;
-    try {
-      if (s.erased) { const e = encodeCv(s.cv, true); base = e.url; bc = e.c; alpha = true; }   // 지운 흔적은 원본 레이어에 반영
-    } catch (e) { toast("이 이미지에는 적용할 수 없어요"); return; }
+    if (!s || !target || !s.ready) return Promise.resolve(false);
+    finishPoly();
+    const items = outItems(s), key = JSON.stringify(items);
+    if (!s.erased && key === s.orig) return Promise.resolve(true);
+    const snapC = document.createElement("canvas"); snapC.width = s.nw; snapC.height = s.nh; snapC.getContext("2d").drawImage(s.cv, 0, 0);   // 이후 편집이 이번 반영에 섞이지 않게 복사
+    let base = s.baseUrl, bc = snapC, alpha = s.alpha;
+    if (s.erased) {
+      try { const e = encodeCv(snapC, true); base = e.url; bc = e.c; alpha = true; }   // 지운 흔적은 원본 레이어에 반영
+      catch (e) { toast("이 이미지에는 적용할 수 없어요"); return Promise.resolve(false); }
+    }
+    const W = s.W, H = s.H, nw = s.nw, mySeq = ++cseq;
+    s.orig = key; s.erased = false; s.baseUrl = base;
     const finish = st => {
-      if (st.src.length + (st.base ? st.base.length : 0) > 2600000) { toast("이미지 용량이 너무 커서 적용하지 못했어요. 이미지를 줄이거나 요소를 줄여 주세요"); return; }
+      if (mySeq < applied) return false;
+      if (st.src.length + (st.base ? st.base.length : 0) > 2600000) { toast("이미지 용량이 너무 커서 적용하지 못했어요. 이미지를 줄이거나 요소를 줄여 주세요"); return false; }
+      applied = mySeq;
       const r0 = target.getBoundingClientRect().width;
-      const h = hist.get(target) || []; h.push(stateOf(target)); while (h.length > 3) h.shift(); hist.set(target, h);
-      putState(target, st);
-      if (bc.width !== s.nw && r0 > 0 && !target.getAttribute("width")) target.setAttribute("width", Math.round(r0));   // 용량 때문에 줄였어도 보이는 크기는 그대로
-      if (img === target) undoBtn.disabled = false;
-      fire(); closeShp(); toast("적용했어요. 마음에 안 들면 [되돌리기]를 눌러 주세요");
+      hpush(target); putState(target, st);
+      if (bc.width !== nw && r0 > 0 && !target.getAttribute("width")) target.setAttribute("width", Math.round(r0));   // 용량 때문에 줄였어도 보이는 크기는 그대로
+      say("이미지에 반영했어요", "ok"); fire(); sched(); return true;
     };
-    if (!items.length) { finish({ src: base, base: null, layers: null }); return; }   // 추가 요소가 없으면 레이어 정보도 없앰
-    const W = s.W, H = s.H;
+    if (!items.length) return Promise.resolve(finish({ src: base, base: null, layers: null }));   // 추가 요소가 없으면 레이어 정보도 없앰
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + bc.width + '" height="' + bc.height + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none">' + items.map(it => itemSvg(it, W, H, true)).join("") + "</svg>";
-    const pic = new Image();
-    pic.onload = () => {
-      if (sh !== s) return;
-      const c = document.createElement("canvas"); c.width = bc.width; c.height = bc.height;
-      const x = c.getContext("2d"); x.drawImage(bc, 0, 0); x.drawImage(pic, 0, 0, c.width, c.height);   // 원본 위에 추가 요소를 합성 (화면·내보내기용)
-      let enc; try { enc = encodeCv(c, alpha); } catch (e) { toast("이 이미지에는 적용할 수 없어요"); return; }
-      if (enc.c.width < bc.width) bc = enc.c;
-      finish({ src: enc.url, base, layers: JSON.stringify({ W, H, items }) });
-    };
-    pic.onerror = () => toast("적용하지 못했어요");
-    pic.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    return new Promise(res => {
+      const pic = new Image();
+      pic.onload = () => {
+        const c = document.createElement("canvas"); c.width = bc.width; c.height = bc.height;
+        const x = c.getContext("2d"); x.drawImage(bc, 0, 0); x.drawImage(pic, 0, 0, c.width, c.height);   // 원본 위에 추가 요소를 합성 (화면·내보내기용)
+        let enc; try { enc = encodeCv(c, alpha); } catch (e) { toast("이 이미지에는 적용할 수 없어요"); res(false); return; }
+        if (enc.c.width < bc.width) bc = enc.c;
+        res(finish({ src: enc.url, base, layers: JSON.stringify({ W, H, items }) }));
+      };
+      pic.onerror = () => { toast("적용하지 못했어요"); res(false); };
+      pic.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    });
+  }
+  /* Esc: [선택 해제] 아이콘과 같음 (반영 + 아이콘 해제). 반영할 것도 고른 아이콘도 없으면 편집 화면을 닫음 */
+  function escShp() {
+    finishPoly();
+    const s = sh;
+    if (sd.tool || s.erased || JSON.stringify(outItems(s)) !== s.orig) { commit(); endTool(); } else closeShp();
   }
   shp.addEventListener("input", e => {
     const q = e.target.getAttribute && e.target.getAttribute("data-q"); if (!q || !sh) return;
+    if (q !== "ew" && sh.items[sh.sel]) pushUndo(false, q + sh.sel);
     const it = sh.items[sh.sel], v = e.target.value;
     if (q === "text") { if (it && isCall(it.t)) { it.text = v; if (it.auto) autoTail(it); } }
     else {
@@ -1842,21 +1895,19 @@ let imgBack = null;
     }
     render();
   });
-  document.addEventListener("keydown", e => {   // Esc 취소 / Ctrl+Enter 적용 / Enter 자유형 도형 마침 / Delete 선택 삭제 / Ctrl+Z 지움 취소
-    if (!sh) return;
-    const typing = /^(TEXTAREA|INPUT|SELECT)$/.test(e.target.nodeName);
-    if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); closeShp(); }
-    else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); applyShp(); }
+  document.addEventListener("keydown", e => {   // 편집 중: Esc 반영 / Ctrl+Enter 반영 후 닫기 / Enter 자유형 도형 마침 / Delete 선택 삭제 / Ctrl+Z·Y 편집 실행 취소·다시 실행
+    const typing = /^(TEXTAREA|INPUT|SELECT)$/.test(e.target.nodeName), ctrl = (e.ctrlKey || e.metaKey) && !e.altKey, k = (e.key || "").toLowerCase();
+    if (!sh) {   // 이미지가 선택된 상태의 Ctrl+Z / Ctrl+Y 는 메모 글자가 아니라 이미지에만 적용
+      if (img && ctrl && !typing && (k === "z" || k === "y")) { e.preventDefault(); e.stopPropagation(); window.imgHist(k === "y" || e.shiftKey ? "redo" : "undo"); }
+      return;
+    }
+    if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); escShp(); }
+    else if (e.key === "Enter" && ctrl) { e.preventDefault(); finishPoly(); commit(); closeShp(); }
     else if (e.key === "Enter" && !typing) { e.preventDefault(); finishPoly(); }
     else if ((e.key === "Delete" || e.key === "Backspace") && !typing) { e.preventDefault(); delSel(); }
-    else if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === "z" && !typing) { e.preventDefault(); popUndo(); }
+    else if (ctrl && !typing && (k === "y" || (k === "z" && e.shiftKey))) { e.preventDefault(); e.stopPropagation(); popRedo(); }
+    else if (ctrl && !typing && k === "z") { e.preventDefault(); e.stopPropagation(); popUndo(); }
   }, true);
-
-
-  function undoTxt() {
-    const h = img && hist.get(img); if (!h || !h.length) return;
-    putState(img, h.pop()); undoBtn.disabled = !h.length; fire(); sched();
-  }
 })();
 
 function pickImage() {
