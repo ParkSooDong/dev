@@ -46,6 +46,9 @@
       overflow: hidden;
     }
     .pane.max { position: fixed; inset: 0; z-index: 1000; border-radius: 0; }
+    /* 차트 4개: 전체화면 대신 grid 영역(2~3행 x 2열)만 덮음. 상단(1행)은 그대로 보임 */
+    .slot.slot-max { position: static; }
+    .pane.chart.max { position: absolute; inset: 0; border-radius: 10px; }
 
     .expand {
       position: absolute;
@@ -168,6 +171,7 @@
     .readout.max .time  { font-size: clamp(1rem, 2vw, 2rem); text-align: center; }
 
     .grid {
+      position: relative;   /* 확대된 차트가 이 영역(2~3행)만 덮도록 기준점 */
       flex: 1 1 0;
       min-height: 0;
       display: grid;
@@ -261,6 +265,8 @@
       .readout .name  { font-size: 1.3rem; }
       .readout .price { font-size: 1.8rem; }
       .readout .chg   { font-size: 1.1rem; }
+      .slot.slot-max { position: relative; }
+      .pane.chart.max { position: fixed; inset: 0; border-radius: 0; }
       .grid {
         flex: none;
         grid-template-columns: minmax(0, 1fr);
@@ -384,10 +390,12 @@
     function setMax(pane, on) {
       document.querySelectorAll('.pane.max').forEach(p => {
         p.classList.remove('max');
+        p.parentElement.classList.remove('slot-max');
         p.querySelector('.expand').textContent = '⤢';
       });
       if (on) {
         pane.classList.add('max');
+        if (pane.classList.contains('chart')) pane.parentElement.classList.add('slot-max');
         pane.querySelector('.expand').textContent = '✕';
       }
       document.body.classList.toggle('has-max', on);
