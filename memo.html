@@ -63,7 +63,8 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .rich .att{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);font-size:.95em;line-height:1.5;cursor:pointer;user-select:none}
 .rich .att:hover{background:var(--line)}
 .tb .pop#attPop{max-width:min(380px,80vw)}
-#attPop>div{display:flex;flex-direction:column}#attPop>div[hidden]{display:none}
+#attPop>div,#tblPop>div{display:flex;flex-direction:column}#attPop>div[hidden],#tblPop>div[hidden]{display:none}
+.tb .pop button.dim{opacity:.45}
 #attPop .row{display:flex;gap:2px;align-items:center}
 #attPop .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;display:block;text-align:left;line-height:32px}
 #attPop .row .rm{min-width:32px;flex:none;padding:0}
@@ -253,17 +254,14 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="clear" title="서식 지우기 (선택한 글자)" aria-label="서식 지우기"><svg viewBox="0 0 24 24"><path d="M4 5h10M9 5l-2.5 14M13 19h6M15.5 12.5l4 4M19.5 12.5l-4 4"/></svg></button>
   <i class="sep"></i>
   <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
-  <button type="button" data-cmd="table" title="표 삽입" aria-label="표 삽입"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg></button>
-  <div class="menu dim" id="tblWrap"><button type="button" data-pal data-needtbl title="표 편집 (표 안의 칸을 클릭하면 사용할 수 있어요)" aria-label="표 편집" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M9.5 5v14"/></svg><span>표 편집</span></button><div class="pop" hidden><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div>
+  <div class="menu" id="tblWrap"><button type="button" data-pal id="tblBtn" title="표: 표 삽입 / 표 편집" aria-label="표" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg><span>표</span></button><div class="pop" id="tblPop" hidden><div id="tblMv"><button type="button" data-cmd="table" title="행·열 수를 정해 표를 넣어요">표 삽입</button><button type="button" id="tblEditGo" data-needtbl title="행·열 추가/삭제 (표 안의 칸을 클릭하면 사용할 수 있어요)">표 편집</button></div><div id="tblLv" hidden><button type="button" data-tbl-back="1">← 뒤로</button><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div></div>
   <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="image">파일 열기</button><button type="button" data-cmd="blank" title="현재 메모 영역의 가로·세로 90% 크기의 흰색 바탕 이미지를 넣어요 (손글씨·도형으로 그리기용)">흰색 바탕 그리기 이미지</button></div></div>
   <input type="color" id="fcPick" value="#f06595" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="file" id="imgFile" accept="image/*" multiple hidden>
   <input type="file" id="attFile" multiple hidden>
   <div class="menu" id="attMenu"><button type="button" data-pal id="attListBtn" title="파일: 메모에 파일 첨부 / PC로 저장 / 첨부 목록" aria-label="파일" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M20 11.5l-7.6 7.6a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.3-7.3"/></svg><span>파일</span></button><div class="pop" id="attPop" hidden><div id="attMv"><button type="button" data-cmd="attach" title="엑셀·문서·이미지 등 파일을 골라 메모 안에 넣어요">PC에서 메모로 첨부</button><button type="button" data-cmd="attsave" title="메모에 첨부된 파일을 모두 PC에 파일로 저장해요">메모에서 PC로 저장</button><button type="button" id="attListGo" title="첨부된 파일을 하나씩 저장하거나 삭제해요">첨부된 파일 목록</button></div><div id="attLv" hidden></div></div></div>
   <button type="button" data-cmd="find" title="찾기" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
-  <button type="button" data-cmd="ul" title="글머리 기호 목록" aria-label="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg></button>
-  <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
-  <button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)" aria-label="체크리스트"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
+  <div class="menu" id="listMenu"><button type="button" data-pal id="listBtn" title="글 목록: 글머리 기호 / 번호 매기기 / 체크리스트" aria-label="글 목록" aria-haspopup="true" aria-expanded="false" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg><span>글 목록</span></button><div class="pop" hidden><button type="button" data-cmd="ul" title="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg>글머리 기호 목록</button><button type="button" data-cmd="ol" title="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg>번호 매기기 목록</button><button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>체크리스트</button></div></div>
   <div class="menu"><button type="button" data-pal title="더보기" aria-label="더보기" aria-haspopup="true" aria-expanded="false">⋯</button><div class="pop" hidden><button type="button" data-cmd="indent">들여쓰기</button><button type="button" data-cmd="outdent">내어쓰기</button><button type="button" data-cmd="hr">구분선</button><button type="button" data-cmd="quote" aria-pressed="false">인용</button><button type="button" data-cmd="code" aria-pressed="false">코드 블록</button><button type="button" data-cmd="clearall" title="메모 전체의 글자 서식을 기본값으로 되돌려요 (글자·이미지·표는 그대로)">전체 서식 초기화</button></div></div>
   <div class="menu" id="layMenu"><button type="button" data-pal id="layBtn" title="분할: 가로 또는 세로로 가·나·다 영역을 나눠 보여요" aria-label="분할" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M12 5v14M3.5 12h17"/></svg><span>분할</span></button><div class="pop" hidden><button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 35 : 35 : 30 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button><button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 80 : 10 : 10 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button></div></div>
   <button type="button" id="cmpBtn" title="비교: 가(원본)를 기준으로 나(변경본)가 일치하는지 확인하고, 비교 내역은 다 영역에 표시" aria-label="비교"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 8h5M15 16h5M4 16l3-3M20 8l-3 3"/></svg><span>비교</span></button>
@@ -1132,7 +1130,7 @@ function table() {
   if (cell) {   // 첫 칸에 커서를 두면 바로 '표 편집'을 쓸 수 있어요
     const rg = document.createRange(); rg.selectNodeContents(cell); rg.collapse(true);
     const sl = getSelection(); sl.removeAllRanges(); sl.addRange(rg); refreshTb();
-    toast("표를 만들었어요. 툴바의 '표 편집'에서 행·열을 추가/삭제할 수 있어요");
+    toast("표를 만들었어요. 툴바의 [표] ▸ [표 편집]에서 행·열을 추가/삭제할 수 있어요");
     const tw = document.getElementById("tblWrap"); tw.classList.add("pulse"); setTimeout(() => tw.classList.remove("pulse"), 2800);   // 버튼이 잠깐 깜빡여요
   }
 }
@@ -1378,7 +1376,7 @@ function tbl(op) {   // 표 편집: 커서가 있는 칸 기준
   if (focus) { const r = document.createRange(); r.selectNodeContents(focus); r.collapse(true); s.removeAllRanges(); s.addRange(r); }
   fire(); refreshTb();
 }
-const imgFile = document.getElementById("imgFile"), tblWrap = document.getElementById("tblWrap");
+const imgFile = document.getElementById("imgFile"), tblWrap = document.getElementById("tblWrap"), tblEditGo = document.getElementById("tblEditGo"), listBtn = document.getElementById("listBtn");
 let imgBack = null;
 /* ===== 이미지: 크기 조절 / 도형 넣기 =====
    - 이미지를 클릭하면 파란 테두리와 모서리 손잡이(끌어서 크기 조절), 그리고 25%·50%·75%·100%·원본 크기 버튼이 나와요
@@ -2236,13 +2234,23 @@ function refreshTb() {
     quote: blk === "blockquote", code: blk === "pre",
     link: !!closestIn(s.anchorNode, "a")
   };
-  tblWrap.classList.toggle("dim", !closestIn(s.anchorNode, "td,th"));   // 표 밖에서는 '표 편집'을 흐리게
+  tblEditGo.classList.toggle("dim", !closestIn(s.anchorNode, "td,th"));   // 표 밖에서는 [표 편집]을 흐리게
+  listBtn.setAttribute("aria-pressed", String(on.ul || on.ol));   // [글 목록]: 글머리/번호 목록 안에서는 눌린 모양
   tb.querySelectorAll("button[data-cmd]").forEach(b => { if (b.dataset.cmd in on) b.setAttribute("aria-pressed", String(on[b.dataset.cmd])); });
 }
 document.addEventListener("selectionchange", refreshTb);
 
 /* 툴바 버튼을 눌러도 메모의 커서/포커스를 유지 */
 tb.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
+/* [표] 메뉴: 처음 화면(표 삽입 / 표 편집) ↔ 표 편집 화면(행·열 추가/삭제) */
+const tblMv = document.getElementById("tblMv"), tblLv = document.getElementById("tblLv");
+function showTblMenu() { tblMv.hidden = false; tblLv.hidden = true; }
+tb.addEventListener("click", e => { if (e.target.closest("#tblBtn")) showTblMenu(); }, true);   // 열 때마다 처음 화면부터
+document.getElementById("tblPop").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.id === "tblEditGo") { if (closestIn(getSelection().anchorNode, "td,th")) { tblMv.hidden = true; tblLv.hidden = false; } return; }   // 표 밖이면 아래 공통 처리가 안내만 보여요
+  if ("tblBack" in b.dataset) showTblMenu();
+});
 tb.addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   if (b.hasAttribute("data-needtbl") && !closestIn(getSelection().anchorNode, "td,th")) { closePop(); toast("표 안의 칸을 먼저 클릭하면 행·열을 추가/삭제할 수 있어요"); return; }
