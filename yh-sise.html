@@ -35,6 +35,21 @@
   .top-view .flat { opacity: .7; }
   .top-view .asof { margin-left: auto; font-size: calc(12px * var(--top-scale)); opacity: .6; }
   .top-view .asof.stale { color: #d97706; opacity: 1; }
+  /* 종목 테이프: 1행(시세 바) 하단, 오른쪽 → 왼쪽으로 흐름. 마우스를 올리면 멈춤, 항목 클릭 시 그 종목 즉시 적용 */
+  .tape { position: relative; margin-top: 4px; overflow: hidden; background: var(--panel);
+    border: 1px solid var(--border); border-radius: 8px; }
+  .tape-track { display: flex; width: max-content; white-space: nowrap; will-change: transform;
+    animation: tape-scroll var(--tape-dur, 30s) linear infinite; }
+  .tape:hover .tape-track, .tape:focus-within .tape-track { animation-play-state: paused; }
+  @keyframes tape-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .tape-item { flex: none; display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 14px; margin: 0;
+    font: inherit; font-size: 13px; color: var(--text); background: none; border: 0;
+    border-right: 1px solid var(--border); cursor: pointer; }
+  .tape-item .tn { font-weight: 700; }
+  .tape-item .tc { opacity: .6; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .tape-item:hover { background: var(--grid); }
+  .tape-item.active { background: var(--grid); box-shadow: inset 0 -2px 0 #e0393e; }
+  @media (prefers-reduced-motion: reduce) { .tape-track { animation-duration: 120s; } }
   .grid { position: relative; flex: 1; min-height: 0; display: grid; gap: 6px;   /* position: 확대된 차트가 이 영역(2~3행)을 덮는 기준 */
     grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
   /* .slot 이 grid 칸 자리를 지키고, .cell 은 그 안을 채움 → 하나를 확대해도 나머지 칸 크기/위치가 변하지 않음 */
@@ -90,6 +105,7 @@
         <button type="submit">적용</button>
       </form>
     </div>
+    <div class="tape" id="tape" aria-label="종목 테이프"><div class="tape-track" id="tapetrack"></div></div>
   </div>
   <div class="grid">
     <!-- data-interval: Worker에 넘기는 값(15, 3, 60, D) / data-refresh: 갱신 주기(ms) / data-label: 제목 뒤에 붙는 봉 이름 -->
@@ -385,6 +401,10 @@
       symInput.reportValidity();
       return;
     }
+    applySymbol(v);
+  });
+  // 종목 적용 (입력칸 / 테이프 클릭 공통)
+  function applySymbol(v) {
     symInput.value = v;
     symInput.blur();
     SYMBOL = v;   // 비우면 worker.js 가 종목을 정함(자동모드/DEFAULT_SYMBOL)
@@ -397,8 +417,43 @@
     Object.assign(topState, { symbol: null, name: "", prev: null, price: null, priceTime: -1, asOf: null });
     topView.innerHTML = "";
     logEl.textContent = ""; logEl.style.display = "none";
+    markTape();
     cells.forEach(c => { c.reset(); c.load(); });
+  }
+
+  // ── 종목 테이프: 오른쪽 → 왼쪽으로 계속 흐름. 클릭하면 그 종목 코드로 바로 적용 ──
+  // 종목을 늘리거나 줄이려면 TAPE_ITEMS 만 고치면 됨 [표시 이름, 종목코드]
+  const TAPE_ITEMS = [
+    ["KOSPI", "^KS11"], ["KOSPI200", "^KS200"], ["삼성전자", "005930.KS"], ["SK하이닉스", "000660.KS"],
+    ["CPNG", "CPNG"], ["NVDA", "NVDA"], ["나스닥 종합", "^IXIC"], ["나스닥100", "^NDX"],
+    ["다우", "^DJI"], ["S&P500", "^GSPC"],
+  ];
+  const TAPE_SPEED = 60;   // 흐르는 속도 (px/초)
+  const tapeBox = document.getElementById("tape");
+  const tapeTrack = document.getElementById("tapetrack");
+  const tapeSet = TAPE_ITEMS.map(([n, c]) =>
+    `<button type="button" class="tape-item" data-sym="${c}"><span class="tn">${n}</span><span class="tc">${c}</span></button>`).join("");
+  function markTape() {
+    const cur = (topState.symbol || SYMBOL || "").toUpperCase();
+    tapeTrack.querySelectorAll(".tape-item").forEach(b => b.classList.toggle("active", b.dataset.sym === cur));
+  }
+  function buildTape() {
+    tapeTrack.innerHTML = tapeSet;
+    const one = tapeTrack.scrollWidth;
+    if (!one) return;
+    // 한 묶음이 화면보다 좁으면 반복해서 빈틈 없이 채우고, 같은 묶음을 한 번 더 이어붙여 -50% 이동으로 끊김 없이 순환
+    const copies = Math.max(1, Math.ceil(tapeBox.clientWidth / one));
+    tapeTrack.innerHTML = tapeSet.repeat(copies * 2);
+    tapeTrack.style.setProperty("--tape-dur", (one * copies / TAPE_SPEED) + "s");
+    markTape();
+  }
+  tapeTrack.addEventListener("click", e => {
+    const b = e.target.closest(".tape-item");
+    if (b) applySymbol(b.dataset.sym);
   });
+  let tapeW = 0;
+  new ResizeObserver(() => { const w = tapeBox.clientWidth; if (w !== tapeW) { tapeW = w; buildTape(); } }).observe(tapeBox);
+  setInterval(markTape, 2000);   // worker 자동모드로 종목이 바뀐 경우에도 강조 표시 따라감
 
   document.querySelectorAll(".cell").forEach(setup);
 </script>
