@@ -442,6 +442,7 @@ p{margin:6px 0 0}
       return false;
     }
   }
+  window.memoFont.reset = () => { cur = DEF; try { localStorage.removeItem(KEY); } catch (e) {} apply(); build(); };   // 글꼴을 기본값(맑은 고딕)으로
   build();
   try { navigator.permissions.query({ name: "local-fonts" }).then(p => { if (p.state === "granted") loadAll(true); }).catch(() => {}); } catch (e) {}
 
@@ -1485,6 +1486,7 @@ function clearAll() {
     b.style.textAlign = ""; b.style.marginLeft = ""; if (!b.getAttribute("style")) b.removeAttribute("style");
   });
   const end = document.createRange(); end.selectNodeContents(ta); end.collapse(false); s.removeAllRanges(); s.addRange(end);
+  if (window.memoFont && window.memoFont.reset) window.memoFont.reset();
   fire(); refreshTb(); say("글자 서식을 기본값으로 되돌렸어요", "ok");
 }
 function tbl(op) {   // 표 편집: 커서가 있는 칸 기준
@@ -2756,7 +2758,7 @@ $("resetAll").addEventListener("click",()=>{
   const memo=keep?memoAll.value:"";
   useFb=false;dirty=false;clearTimers();   /* DB 사용은 끔 (DB 안의 메모는 건드리지 않아요) */
   try{
-    localStorage.removeItem(KEY);localStorage.removeItem(TKEY);localStorage.removeItem("memo-split");window.clearLayoutPrefs&&window.clearLayoutPrefs();
+    localStorage.removeItem(KEY);localStorage.removeItem(TKEY);localStorage.removeItem("memo-font");localStorage.removeItem("memo-split");window.clearLayoutPrefs&&window.clearLayoutPrefs();
     if(memo)localStorage.setItem(KEY,JSON.stringify({memo:memo}));
   }catch(e){}
   location.reload();
