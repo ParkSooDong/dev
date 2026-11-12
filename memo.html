@@ -166,6 +166,12 @@ tr.cmpgap>td{padding:0;border:0;line-height:0;font-size:0;background:repeating-l
 .tb button:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
 .tb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tb .sep{width:1px;height:18px;background:var(--line);margin:0 4px}
+/* 글꼴 선택 (시스템 글꼴) */
+.tb select{width:130px;min-width:0;font:inherit;font-size:13px;height:32px;padding:0 4px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);cursor:pointer;text-overflow:ellipsis}
+.tb select:hover{background:var(--line)}
+.tb select:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.tb select option{background:var(--card);color:var(--ink)}
+body .rich,body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif)}
 .tb .menu{position:relative}
 .tb .menu.dim>button{opacity:.45}
 .tbar{position:fixed;z-index:30;display:flex;flex-wrap:wrap;gap:2px;max-width:calc(100vw - 16px);padding:3px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
@@ -237,6 +243,7 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="italic" title="기울임 (Ctrl+I)" aria-label="기울임" aria-pressed="false"><i style="font-family:serif;font-size:16px">I</i></button>
   <button type="button" data-cmd="underline" title="밑줄 (Ctrl+U)" aria-label="밑줄" aria-pressed="false"><u>U</u></button>
   <button type="button" data-cmd="strike" title="취소선" aria-label="취소선" aria-pressed="false"><s>S</s></button>
+  <select id="fontSel" title="글꼴 (메모 글자와 이미지 '글자 넣기'에 쓰여요 · 기본 맑은 고딕)" aria-label="글꼴"><option value="Malgun Gothic">맑은 고딕</option></select>
   <div class="menu"><button type="button" data-pal title="글자 크기" aria-label="글자 크기" aria-haspopup="true" aria-expanded="false"><span style="font-size:11px">가</span><span style="font-size:17px;font-weight:600">가</span></button><div class="pop" hidden style="min-width:110px;max-height:50vh;overflow:auto"><button type="button" data-fs="8">8</button><button type="button" data-fs="13">13</button><button type="button" data-fs="21">21</button><button type="button" data-fs="34">34</button><button type="button" data-fs="55">55</button><button type="button" data-fs="89">89</button><button type="button" data-fs="144">144</button><button type="button" data-fs="238">238</button><button type="button" data-fs="" style="font-size:13px">기본 크기</button></div></div>
   <div class="menu"><button type="button" data-pal title="글자색" aria-label="글자색" aria-haspopup="true" aria-expanded="false"><b style="border-bottom:3px solid #f06595;line-height:1.1">A</b></button><div class="pop pal wide" hidden><button type="button" class="sw" data-fc="#000000" style="background:#000000" title="#000000" aria-label="#000000"></button><button type="button" class="sw" data-fc="#212529" style="background:#212529" title="#212529" aria-label="#212529"></button><button type="button" class="sw" data-fc="#343a40" style="background:#343a40" title="#343a40" aria-label="#343a40"></button><button type="button" class="sw" data-fc="#495057" style="background:#495057" title="#495057" aria-label="#495057"></button><button type="button" class="sw" data-fc="#6c757d" style="background:#6c757d" title="#6c757d" aria-label="#6c757d"></button><button type="button" class="sw" data-fc="#868e96" style="background:#868e96" title="#868e96" aria-label="#868e96"></button><button type="button" class="sw" data-fc="#adb5bd" style="background:#adb5bd" title="#adb5bd" aria-label="#adb5bd"></button><button type="button" class="sw" data-fc="#ced4da" style="background:#ced4da" title="#ced4da" aria-label="#ced4da"></button><button type="button" class="sw" data-fc="#dee2e6" style="background:#dee2e6" title="#dee2e6" aria-label="#dee2e6"></button><button type="button" class="sw" data-fc="#e9ecef" style="background:#e9ecef" title="#e9ecef" aria-label="#e9ecef"></button><button type="button" class="sw" data-fc="#f1f3f5" style="background:#f1f3f5" title="#f1f3f5" aria-label="#f1f3f5"></button><button type="button" class="sw" data-fc="#ffffff" style="background:#ffffff" title="#ffffff" aria-label="#ffffff"></button><button type="button" class="sw" data-fc="#c92a2a" style="background:#c92a2a" title="#c92a2a" aria-label="#c92a2a"></button><button type="button" class="sw" data-fc="#a61e4d" style="background:#a61e4d" title="#a61e4d" aria-label="#a61e4d"></button><button type="button" class="sw" data-fc="#862e9c" style="background:#862e9c" title="#862e9c" aria-label="#862e9c"></button><button type="button" class="sw" data-fc="#5f3dc4" style="background:#5f3dc4" title="#5f3dc4" aria-label="#5f3dc4"></button><button type="button" class="sw" data-fc="#364fc7" style="background:#364fc7" title="#364fc7" aria-label="#364fc7"></button><button type="button" class="sw" data-fc="#1864ab" style="background:#1864ab" title="#1864ab" aria-label="#1864ab"></button><button type="button" class="sw" data-fc="#0b7285" style="background:#0b7285" title="#0b7285" aria-label="#0b7285"></button><button type="button" class="sw" data-fc="#087f5b" style="background:#087f5b" title="#087f5b" aria-label="#087f5b"></button><button type="button" class="sw" data-fc="#2b8a3e" style="background:#2b8a3e" title="#2b8a3e" aria-label="#2b8a3e"></button><button type="button" class="sw" data-fc="#5c940d" style="background:#5c940d" title="#5c940d" aria-label="#5c940d"></button><button type="button" class="sw" data-fc="#e67700" style="background:#e67700" title="#e67700" aria-label="#e67700"></button><button type="button" class="sw" data-fc="#d9480f" style="background:#d9480f" title="#d9480f" aria-label="#d9480f"></button><button type="button" class="sw" data-fc="#f03e3e" style="background:#f03e3e" title="#f03e3e" aria-label="#f03e3e"></button><button type="button" class="sw" data-fc="#d6336c" style="background:#d6336c" title="#d6336c" aria-label="#d6336c"></button><button type="button" class="sw" data-fc="#ae3ec9" style="background:#ae3ec9" title="#ae3ec9" aria-label="#ae3ec9"></button><button type="button" class="sw" data-fc="#7048e8" style="background:#7048e8" title="#7048e8" aria-label="#7048e8"></button><button type="button" class="sw" data-fc="#4263eb" style="background:#4263eb" title="#4263eb" aria-label="#4263eb"></button><button type="button" class="sw" data-fc="#1c7ed6" style="background:#1c7ed6" title="#1c7ed6" aria-label="#1c7ed6"></button><button type="button" class="sw" data-fc="#1098ad" style="background:#1098ad" title="#1098ad" aria-label="#1098ad"></button><button type="button" class="sw" data-fc="#0ca678" style="background:#0ca678" title="#0ca678" aria-label="#0ca678"></button><button type="button" class="sw" data-fc="#37b24d" style="background:#37b24d" title="#37b24d" aria-label="#37b24d"></button><button type="button" class="sw" data-fc="#74b816" style="background:#74b816" title="#74b816" aria-label="#74b816"></button><button type="button" class="sw" data-fc="#f59f00" style="background:#f59f00" title="#f59f00" aria-label="#f59f00"></button><button type="button" class="sw" data-fc="#f76707" style="background:#f76707" title="#f76707" aria-label="#f76707"></button><button type="button" class="sw" data-fc="#ff6b6b" style="background:#ff6b6b" title="#ff6b6b" aria-label="#ff6b6b"></button><button type="button" class="sw" data-fc="#f06595" style="background:#f06595" title="#f06595" aria-label="#f06595"></button><button type="button" class="sw" data-fc="#cc5de8" style="background:#cc5de8" title="#cc5de8" aria-label="#cc5de8"></button><button type="button" class="sw" data-fc="#845ef7" style="background:#845ef7" title="#845ef7" aria-label="#845ef7"></button><button type="button" class="sw" data-fc="#5c7cfa" style="background:#5c7cfa" title="#5c7cfa" aria-label="#5c7cfa"></button><button type="button" class="sw" data-fc="#339af0" style="background:#339af0" title="#339af0" aria-label="#339af0"></button><button type="button" class="sw" data-fc="#22b8cf" style="background:#22b8cf" title="#22b8cf" aria-label="#22b8cf"></button><button type="button" class="sw" data-fc="#20c997" style="background:#20c997" title="#20c997" aria-label="#20c997"></button><button type="button" class="sw" data-fc="#51cf66" style="background:#51cf66" title="#51cf66" aria-label="#51cf66"></button><button type="button" class="sw" data-fc="#94d82d" style="background:#94d82d" title="#94d82d" aria-label="#94d82d"></button><button type="button" class="sw" data-fc="#fcc419" style="background:#fcc419" title="#fcc419" aria-label="#fcc419"></button><button type="button" class="sw" data-fc="#ff922b" style="background:#ff922b" title="#ff922b" aria-label="#ff922b"></button><button type="button" class="sw" data-fc="#ffa8a8" style="background:#ffa8a8" title="#ffa8a8" aria-label="#ffa8a8"></button><button type="button" class="sw" data-fc="#faa2c1" style="background:#faa2c1" title="#faa2c1" aria-label="#faa2c1"></button><button type="button" class="sw" data-fc="#e599f7" style="background:#e599f7" title="#e599f7" aria-label="#e599f7"></button><button type="button" class="sw" data-fc="#b197fc" style="background:#b197fc" title="#b197fc" aria-label="#b197fc"></button><button type="button" class="sw" data-fc="#91a7ff" style="background:#91a7ff" title="#91a7ff" aria-label="#91a7ff"></button><button type="button" class="sw" data-fc="#74c0fc" style="background:#74c0fc" title="#74c0fc" aria-label="#74c0fc"></button><button type="button" class="sw" data-fc="#66d9e8" style="background:#66d9e8" title="#66d9e8" aria-label="#66d9e8"></button><button type="button" class="sw" data-fc="#63e6be" style="background:#63e6be" title="#63e6be" aria-label="#63e6be"></button><button type="button" class="sw" data-fc="#8ce99a" style="background:#8ce99a" title="#8ce99a" aria-label="#8ce99a"></button><button type="button" class="sw" data-fc="#c0eb75" style="background:#c0eb75" title="#c0eb75" aria-label="#c0eb75"></button><button type="button" class="sw" data-fc="#ffe066" style="background:#ffe066" title="#ffe066" aria-label="#ffe066"></button><button type="button" class="sw" data-fc="#ffc078" style="background:#ffc078" title="#ffc078" aria-label="#ffc078"></button><button type="button" class="rs" data-fc="">기본 글자색</button><button type="button" class="rs" data-fcpick>직접 선택…</button></div></div>
   <div class="menu"><button type="button" data-pal title="배경색(형광펜)" aria-label="배경색" aria-haspopup="true" aria-expanded="false"><b style="background:#fff3a3;color:#1c1b19;padding:0 4px;border-radius:3px;line-height:1.3">A</b></button><div class="pop pal" hidden><button type="button" class="sw" data-bg="#fff3a3" style="background:#fff3a3" title="#fff3a3" aria-label="#fff3a3"></button><button type="button" class="sw" data-bg="#ffd8a8" style="background:#ffd8a8" title="#ffd8a8" aria-label="#ffd8a8"></button><button type="button" class="sw" data-bg="#ffd0e0" style="background:#ffd0e0" title="#ffd0e0" aria-label="#ffd0e0"></button><button type="button" class="sw" data-bg="#c3f0ca" style="background:#c3f0ca" title="#c3f0ca" aria-label="#c3f0ca"></button><button type="button" class="sw" data-bg="#bfe0ff" style="background:#bfe0ff" title="#bfe0ff" aria-label="#bfe0ff"></button><button type="button" class="sw" data-bg="#e0d4ff" style="background:#e0d4ff" title="#e0d4ff" aria-label="#e0d4ff"></button><button type="button" class="sw" data-bg="#e3e1db" style="background:#e3e1db" title="#e3e1db" aria-label="#e3e1db"></button><button type="button" class="sw" data-bg="#ffc9c9" style="background:#ffc9c9" title="#ffc9c9" aria-label="#ffc9c9"></button><button type="button" class="rs" data-bg="">배경색 없음</button></div></div>
@@ -283,6 +290,73 @@ body.has-max header .tr{display:none}
 <div id="memo3" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="다 영역(세 번째 메모)입니다. 비교를 누르면 이 자리에 비교 내역이 표시돼요. (이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (다)"></div></div></div>
 </div></div>
 <script>
+/* ===== 글꼴: 시스템 글꼴 목록 + 메모 글자 / 이미지 '글자 넣기' 공통 글꼴 =====
+   기본값은 맑은 고딕. 고른 글꼴은 이 기기(브라우저)에 기억해요. 목록은 시스템에 설치된 글꼴에서 가져와요
+   (크롬·엣지는 '시스템 글꼴 모두 불러오기'로 전체 목록, 그 외 브라우저는 설치된 대표 글꼴만 보여요). */
+(function () {
+  const KEY = "memo-font", DEF = "Malgun Gothic", ALL = "__all__";
+  const FALL = "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif";   // 고른 글꼴이 없는 기기에서의 대체 순서
+  const KO = { "Malgun Gothic": "맑은 고딕", "Batang": "바탕", "Dotum": "돋움", "Gulim": "굴림", "Gungsuh": "궁서",
+    "NanumGothic": "나눔고딕", "Nanum Gothic": "나눔고딕", "NanumBarunGothic": "나눔바른고딕", "NanumMyeongjo": "나눔명조", "Nanum Myeongjo": "나눔명조",
+    "HCR Dotum": "함초롬돋움", "HCR Batang": "함초롬바탕", "Apple SD Gothic Neo": "Apple SD 산돌고딕 Neo" };
+  const CAND = ["Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", "Noto Serif KR", "Pretendard", "Nanum Gothic", "NanumGothic", "NanumBarunGothic",
+    "Nanum Myeongjo", "NanumMyeongjo", "NanumSquare", "Gulim", "Dotum", "Batang", "Gungsuh", "HCR Dotum", "HCR Batang", "D2Coding",
+    "Arial", "Arial Black", "Calibri", "Cambria", "Candara", "Consolas", "Courier New", "Georgia", "Impact", "Lucida Console", "Palatino Linotype",
+    "Segoe UI", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana", "Comic Sans MS", "Helvetica", "Helvetica Neue", "Menlo", "Monaco", "Roboto",
+    "Yu Gothic", "Meiryo", "MS Gothic", "SimSun", "Microsoft YaHei"];
+  const sel = document.getElementById("fontSel");
+  const clean = n => String(n == null ? "" : n).replace(/["'\\;{}<>&\u0000-\u001f]/g, "").trim().slice(0, 80);
+  let cur = DEF; try { cur = clean(localStorage.getItem(KEY)) || DEF; } catch (e) {}
+  const stack = n => "'" + (clean(n) || DEF) + "'," + FALL;
+  window.memoFont = { get name() { return cur; }, css: () => stack(cur), stack: stack };
+  const apply = () => document.documentElement.style.setProperty("--mf", stack(cur));
+  apply();
+  if (!sel) return;
+
+  const cx = document.createElement("canvas").getContext("2d"), PROBE = "mmmmmmmmlliWWW가나다라마바사漢字 0123", BASES = ["monospace", "serif", "sans-serif"];
+  const bw = BASES.map(b => { cx.font = "64px " + b; return cx.measureText(PROBE).width; });
+  const has = n => BASES.some((b, i) => { cx.font = "64px '" + n + "'," + b; return cx.measureText(PROBE).width !== bw[i]; });   // 설치돼 있으면 대체 글꼴과 폭이 달라져요
+  const label = n => KO[n] || n;
+  let fams = null;   // 시스템 글꼴 전체 목록 (불러오기 전에는 null)
+
+  function build() {
+    const set = new Set([DEF, cur]);
+    if (fams) fams.forEach(n => set.add(n)); else CAND.forEach(n => { try { if (has(n)) set.add(n); } catch (e) {} });
+    const names = Array.from(set).filter(Boolean).sort((a, b) => a === DEF ? -1 : b === DEF ? 1 : label(a).localeCompare(label(b), "ko"));
+    sel.textContent = "";
+    for (const n of names) {
+      const o = document.createElement("option");
+      o.value = n; o.textContent = label(n); o.style.fontFamily = "'" + n + "'," + FALL;
+      sel.appendChild(o);
+    }
+    if (!fams && window.queryLocalFonts) { const o = document.createElement("option"); o.value = ALL; o.textContent = "시스템 글꼴 모두 불러오기…"; sel.appendChild(o); }
+    sel.value = cur;
+  }
+  async function loadAll(quiet) {
+    if (!window.queryLocalFonts) return false;
+    try {
+      const list = await window.queryLocalFonts();   // 브라우저가 허용을 물어봐요
+      const set = new Set(); list.forEach(f => { const n = clean(f.family); if (n) set.add(n); });
+      if (!set.size) return false;
+      fams = Array.from(set); build(); return true;
+    } catch (e) {
+      if (!quiet && typeof toast === "function") toast("시스템 글꼴을 불러오지 못했어요. 브라우저의 '글꼴 접근'을 허용해 주세요");
+      return false;
+    }
+  }
+  build();
+  try { navigator.permissions.query({ name: "local-fonts" }).then(p => { if (p.state === "granted") loadAll(true); }).catch(() => {}); } catch (e) {}
+
+  sel.addEventListener("change", async () => {
+    if (sel.value === ALL) { await loadAll(false); sel.value = cur; return; }
+    cur = sel.value; try { localStorage.setItem(KEY, cur); } catch (e) {}
+    apply();
+    document.dispatchEvent(new CustomEvent("memofontchange", { detail: { name: cur } }));
+    try { if (typeof ta !== "undefined" && ta && !ta.disabled) ta.focus(); } catch (e) {}   // 메모 커서로 돌아가기
+  });
+})();
+</script>
+<script>
 /* ===== 리치 메모: 엑셀 표 / 캡처 이미지 붙여넣기 지원 =====
    <div contenteditable> 를 textarea 처럼 .value / .disabled 로 쓸 수 있게 만들어요.
    저장 값은 "<!--h-->" + 정리(sanitize)된 HTML 이고, 예전 순수 글자 메모도 그대로 불러와요. */
@@ -311,6 +385,7 @@ function makeRich(el) {
       for (const k of ["x1", "y1", "x2", "y2", "tx", "ty"]) r[k] = num(it[k], -1e5, 1e5, 0);
       r.color = HEX.test(it.color) ? it.color : "#f06595"; r.bgc = HEX.test(it.bgc) ? it.bgc : null;
       r.lw = num(it.lw, 1, 40, 3); r.fs = num(it.fs, 6, 400, 21); r.op = num(it.op, 0, 1, 1);
+      r.ff = typeof it.ff === "string" ? it.ff.replace(/["'\\;{}<>&\u0000-\u001f]/g, "").trim().slice(0, 80) : "";
       r.bold = !!it.bold; r.ol = !!it.ol; r.fill = !!it.fill; r.fo = it.fo ? 1 : 0; r.dash = !!it.dash; r.auto = it.auto !== false;
       r.text = typeof it.text === "string" ? it.text.slice(0, 500) : "";
       if (it.t === "poly" || it.t === "free") {
@@ -1311,7 +1386,7 @@ let imgBack = null;
     if (!img) return;
     const t = e.target;
     if (t === img || box.contains(t) || bar.contains(t) || (sh && sh.wrap.contains(t))) return;
-    if (t.closest && t.closest('#tb [data-cmd="undo"],#tb [data-cmd="redo"]')) return;   // 실행 취소·다시 실행 버튼은 이미지 선택을 유지
+    if (t.closest && t.closest('#tb [data-cmd="undo"],#tb [data-cmd="redo"],#tb #fontSel')) return;   // 실행 취소·다시 실행 버튼, 글꼴 선택은 이미지 선택을 유지
     if (sh) { finishPoly(); commit(); }   // 편집 중 밖을 눌러도 버리지 않고 이미지에 반영
     hide();
   }, true);
@@ -1343,6 +1418,7 @@ let imgBack = null;
   /* ---- 글자 넣기(글자·말풍선 4종) / 도형 넣기(6종) / 선 넣기(6종): 같은 편집 화면, 들어가는 요소만 다름 ----
      이미지 위에 겹친 SVG 에 도형을 놓고 → 손잡이로 늘이고 줄이고 옮긴 뒤 → [적용]하면 이미지에 새겨져요 */
   const FONT = "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif";
+  const fontOf = it => (it && it.ff && window.memoFont) ? window.memoFont.stack(it.ff) : FONT;   // 요소마다 넣을 때의 글꼴을 기억 (예전 요소는 맑은 고딕)
   const SVGNS = "http://www.w3.org/2000/svg";
   const CALL = new Set(["ctext", "cround", "coval", "cthink"]), isCall = t => CALL.has(t);
   const BOXT = new Set(["circle", "rect", "tri", "cloud"]);
@@ -1360,7 +1436,7 @@ let imgBack = null;
   /* 말풍선 크기: 글자 크기와 내용에 맞춰 자동 (종류마다 여백이 달라요) */
   function callBox(it) {
     const lines = (it.text || "글자 입력").split("\n"), fs = it.fs, pad = it.t === "ctext" ? 6 : 9;
-    mctx.font = (it.bold ? "700 " : "") + fs + "px " + FONT;
+    mctx.font = (it.bold ? "700 " : "") + fs + "px " + fontOf(it);
     const tw = Math.max(...lines.map(l => mctx.measureText(l).width)), th = lines.length * fs * 1.3;
     let w, h;
     if (it.t === "coval") { w = tw * 1.45 + pad * 2; h = th * 1.55 + pad * 2; }
@@ -1373,7 +1449,7 @@ let imgBack = null;
     const edge = lum(c) > 0.55 ? "#000" : "#fff";
     const ex = (it && it.bold ? ' font-weight="700"' : "") + (it && it.ol ? ' stroke="' + edge + '" stroke-width="' + Math.max(2, b.fs * 0.18) + '" stroke-linejoin="round" paint-order="stroke"' : "");
     return b.lines.map((l, i) =>
-      '<text x="' + (b.x + b.w / 2) + '" y="' + (b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35) + '" text-anchor="middle" font-family="' + FONT + '" font-size="' + b.fs + '" fill="' + c + '"' + (has ? "" : ' fill-opacity=".4"') + ex + ">" + escH(l) + "</text>").join("");
+      '<text x="' + (b.x + b.w / 2) + '" y="' + (b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35) + '" text-anchor="middle" font-family="' + escH(fontOf(it)) + '" font-size="' + b.fs + '" fill="' + c + '"' + (has ? "" : ' fill-opacity=".4"') + ex + ">" + escH(l) + "</text>").join("");
   };
   /* 둥근 사각형 말풍선 꼬리: 상자 가장자리의 두 점 + 끝점 */
   function tailOf(b, it, lw) {
@@ -1613,7 +1689,7 @@ let imgBack = null;
   /* 말풍선 꼬리: 직접 옮기기 전에는 글자(상자 크기)가 바뀔 때마다 상자 아래쪽에 자동으로 맞춤 */
   function autoTail(it) { const b = callBox(it); it.tx = it.x1 + b.w * 0.25; it.ty = it.y1 + b.h + (it.t === "cthink" ? 44 : 28); }
   function newItem(tool, p) {
-    return { t: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y, tx: p.x, ty: p.y, color: sd.color, lw: sd.lw, fs: sd.fs, op: isCall(tool) ? (sd.top != null ? sd.top : tool === "ctext" ? 0 : 0.5) : (LINEM.has(tool) ? sd.op : sd.sop), bold: sd.bold, ol: sd.ol, bgc: sd.bgc, fill: sd.fill, fo: 1, dash: tool === "cross" ? true : sd.dash, text: "", auto: true };
+    return { t: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y, tx: p.x, ty: p.y, color: sd.color, lw: sd.lw, fs: sd.fs, op: isCall(tool) ? (sd.top != null ? sd.top : tool === "ctext" ? 0 : 0.5) : (LINEM.has(tool) ? sd.op : sd.sop), bold: sd.bold, ol: sd.ol, bgc: sd.bgc, fill: sd.fill, fo: 1, dash: tool === "cross" ? true : sd.dash, text: "", auto: true, ff: window.memoFont ? window.memoFont.name : "" };
   }
   /* 자유형 도형 마치기 (점이 3개 미만이면 버림) */
   function finishPoly() {
@@ -1910,6 +1986,14 @@ let imgBack = null;
     }
     render();
   });
+  /* 툴바에서 글꼴을 바꾸면: 편집 중 선택한 글자·말풍선도 그 글꼴로 바뀌고, 이어서 넣는 글자는 새 글꼴을 써요 */
+  document.addEventListener("memofontchange", e => {
+    if (!sh) return;
+    const it = sh.items[sh.sel]; if (!it || !isCall(it.t)) return;
+    pushUndo(false, "ff" + sh.sel);
+    it.ff = e.detail.name; if (it.auto) autoTail(it);
+    render();
+  });
   document.addEventListener("keydown", e => {   // 편집 중: Esc 반영 / Ctrl+Enter 반영 후 닫기 / Enter 자유형 도형 마침 / Delete 선택 삭제 / Ctrl+Z·Y 편집 실행 취소·다시 실행
     const typing = /^(TEXTAREA|INPUT|SELECT)$/.test(e.target.nodeName), ctrl = (e.ctrlKey || e.metaKey) && !e.altKey, k = (e.key || "").toLowerCase();
     if (!sh) {   // 이미지가 선택된 상태의 Ctrl+Z / Ctrl+Y 는 메모 글자가 아니라 이미지에만 적용
@@ -2089,7 +2173,7 @@ function exportMemo(kind) {
   let body, type, name;
   if (kind === "html") {
     body = '<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>메모</title>\n<style>\n' +
-      'body{font:16px/1.6 system-ui,"Noto Sans KR",sans-serif;max-width:800px;margin:24px auto;padding:0 16px;color:#1c1b19;word-break:break-word}\n' +
+      'body{font:16px/1.6 ' + (window.memoFont ? window.memoFont.css() : 'system-ui,"Noto Sans KR",sans-serif') + ';max-width:800px;margin:24px auto;padding:0 16px;color:#1c1b19;word-break:break-word}\n' +
       'img{max-width:100%;height:auto}table{border-collapse:collapse}td,th{border:1px solid #d9d5cb;padding:2px 6px;vertical-align:top}\n' +
       '[data-att]{display:inline-block;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid #d9d5cb;border-radius:999px;cursor:pointer}\n' +
       '</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
