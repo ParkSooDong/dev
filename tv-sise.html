@@ -49,6 +49,9 @@
     /* 차트 4개: 전체화면 대신 grid 영역(2~3행 x 2열)만 덮음. 상단(1행)은 그대로 보임 */
     .slot.slot-max { position: static; }
     .pane.chart.max { position: absolute; inset: 0; border-radius: 10px; }
+    /* 상단 2칸(티커/현재가): 전체화면 대신 1행(.top) 영역만 덮음 */
+    .slot.slot-max-top { position: static; }
+    .pane.single.max, .pane.readout.max { position: absolute; inset: 0; border-radius: 10px; }
 
     .expand {
       position: absolute;
@@ -72,7 +75,7 @@
     .pane.single .expand { top: auto; bottom: 6px; }
     .pane.max .expand { top: 10px; right: 12px; bottom: auto; width: 32px; height: 32px; font-size: 18px; }
 
-    .top { flex: 0 0 auto; height: 120px; display: flex; gap: var(--gap); }
+    .top { position: relative; flex: 0 0 auto; height: 120px; display: flex; gap: var(--gap); }
     .slot-single  { flex: 0 0 calc((100% - var(--gap)) / 2); }
     .slot-readout { flex: 1 1 0; }
 
@@ -132,10 +135,10 @@
       max-width: calc(100% - 52px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
       background: var(--card); padding: 0 4px; border-radius: 4px;
     }
-    .pane.single.max .mq-price { font-size: clamp(2.5rem, 6vw, 6rem); }
-    .pane.single.max .mq-code  { font-size: clamp(1.5rem, 3vw, 3rem); }
-    .pane.single.max .mq-name  { font-size: clamp(1rem, 2vw, 2rem); }
-    .pane.single.max .mq-chg   { font-size: clamp(1.1rem, 2.4vw, 2.4rem); }
+    .pane.single.max .mq-price { font-size: clamp(2rem, 3.5vw, 2.8rem); }
+    .pane.single.max .mq-code  { font-size: clamp(1.1rem, 1.8vw, 1.4rem); }
+    .pane.single.max .mq-name  { font-size: clamp(0.9rem, 1.4vw, 1.1rem); }
+    .pane.single.max .mq-chg   { font-size: clamp(1rem, 1.6vw, 1.3rem); }
 
     /* the old single ticker is removed from view; it only stays as an off-screen data source for the readout pane */
     .mq-src { position: fixed; left: -10000px; top: 0; width: 320px; opacity: 0; pointer-events: none; }
@@ -164,11 +167,11 @@
       .readout .up   { color: #22ab94; }
       .readout .down { color: #f7525f; }
     }
-    .pane.readout.max .readout-view { justify-content: center; align-content: center; gap: 1vh 4vw; }
-    .readout.max .name  { font-size: clamp(2rem, 7vw, 7rem); }
-    .readout.max .price { font-size: clamp(3rem, 12vw, 12rem); }
-    .readout.max .chg   { font-size: clamp(1.5rem, 5vw, 5rem); }
-    .readout.max .time  { font-size: clamp(1rem, 2vw, 2rem); text-align: center; }
+    .pane.readout.max .readout-view { justify-content: center; align-content: center; gap: 2px 3vw; }
+    .readout.max .name  { font-size: clamp(1.4rem, 3vw, 2.6rem); }
+    .readout.max .price { font-size: clamp(2rem, 5vw, 3.4rem); }
+    .readout.max .chg   { font-size: clamp(1.1rem, 2.4vw, 2rem); }
+    .readout.max .time  { font-size: clamp(0.9rem, 1.4vw, 1.1rem); text-align: center; }
 
     .grid {
       position: relative;   /* 확대된 차트가 이 영역(2~3행)만 덮도록 기준점 */
@@ -390,12 +393,12 @@
     function setMax(pane, on) {
       document.querySelectorAll('.pane.max').forEach(p => {
         p.classList.remove('max');
-        p.parentElement.classList.remove('slot-max');
+        p.parentElement.classList.remove('slot-max', 'slot-max-top');
         p.querySelector('.expand').textContent = '⤢';
       });
       if (on) {
         pane.classList.add('max');
-        if (pane.classList.contains('chart')) pane.parentElement.classList.add('slot-max');
+        pane.parentElement.classList.add(pane.classList.contains('chart') ? 'slot-max' : 'slot-max-top');
         pane.querySelector('.expand').textContent = '✕';
       }
       document.body.classList.toggle('has-max', on);
