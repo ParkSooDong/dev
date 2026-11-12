@@ -63,6 +63,7 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .rich .att{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);font-size:.95em;line-height:1.5;cursor:pointer;user-select:none}
 .rich .att:hover{background:var(--line)}
 .tb .pop#attPop{max-width:min(380px,80vw)}
+#attPop>div{display:flex;flex-direction:column}#attPop>div[hidden]{display:none}
 #attPop .row{display:flex;gap:2px;align-items:center}
 #attPop .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;display:block;text-align:left;line-height:32px}
 #attPop .row .rm{min-width:32px;flex:none;padding:0}
@@ -254,12 +255,11 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
   <button type="button" data-cmd="table" title="표 삽입" aria-label="표 삽입"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg></button>
   <div class="menu dim" id="tblWrap"><button type="button" data-pal data-needtbl title="표 편집 (표 안의 칸을 클릭하면 사용할 수 있어요)" aria-label="표 편집" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M9.5 5v14"/></svg><span>표 편집</span></button><div class="pop" hidden><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div>
-  <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg></button><div class="pop" hidden><button type="button" data-cmd="image">파일 열기</button><button type="button" data-cmd="blank" title="현재 메모 영역의 가로·세로 90% 크기의 흰색 바탕 이미지를 넣어요 (손글씨·도형으로 그리기용)">흰색 바탕 그리기 이미지</button></div></div>
+  <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="image">파일 열기</button><button type="button" data-cmd="blank" title="현재 메모 영역의 가로·세로 90% 크기의 흰색 바탕 이미지를 넣어요 (손글씨·도형으로 그리기용)">흰색 바탕 그리기 이미지</button></div></div>
   <input type="color" id="fcPick" value="#f06595" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="file" id="imgFile" accept="image/*" multiple hidden>
-  <button type="button" data-cmd="attach" title="파일 첨부 저장 (엑셀·문서·이미지 등 — 메모 안에 포함돼요)" aria-label="파일 첨부 저장"><svg viewBox="0 0 24 24"><path d="M20 11.5l-7.6 7.6a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.3-7.3"/></svg></button>
   <input type="file" id="attFile" multiple hidden>
-  <div class="menu" id="attMenu"><button type="button" data-pal id="attListBtn" title="파일 첨부 읽기 (첨부된 파일을 다시 파일로 저장)" aria-label="첨부 파일 목록" aria-haspopup="true" aria-expanded="false"><span id="attN">첨부 목록</span></button><div class="pop" id="attPop" hidden></div></div>
+  <div class="menu" id="attMenu"><button type="button" data-pal id="attListBtn" title="파일: 메모에 파일 첨부 / PC로 저장 / 첨부 목록" aria-label="파일" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M20 11.5l-7.6 7.6a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.3-7.3"/></svg><span>파일</span></button><div class="pop" id="attPop" hidden><div id="attMv"><button type="button" data-cmd="attach" title="엑셀·문서·이미지 등 파일을 골라 메모 안에 넣어요">PC에서 메모로 첨부</button><button type="button" data-cmd="attsave" title="메모에 첨부된 파일을 모두 PC에 파일로 저장해요">메모에서 PC로 저장</button><button type="button" id="attListGo" title="첨부된 파일을 하나씩 저장하거나 삭제해요">첨부된 파일 목록</button></div><div id="attLv" hidden></div></div></div>
   <button type="button" data-cmd="find" title="찾기" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
   <button type="button" data-cmd="ul" title="글머리 기호 목록" aria-label="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg></button>
   <button type="button" data-cmd="ol" title="번호 매기기 목록" aria-label="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg></button>
@@ -1238,7 +1238,7 @@ const CMDS = {
   check, indent: () => indent(1), outdent: () => indent(-1),
   alL: () => align("justifyLeft"), alC: () => align("justifyCenter"), alR: () => align("justifyRight"),
   hr: () => exec("insertHorizontalRule"), quote: () => block("blockquote"), code: () => block("pre"),
-  clear: clearFmt, clearall: clearAll, image: pickImage, blank: blankImage, attach: pickAttach, find: openFind
+  clear: clearFmt, clearall: clearAll, image: pickImage, blank: blankImage, attach: pickAttach, attsave: attSaveAll, find: openFind
 };
 
 /* ===== 추가 서식: 블록 찾기 / 들여쓰기 / 체크리스트 / 정렬 / 서식 지우기 / 표 편집 / 이미지 / 찾기 ===== */
@@ -2698,11 +2698,11 @@ document.getElementById("resetAll").addEventListener("click",()=>{
 });
 
 /* ===== 파일 첨부: 저장(첨부) / 읽기(다시 파일로 저장) =====
-   - 📎 버튼: 파일을 골라 메모 안에 넣어요 (엑셀·문서·압축 파일 등 아무 파일). 파일을 메모로 끌어놓거나 붙여넣어도 돼요.
+   - [파일] ▸ [PC에서 메모로 첨부]: 파일을 골라 메모 안에 넣어요 (엑셀·문서·압축 파일 등 아무 파일). 파일을 메모로 끌어놓거나 붙여넣어도 돼요.
    - 파일은 base64 로 메모 본문에 들어가므로 "DB n / 3,000,000자" 용량을 함께 써요 (파일 크기의 약 1.33배).
-   - 칩을 클릭하거나 '첨부 목록'에서 고르면 원래 파일로 저장돼요. */
+   - 칩을 클릭하거나 [파일] ▸ [메모에서 PC로 저장](전체) / [첨부된 파일 목록](하나씩)에서 고르면 원래 파일로 저장돼요. */
 let attBack = null;
-const attFile = document.getElementById("attFile"), attPop = document.getElementById("attPop"), attN = document.getElementById("attN");
+const attFile = document.getElementById("attFile"), attPop = document.getElementById("attPop"), attMv = document.getElementById("attMv"), attLv = document.getElementById("attLv"), attGo = document.getElementById("attListGo");
 const attFmt = n => n >= 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
 const attNodes = () => EDS.flatMap(e => Array.from(e.querySelectorAll(".att")));
 function pickAttach() {
@@ -2731,11 +2731,21 @@ onEd("click", e => {   // 칩 클릭 → 파일로 저장
   if (!c || !ta.contains(c)) return;
   e.preventDefault(); attDownload(c);
 });
-function fillAttPop() {
-  const L = attNodes(); attPop.textContent = "";
+function attSaveAll() {   // [메모에서 PC로 저장]: 메모에 첨부된 파일을 모두 파일로 저장 (여러 개면 차례로)
+  const L = attNodes();
+  if (!L.length) { toast("저장할 첨부 파일이 없어요"); return; }
+  if (L.length > 1) say("첨부 파일 " + L.length + "개를 저장하는 중…");
+  L.forEach((c, i) => setTimeout(() => attDownload(c), i * 350));
+}
+function showAttMenu() { attMv.hidden = false; attLv.hidden = true; }
+function fillAttPop() {   // [첨부된 파일 목록]: 같은 팝업 안에서 목록 화면으로 바꿈
+  const L = attNodes(); attLv.textContent = "";
+  attMv.hidden = true; attLv.hidden = false;
+  const back = document.createElement("button"); back.type = "button"; back.dataset.attBack = "1"; back.textContent = "← 뒤로";
+  attLv.appendChild(back);
   if (!L.length) {
     const b = document.createElement("button"); b.type = "button"; b.disabled = true; b.textContent = "첨부된 파일이 없어요";
-    attPop.appendChild(b); return;
+    attLv.appendChild(b); return;
   }
   L.forEach((c, i) => {
     const row = document.createElement("div"); row.className = "row";
@@ -2743,20 +2753,22 @@ function fillAttPop() {
     d.textContent = "⬇ " + c.dataset.name + " (" + attFmt(+c.dataset.size || 0) + ")"; d.title = "클릭하면 파일로 저장돼요";
     const x = document.createElement("button"); x.type = "button"; x.className = "rm"; x.dataset.attDel = i;
     x.textContent = "🗑"; x.title = "메모에서 이 첨부 삭제";
-    row.append(d, x); attPop.appendChild(row);
+    row.append(d, x); attLv.appendChild(row);
   });
 }
-tb.addEventListener("click", e => { if (e.target.closest("#attListBtn")) fillAttPop(); }, true);   // 열기 직전에 목록을 새로 채움
+tb.addEventListener("click", e => { if (e.target.closest("#attListBtn")) showAttMenu(); }, true);   // 열 때마다 처음 화면(3개 메뉴)부터
 attPop.addEventListener("click", e => {
   const b = e.target.closest("button"); if (!b) return;
   const L = attNodes();
+  if (b.id === "attListGo") { fillAttPop(); return; }
+  if ("attBack" in b.dataset) { showAttMenu(); return; }
   if ("attDl" in b.dataset) { const c = L[+b.dataset.attDl]; closePop(); if (c) attDownload(c); }
   else if ("attDel" in b.dataset) {
     const c = L[+b.dataset.attDel]; closePop();
     if (c && confirm("'" + c.dataset.name + "' 첨부를 메모에서 삭제할까요?")) { c.remove(); fire(); say("첨부를 삭제했어요", "ok"); }
   }
 });
-function updateAttN() { const n = attNodes().length; attN.textContent = n ? "첨부 " + n : "첨부 목록"; }
+function updateAttN() { const n = attNodes().length; attGo.textContent = n ? "첨부된 파일 목록 (" + n + ")" : "첨부된 파일 목록"; }
 observeEds(updateAttN, { childList: true, subtree: true });
 updateAttN();
 </script>
