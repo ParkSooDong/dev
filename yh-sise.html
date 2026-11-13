@@ -33,7 +33,7 @@
   .top-view .lb { opacity: .6; font-size: calc(12px * var(--top-scale)); margin-right: calc(4px * var(--top-scale)); }
   .top-view .chg { font-variant-numeric: tabular-nums; }
   .top-view .flat { opacity: .7; }
-  .top-view .asof { margin-left: auto; font-size: 22px; opacity: .6; }   /* 배율과 무관한 고정 크기 */
+  .top-view .asof { margin-left: auto; font-size: 20px; opacity: .6; }   /* 배율과 무관한 고정 크기 */
   .top-view .asof.stale { color: #d97706; opacity: 1; }
   /* 종목 테이프: 1행(시세 바) 하단, 오른쪽 → 왼쪽으로 흐름. 마우스를 올리면 멈춤, 항목 클릭 시 그 종목 즉시 적용 */
   .tape { position: relative; margin-top: 4px; overflow: hidden; background: var(--panel);
@@ -208,7 +208,7 @@
       const p = {};
       ASOF_FMT.formatToParts(new Date(s.asOf * 1000)).forEach(x => { p[x.type] = x.value; });
       const stamp = `${p.year}.${p.month}.${p.day}.${p.weekday} ${p.hour}:${p.minute}`;
-      html += `<span class="asof ${mins >= 5 ? "stale" : ""}">데이터 기준 : ${stamp}</span>`;
+      html += `<span class="asof ${mins >= 5 ? "stale" : ""}">기준 : ${stamp}</span>`;
     }
     topView.innerHTML = html;
     topEl.style.display = "block";
