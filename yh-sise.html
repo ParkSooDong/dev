@@ -30,10 +30,11 @@
     font-size: calc(15px * var(--top-scale)); }
   .top-view .nm { font-weight: 700; font-size: calc(17px * var(--top-scale)); }
   .top-view .px { font-weight: 700; font-size: calc(17px * var(--top-scale)); font-variant-numeric: tabular-nums; }
-  .top-view .lb { opacity: .6; font-size: calc(12px * var(--top-scale)); margin-right: calc(4px * var(--top-scale)); }
-  .top-view .chg { font-variant-numeric: tabular-nums; }
+  .top-view .lb { opacity: .6; font-size: 20px; margin-right: calc(4px * var(--top-scale)); }
+  .top-view .chg { font-variant-numeric: tabular-nums; font-size: 20px; }   /* 전일대비 / 등락폭 / 등락률 고정 20px */
+  .top-view .chg b { font-weight: 700; }   /* 등락폭만 굵게 */
   .top-view .flat { opacity: .7; }
-  .top-view .asof { margin-left: auto; font-size: 20px; opacity: .6; }   /* 배율과 무관한 고정 크기 */
+  .top-view .asof { margin-left: auto; font-size: 18px; opacity: .6; }   /* 배율과 무관한 고정 크기 */
   .top-view .asof.stale { color: #d97706; opacity: 1; }
   /* 종목 테이프: 1행(시세 바) 하단, 오른쪽 → 왼쪽으로 흐름. 마우스를 올리면 멈춤, 항목 클릭 시 그 종목 즉시 적용 */
   .tape { position: relative; margin-top: 4px; overflow: hidden; background: var(--panel);
@@ -200,7 +201,7 @@
       const pct = diff / s.prev * 100;
       const cls = diff > 0 ? "up" : diff < 0 ? "down" : "flat";
       const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
-      html += `<span class="chg ${cls}"><span class="lb">전일대비</span>${sign}${fmt(Math.abs(diff))} (${sign}${Math.abs(pct).toFixed(2)}%)</span>`;
+      html += `<span class="chg ${cls}"><span class="lb">전일대비</span><b>${sign}${fmt(Math.abs(diff))}</b> (${sign}${Math.abs(pct).toFixed(2)}%)</span>`;
     }
     if (s.asOf) {
       const mins = Math.max(0, Math.round((Date.now() / 1000 - s.asOf) / 60));
