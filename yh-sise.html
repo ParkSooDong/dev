@@ -28,8 +28,8 @@
     gap: calc(4px * var(--top-scale)) calc(16px * var(--top-scale));
     padding: calc(5px * var(--top-scale)) calc(12px * var(--top-scale));
     font-size: calc(15px * var(--top-scale)); }
-  .top-view .nm { font-weight: 700; font-size: calc(17px * var(--top-scale)); }
-  .top-view .px { font-weight: 700; font-size: calc(17px * var(--top-scale)); font-variant-numeric: tabular-nums; }
+  .top-view .nm { font-weight: 700; font-size: 24px; }   /* 종목명 고정 24px */
+  .top-view .px { font-weight: 700; font-size: 28px;   /* 현재가 고정 28px */ font-variant-numeric: tabular-nums; }
   .top-view .lb { opacity: .6; font-size: 20px; margin-right: calc(4px * var(--top-scale)); }
   .top-view .chg { font-variant-numeric: tabular-nums; font-size: 20px; }   /* 전일대비 / 등락폭 / 등락률 고정 20px */
   .top-view .chg b { font-weight: 700; }   /* 등락폭만 굵게 */
@@ -92,7 +92,6 @@
     .wrap { padding: 3px; gap: 3px; }
     .top-pane .top-view { padding: calc(3px * var(--top-scale)) calc(8px * var(--top-scale));
       gap: calc(2px * var(--top-scale)) calc(10px * var(--top-scale)); font-size: calc(12px * var(--top-scale)); }
-    .top-view .nm, .top-view .px { font-size: calc(14px * var(--top-scale)); }
     .grid { gap: 3px; }
     .head { flex-direction: column; gap: 0; padding: 3px 34px 3px 6px; font-size: 11px; }
   }
