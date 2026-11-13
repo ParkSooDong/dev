@@ -1618,7 +1618,9 @@ let imgBack = null;
     return { lines, fs, pad, tw, th, x: it.x1, y: it.y1, w: Math.max(40, Math.ceil(w)), h: Math.ceil(h) };
   }
   const lum = hex => { const n = parseInt(hex.slice(1), 16); return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255; };
+  let SKIPTXT = false;   /* 이미지로 굽는 동안엔 글자를 SVG 에 넣지 않고 canvas 에 직접 그림 (모바일 강제 다크모드가 SVG 이미지 속 글자색을 바꾸는 것을 피함) */
   const callText = (b, c, has, it) => {
+    if (SKIPTXT) return "";
     const edge = lum(c) > 0.55 ? "#000" : "#fff";
     const ex = (it && it.bold ? ' font-weight="700"' : "") + (it && it.ol ? ' stroke="' + edge + '" stroke-width="' + Math.max(2, b.fs * 0.18) + '" stroke-linejoin="round" paint-order="stroke"' : "");
     return b.lines.map((l, i) =>
@@ -2225,12 +2227,27 @@ let imgBack = null;
     };
     if (!items.length) return Promise.resolve(finish({ src: base, base: null, layers: null }));   // 추가 요소가 없으면 레이어 정보도 없앰
     const loadI = u => new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = u; });
-    const segSvg = arr => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" style="color-scheme:light" width="' + bc.width + '" height="' + bc.height + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" overflow="hidden">' + arr.map(it => itemSvg(it, W, H, true)).join("") + "</svg>");
+    const segSvg = arr => { SKIPTXT = true; try { return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" style="color-scheme:light" width="' + bc.width + '" height="' + bc.height + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" overflow="hidden">' + arr.map(it => itemSvg(it, W, H, true)).join("") + "</svg>"); } finally { SKIPTXT = false; } };
     return (async () => {   // 올린 이미지는 SVG 안에 넣으면 합성에서 빠질 수 있어서 캔버스에 직접 그려요 (바탕 밖은 잘림)
       const c = document.createElement("canvas"); c.width = bc.width; c.height = bc.height;
       const x = c.getContext("2d"), kx = c.width / W, ky = c.height / H; x.drawImage(bc, 0, 0);
       let seg = [];
-      const flush = async () => { if (!seg.length) return; const im = await loadI(segSvg(seg)); seg = []; if (im) x.drawImage(im, 0, 0, c.width, c.height); };
+      const drawTexts = arr => {
+        arr.forEach(it => {
+          if (!isCall(it.t)) return;
+          const b = callBox(it), col = /^#[0-9a-f]{6}$/i.test(it.color) ? it.color : "#f06595", edge = lum(col) > 0.55 ? "#000" : "#fff";
+          x.save(); x.setTransform(kx, 0, 0, ky, 0, 0);
+          x.font = (it.bold ? "700 " : "") + b.fs + "px " + fontOf(it); x.textAlign = "center"; x.textBaseline = "alphabetic";
+          x.globalAlpha = it.text ? 1 : 0.4; x.lineJoin = "round";
+          b.lines.forEach((l, i) => {
+            const tx = b.x + b.w / 2, ty = b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35;
+            if (it.ol) { x.lineWidth = Math.max(2, b.fs * 0.18); x.strokeStyle = edge; x.strokeText(l, tx, ty); }
+            x.fillStyle = col; x.fillText(l, tx, ty);
+          });
+          x.restore();
+        });
+      };
+      const flush = async () => { if (!seg.length) return; const sg = seg, im = await loadI(segSvg(sg)); seg = []; if (im) x.drawImage(im, 0, 0, c.width, c.height); drawTexts(sg); };
       for (const it of items) {
         if (it.t === "pic") {
           await flush();
