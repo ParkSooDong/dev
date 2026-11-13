@@ -637,8 +637,12 @@ function makeRich(el) {
       if (n.nodeType !== 1) continue;
       const t = n.nodeName.toUpperCase();
       if (DROP.has(t)) continue;
-      if (t === "FONT" && n.getAttribute("face")) {   /* 브라우저가 글꼴을 <font face> 로 만든 경우도 글꼴을 살려서 span 으로 바꿈 */
-        const e = document.createElement("span"), st = cleanStyle("font-family:" + n.getAttribute("face"));
+      if (t === "FONT" && (n.getAttribute("face") || n.getAttribute("color"))) {   /* 브라우저가 글꼴/글자색을 <font face|color> 로 만든 경우도 살려서 span 으로 바꿈 */
+        const e = document.createElement("span"), fc = (n.getAttribute("color") || "").trim();
+        const st = [
+          n.getAttribute("face") ? cleanStyle("font-family:" + n.getAttribute("face")) : "",
+          /^(#[0-9a-f]{3,8}|[a-z]+)$/i.test(fc) ? "color:" + fc : ""
+        ].filter(Boolean).join(";");
         if (st) e.setAttribute("style", st);
         walk(n, e); dst.appendChild(e); continue;
       }
@@ -1867,7 +1871,7 @@ let imgBack = null;
     const edge = lum(c) > 0.55 ? "#000" : "#fff";
     const ex = (it && it.bold ? ' font-weight="700"' : "") + (it && it.ol ? ' stroke="' + edge + '" stroke-width="' + Math.max(2, b.fs * 0.18) + '" stroke-linejoin="round" paint-order="stroke"' : "");
     return b.lines.map((l, i) =>
-      '<text x="' + (b.x + b.w / 2) + '" y="' + (b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35) + '" text-anchor="middle" font-family="' + escH(fontOf(it)) + '" font-size="' + b.fs + '" fill="' + c + '"' + (has ? "" : ' fill-opacity=".4"') + ex + ">" + escH(l) + "</text>").join("");
+      '<text x="' + (b.x + b.w / 2) + '" y="' + (b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35) + '" text-anchor="middle" font-family="' + escH(fontOf(it)) + '" font-size="' + b.fs + '" fill="' + c + '" style="fill:' + c + '"' + (has ? "" : ' fill-opacity=".4"') + ex + ">" + escH(l) + "</text>").join("");
   };
   /* 둥근 사각형 말풍선 꼬리: 상자 가장자리의 두 점 + 끝점 */
   function tailOf(b, it, lw) {
@@ -2470,7 +2474,7 @@ let imgBack = null;
     };
     if (!items.length) return Promise.resolve(finish({ src: base, base: null, layers: null }));   // 추가 요소가 없으면 레이어 정보도 없앰
     const loadI = u => new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = u; });
-    const segSvg = arr => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + bc.width + '" height="' + bc.height + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" overflow="hidden">' + arr.map(it => itemSvg(it, W, H, true)).join("") + "</svg>");
+    const segSvg = arr => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" style="color-scheme:light" width="' + bc.width + '" height="' + bc.height + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" overflow="hidden">' + arr.map(it => itemSvg(it, W, H, true)).join("") + "</svg>");
     return (async () => {   // 올린 이미지는 SVG 안에 넣으면 합성에서 빠질 수 있어서 캔버스에 직접 그려요 (바탕 밖은 잘림)
       const c = document.createElement("canvas"); c.width = bc.width; c.height = bc.height;
       const x = c.getContext("2d"), kx = c.width / W, ky = c.height / H; x.drawImage(bc, 0, 0);
