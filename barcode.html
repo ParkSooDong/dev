@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="only light">
 <meta name="supported-color-schemes" content="light">
-<script>
+<script type="text/javascript" nonce="1f374108d9d541978cf3987fa2f" src="//local.adguard.org?ts=1794525945669&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000003ba88209b246fdced0da2478%26fn%3Dbarcode_memo_scroll_fixed.html%26cd%3Dattachment%26ts%3D498481%26p%3Dfs%26cid%3D1%26sig%3D7d1dd54348c64da82719fe4ae60f214a25b7160df75ba3e5407575ba43582371%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="1f374108d9d541978cf3987fa2f" src="//local.adguard.org?ts=1794525945669&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 모바일 브라우저의 강제 다크모드 방지: 저장된 모드가 dark일 때만 dark, 그 외에는 항상 light */
 (function(){var m="light";try{var s=JSON.parse(localStorage.getItem("bc9-state"));if(s&&s.m==="dark")m="dark"}catch(e){}
 document.documentElement.setAttribute("data-theme",m);
@@ -199,6 +200,13 @@ tr.cmpgap>td{padding:0;border:0;line-height:0;font-size:0;background:repeating-l
 .edwrap.lh:not(.cmpm) .edsplit{grid-auto-flow:column}
 .edwrap.lh .splitter{cursor:col-resize}
 .edwrap.lh .splitter::after{left:3px;right:3px;top:0;bottom:0;height:auto}
+/* 바코드 첫 화면의 가로 3분할 메모: 내용이 늘어나도 메모/페이지 높이를 밀어내지 않고 각 메모 안에서 스크롤 */
+.edwrap.lh:not(.cmpm) .edsplit{min-width:0;min-height:0;overflow:hidden}
+.edwrap.lh:not(.cmpm) .edsplit>.rich{min-width:0;max-width:100%;min-height:0;overflow:auto;overflow-wrap:anywhere;word-break:break-word;resize:none}
+@media (max-width:1279px){
+  .mpane:not(.max) .edwrap.lh:not(.cmpm) .edsplit{height:clamp(140px,30vh,300px);min-height:0;flex:none}
+  .mpane:not(.max) .edwrap.lh:not(.cmpm) .edsplit>.rich{height:100%;max-height:100%}
+}
 /* 세로 3분할에서 확대하지 않았을 때는 가장 큰 영역(기본: 가) 하나만 세 줄 높이로 보이고, 확대하면 세 영역이 모두 보여요. 가로 3분할은 확대하지 않아도 세 영역이 나란히 보여요 */
 .mpane.max .edwrap{flex:1;min-height:0}
 .mpane:not(.max) .edwrap.lv .edsplit{display:block}
