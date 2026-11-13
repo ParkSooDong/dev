@@ -95,6 +95,14 @@
     .grid { gap: 3px; }
     .head { flex-direction: column; gap: 0; padding: 3px 34px 3px 6px; font-size: 11px; }
   }
+  /* 아주 좁은 화면(폭 640px 이하): 차트를 1열로 쌓고, 1행(#top: 시세 바 + 테이프)은 고정, 차트 영역(.grid)만 세로 스크롤.
+     2x2 를 유지하고 싶으면 이 블록을 지우면 됨 */
+  @media (max-width: 640px) {
+    .grid { overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+      grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-rows: 420px; }
+    .grid.has-max { overflow: hidden; }   /* 확대 중에는 스크롤 잠금 (확대된 차트가 영역을 덮음) */
+    #top { flex: none; }
+  }
 </style>
 </head>
 <body>
@@ -226,16 +234,25 @@
   setInterval(renderTop, 30000);   // '몇 분 전' 표시 갱신
 
   // ── 확대/축소: 차트 4개 어느 것이든 버튼으로 2~3행 전체(grid 영역)로 확대, Esc 로 복귀. 1행(시세 바)은 확대 없음 ──
+  const gridEl = document.querySelector(".grid");
+  let gridScroll = 0;   // 1열 스크롤 모드에서 확대 전 스크롤 위치 (확대 후 닫을 때 복원)
   function setMax(pane, on) {
+    const wasMax = !!document.querySelector(".cell.max");
     document.querySelectorAll(".cell.max").forEach(p => {
       p.classList.remove("max");
       p.parentElement.classList.remove("slot-max");
       p.querySelector(".expand").textContent = "⤢";
     });
     if (on) {
+      if (!wasMax) gridScroll = gridEl.scrollTop;
+      gridEl.scrollTop = 0;   // 확대 칸은 grid 영역(맨 위 기준)을 덮으므로 스크롤을 맨 위로
+      gridEl.classList.add("has-max");
       pane.classList.add("max");
       pane.parentElement.classList.add("slot-max");
       pane.querySelector(".expand").textContent = "✕";
+    } else {
+      gridEl.classList.remove("has-max");
+      gridEl.scrollTop = gridScroll;
     }
   }
   document.querySelectorAll(".expand").forEach(btn => btn.addEventListener("click", e => {
