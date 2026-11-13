@@ -637,8 +637,7 @@
       chg.className = 'mq-chg ' + (!d ? 'flat' : d.dir > 0 ? 'up' : d.dir < 0 ? 'down' : 'flat');
       if (!d) { chg.textContent = '--'; return; }
       const sg = d.dir > 0 ? '+' : d.dir < 0 ? '-' : '';
-      const arrow = d.dir > 0 ? '▲ ' : d.dir < 0 ? '▼ ' : '';
-      chg.textContent = `${arrow}${sg}${d.chg} (${sg}${d.pct}%)`;
+      chg.textContent = `${sg}${d.chg} (${sg}${d.pct}%)`;
     }
 
     function mqBuildItem(it) {
