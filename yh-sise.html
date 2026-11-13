@@ -14,8 +14,8 @@
     font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
   .wrap { height: 100dvh; padding: 6px; display: flex; flex-direction: column; gap: 6px; }
   /* 최상단 시세 바: #top(자리 유지용 slot) > .top-pane > .cropbox > .top-view(내용) */
-  /* --top-scale: 시세 바 글자 배율 (1 = 원래 크기, 3 = 3배). 바뀐 만큼 바 높이가 늘고 차트 영역은 줄어듦 */
-  #top { display: block; position: relative; --top-scale: 3; }   /* 종목코드 입력칸이 항상 보이도록 처음부터 표시 */
+  /* --top-scale: 시세 바 글자 배율 (1 = 원래 크기, 2.6 = 2.6배). 바뀐 만큼 바 높이가 늘고 차트 영역은 줄어듦 */
+  #top { display: block; position: relative; --top-scale: 2.6; }   /* 종목코드 입력칸이 항상 보이도록 처음부터 표시 */
   .top-pane { position: relative; display: flex; align-items: center; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .top-pane .cropbox { height: auto; width: auto; flex: 1 1 0; min-width: 0; }
   /* 종목코드 입력칸 (시세 바 오른쪽) */
