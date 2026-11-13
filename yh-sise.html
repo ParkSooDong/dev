@@ -33,7 +33,7 @@
   .top-view .lb { opacity: .6; font-size: calc(12px * var(--top-scale)); margin-right: calc(4px * var(--top-scale)); }
   .top-view .chg { font-variant-numeric: tabular-nums; }
   .top-view .flat { opacity: .7; }
-  .top-view .asof { margin-left: auto; font-size: 11px; opacity: .6; }   /* 배율과 무관하게 항상 작게 */
+  .top-view .asof { margin-left: auto; font-size: 22px; opacity: .6; }   /* 배율과 무관한 고정 크기 */
   .top-view .asof.stale { color: #d97706; opacity: 1; }
   /* 종목 테이프: 1행(시세 바) 하단, 오른쪽 → 왼쪽으로 흐름. 마우스를 올리면 멈춤, 항목 클릭 시 그 종목 즉시 적용 */
   .tape { position: relative; margin-top: 4px; overflow: hidden; background: var(--panel);
@@ -182,7 +182,7 @@
   function logLine(t) { logEl.style.display = "block"; logEl.textContent += t + "\n"; logEl.scrollTop = logEl.scrollHeight; }
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
-  // ── 최상단: 종목명 / 현재가 / 전일대비 등락폭 / 등락률 ──
+  // ── 최상단: 종목명 / 현재가 / 전일대비 등락폭(등락률) ──
   // 전일 종가 = 일봉의 마지막에서 두 번째 봉 종가, 현재가 = 가장 최근 봉의 종가
   const topEl = document.getElementById("top");        // 자리 유지용 바깥 상자 (데이터가 오기 전에는 숨김)
   const topView = document.getElementById("topview");  // 실제 내용이 들어가는 곳
@@ -199,10 +199,8 @@
       const diff = s.price - s.prev;
       const pct = diff / s.prev * 100;
       const cls = diff > 0 ? "up" : diff < 0 ? "down" : "flat";
-      const arrow = diff > 0 ? "▲" : diff < 0 ? "▼" : "-";
       const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
-      html += `<span class="chg ${cls}"><span class="lb">전일대비</span>${arrow} ${fmt(Math.abs(diff))}</span>`
-            + `<span class="chg ${cls}">${sign}${Math.abs(pct).toFixed(2)}%</span>`;
+      html += `<span class="chg ${cls}"><span class="lb">전일대비</span>${sign}${fmt(Math.abs(diff))} (${sign}${Math.abs(pct).toFixed(2)}%)</span>`;
     }
     if (s.asOf) {
       const mins = Math.max(0, Math.round((Date.now() / 1000 - s.asOf) / 60));
