@@ -25,8 +25,9 @@
   .symform button { padding: 3px 6px; font-size: 13px; color: var(--text); background: var(--panel);
     border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
   .top-pane .top-view { display: flex; flex-wrap: wrap; align-items: baseline; height: auto;
-    gap: calc(4px * var(--top-scale)) calc(16px * var(--top-scale));
-    padding: calc(5px * var(--top-scale)) calc(12px * var(--top-scale));
+    gap: 2px calc(16px * var(--top-scale));   /* 줄 사이 간격 */
+    padding: 3px calc(12px * var(--top-scale));   /* 위아래 여백 */
+    line-height: 1.15;   /* 줄 높이 */
     font-size: calc(15px * var(--top-scale)); }
   .top-view .nm { font-weight: 700; font-size: 24px; }   /* 종목명 고정 24px */
   .top-view .px { font-weight: 700; font-size: 28px;   /* 현재가 고정 28px */ font-variant-numeric: tabular-nums; }
@@ -90,8 +91,8 @@
   /* 모바일/PC 모두 2x2 고정. 좁은 화면에서는 헤더만 작게 */
   @media (max-width: 800px), (orientation: portrait) {
     .wrap { padding: 3px; gap: 3px; }
-    .top-pane .top-view { padding: calc(3px * var(--top-scale)) calc(8px * var(--top-scale));
-      gap: calc(2px * var(--top-scale)) calc(10px * var(--top-scale)); font-size: calc(12px * var(--top-scale)); }
+    .top-pane .top-view { padding: 2px calc(8px * var(--top-scale));
+      gap: 0 calc(10px * var(--top-scale)); font-size: calc(12px * var(--top-scale)); }
     .grid { gap: 3px; }
     .head { flex-direction: column; gap: 0; padding: 3px 34px 3px 6px; font-size: 11px; }
   }
