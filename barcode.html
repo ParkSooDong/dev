@@ -357,10 +357,10 @@ p{margin:6px 0 0}
   .mpane:not(.max) .edwrap:not(.cmpm) .edsplit{height:100%;min-height:0;max-height:100%;overflow:hidden}
   .mpane:not(.max) .edwrap:not(.cmpm) .edsplit>.rich{height:100%;min-height:0;max-height:100%;overflow:auto;resize:none;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch}
   .mpane.max .rich{overflow:auto}
-  /* 2) 바코드 입력칸: 입력 중인 칸은 3열을 모두 차지해 전체 코드가 보이고, 저장 버튼은 숨김 */
-  .cell:focus-within{grid-column:1/-1}
-  .cell:focus-within .inrow button{display:none}
-  .cell:focus-within .inrow input{font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:.02em;border-color:var(--ink)}
+  /* 2) 바코드 입력칸: 입력 중 글자가 칸에 다 안 들어가면 3열을 모두 차지해 전체 코드가 보이고, 저장 버튼은 숨김 */
+  .cell.wide{grid-column:1/-1}
+  .cell.wide .inrow button{display:none}
+  .cell.wide .inrow input{font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:.02em;border-color:var(--ink)}
 }
 </style>
 </head>
@@ -1059,7 +1059,14 @@ function init(){
     const c={inp:el.querySelector("input"),view:el.querySelector(".view"),bl:el.querySelector("button")};
     c.inp.value=d[i];
     c.inp.addEventListener("input",()=>{draw(i);saveState()});
-    c.inp.addEventListener("focus",()=>{if(matchMedia("(max-width:560px)").matches)setTimeout(()=>{try{el.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}},250)});
+    /* 모바일: 글자가 입력칸에 다 안 들어갈 때만 칸을 넓힘 (한 번 넓어지면 입력이 끝날 때까지 유지) */
+    const mob=()=>matchMedia("(max-width:560px)").matches;
+    const fit=()=>{if(!mob()||el.classList.contains("wide"))return;
+      if(c.inp.scrollWidth>c.inp.clientWidth){el.classList.add("wide");
+        setTimeout(()=>{try{c.inp.focus();c.inp.scrollLeft=0;el.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}},50)}};
+    c.inp.addEventListener("focus",()=>setTimeout(fit,0));
+    c.inp.addEventListener("input",fit);
+    c.inp.addEventListener("blur",()=>el.classList.remove("wide"));
     c.bl.onclick=()=>download(i,$("m").value);
     cells.push(c);g.append(el);
   }
