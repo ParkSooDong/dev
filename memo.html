@@ -3,11 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
 <title>메모장</title>
 <style>
 :root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fffefb;--ok:#2e7d32;--err:#b3261e;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--card:#1e1d21;--ok:#81c784;--err:#ff8a80}}
+:root{color-scheme:light dark}
+:root[data-theme="light"]{color-scheme:light}
+.imgx-ov,.imgx-ov>svg,.imgx-ov>canvas{color-scheme:light;forced-color-adjust:none;-webkit-text-fill-color:initial}
+.imgx-ov svg text{forced-color-adjust:none}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;display:flex;flex-direction:column;padding:12px;gap:8px}
