@@ -1626,6 +1626,22 @@ let imgBack = null;
     return b.lines.map((l, i) =>
       '<text x="' + (b.x + b.w / 2) + '" y="' + (b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35) + '" text-anchor="middle" font-family="' + escH(fontOf(it)) + '" font-size="' + b.fs + '" fill="' + c + '" style="fill:' + c + '"' + (has ? "" : ' fill-opacity=".4"') + ex + ">" + escH(l) + "</text>").join("");
   };
+  /* 글자는 SVG 가 아니라 canvas 에 직접 그림: 모바일 브라우저의 강제 다크모드가 SVG 글자색을 바꾸는 것을 피함 (편집 화면 · 이미지로 굽기 공통) */
+  function paintTexts(x, arr, kx, ky) {
+    arr.forEach(it => {
+      if (!isCall(it.t)) return;
+      const b = callBox(it), col = /^#[0-9a-f]{6}$/i.test(it.color) ? it.color : "#f06595", edge = lum(col) > 0.55 ? "#000" : "#fff";
+      x.save(); x.setTransform(kx, 0, 0, ky, 0, 0);
+      x.font = (it.bold ? "700 " : "") + b.fs + "px " + fontOf(it); x.textAlign = "center"; x.textBaseline = "alphabetic";
+      x.globalAlpha = it.text ? 1 : 0.4; x.lineJoin = "round";
+      b.lines.forEach((l, i) => {
+        const tx = b.x + b.w / 2, ty = b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35;
+        if (it.ol) { x.lineWidth = Math.max(2, b.fs * 0.18); x.strokeStyle = edge; x.strokeText(l, tx, ty); }
+        x.fillStyle = col; x.fillText(l, tx, ty);
+      });
+      x.restore();
+    });
+  }
   /* 둥근 사각형 말풍선 꼬리: 상자 가장자리의 두 점 + 끝점 */
   function tailOf(b, it, lw) {
     const cx = b.x + b.w / 2, cy = b.y + b.h / 2, dx = it.tx - cx, dy = it.ty - cy;
@@ -1790,10 +1806,13 @@ let imgBack = null;
     const s = sh; if (!s) return;
     let g = "";
     if (s.showItems) {   // 추가 요소 레이어를 숨기면 요소도 손잡이도 그리지 않음
-      s.items.forEach((it, i) => { g += '<g data-i="' + i + '" style="cursor:' + (sd.tool === "hand" ? "crosshair" : "move") + '">' + itemSvg(it, s.W, s.H, false) + "</g>"; });
+      SKIPTXT = true;
+      try { s.items.forEach((it, i) => { g += '<g data-i="' + i + '" style="cursor:' + (sd.tool === "hand" ? "crosshair" : "move") + '">' + itemSvg(it, s.W, s.H, false) + "</g>"; }); }
+      finally { SKIPTXT = false; }
       g += handlesOf(s.items[s.sel]);
     }
     s.gi.innerHTML = g;
+    if (s.tc) { const t = s.tc.getContext("2d"); t.setTransform(1, 0, 0, 1, 0, 0); t.clearRect(0, 0, s.tc.width, s.tc.height); if (s.showItems) paintTexts(t, s.items, s.tc.width / s.W, s.tc.height / s.H); }
   }
   /* 지우개 크기 표시(원) / 올가미 선 */
   function drawCur() {
@@ -2069,13 +2088,14 @@ let imgBack = null;
     [["fill", "rgba(255,255,255,.3)"], ["stroke", "#339af0"], ["stroke-width", "1.5"], ["vector-effect", "non-scaling-stroke"], ["pointer-events", "none"]].forEach(a => cc.setAttribute(a[0], a[1]));
     [["fill", "rgba(51,154,240,.12)"], ["stroke", "#339af0"], ["stroke-width", "1.5"], ["stroke-dasharray", "5 4"], ["vector-effect", "non-scaling-stroke"], ["pointer-events", "none"]].forEach(a => lp.setAttribute(a[0], a[1]));
     cc.style.display = "none";
-    ov.append(gi, cc, lp); wrap.append(cv, ov); document.body.appendChild(wrap);   // 아래층: 원본 이미지(canvas), 위층: 추가 요소(svg)
+    const tc = document.createElement("canvas"); tc.width = Math.max(1, Math.round(W * Math.min(2, window.devicePixelRatio || 1))); tc.height = Math.max(1, Math.round(H * Math.min(2, window.devicePixelRatio || 1))); tc.style.pointerEvents = "none";
+    ov.append(gi, cc, lp); wrap.append(cv, ov, tc); document.body.appendChild(wrap);   // 아래층: 원본 이미지(canvas), 위층: 추가 요소(svg)
     const items = L ? L.items.map(it => ({ ...it, pts: it.pts && it.pts.map(q => q.slice()) })).filter(it => {
       if (it.t !== "pic") return true;
       if (typeof it.src !== "string" || !it.src) return false;
       it.pid = regPic(it.src); delete it.src; return true;
     }) : [];
-    const mine = sh = { wrap, ov, gi, cc, lp, cv, ctx: null, nw: 0, nh: 0, ready: false, alpha: false, erased: false, baseUrl: img.getAttribute("data-base") || img.src, W, H, items, orig: JSON.stringify(items), sel: -1, drag: null, lastDown: null, mode, undo: [], redo: [], pre: null, coal: null, showBase: true, showItems: true, cur: null };
+    const mine = sh = { wrap, tc, ov, gi, cc, lp, cv, ctx: null, nw: 0, nh: 0, ready: false, alpha: false, erased: false, baseUrl: img.getAttribute("data-base") || img.src, W, H, items, orig: JSON.stringify(items), sel: -1, drag: null, lastDown: null, mode, undo: [], redo: [], pre: null, coal: null, showBase: true, showItems: true, cur: null };
     const bi = new Image();   // 원본(=지우개가 지울 대상)을 불러와 canvas 에 올림
     bi.onload = () => {
       if (sh !== mine) return;
@@ -2232,21 +2252,7 @@ let imgBack = null;
       const c = document.createElement("canvas"); c.width = bc.width; c.height = bc.height;
       const x = c.getContext("2d"), kx = c.width / W, ky = c.height / H; x.drawImage(bc, 0, 0);
       let seg = [];
-      const drawTexts = arr => {
-        arr.forEach(it => {
-          if (!isCall(it.t)) return;
-          const b = callBox(it), col = /^#[0-9a-f]{6}$/i.test(it.color) ? it.color : "#f06595", edge = lum(col) > 0.55 ? "#000" : "#fff";
-          x.save(); x.setTransform(kx, 0, 0, ky, 0, 0);
-          x.font = (it.bold ? "700 " : "") + b.fs + "px " + fontOf(it); x.textAlign = "center"; x.textBaseline = "alphabetic";
-          x.globalAlpha = it.text ? 1 : 0.4; x.lineJoin = "round";
-          b.lines.forEach((l, i) => {
-            const tx = b.x + b.w / 2, ty = b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35;
-            if (it.ol) { x.lineWidth = Math.max(2, b.fs * 0.18); x.strokeStyle = edge; x.strokeText(l, tx, ty); }
-            x.fillStyle = col; x.fillText(l, tx, ty);
-          });
-          x.restore();
-        });
-      };
+      const drawTexts = arr => paintTexts(x, arr, kx, ky);
       const flush = async () => { if (!seg.length) return; const sg = seg, im = await loadI(segSvg(sg)); seg = []; if (im) x.drawImage(im, 0, 0, c.width, c.height); drawTexts(sg); };
       for (const it of items) {
         if (it.t === "pic") {
