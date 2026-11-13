@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="only light">
 <meta name="supported-color-schemes" content="light">
-<script type="text/javascript" nonce="1f374108d9d541978cf3987fa2f" src="//local.adguard.org?ts=1794525945669&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000055a8821291182174e453a2a7%26fn%3Dbarcode_memo_viewport_fixed.html%26cd%3Dattachment%26ts%3D498482%26p%3Dfs%26cid%3D1%26sig%3Db7c68e37a8f3ea8751c87cb70d7cc7c35549107c7a7aeebc2f76db0d61f8bce8%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="1f374108d9d541978cf3987fa2f" src="//local.adguard.org?ts=1794525945669&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000046ec820ba901601c0213a458%26fn%3Dbarcode_memo_fixed_memo_height.html%26cd%3Dattachment%26ts%3D498482%26p%3Dfs%26cid%3D1%26sig%3D04e1d66a76909eb0d1b8348085862632f87511ed8dbb47d61617545207438f50%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="1f374108d9d541978cf3987fa2f" src="//local.adguard.org?ts=1794525945669&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 모바일 브라우저의 강제 다크모드 방지: 저장된 모드가 dark일 때만 dark, 그 외에는 항상 light */
 (function(){var m="light";try{var s=JSON.parse(localStorage.getItem("bc9-state"));if(s&&s.m==="dark")m="dark"}catch(e){}
@@ -324,6 +324,32 @@ label[for-memo],main>label,main>.lbl{margin-top:8px!important}
 p{margin:6px 0 0}
 }
 @media (max-width:560px){.mhead{grid-template-columns:auto 1fr}#mst{grid-column:1/-1;text-align:left}.top{grid-template-columns:repeat(3,minmax(0,1fr))}.btns{flex-direction:column}}
+
+/* 데스크톱 브라우저 공통: 가로 3분할 메모 행은 화면 높이에 따라 늘어나지 않도록 고정하고, 내용은 각 메모 내부에서 스크롤 */
+@media (min-width:561px){
+  .mpane:not(.max) .edwrap.lh:not(.cmpm){
+    flex:0 0 190px!important;
+    height:190px!important;
+    min-height:190px!important;
+    max-height:190px!important;
+    overflow:hidden;
+  }
+  .mpane:not(.max) .edwrap.lh:not(.cmpm) .edsplit{
+    flex:1 1 0!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:100%;
+    overflow:hidden;
+  }
+  .mpane:not(.max) .edwrap.lh:not(.cmpm) .edsplit>.rich{
+    height:100%!important;
+    min-height:0!important;
+    max-height:100%!important;
+    overflow:auto!important;
+    resize:none!important;
+  }
+}
+
 </style>
 </head>
 <body>
