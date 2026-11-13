@@ -157,7 +157,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script>
   // 배포한 Cloudflare Worker 주소로 바꾸세요 (끝에 / 없이, .workers.dev 까지만)
-  const API_BASE = "https://kospi-proxy.YOUR-SUBDOMAIN.workers.dev";
+  const API_BASE = "https://kospi-proxy.pesdee00.workers.dev";
   // 종목 코드: 화면 오른쪽 위 입력칸에서 바꿀 수 있음. 시작할 때 쓰는 값의 우선순위:
   //   ① 주소의 ?symbol=005930.KS  ② 마지막으로 입력한 값(브라우저에 저장)  ③ 아래 DEFAULT_SYMBOL  ④ 비어 있으면 worker.js 가 정함(AUTO_MODE 면 시간대별 자동 종목, 아니면 worker.js 의 DEFAULT_SYMBOL)
   // 코드표는 worker.js 상단 주석 참고.
