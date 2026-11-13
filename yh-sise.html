@@ -30,7 +30,7 @@
     font-size: calc(15px * var(--top-scale)); }
   .top-view .nm { font-weight: 700; font-size: 24px; }   /* 종목명 고정 24px */
   .top-view .px { font-weight: 700; font-size: 28px;   /* 현재가 고정 28px */ font-variant-numeric: tabular-nums; }
-  .top-view .lb { opacity: .6; font-size: 20px; margin-right: calc(4px * var(--top-scale)); }
+  .top-view .ar { font-size: 20px; margin-right: 4px; }   /* ▲▼ : 부모(.chg.up/.down)의 색상을 그대로 따름 */
   .top-view .chg { font-variant-numeric: tabular-nums; font-size: 20px; }   /* 전일대비 / 등락폭 / 등락률 고정 20px */
   .top-view .chg b { font-weight: 700; }   /* 등락폭만 굵게 */
   .top-view .flat { opacity: .7; }
@@ -200,7 +200,8 @@
       const pct = diff / s.prev * 100;
       const cls = diff > 0 ? "up" : diff < 0 ? "down" : "flat";
       const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
-      html += `<span class="chg ${cls}"><span class="lb">전일대비</span><b>${sign}${fmt(Math.abs(diff))}</b> (${sign}${Math.abs(pct).toFixed(2)}%)</span>`;
+      const arrow = diff > 0 ? "▲" : diff < 0 ? "▼" : "-";
+      html += `<span class="chg ${cls}"><span class="ar">${arrow}</span><b>${sign}${fmt(Math.abs(diff))}</b> (${sign}${Math.abs(pct).toFixed(2)}%)</span>`;
     }
     if (s.asOf) {
       const mins = Math.max(0, Math.round((Date.now() / 1000 - s.asOf) / 60));
