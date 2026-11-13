@@ -110,7 +110,7 @@
     </div>
     <div class="tape" id="tapekr" aria-label="한국 시총 상위 40 테이프"><div class="tape-track" id="tapetrackkr"></div></div>
     <div class="tape" id="tape" aria-label="미국 등 주요 종목 테이프"><div class="tape-track" id="tapetrack"></div></div>
-    <div class="krnote" id="krnote" hidden>Yahoo에서 제공하는 KRX 시세는 20분 지연이며, 15시 이후에는 종가 데이터만 제공되므로, 캔들도 그려지지 않습니다.</div>
+    <div class="krnote" id="krnote" hidden>Yahoo에서 제공하는 KRX 시세는 21분 지연이며, 15시 이후에는 종가 데이터만 제공되므로, 캔들도 그려지지 않습니다.</div>
   </div>
   <div class="grid">
     <!-- data-interval: Worker에 넘기는 값(15, 3, 60, D) / data-refresh: 갱신 주기(ms) / data-label: 제목 뒤에 붙는 봉 이름 -->
@@ -180,6 +180,7 @@
   const topView = document.getElementById("topview");  // 실제 내용이 들어가는 곳
   const ASOF_FMT = new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
     weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+  let krPost = false;   // 한국 종목에서 15:00 이후의 실제 봉이 오고 있는지 (3분봉 기준). 오면 "종가만 제공" 안내를 자동으로 뺌
   const topState = { symbol: null, name: "", dec: 2, prev: null, price: null, priceTime: -1, asOf: null };
   function renderTop() {
     const s = topState;
@@ -381,6 +382,17 @@
         info.innerHTML = `<span class="${diff >= 0 ? "up" : "down"}">${last.close.toLocaleString(undefined, { minimumFractionDigits: dec, maximumFractionDigits: dec })} (${diff >= 0 ? "+" : ""}${diff.toFixed(dec)})</span> · ${d.candles.length}봉`;
         msg.style.display = "none";
         reportTop(d, interval, dec);
+        if (interval === "3" && /\.(KS|KQ)$|^\^(KS11|KS200|KQ11)$/i.test(d.symbol)) {
+                    // 마지막 거래일 안에 15:03~15:27 사이 3분봉이 하나라도 있어야 "15시 이후 봉 제공"으로 판단
+          // (15:00 은 거래량 0 종가 봉, 15:30 은 종가 확정 봉일 수 있어 제외)
+          const day = Math.floor(last.time / 86400);
+          krPost = false;
+          for (let i = d.candles.length - 1; i >= 0 && Math.floor(d.candles[i].time / 86400) === day; i--) {
+            const sec = d.candles[i].time % 86400;
+            if (sec > 15 * 3600 && sec < 15.5 * 3600) { krPost = true; break; }
+          }
+          updateKrNote();
+        }
       } catch (e) {
         if (reqSym !== SYMBOL) return;
         console.error("[chart]", e);
@@ -427,6 +439,7 @@
     Object.assign(topState, { symbol: null, name: "", prev: null, price: null, priceTime: -1, asOf: null });
     topView.innerHTML = "";
     logEl.textContent = ""; logEl.style.display = "none";
+    krPost = false;
     markTape();
     cells.forEach(c => { c.reset(); c.load(); });
   }
@@ -483,11 +496,17 @@
     new ResizeObserver(() => { const w = box.clientWidth; if (w !== w0) { w0 = w; build(); } }).observe(box);
     tapes.push({ mark });
   }
-  function markTape() { tapes.forEach(t => t.mark()); krNote.hidden = !isKrNow(); }
+  function markTape() { tapes.forEach(t => t.mark()); updateKrNote(); }
   makeTape("tapekr", "tapetrackkr", TAPE_KR_ITEMS, true);   // 1번째 줄: 한국 시총 상위 40
   makeTape("tape", "tapetrack", TAPE_ITEMS, false);         // 2번째 줄: 미국 등 주요 종목
   // KRX 종목(.KS/.KQ, 코스피·코스닥 지수)을 보고 있을 때만 안내 문구 표시
   const krNote = document.getElementById("krnote");
+  function updateKrNote() {
+    const kr = isKrNow();
+    krNote.hidden = !kr;
+    if (kr) krNote.textContent = "Yahoo에서 제공하는 KRX 시세는 21분 지연"
+      + (krPost ? "됩니다." : "이며, 15시 이후에는 종가 데이터만 제공되므로, 캔들도 그려지지 않습니다.");
+  }
   const isKrNow = () => /\.(KS|KQ)$|^\^(KS11|KS200|KQ11)$/i.test(topState.symbol || SYMBOL || "");
   setInterval(markTape, 2000);
   markTape();   // worker 자동모드로 종목이 바뀐 경우에도 강조 표시 따라감
