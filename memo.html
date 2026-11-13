@@ -265,8 +265,8 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
   <div class="menu" id="tblWrap"><button type="button" data-pal id="tblBtn" title="표: 표 삽입 / 표 편집" aria-label="표" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg><span>표</span></button><div class="pop" id="tblPop" hidden><div id="tblMv"><button type="button" data-cmd="table" title="행·열 수를 정해 표를 넣어요">표 삽입</button><button type="button" id="tblEditGo" data-needtbl title="행·열 추가/삭제 (표 안의 칸을 클릭하면 사용할 수 있어요)">표 편집</button></div><div id="tblLv" hidden><button type="button" data-tbl-back="1">← 뒤로</button><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div></div>
   <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="image">파일 열기</button><div class="bgsec"><div class="bgttl" title="고른 색을 바탕으로 한 이미지를 메모에 넣어요 (손글씨·도형으로 그리기용)">바탕 이미지 넣기</div><div class="bgnote">색을 누르면 바로 들어가요</div><div class="bgrow"><button type="button" class="sw" data-bgc="#ffffff" style="background:#ffffff" title="흰색" aria-label="흰색"></button><button type="button" class="sw" data-bgc="#000000" style="background:#000000" title="검정색" aria-label="검정색"></button><button type="button" class="sw" data-bgc="#f1f3f5" style="background:#f1f3f5" title="아주 연한 회색" aria-label="아주 연한 회색"></button><button type="button" class="sw" data-bgc="#fffbe0" style="background:#fffbe0" title="아주 연한 노란색" aria-label="아주 연한 노란색"></button><button type="button" class="sw" data-bgc="#fff0f5" style="background:#fff0f5" title="아주 연한 핑크색" aria-label="아주 연한 핑크색"></button><button type="button" class="sw" data-bgc="#f0fff0" style="background:#f0fff0" title="아주 연한 녹색" aria-label="아주 연한 녹색"></button></div><button type="button" class="bgpk" data-bgpick title="색상 팔레트에서 원하는 색을 골라 넣어요">색상 팔레트에서 선택…</button><div class="bgsz"><span>크기</span><input type="number" id="bgW" min="24" max="4000" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" id="bgH" min="24" max="4000" step="1" aria-label="세로 픽셀"><span>px</span></div><button type="button" class="bgpk" data-bgreset title="현재 메모창 비율에 맞춘 크기로 되돌려요">기본 크기로</button></div></div></div>
-  <input type="color" id="bgPick" value="#ffffff" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="color" id="fcPick" value="#f06595" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
+  <input type="color" id="bgPick" value="#ffffff" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="file" id="imgFile" accept="image/*" multiple hidden>
   <input type="file" id="attFile" multiple hidden>
   <div class="menu" id="attMenu"><button type="button" data-pal id="attListBtn" title="파일: 메모에 파일 첨부 / PC로 저장 / 첨부 목록" aria-label="파일" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M20 11.5l-7.6 7.6a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.3-7.3"/></svg><span>파일</span></button><div class="pop" id="attPop" hidden><div id="attMv"><button type="button" data-cmd="attach" title="엑셀·문서·이미지 등 파일을 골라 메모 안에 넣어요">PC에서 메모로 첨부</button><button type="button" data-cmd="attsave" title="메모에 첨부된 파일을 모두 PC에 파일로 저장해요">메모에서 PC로 저장</button><button type="button" id="attListGo" title="첨부된 파일을 하나씩 저장하거나 삭제해요">첨부된 파일 목록</button></div><div id="attLv" hidden></div></div></div>
@@ -1881,7 +1881,7 @@ let imgBack = null;
     if (hEl && cur) {
       const h = hEl.getAttribute("data-h");
       s.drag = h === "mv" ? { m: "move", sx: p.x, sy: p.y, o: snap(cur) } : { m: "h", h };
-    } else if (iEl) {
+    } else if (iEl && !(sd.tool && s.items[+iEl.getAttribute("data-i")] && s.items[+iEl.getAttribute("data-i")].t === "pic")) {   // 아이콘을 고른 상태에서 올린 이미지 위를 누르면 이미지를 옮기지 않고 그 위에 새 요소를 넣음
       s.sel = +iEl.getAttribute("data-i");
       s.drag = { m: "move", sx: p.x, sy: p.y, o: snap(s.items[s.sel]) };
       syncCtl();
@@ -2151,19 +2151,27 @@ let imgBack = null;
       say("이미지에 반영했어요", "ok"); fire(); sched(); return true;
     };
     if (!items.length) return Promise.resolve(finish({ src: base, base: null, layers: null }));   // 추가 요소가 없으면 레이어 정보도 없앰
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + bc.width + '" height="' + bc.height + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" overflow="hidden">' + items.map(it => itemSvg(it, W, H, true)).join("") + "</svg>";
-    return new Promise(res => {
-      const pic = new Image();
-      pic.onload = () => {
-        const c = document.createElement("canvas"); c.width = bc.width; c.height = bc.height;
-        const x = c.getContext("2d"); x.drawImage(bc, 0, 0); x.drawImage(pic, 0, 0, c.width, c.height);   // 원본 위에 추가 요소를 합성 (화면·내보내기용)
-        let enc; try { enc = encodeCv(c, alpha); } catch (e) { toast("이 이미지에는 적용할 수 없어요"); res(false); return; }
-        if (enc.c.width < bc.width) bc = enc.c;
-        res(finish({ src: enc.url, base, layers: JSON.stringify({ W, H, items }) }));
-      };
-      pic.onerror = () => { toast("적용하지 못했어요"); res(false); };
-      pic.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-    });
+    const loadI = u => new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = u; });
+    const segSvg = arr => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + bc.width + '" height="' + bc.height + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" overflow="hidden">' + arr.map(it => itemSvg(it, W, H, true)).join("") + "</svg>");
+    return (async () => {   // 올린 이미지는 SVG 안에 넣으면 합성에서 빠질 수 있어서 캔버스에 직접 그려요 (바탕 밖은 잘림)
+      const c = document.createElement("canvas"); c.width = bc.width; c.height = bc.height;
+      const x = c.getContext("2d"), kx = c.width / W, ky = c.height / H; x.drawImage(bc, 0, 0);
+      let seg = [];
+      const flush = async () => { if (!seg.length) return; const im = await loadI(segSvg(seg)); seg = []; if (im) x.drawImage(im, 0, 0, c.width, c.height); };
+      for (const it of items) {
+        if (it.t === "pic") {
+          await flush();
+          const im = await loadI(it.src); if (!im) continue;
+          x.save(); x.beginPath(); x.rect(0, 0, c.width, c.height); x.clip(); x.globalAlpha = it.op;
+          x.drawImage(im, Math.min(it.x1, it.x2) * kx, Math.min(it.y1, it.y2) * ky, Math.abs(it.x2 - it.x1) * kx, Math.abs(it.y2 - it.y1) * ky);
+          x.restore();
+        } else seg.push(it);
+      }
+      await flush();
+      let enc; try { enc = encodeCv(c, alpha); } catch (e) { toast("이 이미지에는 적용할 수 없어요"); return false; }
+      if (enc.c.width < bc.width) bc = enc.c;
+      return finish({ src: enc.url, base, layers: JSON.stringify({ W, H, items }) });
+    })();
   }
   /* Esc: [선택 해제] 아이콘과 같음 (반영 + 아이콘 해제). 반영할 것도 고른 아이콘도 없으면 편집 화면을 닫음 */
   function escShp() {
@@ -2256,6 +2264,7 @@ let imgBack = null;
     else if (ctrl && !typing && k === "z") { e.preventDefault(); e.stopPropagation(); popUndo(); }
   }, true);
 })();
+
 
 let bgBack = null;
 const bgW = document.getElementById("bgW"), bgH = document.getElementById("bgH");
