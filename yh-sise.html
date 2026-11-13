@@ -14,8 +14,8 @@
     font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
   .wrap { height: 100dvh; padding: 6px; display: flex; flex-direction: column; gap: 6px; }
   /* 최상단 시세 바: #top(자리 유지용 slot) > .top-pane > .cropbox > .top-view(내용) */
-  /* --top-scale: 시세 바 글자 배율 (1 = 원래 크기, 2.6 = 2.6배). 바뀐 만큼 바 높이가 늘고 차트 영역은 줄어듦 */
-  #top { display: block; position: relative; --top-scale: 2.6; }   /* 종목코드 입력칸이 항상 보이도록 처음부터 표시 */
+  /* --top-scale: 시세 바 글자 배율 (1 = 원래 크기, 2.0 = 2.0배). 바뀐 만큼 바 높이가 늘고 차트 영역은 줄어듦 */
+  #top { display: block; position: relative; --top-scale: 2.0; }   /* 종목코드 입력칸이 항상 보이도록 처음부터 표시 */
   .top-pane { position: relative; display: flex; align-items: center; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .top-pane .cropbox { height: auto; width: auto; flex: 1 1 0; min-width: 0; }
   /* 종목코드 입력칸 (시세 바 오른쪽) */
@@ -33,7 +33,7 @@
   .top-view .lb { opacity: .6; font-size: calc(12px * var(--top-scale)); margin-right: calc(4px * var(--top-scale)); }
   .top-view .chg { font-variant-numeric: tabular-nums; }
   .top-view .flat { opacity: .7; }
-  .top-view .asof { margin-left: auto; font-size: calc(12px * var(--top-scale)); opacity: .6; }
+  .top-view .asof { margin-left: auto; font-size: 11px; opacity: .6; }   /* 배율과 무관하게 항상 작게 */
   .top-view .asof.stale { color: #d97706; opacity: 1; }
   /* 종목 테이프: 1행(시세 바) 하단, 오른쪽 → 왼쪽으로 흐름. 마우스를 올리면 멈춤, 항목 클릭 시 그 종목 즉시 적용 */
   .tape { position: relative; margin-top: 4px; overflow: hidden; background: var(--panel);
@@ -202,7 +202,7 @@
       const arrow = diff > 0 ? "▲" : diff < 0 ? "▼" : "-";
       const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
       html += `<span class="chg ${cls}"><span class="lb">전일대비</span>${arrow} ${fmt(Math.abs(diff))}</span>`
-            + `<span class="chg ${cls}"><span class="lb">등락률</span>${sign}${Math.abs(pct).toFixed(2)}%</span>`;
+            + `<span class="chg ${cls}">${sign}${Math.abs(pct).toFixed(2)}%</span>`;
     }
     if (s.asOf) {
       const mins = Math.max(0, Math.round((Date.now() / 1000 - s.asOf) / 60));
