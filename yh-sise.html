@@ -46,6 +46,8 @@
     font: inherit; font-size: 13px; color: var(--text); background: none; border: 0;
     border-right: 1px solid var(--border); cursor: pointer; }
   .tape-item .tn { font-weight: 700; }
+  .krnote { margin-top: 4px; padding: 3px 8px; font-size: 12px; color: #d97706; }
+  .krnote[hidden] { display: none; }
   .tape-item .rk { opacity: .45; font-size: 11px; font-variant-numeric: tabular-nums; }
   .tape-item .tc { opacity: .6; font-size: 12px; font-variant-numeric: tabular-nums; }
   .tape-item:hover { background: var(--grid); }
@@ -106,8 +108,9 @@
         <button type="submit">적용</button>
       </form>
     </div>
-    <div class="tape" id="tape" aria-label="종목 테이프"><div class="tape-track" id="tapetrack"></div></div>
-    <div class="tape" id="tape2" aria-label="한국 시총 상위 40 테이프"><div class="tape-track" id="tapetrack2"></div></div>
+    <div class="tape" id="tapekr" aria-label="한국 시총 상위 40 테이프"><div class="tape-track" id="tapetrackkr"></div></div>
+    <div class="tape" id="tape" aria-label="미국 등 주요 종목 테이프"><div class="tape-track" id="tapetrack"></div></div>
+    <div class="krnote" id="krnote" hidden>Yahoo에서 제공하는 KRX 시세는 20분 지연이며, 15시 이후에는 종가 데이터만 제공되므로, 캔들도 그려지지 않습니다.</div>
   </div>
   <div class="grid">
     <!-- data-interval: Worker에 넘기는 값(15, 3, 60, D) / data-refresh: 갱신 주기(ms) / data-label: 제목 뒤에 붙는 봉 이름 -->
@@ -480,10 +483,14 @@
     new ResizeObserver(() => { const w = box.clientWidth; if (w !== w0) { w0 = w; build(); } }).observe(box);
     tapes.push({ mark });
   }
-  function markTape() { tapes.forEach(t => t.mark()); }
-  makeTape("tape", "tapetrack", TAPE_ITEMS, false);
-  makeTape("tape2", "tapetrack2", TAPE_KR_ITEMS, true);
-  setInterval(markTape, 2000);   // worker 자동모드로 종목이 바뀐 경우에도 강조 표시 따라감
+  function markTape() { tapes.forEach(t => t.mark()); krNote.hidden = !isKrNow(); }
+  makeTape("tapekr", "tapetrackkr", TAPE_KR_ITEMS, true);   // 1번째 줄: 한국 시총 상위 40
+  makeTape("tape", "tapetrack", TAPE_ITEMS, false);         // 2번째 줄: 미국 등 주요 종목
+  // KRX 종목(.KS/.KQ, 코스피·코스닥 지수)을 보고 있을 때만 안내 문구 표시
+  const krNote = document.getElementById("krnote");
+  const isKrNow = () => /\.(KS|KQ)$|^\^(KS11|KS200|KQ11)$/i.test(topState.symbol || SYMBOL || "");
+  setInterval(markTape, 2000);
+  markTape();   // worker 자동모드로 종목이 바뀐 경우에도 강조 표시 따라감
 
   document.querySelectorAll(".cell").forEach(setup);
 </script>
