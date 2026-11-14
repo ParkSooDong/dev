@@ -317,6 +317,20 @@ body.has-max header .tr{display:none}
 <div id="memo3" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="다 영역(세 번째 메모)입니다. 비교를 누르면 이 자리에 비교 내역이 표시돼요. (이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (다)"></div></div></div>
 </div></div>
 <script>
+/* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
+   고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
+window.armPicker = function (pk, apply) {
+  pk._apply = apply; pk._pend = null;
+  if (pk._bound) return; pk._bound = true;
+  const flush = () => { if (pk._pend == null) return; const v = pk._pend; pk._pend = null; if (pk._apply) pk._apply(v); };
+  pk.addEventListener("input", () => { pk._pend = pk.value; });
+  pk.addEventListener("change", () => { pk._pend = pk.value; flush(); });
+  document.addEventListener("pointerdown", flush, true);
+  document.addEventListener("keydown", flush, true);
+  window.addEventListener("focus", flush);
+};
+</script>
+<script>
 /* ===== 글꼴: 시스템 글꼴 목록 + 메모 글자 / 이미지 '글자 넣기' 공통 글꼴 =====
    기본값은 맑은 고딕. 고른 글꼴은 이 기기(브라우저)에 기억해요. 목록은 시스템에 설치된 글꼴에서 가져와요
    (크롬·엣지는 '시스템 글꼴 모두 불러오기'로 전체 목록, 그 외 브라우저는 설치된 대표 글꼴만 보여요). */
@@ -1685,6 +1699,7 @@ let imgBack = null;
     else if (b.hasAttribute("data-bpn")) bgApply(null, null, true);
   });
   bpop.addEventListener("input", e => { if (e.target === bpr) { bpv.textContent = bpr.value + "%"; bgApply(null, +bpr.value, false); } });
+  bpk.addEventListener("input", () => bgApply(bpk.value, null, false));
   bpk.addEventListener("change", () => bgApply(bpk.value, null, false));
   document.addEventListener("pointerdown", e => { if (!bpop.hidden && !bpop.contains(e.target) && !(e.target.closest && e.target.closest('[data-sa="bgmenu"]'))) closeBg(); }, true);
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !bpop.hidden) { e.preventDefault(); e.stopImmediatePropagation(); closeBg(); } }, true);
@@ -1715,11 +1730,11 @@ let imgBack = null;
     const chip = bar.querySelector("[data-pchip]"); if (chip) chip.style.background = sd.pcolor;
     ppr.value = String(Math.round((1 - sd.fop) * 100)); ppv.textContent = ppr.value + "%";
   }
-  function ppApply(c, t) {
+  function ppApply(c, t, quiet) {
     if (!sh) return;
     if (c) {
       sd.pcolor = c; sd.color = complement(c); qc("color").value = sd.color;   // 글자·도형·선 기본 색 = 페인트 색의 보색
-      toast("페인트 색을 골랐어요. 이미지에서 채울 곳을 클릭하면 칠해져요 (글자·도형·선 색은 보색 " + sd.color + ")");
+      if (!quiet) toast("페인트 색을 골랐어요. 이미지에서 채울 곳을 클릭하면 칠해져요 (글자·도형·선 색은 보색 " + sd.color + ")");
     }
     if (t != null) sd.fop = Math.max(0.05, 1 - t / 100);
     ppSync();
@@ -1744,6 +1759,7 @@ let imgBack = null;
     else if (b.hasAttribute("data-ppk")) { ppk.value = sd.pcolor; ppk.click(); }
   });
   ppop.addEventListener("input", e => { if (e.target === ppr) { ppv.textContent = ppr.value + "%"; ppApply(null, +ppr.value); } });
+  ppk.addEventListener("input", () => ppApply(ppk.value, null, true));   // 고르는 즉시 반영 (안내 문구는 생략)
   ppk.addEventListener("change", () => ppApply(ppk.value, null));
   document.addEventListener("pointerdown", e => { if (!ppop.hidden && !ppop.contains(e.target) && !(e.target.closest && e.target.closest('[data-sa="pmenu"]'))) closePp(); }, true);
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !ppop.hidden) { e.preventDefault(); e.stopImmediatePropagation(); closePp(); } }, true);
@@ -2829,7 +2845,7 @@ tb.addEventListener("click", e => {
     const trig = b.closest(".menu").querySelector("[data-pal]").getBoundingClientRect();   // 닫기 전에 위치를 잰다
     closePop(); const restore = saveRange(), pk = document.getElementById("fcPick");
     pk.style.left = Math.round(trig.left) + "px"; pk.style.top = Math.round(trig.bottom) + "px";   // 선택창이 버튼 근처에 뜨도록
-    pk.onchange = () => { restore(); applyColor("fc", pk.value); };
+    armPicker(pk, v => { restore(); applyColor("fc", v); });
     pk.click(); return;
   }
   if ("fc" in b.dataset) { closePop(); applyColor("fc", b.dataset.fc); return; }
@@ -2837,7 +2853,7 @@ tb.addEventListener("click", e => {
     const trig = b.closest(".menu").querySelector("[data-pal]").getBoundingClientRect();
     closePop(); const restore = saveRange(), pk = document.getElementById("bgcPick");
     pk.style.left = Math.round(trig.left) + "px"; pk.style.top = Math.round(trig.bottom) + "px";
-    pk.onchange = () => { restore(); applyColor("bg", pk.value); };
+    armPicker(pk, v => { restore(); applyColor("bg", v); });
     pk.click(); return;
   }
   if ("bg" in b.dataset) { closePop(); applyColor("bg", b.dataset.bg); return; }
@@ -2847,7 +2863,7 @@ tb.addEventListener("click", e => {
     const trig = b.closest(".menu").querySelector("[data-pal]").getBoundingClientRect();
     closePop(); const pk = document.getElementById("bgPick");
     pk.style.left = Math.round(trig.left) + "px"; pk.style.top = Math.round(trig.bottom) + "px";
-    pk.onchange = () => blankImage(pk.value);
+    armPicker(pk, v => blankImage(v));
     pk.click(); return;
   }
   if (b.dataset.cmd) { closePop(); CMDS[b.dataset.cmd](); }
