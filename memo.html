@@ -40,6 +40,9 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .imgx-pop{position:fixed;z-index:121;display:flex;flex-direction:column;gap:2px;padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 .imgx-pop[hidden]{display:none}
 .imgx-bar .imgx-pop button{text-align:left;padding:5px 12px}
+.imgx-pop button{flex:none;width:auto;height:auto;margin:0;font:inherit;font-size:13px;font-weight:400;padding:5px 12px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap;text-align:left}
+.imgx-pop button:hover{background:var(--line)}
+.imgx-pop{color:var(--ink)}
 .imgx-grip{position:absolute;right:-10px;bottom:-10px;width:20px;height:20px;border-radius:50%;background:#339af0;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);cursor:nwse-resize;pointer-events:auto;touch-action:none}
 .imgx-bar{flex:none;position:static;margin-bottom:6px;padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;color:var(--ink)}
 .imgx-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
@@ -1495,7 +1498,7 @@ let imgBack = null;
   document.addEventListener("pointerdown", e => {
     if (!img) return;
     const t = e.target;
-    if (t === img || box.contains(t) || bar.contains(t) || (sh && sh.wrap.contains(t))) return;
+    if (t === img || box.contains(t) || bar.contains(t) || (typeof bpop !== "undefined" && bpop.contains(t)) || (sh && sh.wrap.contains(t))) return;
     if (t.closest && t.closest('#tb [data-cmd="undo"],#tb [data-cmd="redo"],#tb #fontSel')) return;   // 실행 취소·다시 실행 버튼, 글꼴 선택은 이미지 선택을 유지
     if (sh) { finishPoly(); commit(); }   // 편집 중 밖을 눌러도 버리지 않고 이미지에 반영
     hide();
@@ -1560,7 +1563,8 @@ let imgBack = null;
   /* 배경색 버튼(글자 넣기·도형 넣기): 색 고르기 + 투명 비율 슬라이드바(기본 50%) */
   const BPAL = ["#fff3a3", "#ffffff", "#000000", "#f1f3f5", "#fffbe0", "#fff0f5", "#f0fff0"];
   const bpop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">배경색</div><div style="font-size:11.5px;opacity:.7">색을 누르면 바로 적용돼요</div><div style="display:flex;gap:6px">' + BPAL.map(c => '<button type="button" data-bpc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-bpk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-bpr min="0" max="100" step="5" value="50" style="flex:1;min-width:110px"><span data-bpv style="min-width:36px;text-align:right">50%</span></label><button type="button" data-bpn title="배경을 칠하지 않아요">배경 없음</button>');
-  bpop.hidden = true; bar.appendChild(bpop);
+  bpop.hidden = true; document.body.appendChild(bpop);   /* 이미지 편집 화면(overlay) 위에 보이도록 body 에 둠 */
+  bpop.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
   const bpk = document.createElement("input"); bpk.type = "color"; bpk.tabIndex = -1; bpk.setAttribute("aria-hidden", "true");
   bpk.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"; bar.appendChild(bpk);
   const bpr = bpop.querySelector("[data-bpr]"), bpv = bpop.querySelector("[data-bpv]");
