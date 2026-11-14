@@ -1186,29 +1186,54 @@ const FC_DEF = "#2b8a3e", BG_DEF = "#f6cbed";
 const cst = { fc: { c: FC_DEF, a: 1 }, bg: { c: BG_DEF, a: 1 } };
 let palBack = null;
 const rgbaOf = (hex, a) => { if (a >= 1 || !/^#[0-9a-f]{6}$/i.test(hex)) return hex; const n = parseInt(hex.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + (Math.round(a * 100) / 100) + ")"; };
+function selOffsets() {   // 선택 범위를 글자 위치(offset)로 기억: span 을 풀어도 선택이 유지되도록
+  const s = getSelection(); if (!s.rangeCount) return null;
+  const r = s.getRangeAt(0), pre = document.createRange();
+  pre.selectNodeContents(ta); pre.setEnd(r.startContainer, r.startOffset);
+  const a = pre.toString().length; return [a, a + r.toString().length];
+}
+function restoreOffsets(o) {
+  if (!o) return;
+  const w = document.createTreeWalker(ta, NodeFilter.SHOW_TEXT), r = document.createRange();
+  let n, pos = 0, set0 = false;
+  while ((n = w.nextNode())) {
+    const len = n.nodeValue.length;
+    if (!set0 && o[0] <= pos + len) { r.setStart(n, o[0] - pos); set0 = true; }
+    if (set0 && o[1] <= pos + len) { r.setEnd(n, o[1] - pos); break; }
+    pos += len;
+  }
+  if (!set0) return;
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+}
 function clearProp(prop, rgb) {
   const s = getSelection(); if (!s.rangeCount) return;
+  const off = selOffsets();
   const r = s.getRangeAt(0);
   ta.querySelectorAll("span[style]").forEach(sp => {
     if (!r.intersectsNode(sp) || sp.style[prop] !== rgb) return;
     sp.style[prop] = "";
     if (!sp.getAttribute("style")) { while (sp.firstChild) sp.before(sp.firstChild); sp.remove(); }
   });
+  restoreOffsets(off);
   ta.dispatchEvent(new Event("input", { bubbles: true }));
 }
 function setInd(kind) {   // 툴바 버튼의 색 표시
-  const st = cst[kind], b = document.querySelector(kind === "fc" ? "#fcBtn b" : "#bgBtn b"), col = rgbaOf(st.c, st.a);
-  if (b) { if (kind === "fc") b.style.borderBottomColor = col; else b.style.background = col; }
+  const st = cst[kind], b = document.querySelector(kind === "fc" ? "#fcBtn b" : "#bgBtn b"), col = st.off ? "" : rgbaOf(st.c, st.a);
+  if (b) { if (kind === "fc") b.style.borderBottomColor = col || FC_DEF; else b.style.background = col; }
 }
 function syncPal(p) {   // 팝업을 열 때: 현재 색 표시 + 투명도 슬라이더
   const kind = p.id === "popFc" ? "fc" : "bg", st = cst[kind], id = kind === "fc" ? "Fc" : "Bg";
-  p.querySelectorAll("button.sw").forEach(b => b.classList.toggle("cur", (b.dataset[kind] || "").toLowerCase() === st.c.toLowerCase()));
+  p.querySelectorAll("button.sw").forEach(b => b.classList.toggle("cur", !st.off && (b.dataset[kind] || "").toLowerCase() === st.c.toLowerCase()));
   const r = document.getElementById("al" + id); r.value = String(Math.round((1 - st.a) * 100));
   document.getElementById("al" + id + "V").textContent = r.value + "%";
 }
 function applyColor(kind, hex) {   // hex 가 "" 이면 되돌리기
-  if (!hex) { paint(kind, ""); return; }
-  const st = cst[kind]; st.c = hex; setInd(kind);
+  if (!hex) {   // 기본 글자색으로 / 배경색 없음: 표시도 기본으로, 선택이 없으면 이어서 입력하는 글자도 기본으로
+    cst[kind] = { c: kind === "fc" ? FC_DEF : BG_DEF, a: 1, off: true }; setInd(kind);
+    if (getSelection().isCollapsed && !ta.disabled) { ta.focus(); caretStyle(kind === "fc" ? "color" : "backgroundColor", kind === "fc" ? FC_DEF : "transparent"); return; }
+    paint(kind, ""); return;
+  }
+  const st = cst[kind]; st.c = hex; st.off = false; setInd(kind);
   paint(kind, rgbaOf(hex, st.a));
 }
 function paint(kind, c) {
@@ -1647,7 +1672,7 @@ let imgBack = null;
   window.addEventListener("scroll", closeBg, true); window.addEventListener("resize", closeBg);
   /* 페인트 색(바탕색): 글자·도형·선의 색(sd.color)과 완전히 따로 저장. 페인트 색을 바꾸면 글자·도형·선의 기본 색만 보색으로 맞추고, 그 반대(글자·도형·선 색 → 페인트 색)는 하지 않음 */
   const PPAL = ["#fff3a3", "#ffffff", "#000000", "#f1f3f5", "#ffe3e3", "#d0ebff", "#d3f9d8", "#e5dbff"];
-  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 누르면 바로 적용돼요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label>');
+  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="이 창을 연 뒤에 바꾼 페인트 색·투명도·글자/도형/선 색을 모두 취소하고, 연 때의 상태로 되돌려요">기존 페인트 색 유지</button>');
   ppop.hidden = true; document.body.appendChild(ppop);
   ppop.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
   const ppk = document.createElement("input"); ppk.type = "color"; ppk.tabIndex = -1; ppk.setAttribute("aria-hidden", "true");
@@ -1675,14 +1700,16 @@ let imgBack = null;
     if (!sh) return;
     if (c) {
       sd.pcolor = c; sd.color = complement(c); qc("color").value = sd.color;   // 글자·도형·선 기본 색 = 페인트 색의 보색
-      toast("페인트 색을 바꿨어요. 글자·도형·선 넣기의 색은 보색(" + sd.color + ")으로 맞췄어요");
+      toast("페인트 색을 골랐어요. 이미지에서 채울 곳을 클릭하면 칠해져요 (글자·도형·선 색은 보색 " + sd.color + ")");
     }
     if (t != null) sd.fop = Math.max(0.05, 1 - t / 100);
     ppSync();
   }
+  let ppSnap = null;
   function togglePp(b) {
     if (!ppop.hidden) { closePp(); return; }
     closeSave(); closeBg(); ppSync(); ppop.hidden = false;
+    ppSnap = { pcolor: sd.pcolor, fop: sd.fop, color: sd.color };   // 열 때의 상태 (기존 페인트 색 유지용)
     const r = b.getBoundingClientRect();
     ppop.style.left = clamp(r.left, 4, Math.max(4, innerWidth - ppop.offsetWidth - 4)) + "px";
     ppop.style.top = clamp(r.bottom + 4, 4, Math.max(4, innerHeight - ppop.offsetHeight - 4)) + "px";
@@ -1691,6 +1718,10 @@ let imgBack = null;
   ppop.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     if (b.dataset.ppc) ppApply(b.dataset.ppc, null);
+    else if (b.hasAttribute("data-ppkeep")) {
+      if (ppSnap) { sd.pcolor = ppSnap.pcolor; sd.fop = ppSnap.fop; sd.color = ppSnap.color; qc("color").value = sd.color; }
+      ppSync(); closePp(); toast("기존 페인트 색을 유지했어요");
+    }
     else if (b.hasAttribute("data-ppk")) { ppk.value = sd.pcolor; ppk.click(); }
   });
   ppop.addEventListener("input", e => { if (e.target === ppr) { ppv.textContent = ppr.value + "%"; ppApply(null, +ppr.value); } });
