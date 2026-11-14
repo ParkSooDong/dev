@@ -1747,7 +1747,7 @@ let imgBack = null;
   document.addEventListener("pointerdown", e => {
     if (!img) return;
     const t = e.target;
-    if (t === img || box.contains(t) || bar.contains(t) || (typeof bpop !== "undefined" && bpop.contains(t)) || (sh && sh.wrap.contains(t))) return;
+    if (t === img || box.contains(t) || bar.contains(t) || (typeof bpop !== "undefined" && bpop.contains(t)) || (typeof ppop !== "undefined" && ppop.contains(t)) || (sh && sh.wrap.contains(t))) return;
     if (t.closest && t.closest('#tb [data-cmd="undo"],#tb [data-cmd="redo"],#tb #fontSel')) return;   // 실행 취소·다시 실행 버튼, 글꼴 선택은 이미지 선택을 유지
     if (sh) { finishPoly(); commit(); }   // 편집 중 밖을 눌러도 버리지 않고 이미지에 반영
     hide();
