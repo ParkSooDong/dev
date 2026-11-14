@@ -6,9 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>메모장</title>
 <style>
-:root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fffefb;--ok:#2e7d32;--err:#b3261e;
+:root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fffefb;--mfg:#2b8a3e;--ok:#2e7d32;--err:#b3261e;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--card:#1e1d21;--ok:#81c784;--err:#ff8a80}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--card:#1e1d21;--mfg:#4cc764;--ok:#81c784;--err:#ff8a80}}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;display:flex;flex-direction:column;padding:12px;gap:8px}
@@ -31,7 +31,7 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .slot{flex:1;min-height:0;position:relative}
 .pane{position:absolute;inset:0;display:flex;flex-direction:column;gap:6px}
 .rich{display:block;overflow:auto;word-break:break-word;outline:none}
-.rich:empty::before{content:attr(data-ph);color:var(--mute);pointer-events:none}
+.rich:empty::before{content:attr(data-ph);color:var(--mute);font-size:14px;pointer-events:none}
 .rich img{display:inline-block;vertical-align:middle;max-width:100%;height:auto;margin:2px 0}
 /* 이미지 크기 조절 / 도형 넣기 */
 .imgx-box{position:fixed;z-index:110;border:2px solid #339af0;box-sizing:border-box;pointer-events:none}
@@ -96,7 +96,7 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 ::highlight(find){background:#ffe066;color:#1c1b19}
 ::highlight(findcur){background:#ff922b;color:#1c1b19}
 .edwrap{flex:1}
-.rich{flex:1;min-height:0;width:100%;font:inherit;font-size:13px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+.rich{flex:1;min-height:0;width:100%;font:inherit;font-size:21px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--mfg)}
 /* 서식 툴바 */
 .edsplit{display:grid;grid-template-rows:minmax(0,80fr) 10px minmax(0,10fr) 10px minmax(0,10fr);min-height:0}
 /* 비교 모드: 위/아래 → 왼쪽(원본)/오른쪽(변경본), 스크롤바는 하나(두 영역이 함께 스크롤) */
@@ -220,6 +220,15 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tb .pop .bgsec button.bgpk{height:28px;padding:0 8px;border:1px solid var(--line);border-radius:7px;font-size:12.5px}
 .tb .pop .bgsz{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink)}
 .tb .pop .bgsz input{width:64px;height:26px;padding:0 4px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px;text-align:right}
+.tb .pop.cpal:not([hidden]){display:flex;flex-direction:column;gap:6px;padding:8px;min-width:244px}
+.tb .pop.cpal .cpsw{display:grid;grid-template-columns:repeat(7,30px);gap:5px}
+.tb .pop.cpal button.sw{min-width:0;width:30px;height:30px;padding:0;border:1.5px solid var(--line);border-radius:7px}
+.tb .pop.cpal button.sw:hover{outline:2px solid #339af0}
+.tb .pop.cpal button.sw.cur{outline:2px solid var(--ink);outline-offset:1px}
+.tb .pop.cpal button.bgpk{height:28px;padding:0 8px;border:1px solid var(--line);border-radius:7px;font-size:12.5px}
+.tb .pop.cpal .cpa{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink)}
+.tb .pop.cpal .cpa input[type=range]{flex:1;min-width:110px;width:auto;padding:0;border:0;background:transparent}
+.tb .pop.cpal .cpa span:last-child{min-width:36px;text-align:right}
 .tb .pop.pal:not([hidden]){display:grid;grid-template-columns:repeat(4,32px);gap:4px;min-width:0}
 .tb .pop.pal button{min-width:0;width:32px;padding:0;justify-content:center}
 .tb .pop.pal button.sw{border:1.5px solid var(--line)}
@@ -268,17 +277,16 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="strike" title="취소선" aria-label="취소선" aria-pressed="false"><s>S</s></button>
   <select id="fontSel" title="글꼴 (메모 글자와 이미지 '글자 넣기'에 쓰여요 · 기본 맑은 고딕)" aria-label="글꼴"><option value="Malgun Gothic">맑은 고딕</option></select>
   <div class="menu"><button type="button" data-pal title="글자 크기" aria-label="글자 크기" aria-haspopup="true" aria-expanded="false"><span style="font-size:11px">가</span><span style="font-size:17px;font-weight:600">가</span></button><div class="pop" hidden style="min-width:110px;max-height:50vh;overflow:auto"><button type="button" data-fs="8">8</button><button type="button" data-fs="13">13</button><button type="button" data-fs="21">21</button><button type="button" data-fs="34">34</button><button type="button" data-fs="55">55</button><button type="button" data-fs="89">89</button><button type="button" data-fs="144">144</button><button type="button" data-fs="238">238</button><button type="button" data-fs="" style="font-size:13px">기본 크기</button></div></div>
-  <div class="menu"><button type="button" data-pal title="글자색" aria-label="글자색" aria-haspopup="true" aria-expanded="false"><b style="border-bottom:3px solid #f06595;line-height:1.1">A</b></button><div class="pop pal wide" hidden><button type="button" class="sw" data-fc="#000000" style="background:#000000" title="#000000" aria-label="#000000"></button><button type="button" class="sw" data-fc="#212529" style="background:#212529" title="#212529" aria-label="#212529"></button><button type="button" class="sw" data-fc="#343a40" style="background:#343a40" title="#343a40" aria-label="#343a40"></button><button type="button" class="sw" data-fc="#495057" style="background:#495057" title="#495057" aria-label="#495057"></button><button type="button" class="sw" data-fc="#6c757d" style="background:#6c757d" title="#6c757d" aria-label="#6c757d"></button><button type="button" class="sw" data-fc="#868e96" style="background:#868e96" title="#868e96" aria-label="#868e96"></button><button type="button" class="sw" data-fc="#adb5bd" style="background:#adb5bd" title="#adb5bd" aria-label="#adb5bd"></button><button type="button" class="sw" data-fc="#ced4da" style="background:#ced4da" title="#ced4da" aria-label="#ced4da"></button><button type="button" class="sw" data-fc="#dee2e6" style="background:#dee2e6" title="#dee2e6" aria-label="#dee2e6"></button><button type="button" class="sw" data-fc="#e9ecef" style="background:#e9ecef" title="#e9ecef" aria-label="#e9ecef"></button><button type="button" class="sw" data-fc="#f1f3f5" style="background:#f1f3f5" title="#f1f3f5" aria-label="#f1f3f5"></button><button type="button" class="sw" data-fc="#ffffff" style="background:#ffffff" title="#ffffff" aria-label="#ffffff"></button><button type="button" class="sw" data-fc="#c92a2a" style="background:#c92a2a" title="#c92a2a" aria-label="#c92a2a"></button><button type="button" class="sw" data-fc="#a61e4d" style="background:#a61e4d" title="#a61e4d" aria-label="#a61e4d"></button><button type="button" class="sw" data-fc="#862e9c" style="background:#862e9c" title="#862e9c" aria-label="#862e9c"></button><button type="button" class="sw" data-fc="#5f3dc4" style="background:#5f3dc4" title="#5f3dc4" aria-label="#5f3dc4"></button><button type="button" class="sw" data-fc="#364fc7" style="background:#364fc7" title="#364fc7" aria-label="#364fc7"></button><button type="button" class="sw" data-fc="#1864ab" style="background:#1864ab" title="#1864ab" aria-label="#1864ab"></button><button type="button" class="sw" data-fc="#0b7285" style="background:#0b7285" title="#0b7285" aria-label="#0b7285"></button><button type="button" class="sw" data-fc="#087f5b" style="background:#087f5b" title="#087f5b" aria-label="#087f5b"></button><button type="button" class="sw" data-fc="#2b8a3e" style="background:#2b8a3e" title="#2b8a3e" aria-label="#2b8a3e"></button><button type="button" class="sw" data-fc="#5c940d" style="background:#5c940d" title="#5c940d" aria-label="#5c940d"></button><button type="button" class="sw" data-fc="#e67700" style="background:#e67700" title="#e67700" aria-label="#e67700"></button><button type="button" class="sw" data-fc="#d9480f" style="background:#d9480f" title="#d9480f" aria-label="#d9480f"></button><button type="button" class="sw" data-fc="#f03e3e" style="background:#f03e3e" title="#f03e3e" aria-label="#f03e3e"></button><button type="button" class="sw" data-fc="#d6336c" style="background:#d6336c" title="#d6336c" aria-label="#d6336c"></button><button type="button" class="sw" data-fc="#ae3ec9" style="background:#ae3ec9" title="#ae3ec9" aria-label="#ae3ec9"></button><button type="button" class="sw" data-fc="#7048e8" style="background:#7048e8" title="#7048e8" aria-label="#7048e8"></button><button type="button" class="sw" data-fc="#4263eb" style="background:#4263eb" title="#4263eb" aria-label="#4263eb"></button><button type="button" class="sw" data-fc="#1c7ed6" style="background:#1c7ed6" title="#1c7ed6" aria-label="#1c7ed6"></button><button type="button" class="sw" data-fc="#1098ad" style="background:#1098ad" title="#1098ad" aria-label="#1098ad"></button><button type="button" class="sw" data-fc="#0ca678" style="background:#0ca678" title="#0ca678" aria-label="#0ca678"></button><button type="button" class="sw" data-fc="#37b24d" style="background:#37b24d" title="#37b24d" aria-label="#37b24d"></button><button type="button" class="sw" data-fc="#74b816" style="background:#74b816" title="#74b816" aria-label="#74b816"></button><button type="button" class="sw" data-fc="#f59f00" style="background:#f59f00" title="#f59f00" aria-label="#f59f00"></button><button type="button" class="sw" data-fc="#f76707" style="background:#f76707" title="#f76707" aria-label="#f76707"></button><button type="button" class="sw" data-fc="#ff6b6b" style="background:#ff6b6b" title="#ff6b6b" aria-label="#ff6b6b"></button><button type="button" class="sw" data-fc="#f06595" style="background:#f06595" title="#f06595" aria-label="#f06595"></button><button type="button" class="sw" data-fc="#cc5de8" style="background:#cc5de8" title="#cc5de8" aria-label="#cc5de8"></button><button type="button" class="sw" data-fc="#845ef7" style="background:#845ef7" title="#845ef7" aria-label="#845ef7"></button><button type="button" class="sw" data-fc="#5c7cfa" style="background:#5c7cfa" title="#5c7cfa" aria-label="#5c7cfa"></button><button type="button" class="sw" data-fc="#339af0" style="background:#339af0" title="#339af0" aria-label="#339af0"></button><button type="button" class="sw" data-fc="#22b8cf" style="background:#22b8cf" title="#22b8cf" aria-label="#22b8cf"></button><button type="button" class="sw" data-fc="#20c997" style="background:#20c997" title="#20c997" aria-label="#20c997"></button><button type="button" class="sw" data-fc="#51cf66" style="background:#51cf66" title="#51cf66" aria-label="#51cf66"></button><button type="button" class="sw" data-fc="#94d82d" style="background:#94d82d" title="#94d82d" aria-label="#94d82d"></button><button type="button" class="sw" data-fc="#fcc419" style="background:#fcc419" title="#fcc419" aria-label="#fcc419"></button><button type="button" class="sw" data-fc="#ff922b" style="background:#ff922b" title="#ff922b" aria-label="#ff922b"></button><button type="button" class="sw" data-fc="#ffa8a8" style="background:#ffa8a8" title="#ffa8a8" aria-label="#ffa8a8"></button><button type="button" class="sw" data-fc="#faa2c1" style="background:#faa2c1" title="#faa2c1" aria-label="#faa2c1"></button><button type="button" class="sw" data-fc="#e599f7" style="background:#e599f7" title="#e599f7" aria-label="#e599f7"></button><button type="button" class="sw" data-fc="#b197fc" style="background:#b197fc" title="#b197fc" aria-label="#b197fc"></button><button type="button" class="sw" data-fc="#91a7ff" style="background:#91a7ff" title="#91a7ff" aria-label="#91a7ff"></button><button type="button" class="sw" data-fc="#74c0fc" style="background:#74c0fc" title="#74c0fc" aria-label="#74c0fc"></button><button type="button" class="sw" data-fc="#66d9e8" style="background:#66d9e8" title="#66d9e8" aria-label="#66d9e8"></button><button type="button" class="sw" data-fc="#63e6be" style="background:#63e6be" title="#63e6be" aria-label="#63e6be"></button><button type="button" class="sw" data-fc="#8ce99a" style="background:#8ce99a" title="#8ce99a" aria-label="#8ce99a"></button><button type="button" class="sw" data-fc="#c0eb75" style="background:#c0eb75" title="#c0eb75" aria-label="#c0eb75"></button><button type="button" class="sw" data-fc="#ffe066" style="background:#ffe066" title="#ffe066" aria-label="#ffe066"></button><button type="button" class="sw" data-fc="#ffc078" style="background:#ffc078" title="#ffc078" aria-label="#ffc078"></button><button type="button" class="rs" data-fc="">기본 글자색</button><button type="button" class="rs" data-fcpick>직접 선택…</button></div></div>
-  <div class="menu"><button type="button" data-pal title="배경색(형광펜)" aria-label="배경색" aria-haspopup="true" aria-expanded="false"><b style="background:#fff3a3;color:#1c1b19;padding:0 4px;border-radius:3px;line-height:1.3">A</b></button><div class="pop pal" hidden><button type="button" class="sw" data-bg="#fff3a3" style="background:#fff3a3" title="#fff3a3" aria-label="#fff3a3"></button><button type="button" class="sw" data-bg="#ffd8a8" style="background:#ffd8a8" title="#ffd8a8" aria-label="#ffd8a8"></button><button type="button" class="sw" data-bg="#ffd0e0" style="background:#ffd0e0" title="#ffd0e0" aria-label="#ffd0e0"></button><button type="button" class="sw" data-bg="#c3f0ca" style="background:#c3f0ca" title="#c3f0ca" aria-label="#c3f0ca"></button><button type="button" class="sw" data-bg="#bfe0ff" style="background:#bfe0ff" title="#bfe0ff" aria-label="#bfe0ff"></button><button type="button" class="sw" data-bg="#e0d4ff" style="background:#e0d4ff" title="#e0d4ff" aria-label="#e0d4ff"></button><button type="button" class="sw" data-bg="#e3e1db" style="background:#e3e1db" title="#e3e1db" aria-label="#e3e1db"></button><button type="button" class="sw" data-bg="#ffc9c9" style="background:#ffc9c9" title="#ffc9c9" aria-label="#ffc9c9"></button><button type="button" class="rs" data-bg="">배경색 없음</button></div></div>
+  <div class="menu"><button type="button" data-pal id="fcBtn" title="글자색 (진한 색)" aria-label="글자색" aria-haspopup="true" aria-expanded="false"><b style="border-bottom:3px solid #2b8a3e;line-height:1.1">A</b></button><div class="pop cpal" id="popFc" hidden><div class="bgttl">글자 색</div><div class="bgnote">진한 색 · 누르면 바로 적용돼요</div><div class="cpsw"><button type="button" class="sw" data-fc="#2b8a3e" style="background:#2b8a3e" title="#2b8a3e" aria-label="#2b8a3e"></button><button type="button" class="sw" data-fc="#087f5b" style="background:#087f5b" title="#087f5b" aria-label="#087f5b"></button><button type="button" class="sw" data-fc="#5c940d" style="background:#5c940d" title="#5c940d" aria-label="#5c940d"></button><button type="button" class="sw" data-fc="#1b5e20" style="background:#1b5e20" title="#1b5e20" aria-label="#1b5e20"></button><button type="button" class="sw" data-fc="#000000" style="background:#000000" title="#000000" aria-label="#000000"></button><button type="button" class="sw" data-fc="#343a40" style="background:#343a40" title="#343a40" aria-label="#343a40"></button><button type="button" class="sw" data-fc="#c92a2a" style="background:#c92a2a" title="#c92a2a" aria-label="#c92a2a"></button><button type="button" class="sw" data-fc="#a61e4d" style="background:#a61e4d" title="#a61e4d" aria-label="#a61e4d"></button><button type="button" class="sw" data-fc="#862e9c" style="background:#862e9c" title="#862e9c" aria-label="#862e9c"></button><button type="button" class="sw" data-fc="#5f3dc4" style="background:#5f3dc4" title="#5f3dc4" aria-label="#5f3dc4"></button><button type="button" class="sw" data-fc="#364fc7" style="background:#364fc7" title="#364fc7" aria-label="#364fc7"></button><button type="button" class="sw" data-fc="#1864ab" style="background:#1864ab" title="#1864ab" aria-label="#1864ab"></button><button type="button" class="sw" data-fc="#0b7285" style="background:#0b7285" title="#0b7285" aria-label="#0b7285"></button><button type="button" class="sw" data-fc="#d9480f" style="background:#d9480f" title="#d9480f" aria-label="#d9480f"></button></div><button type="button" class="bgpk" data-fcpick title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div class="cpa"><span>투명</span><input type="range" id="alFc" min="0" max="90" step="5" value="0" aria-label="글자색 투명도"><span id="alFcV">0%</span></div><button type="button" class="bgpk" data-fc="" title="선택한 글자의 색을 기본(녹색)으로 되돌려요">기본 글자색으로</button></div></div><div class="menu"><button type="button" data-pal id="bgBtn" title="배경색(형광펜, 연한 색)" aria-label="배경색" aria-haspopup="true" aria-expanded="false"><b style="background:#f5d6f5;color:#1c1b19;padding:0 4px;border-radius:3px;line-height:1.3">A</b></button><div class="pop cpal" id="popBg" hidden><div class="bgttl">바탕 색</div><div class="bgnote">연한 색 · 누르면 바로 적용돼요</div><div class="cpsw"><button type="button" class="sw" data-bg="#f5d6f5" style="background:#f5d6f5" title="#f5d6f5" aria-label="#f5d6f5"></button><button type="button" class="sw" data-bg="#fff3a3" style="background:#fff3a3" title="#fff3a3" aria-label="#fff3a3"></button><button type="button" class="sw" data-bg="#ffd8a8" style="background:#ffd8a8" title="#ffd8a8" aria-label="#ffd8a8"></button><button type="button" class="sw" data-bg="#ffd0e0" style="background:#ffd0e0" title="#ffd0e0" aria-label="#ffd0e0"></button><button type="button" class="sw" data-bg="#c3f0ca" style="background:#c3f0ca" title="#c3f0ca" aria-label="#c3f0ca"></button><button type="button" class="sw" data-bg="#bfe0ff" style="background:#bfe0ff" title="#bfe0ff" aria-label="#bfe0ff"></button><button type="button" class="sw" data-bg="#e0d4ff" style="background:#e0d4ff" title="#e0d4ff" aria-label="#e0d4ff"></button><button type="button" class="sw" data-bg="#e3e1db" style="background:#e3e1db" title="#e3e1db" aria-label="#e3e1db"></button><button type="button" class="sw" data-bg="#ffc9c9" style="background:#ffc9c9" title="#ffc9c9" aria-label="#ffc9c9"></button><button type="button" class="sw" data-bg="#d0f4ea" style="background:#d0f4ea" title="#d0f4ea" aria-label="#d0f4ea"></button><button type="button" class="sw" data-bg="#c5f6fa" style="background:#c5f6fa" title="#c5f6fa" aria-label="#c5f6fa"></button><button type="button" class="sw" data-bg="#ffe8cc" style="background:#ffe8cc" title="#ffe8cc" aria-label="#ffe8cc"></button><button type="button" class="sw" data-bg="#e9fac8" style="background:#e9fac8" title="#e9fac8" aria-label="#e9fac8"></button><button type="button" class="sw" data-bg="#f8f0fc" style="background:#f8f0fc" title="#f8f0fc" aria-label="#f8f0fc"></button></div><button type="button" class="bgpk" data-bgcpick title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div class="cpa"><span>투명</span><input type="range" id="alBg" min="0" max="90" step="5" value="0" aria-label="바탕색 투명도"><span id="alBgV">0%</span></div><button type="button" class="bgpk" data-bg="">배경색 없음</button></div></div>
   <div class="menu"><button type="button" data-pal title="정렬" aria-label="정렬" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h14"/></svg></button><div class="pop" hidden><button type="button" data-cmd="alL">왼쪽 정렬</button><button type="button" data-cmd="alC">가운데 정렬</button><button type="button" data-cmd="alR">오른쪽 정렬</button></div></div>
   <button type="button" data-cmd="clear" title="서식 지우기 (선택한 글자)" aria-label="서식 지우기"><svg viewBox="0 0 24 24"><path d="M4 5h10M9 5l-2.5 14M13 19h6M15.5 12.5l4 4M19.5 12.5l-4 4"/></svg></button>
   <i class="sep"></i>
   <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
   <div class="menu" id="tblWrap"><button type="button" data-pal id="tblBtn" title="표: 표 삽입 / 표 편집" aria-label="표" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg><span>표</span></button><div class="pop" id="tblPop" hidden><div id="tblMv"><button type="button" data-cmd="table" title="행·열 수를 정해 표를 넣어요">표 삽입</button><button type="button" id="tblEditGo" data-needtbl title="행·열 추가/삭제 (표 안의 칸을 클릭하면 사용할 수 있어요)">표 편집</button></div><div id="tblLv" hidden><button type="button" data-tbl-back="1">← 뒤로</button><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div></div>
   <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="image">파일 열기</button><div class="bgsec"><div class="bgttl" title="고른 색을 바탕으로 한 이미지를 메모에 넣어요 (손글씨·도형으로 그리기용)">바탕 이미지 넣기</div><div class="bgnote">색을 누르면 바로 들어가요</div><div class="bgrow"><button type="button" class="sw" data-bgc="#ffffff" style="background:#ffffff" title="흰색" aria-label="흰색"></button><button type="button" class="sw" data-bgc="#000000" style="background:#000000" title="검정색" aria-label="검정색"></button><button type="button" class="sw" data-bgc="#f1f3f5" style="background:#f1f3f5" title="아주 연한 회색" aria-label="아주 연한 회색"></button><button type="button" class="sw" data-bgc="#fffbe0" style="background:#fffbe0" title="아주 연한 노란색" aria-label="아주 연한 노란색"></button><button type="button" class="sw" data-bgc="#fff0f5" style="background:#fff0f5" title="아주 연한 핑크색" aria-label="아주 연한 핑크색"></button><button type="button" class="sw" data-bgc="#f0fff0" style="background:#f0fff0" title="아주 연한 녹색" aria-label="아주 연한 녹색"></button></div><button type="button" class="bgpk" data-bgpick title="색상 팔레트에서 원하는 색을 골라 넣어요">색상 팔레트에서 선택…</button><div class="bgsz"><span>크기</span><input type="number" id="bgW" min="24" max="4000" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" id="bgH" min="24" max="4000" step="1" aria-label="세로 픽셀"><span>px</span></div><button type="button" class="bgpk" data-bgreset title="현재 메모창 비율에 맞춘 크기로 되돌려요">기본 크기로</button></div></div></div>
-  <input type="color" id="fcPick" value="#f06595" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
+  <input type="color" id="fcPick" value="#2b8a3e" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="color" id="bgPick" value="#ffffff" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
-  <input type="file" id="imgFile" accept="image/*" multiple hidden>
+  <input type="color" id="bgcPick" value="#f5d6f5" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"><input type="file" id="imgFile" accept="image/*" multiple hidden>
   <input type="file" id="attFile" multiple hidden>
   <div class="menu" id="attMenu"><button type="button" data-pal id="attListBtn" title="파일: 메모에 파일 첨부 / PC로 저장 / 첨부 목록" aria-label="파일" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M20 11.5l-7.6 7.6a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.3-7.3"/></svg><span>파일</span></button><div class="pop" id="attPop" hidden><div id="attMv"><button type="button" data-cmd="attach" title="엑셀·문서·이미지 등 파일을 골라 메모 안에 넣어요">PC에서 메모로 첨부</button><button type="button" data-cmd="attsave" title="메모에 첨부된 파일을 모두 PC에 파일로 저장해요">메모에서 PC로 저장</button><button type="button" id="attListGo" title="첨부된 파일을 하나씩 저장하거나 삭제해요">첨부된 파일 목록</button></div><div id="attLv" hidden></div></div></div>
   <button type="button" data-cmd="find" title="찾기" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
@@ -442,7 +450,7 @@ function makeRich(el) {
       if (!it || !LT.has(it.t)) continue;
       const r = { t: it.t };
       for (const k of ["x1", "y1", "x2", "y2", "tx", "ty"]) r[k] = num(it[k], -1e5, 1e5, 0);
-      r.color = HEX.test(it.color) ? it.color : "#f06595"; r.bgc = HEX.test(it.bgc) ? it.bgc : null;
+      r.color = HEX.test(it.color) ? it.color : "#2b8a3e"; r.bgc = HEX.test(it.bgc) ? it.bgc : null;
       r.lw = num(it.lw, 1, 40, 3); r.fs = num(it.fs, 6, 400, 21); r.op = num(it.op, 0, 1, 1);
       r.ff = typeof it.ff === "string" ? it.ff.replace(/["'\\;{}<>&\u0000-\u001f]/g, "").trim().slice(0, 80) : "";
       r.bold = !!it.bold; r.ol = !!it.ol; r.fill = !!it.fill; r.fo = it.fo ? 1 : 0; r.bo = it.bo == null ? null : num(it.bo, 0, 1, 1); r.dash = !!it.dash; r.auto = it.auto !== false;
@@ -1170,9 +1178,14 @@ function table() {
     const tw = document.getElementById("tblWrap"); tw.classList.add("pulse"); setTimeout(() => tw.classList.remove("pulse"), 2800);   // 버튼이 잠깐 깜빡여요
   }
 }
-/* 글자색 / 배경색: 선택한 글자에 적용 (선택이 없으면 이어서 입력하는 글자에 적용)
+/* 글자색 / 배경색: 진한 글자색·연한 바탕색 팔레트 + 투명도. 선택한 글자에 적용하고, 선택이 없으면 이어서 입력하는 글자에 적용
+   - 기본 글자색은 녹색(#2b8a3e), 기본 바탕색은 아주 연한 녹색의 보색(#f5d6f5). 이후에는 자유롭게 바꿀 수 있어요
    - 배경색(형광펜)은 글자색을 바꾸지 않고 배경만 칠해요 */
 const INK = "#1c1b19", MARK = "#010203";
+const FC_DEF = "#2b8a3e", BG_DEF = "#f5d6f5";
+const cst = { fc: { c: FC_DEF, a: 1 }, bg: { c: BG_DEF, a: 1 } };
+let palBack = null;
+const rgbaOf = (hex, a) => { if (a >= 1 || !/^#[0-9a-f]{6}$/i.test(hex)) return hex; const n = parseInt(hex.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + (Math.round(a * 100) / 100) + ")"; };
 function clearProp(prop, rgb) {
   const s = getSelection(); if (!s.rangeCount) return;
   const r = s.getRangeAt(0);
@@ -1183,10 +1196,27 @@ function clearProp(prop, rgb) {
   });
   ta.dispatchEvent(new Event("input", { bubbles: true }));
 }
+function setInd(kind) {   // 툴바 버튼의 색 표시
+  const st = cst[kind], b = document.querySelector(kind === "fc" ? "#fcBtn b" : "#bgBtn b"), col = rgbaOf(st.c, st.a);
+  if (b) { if (kind === "fc") b.style.borderBottomColor = col; else b.style.background = col; }
+}
+function syncPal(p) {   // 팝업을 열 때: 현재 색 표시 + 투명도 슬라이더
+  const kind = p.id === "popFc" ? "fc" : "bg", st = cst[kind], id = kind === "fc" ? "Fc" : "Bg";
+  p.querySelectorAll("button.sw").forEach(b => b.classList.toggle("cur", (b.dataset[kind] || "").toLowerCase() === st.c.toLowerCase()));
+  const r = document.getElementById("al" + id); r.value = String(Math.round((1 - st.a) * 100));
+  document.getElementById("al" + id + "V").textContent = r.value + "%";
+}
+function applyColor(kind, hex) {   // hex 가 "" 이면 되돌리기
+  if (!hex) { paint(kind, ""); return; }
+  const st = cst[kind]; st.c = hex; setInd(kind);
+  paint(kind, rgbaOf(hex, st.a));
+}
 function paint(kind, c) {
   if (ta.disabled) return;
   ta.focus();
-  if (!c && getSelection().isCollapsed) { say("색을 되돌릴 글자를 먼저 선택해 주세요"); return; }   // 되돌리기는 선택한 글자에만 적용돼요
+  const s = getSelection();
+  if (!c && s.isCollapsed) { say("색을 되돌릴 글자를 먼저 선택해 주세요"); return; }   // 되돌리기는 선택한 글자에만 적용돼요
+  if (c && s.isCollapsed) { caretStyle(kind === "fc" ? "color" : "backgroundColor", c); return; }   // 선택이 없으면 이어서 입력하는 글자에 적용 (글자 크기와 같은 방식이라 순서와 관계없이 함께 유지돼요)
   document.execCommand("styleWithCSS", false, true);   // <font> 대신 style 로 넣어야 저장/내보내기에서 유지돼요
   if (kind === "fc") {
     if (c) exec("foreColor", c);
@@ -1196,8 +1226,15 @@ function paint(kind, c) {
     else { exec("hiliteColor", MARK); clearProp("backgroundColor", "rgb(1, 2, 3)"); clearProp("color", "rgb(28, 27, 25)"); }
   }
   document.execCommand("styleWithCSS", false, false);
-  const bar = tb.querySelector('[data-pal] b' + (kind === "bg" ? '[style*="background"]' : '[style*="border-bottom"]'));
-  if (bar && c) { if (kind === "fc") bar.style.borderBottomColor = c; else bar.style.background = c; }
+}
+for (const [k, id] of [["fc", "Fc"], ["bg", "Bg"]]) {   // 투명도 슬라이더: 놓을 때 현재 색에 적용
+  const r = document.getElementById("al" + id), v = document.getElementById("al" + id + "V");
+  r.addEventListener("input", () => { v.textContent = r.value + "%"; });
+  r.addEventListener("change", () => {
+    cst[k].a = 1 - r.value / 100;
+    if (palBack) palBack();
+    applyColor(k, cst[k].c); palBack = saveRange();
+  });
 }
 /* 글자 크기: 선택한 글자를 px 단위로 지정 (execCommand 는 1~7 단계만 지원해서, 만든 뒤 px 로 바꿔 줘요) */
 function unspan(sp) { while (sp.firstChild) sp.before(sp.firstChild); sp.remove(); }
@@ -1218,20 +1255,23 @@ document.addEventListener("selectionchange", () => {
   const s = getSelection();
   if (!s.rangeCount || !ghost.contains(s.anchorNode)) dropGhost();
 });
-function sizeAtCaret(px) {
+function caretStyle(prop, val) {   // 선택 없이 색·크기를 고른 경우: 같은 ghost span 에 계속 쌓아서, 어떤 순서로 골라도 모두 반영
   const s = getSelection();
-  const size = (px || Math.round(parseFloat(getComputedStyle(ta).fontSize)) || 16) + "px";   // 기본 크기: 메모의 기본 글자 크기
-  if (ghost && ghost.isConnected && ghost.contains(s.anchorNode) && ghost.textContent === "\u200b") {   // 같은 자리에서 다시 고르면 크기만 바꿈
-    ghost.style.fontSize = size; ta.dispatchEvent(new Event("input", { bubbles: true })); return;
-  }
-  dropGhost();
   if (!s.rangeCount || !ta.contains(s.anchorNode)) return;
+  if (ghost && ghost.isConnected && ghost.contains(s.anchorNode) && ghost.textContent === "\u200b") {   // 같은 자리에서 이어서 고르면 속성만 추가/변경
+    ghost.style[prop] = val; ta.dispatchEvent(new Event("input", { bubbles: true })); return;
+  }
+  if (ghost) { if (ghost.isConnected && ghost.contains(s.anchorNode)) ghost = null; else dropGhost(); }
+  if (!s.rangeCount) return;
   const r = s.getRangeAt(0), sp = document.createElement("span"), tn = document.createTextNode("\u200b");
-  sp.style.fontSize = size; sp.appendChild(tn); r.insertNode(sp);
+  sp.style[prop] = val; sp.appendChild(tn); r.insertNode(sp);
   const nr = document.createRange(); nr.setStart(tn, 1); nr.collapse(true);
   s.removeAllRanges(); s.addRange(nr);
   ghost = sp;
   ta.dispatchEvent(new Event("input", { bubbles: true }));
+}
+function sizeAtCaret(px) {
+  caretStyle("fontSize", (px || Math.round(parseFloat(getComputedStyle(ta).fontSize)) || 21) + "px");   // 기본 크기: 메모의 기본 글자 크기(21)
 }
 function setSize(px) {
   if (ta.disabled) return;
@@ -1446,7 +1486,7 @@ let imgBack = null;
   const shp = el("div", "imgx-row",
     '<button type="button" class="ic" data-none aria-label="선택 해제" title="선택 해제: 지금까지 편집한 내용을 이미지에 반영하고, 고른 아이콘을 풀어요 (Esc, 이미지 밖 클릭도 같음)" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M5 3l5.5 15 2.3-6.2L19 9.5z"/><path d="m13.5 13.5 5 5"/></svg></button><button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="hand" aria-label="손글씨" title="손글씨: 마우스나 펜으로 이미지 위에 자유롭게 글씨를 써요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
     '<button type="button" data-m="pic" data-sa="picpaste" title="클립보드에 복사한 캡처 이미지를 올려요 (Ctrl+V도 돼요)">붙여넣기</button><button type="button" data-m="pic" data-sa="picfile" title="이미지 파일을 골라서 올려요 (파일을 끌어다 놓아도 돼요)">파일 선택</button><i class="sep" data-m="pic"></i><button type="button" data-m="text shape line pic" data-sa="pback" title="선택한 요소를 맨 뒤로 보내요 (다른 요소 아래로)">뒤로</button><button type="button" data-m="text shape line pic" data-sa="pfront" title="선택한 요소를 맨 앞으로 가져와요 (다른 요소 위로)">앞으로</button><button type="button" data-m="text shape line pic" data-sa="pdel" title="선택한 요소를 삭제해요 (Delete 키도 같음)">삭제</button><i class="sep" data-m="text shape line pic"></i>' +
-    '<button type="button" data-m="fill" data-sa="pmenu" title="페인트 색: 바탕을 칠할 색을 고르고 투명 비율을 슬라이드바로 정해요. 색을 바꾸면 글자·도형·선 넣기의 기본 색은 보색으로 바뀌어요">페인트 색 <i data-pchip style="display:inline-block;width:12px;height:12px;vertical-align:-1px;border:1px solid #888;border-radius:2px;background:#fff3a3"></i></button><input type="color" data-q="color" data-m="text shape line" value="#f06595" title="색 (글자·도형·선 공통)" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><select data-m="text" data-q="fs" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><input type="color" data-m="none" data-q="bg" value="#fff3a3" hidden aria-hidden="true" tabindex="-1"><button type="button" data-m="text shape" data-sa="bgmenu" title="배경색: 색을 고르고 투명 비율을 슬라이드바로 정해요">배경색</button><select data-q="op" data-m="line pic" title="투명도" aria-label="투명도"></select><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><input type="color" data-m="text" data-q="oc" value="#000000" title="외곽선 색 (고르면 외곽선이 켜져요)" aria-label="외곽선 색"><input type="number" data-m="text" data-q="rot" min="0" max="360" step="1" placeholder="각도°" title="각도 (0~360도): 글자 덩어리 전체가 이 각도만큼 시계 방향으로 기울어요" aria-label="각도"><button type="button" data-m="text" data-q="fh" aria-pressed="false" title="글 덩어리 전체를 좌우로 뒤집어요">좌우 반전</button>' +
+    '<button type="button" data-m="fill" data-sa="pmenu" title="페인트 색: 바탕을 칠할 색을 고르고 투명 비율을 슬라이드바로 정해요. 색을 바꾸면 글자·도형·선 넣기의 기본 색은 보색으로 바뀌어요">페인트 색 <i data-pchip style="display:inline-block;width:12px;height:12px;vertical-align:-1px;border:1px solid #888;border-radius:2px;background:#fff3a3"></i></button><input type="color" data-q="color" data-m="text shape line" value="#2b8a3e" title="색 (글자·도형·선 공통)" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><select data-m="text" data-q="fs" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><input type="color" data-m="none" data-q="bg" value="#fff3a3" hidden aria-hidden="true" tabindex="-1"><button type="button" data-m="text shape" data-sa="bgmenu" title="배경색: 색을 고르고 투명 비율을 슬라이드바로 정해요">배경색</button><select data-q="op" data-m="line pic" title="투명도" aria-label="투명도"></select><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><input type="color" data-m="text" data-q="oc" value="#000000" title="외곽선 색 (고르면 외곽선이 켜져요)" aria-label="외곽선 색"><input type="number" data-m="text" data-q="rot" min="0" max="360" step="1" placeholder="각도°" title="각도 (0~360도): 글자 덩어리 전체가 이 각도만큼 시계 방향으로 기울어요" aria-label="각도"><button type="button" data-m="text" data-q="fh" aria-pressed="false" title="글 덩어리 전체를 좌우로 뒤집어요">좌우 반전</button>' +
     '<textarea data-q="text" rows="2" placeholder="글자 입력" aria-label="글자" hidden></textarea><i class="sep" data-m="text shape line"></i>' +
     '<button type="button" class="ic" data-s="eraser" aria-label="지우개" title="지우개: 원본 이미지를 끌어서 지워요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>' +
     '<select data-q="ew" title="지우개 굵기" aria-label="지우개 굵기"><option value="8">가늘게 (8)</option><option value="16" selected>보통 (16)</option><option value="32">굵게 (32)</option><option value="64">아주 굵게 (64)</option></select>' +
@@ -1708,7 +1748,7 @@ let imgBack = null;
   }
   const DEF_BG = "#fff3a3";   // 배경·채움 기본색(연한 노랑)
   const LINEM = new Set("arrow darrow trend vline hline cross".split(" "));   // 선 넣기 도구(도형 넣기와 투명도 기본값을 따로 둠)
-  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, ol: false, top: null, color: "#f06595", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 21, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, ew: 16 };
+  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, ol: false, top: null, color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 21, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, ew: 16 };
   const HM = [["x1", "y1"], ["y1"], ["x2", "y1"], ["x2"], ["x2", "y2"], ["y2"], ["x1", "y2"], ["x1"]];   // 상자형 도형의 8개 손잡이가 움직이는 좌표
   const HLN = [["x1", "y1"], ["x2", "y2"]];                                                              // 선형 도형의 양 끝 손잡이
   const HCUR = ["nwse-resize", "ns-resize", "nesw-resize", "ew-resize", "nwse-resize", "ns-resize", "nesw-resize", "ew-resize"];
@@ -1760,7 +1800,7 @@ let imgBack = null;
   function paintTexts(x, arr, kx, ky) {
     arr.forEach(it => {
       if (!isCall(it.t)) return;
-      const b = callBox(it), col = /^#[0-9a-f]{6}$/i.test(it.color) ? it.color : "#f06595", edge = /^#[0-9a-f]{6}$/i.test(it.oc) ? it.oc : lum(col) > 0.55 ? "#000" : "#fff";
+      const b = callBox(it), col = /^#[0-9a-f]{6}$/i.test(it.color) ? it.color : "#2b8a3e", edge = /^#[0-9a-f]{6}$/i.test(it.oc) ? it.oc : lum(col) > 0.55 ? "#000" : "#fff";
       const rot = rotOf(it), al = alOf(it);
       x.save(); x.setTransform(kx, 0, 0, ky, 0, 0);
       { const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
@@ -2388,8 +2428,8 @@ let imgBack = null;
   /* 도구 설정을 기본값으로: 색 빨강, 선 굵기 보통, 글자 크기 21, 배경·채움 연한 노랑(도형 투명도 50%), 점선·굵게·외곽선 해제, 지우개 보통 (이미 넣은 요소는 건드리지 않음) */
   function resetSd() {
     if (!sh) return;
-    Object.assign(sd, { color: "#f06595", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 21, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, bold: false, ol: false, top: null, ew: 16 });
-    qc("color").value = "#f06595"; ppSync(); qc("lw").value = "3"; qc("fs").value = "21"; qc("ew").value = "16"; qc("bg").value = DEF_BG;
+    Object.assign(sd, { color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 21, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, bold: false, ol: false, top: null, ew: 16 });
+    qc("color").value = "#2b8a3e"; ppSync(); qc("lw").value = "3"; qc("fs").value = "21"; qc("ew").value = "16"; qc("bg").value = DEF_BG;
     qc("op").value = sh.mode === "text" ? String(sd.tool === "ctext" ? 0 : 0.5) : sh.mode === "shape" ? "0.5" : "1";
     ["dash", "bold", "ol"].forEach(k => setP(qc(k), false));
     drawCur(); toast("도구 설정을 기본값으로 되돌렸어요");
@@ -2739,11 +2779,18 @@ tb.addEventListener("click", e => {
     const trig = b.closest(".menu").querySelector("[data-pal]").getBoundingClientRect();   // 닫기 전에 위치를 잰다
     closePop(); const restore = saveRange(), pk = document.getElementById("fcPick");
     pk.style.left = Math.round(trig.left) + "px"; pk.style.top = Math.round(trig.bottom) + "px";   // 선택창이 버튼 근처에 뜨도록
-    pk.onchange = () => { restore(); paint("fc", pk.value); };
+    pk.onchange = () => { restore(); applyColor("fc", pk.value); };
     pk.click(); return;
   }
-  if ("fc" in b.dataset) { closePop(); paint("fc", b.dataset.fc); return; }
-  if ("bg" in b.dataset) { closePop(); paint("bg", b.dataset.bg); return; }
+  if ("fc" in b.dataset) { closePop(); applyColor("fc", b.dataset.fc); return; }
+  if ("bgcpick" in b.dataset) {   // 바탕색: 색상 팔레트에서 직접 고르기
+    const trig = b.closest(".menu").querySelector("[data-pal]").getBoundingClientRect();
+    closePop(); const restore = saveRange(), pk = document.getElementById("bgcPick");
+    pk.style.left = Math.round(trig.left) + "px"; pk.style.top = Math.round(trig.bottom) + "px";
+    pk.onchange = () => { restore(); applyColor("bg", pk.value); };
+    pk.click(); return;
+  }
+  if ("bg" in b.dataset) { closePop(); applyColor("bg", b.dataset.bg); return; }
   if (b.dataset.bgc) { closePop(); blankImage(b.dataset.bgc); return; }
   if ("bgreset" in b.dataset) { bgDefaults(); return; }
   if ("bgpick" in b.dataset) {   // 색상 팔레트에서 직접 고르기
@@ -2790,6 +2837,7 @@ function closePop() {
 }
 function openPop(btn, p) {
   closePop(); p.hidden = false; btn.setAttribute("aria-expanded", "true");
+  if (p.id === "popFc" || p.id === "popBg") { palBack = saveRange(); syncPal(p); }
   if (p.querySelector("#bgW")) { bgBack = saveRange(); bgDefaults(); }   // 이미지 메뉴: 커서 위치 기억 + 현재 메모창 기준 기본 크기 표시
   if (p.getBoundingClientRect().right > innerWidth - 8) p.classList.add("r");   // 화면 밖으로 나가면 오른쪽 정렬
 }
@@ -2806,7 +2854,7 @@ function exportMemo(kind) {
   let body, type, name;
   if (kind === "html") {
     body = '<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>메모</title>\n<style>\n' +
-      'body{font:16px/1.6 ' + "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif" + ';max-width:800px;margin:24px auto;padding:0 16px;color:#1c1b19;word-break:break-word}\n' +
+      'body{font:16px/1.6 ' + "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif" + ';max-width:800px;margin:24px auto;padding:0 16px;color:#2b8a3e;word-break:break-word}\n' +
       'img{max-width:100%;height:auto}table{border-collapse:collapse}td,th{border:1px solid #d9d5cb;padding:2px 6px;vertical-align:top}\n' +
       '[data-att]{display:inline-block;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid #d9d5cb;border-radius:999px;cursor:pointer}\n' +
       '</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
