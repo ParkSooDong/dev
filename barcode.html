@@ -1477,10 +1477,12 @@ function syncPal(p) {   // 팝업을 열 때: 현재 색 표시 + 투명도 슬�
   document.getElementById("al" + id + "V").textContent = r.value + "%";
 }
 function leaveSpans(prop) {   // 커서가 배경색 span 안에 있으면 그 span 밖으로 빼서(앞뒤로 나눠서) 부모 배경이 비치지 않게
-  const sel = getSelection(); if (!sel.rangeCount || !sel.isCollapsed) return;
+  const sel = getSelection(); if (!sel.rangeCount || !sel.isCollapsed) return null;
+  const cs = getComputedStyle(sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentNode), base = getComputedStyle(ta);
+  const keep = { color: cs.color !== base.color ? cs.color : "", fontSize: cs.fontSize !== base.fontSize ? cs.fontSize : "" };
   let n = sel.anchorNode, top = null;
   for (; n && n !== ta; n = n.parentNode) if (n.nodeType === 1 && n.tagName === "SPAN" && n.style[prop] && !(ghost && n === ghost && n.textContent === "\u200b")) top = n;
-  if (!top || !ta.contains(top)) return;
+  if (!top || !ta.contains(top)) return keep;
   const r = document.createRange(); r.setStart(sel.anchorNode, sel.anchorOffset); r.setEndAfter(top);
   const frag = r.extractContents();
   const clean = e => { if (e.isConnected && !e.textContent.replace(/\u200b/g, "") && !e.querySelector("img,br")) e.remove(); };
@@ -1489,11 +1491,14 @@ function leaveSpans(prop) {   // 커서가 배경색 span 안에 있으면 그 s
   const nr = document.createRange(); nr.setStartAfter(top); nr.collapse(true);
   if (!top.textContent.replace(/\u200b/g, "")) { nr.setStartBefore(top); nr.collapse(true); top.remove(); }
   sel.removeAllRanges(); sel.addRange(nr);
+  return keep;
 }
 function applyColor(kind, hex) {   // hex 가 "" 이면 되돌리기
   if (!hex) {   // 기본 글자색으로 / 배경색 없음: 표시도 기본으로, 선택이 없으면 이어서 입력하는 글자도 기본으로
     cst[kind] = { c: kind === "fc" ? FC_DEF : BG_DEF, a: 1, off: true }; setInd(kind);
-    if (getSelection().isCollapsed && !ta.disabled) { ta.focus(); if (kind === "bg") leaveSpans("backgroundColor"); caretStyle(kind === "fc" ? "color" : "backgroundColor", kind === "fc" ? FC_DEF : "transparent"); return; }
+    if (getSelection().isCollapsed && !ta.disabled) { ta.focus(); const keep = kind === "bg" ? leaveSpans("backgroundColor") : null; caretStyle(kind === "fc" ? "color" : "backgroundColor", kind === "fc" ? FC_DEF : "transparent");
+      if (keep && ghost) { if (keep.color) ghost.style.color = keep.color; if (keep.fontSize) ghost.style.fontSize = keep.fontSize; }   // 쓰던 글자색·크기는 그대로 이어가요
+      return; }
     paint(kind, ""); return;
   }
   const st = cst[kind]; st.c = hex; st.off = false; setInd(kind);
