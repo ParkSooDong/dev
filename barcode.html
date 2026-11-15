@@ -465,7 +465,7 @@ p{margin:6px 0 0}
   <button type="button" data-cmd="find" title="찾기" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
   <div class="menu" id="listMenu"><button type="button" data-pal id="listBtn" title="글 목록: 글머리 기호 / 번호 매기기 / 체크리스트" aria-label="글 목록" aria-haspopup="true" aria-expanded="false" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg><span>글 목록</span></button><div class="pop" hidden><button type="button" data-cmd="ul" title="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg>글머리 기호 목록</button><button type="button" data-cmd="ol" title="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg>번호 매기기 목록</button><button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>체크리스트</button></div></div>
   <div class="menu"><button type="button" data-pal title="더보기" aria-label="더보기" aria-haspopup="true" aria-expanded="false">⋯</button><div class="pop" hidden><button type="button" data-cmd="indent">들여쓰기</button><button type="button" data-cmd="outdent">내어쓰기</button><button type="button" data-cmd="hr">구분선</button><button type="button" data-cmd="quote" aria-pressed="false">인용</button><button type="button" data-cmd="code" aria-pressed="false">코드 블록</button><button type="button" data-cmd="clearall" title="메모 전체의 글자 서식을 기본값으로 되돌려요 (글자·이미지·표는 그대로)">전체 서식 초기화</button></div></div>
-  <div class="menu" id="layMenu"><button type="button" data-pal id="layBtn" title="분할: 가로 또는 세로로 가·나·다 영역을 나눠 보여요" aria-label="분할" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M12 5v14M3.5 12h17"/></svg><span>분할</span></button><div class="pop" hidden><button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 35 : 35 : 30 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button><button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 80 : 10 : 10 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button></div></div>
+  <div class="menu" id="layMenu"><button type="button" data-pal id="layBtn" title="분할: 가로 또는 세로로 가·나·다 영역을 나눠 보여요 (마우스를 올리면 미리 보이고, 클릭하면 적용됩니다)" aria-label="분할" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M12 5v14M3.5 12h17"/></svg><span>분할</span></button><div class="pop" hidden><button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 35 : 35 : 30 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button><button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 80 : 10 : 10 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button></div></div>
   <button type="button" id="cmpBtn" title="비교: 가(원본)를 기준으로 나(변경본)가 일치하는지 확인하고, 비교 내역은 다 영역에 표시" aria-label="비교"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 8h5M15 16h5M4 16l3-3M20 8l-3 3"/></svg><span>비교</span></button>
   <i class="sep"></i>
   <button type="button" id="impBtn" title="열기 (.html / .txt)" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
@@ -1099,7 +1099,9 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
   const V = load(KV, DEFV), Hh = load(KH, DEFH);
   const keep = () => { try { localStorage.setItem(KV, JSON.stringify(V)); localStorage.setItem(KH, JSON.stringify(Hh)); } catch (e) {} };
   const compare = () => wrap.classList.contains("cmpm");
-  const pref = () => { let m = null; try { m = localStorage.getItem(KL + ctx()); } catch (e) {} return m === "h" || m === "v" ? m : (ctx() === "n" ? "h" : "v"); };
+  let pvm = null;   // [분할] 목록 미리보기 중인 방식 ("h" / "v"). 저장하지 않는 임시 값이에요
+  const saved = () => { let m = null; try { m = localStorage.getItem(KL + ctx()); } catch (e) {} return m === "h" || m === "v" ? m : (ctx() === "n" ? "h" : "v"); };   // 실제로 고른(저장된) 방식
+  const pref = () => pvm || saved();
   const mode = () => compare() ? "h" : pref();
   const arr = () => mode() === "v" ? V : Hh;
   const dflt = () => mode() === "v" ? DEFV : DEFH;
@@ -1108,7 +1110,7 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
     const m = mode(), a = arr();
     SPL[0].setAttribute("aria-valuenow", String(Math.round(a[0]))); SPL[1].setAttribute("aria-valuenow", String(Math.round(a[0] + a[1])));
     SPL.forEach(s => { s.setAttribute("aria-orientation", m === "v" ? "horizontal" : "vertical"); });
-    layH.setAttribute("aria-pressed", String(pref() === "h")); layV.setAttribute("aria-pressed", String(pref() === "v"));
+    layH.setAttribute("aria-pressed", String(saved() === "h")); layV.setAttribute("aria-pressed", String(saved() === "v"));
   };
   const apply = () => {
     if (compare()) { sync(); return; }   // 비교 중 배치는 비교 코드가 맡아요
@@ -1156,12 +1158,26 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
   for (const [b, m] of [[layH, "h"], [layV, "v"]]) {
     b.addEventListener("mousedown", e => e.preventDefault());
     b.addEventListener("click", () => {
+      pvm = null;   // 확정: 미리보기 값을 먼저 걷어내고 아래에서 선택한 방식을 저장·적용
       closePop();   // [분할] 메뉴를 닫음
       try { localStorage.setItem(KL + ctx(), m); } catch (e) {}
       if (compare()) toast("비교 중에는 가로로 나란히 보여요. 비교를 끝내면 " + (m === "h" ? "가로" : "세로") + " 분할로 바뀌어요");
       apply();
     });
   }
+  /* ===== [분할] 목록 미리보기: 글꼴·글자 크기·정렬 목록과 같은 방식 =====
+     가로/세로 분할 항목 위에 마우스를 올리면 임시로 그 배치를 보여주고, 클릭하면 확정,
+     클릭 없이 목록을 벗어나거나 닫으면 원래 배치로 되돌려요. 미리보기는 저장되지 않아요. (비교 중에는 가로 고정이라 미리보기 없음) */
+  const layPop = gid("layMenu").querySelector(".pop");
+  const pvEnd = () => { if (pvm) { pvm = null; apply(); } };
+  const pvShow = m => { if (compare()) return; if (m === saved()) { pvEnd(); return; } if (pvm !== m) { pvm = m; apply(); } };
+  for (const [b, m] of [[layH, "h"], [layV, "v"]]) {
+    b.addEventListener("mouseover", () => pvShow(m));
+    b.addEventListener("focus", () => pvShow(m));   // 키보드로 이동할 때도 미리 보여줌
+  }
+  layPop.addEventListener("mouseleave", pvEnd);
+  layPop.addEventListener("focusout", e => { if (!e.relatedTarget || !layPop.contains(e.relatedTarget)) pvEnd(); });
+  new MutationObserver(() => { if (layPop.hidden) pvEnd(); }).observe(layPop, { attributes: true, attributeFilter: ["hidden"] });
   /* 이름표(가 / 나 / 다): 지금 입력 중인 메모를 표시하고, 내용이 있으면 점을 붙여요. 누르면 그 메모로 이동 (접혀 있으면 펼침) */
   let rl = null;
   window.refreshLabels = () => {
