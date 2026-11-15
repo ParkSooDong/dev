@@ -3545,5 +3545,109 @@ function updateAttN() { const n = attNodes().length; attGo.textContent = n ? "�
 observeEds(updateAttN, { childList: true, subtree: true });
 updateAttN();
 </script>
+
+<script>
+/* ===== 글자 크기 / 정렬 목록 미리보기: 글꼴 목록과 같은 방식 =====
+   목록 항목 위에 마우스를 올리면 선택한 글자(정렬은 커서가 있는 줄 포함)에 임시로 적용해 보여주고,
+   클릭하면 확정, 클릭 없이 벗어나거나 목록을 닫으면 원래대로 되돌려요. 미리보기는 저장·실행 취소 기록에 남지 않아요. */
+(function () {
+  const tb = document.getElementById("tb"); if (!tb) return;
+  const sizeBtn = tb.querySelector("button[data-fs]"), alBtn = tb.querySelector('button[data-cmd="alL"]');
+  if (!sizeBtn || !alBtn) return;
+  const sizePop = sizeBtn.closest(".pop"), alPop = alBtn.closest(".pop");
+  if (!sizePop || !alPop) return;
+  let pv = null, want = null, raf = 0;
+  const textNodes = host => { const w = document.createTreeWalker(host, NodeFilter.SHOW_TEXT), a = []; for (let n; (n = w.nextNode());) a.push(n); return a; };
+  const offOf = (host, node, off) => { const r = document.createRange(); r.setStart(host, 0); r.setEnd(node, off); return r.toString().length; };
+  function setSel(host, a, b) {
+    const t = textNodes(host), find = (k, forStart) => { let acc = 0; for (const n of t) { const L = n.length; if (forStart ? acc + L > k : acc + L >= k) return [n, k - acc]; acc += L; } const z = t[t.length - 1]; return z ? [z, z.length] : [host, 0]; };
+    const p1 = find(a, true), p2 = find(b, false), r = document.createRange();
+    r.setStart(p1[0], p1[1]); r.setEnd(p2[0], p2[1]);
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+  const blockSize = el => { let n = el; while (n && n !== ta && /^inline/.test(getComputedStyle(n).display)) n = n.parentElement; return getComputedStyle(n || ta).fontSize; };
+
+  /* --- 글자 크기 --- */
+  function sizeStart(v) {
+    if (ta.disabled) return false;
+    const s = getSelection(); if (!s.rangeCount || s.isCollapsed) return false;
+    const r = s.getRangeAt(0); if (!ta.contains(r.commonAncestorContainer)) return false;
+    const a = offOf(ta, r.startContainer, r.startOffset), b = offOf(ta, r.endContainer, r.endOffset), recs = []; let acc = 0;
+    for (const n0 of textNodes(ta)) {
+      const L = n0.length, st = Math.max(a, acc) - acc, en = Math.min(b, acc + L) - acc; acc += L;
+      if (en <= st || !/\S/.test(n0.data.slice(st, en))) continue;
+      if (n0.parentElement && n0.parentElement.closest('.att,[contenteditable="false"]')) continue;
+      let mid = n0, tail = null;
+      if (en < L) tail = n0.splitText(en);
+      if (st > 0) mid = n0.splitText(st);
+      const sp = document.createElement("span"); sp.setAttribute("data-fpv", "1");
+      mid.parentNode.insertBefore(sp, mid); sp.appendChild(mid);
+      recs.push({ sp, head: n0, mid, tail, base: blockSize(sp.parentElement) });
+    }
+    if (!recs.length) return false;
+    pv = { k: "size", a, b, recs }; setSel(ta, a, b);
+    return true;
+  }
+  const sizeSet = v => pv.recs.forEach(r => { r.sp.style.fontSize = v ? v + "px" : r.base; });
+  function undoWrap(r) {
+    const sp = r.sp, p = sp.parentNode; if (!p) return;
+    if (r.mid === r.head) p.insertBefore(r.head, sp); else r.head.appendData(r.mid.data);
+    sp.remove();
+    if (r.tail) { r.head.appendData(r.tail.data); r.tail.remove(); }
+  }
+
+  /* --- 정렬 --- */
+  function alignStart(kind) {
+    if (ta.disabled) return false;
+    const s = getSelection(); if (!s.rangeCount || !ta.contains(s.anchorNode)) return false;
+    const els = leafBlocks();
+    if (els.length) { pv = { k: "align", saved: els.map(e => [e, e.getAttribute("style")]) }; return true; }
+    /* 블록 없이 그냥 글자인 줄: 그 줄(앞뒤 줄바꿈·블록 사이)을 임시 div 로 감싸서 보여줌 */
+    const isBlk = n => n.nodeType === 1 && /^(DIV|P|H[1-6]|BLOCKQUOTE|LI|PRE|UL|OL|TABLE|HR)$/.test(n.nodeName);
+    let top = s.anchorNode; while (top && top.parentNode !== ta) top = top.parentNode;
+    if (!top || isBlk(top) || !textNodes(ta).length) return false;
+    const r = s.getRangeAt(0), a = offOf(ta, r.startContainer, r.startOffset), b = offOf(ta, r.endContainer, r.endOffset);
+    let first = top, last = top;
+    while (first.previousSibling && !isBlk(first.previousSibling) && first.previousSibling.nodeName !== "BR") first = first.previousSibling;
+    while (last.nextSibling && !isBlk(last.nextSibling) && last.nodeName !== "BR") last = last.nextSibling;
+    if (last.nextSibling && !isBlk(last.nextSibling) && last.nodeName === "BR") { /* 줄 끝의 BR 까지 포함 */ }
+    const nodes = []; for (let n = first; n; n = n.nextSibling) { nodes.push(n); if (n === last) break; }
+    const div = document.createElement("div"); div.setAttribute("data-fpv", "1");
+    ta.insertBefore(div, first); nodes.forEach(n => div.appendChild(n));
+    pv = { k: "align", wrap: { div, nodes }, a, b }; setSel(ta, a, b);
+    return true;
+  }
+  const alignSet = al => { if (pv.wrap) pv.wrap.div.style.textAlign = al; else pv.saved.forEach(x => { x[0].style.textAlign = al; }); };
+
+  function pvApply(item) {
+    if (!pv && !(item.k === "size" ? sizeStart(item.v) : alignStart(item.v))) return;
+    if (pv.k === "size") sizeSet(item.v); else alignSet(item.v);
+  }
+  function pvEnd() {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    want = null;
+    const p = pv; if (!p) return; pv = null;
+    if (p.k === "size") { for (let i = p.recs.length - 1; i >= 0; i--) undoWrap(p.recs[i]); setSel(ta, p.a, p.b); }
+    else if (p.wrap) { const d = p.wrap.div; p.wrap.nodes.forEach(n => d.parentNode && d.parentNode.insertBefore(n, d)); d.remove(); setSel(ta, p.a, p.b); }
+    else p.saved.forEach(x => { if (x[1] === null) x[0].removeAttribute("style"); else x[0].setAttribute("style", x[1]); });
+  }
+  const AL = { alL: "left", alC: "center", alR: "right" };
+  function wire(pop, kind) {
+    pop.addEventListener("mouseover", e => {
+      const b = e.target.closest && e.target.closest("button"); if (!b) return;
+      let v;
+      if (kind === "size") { if (!b.hasAttribute("data-fs")) return; v = b.getAttribute("data-fs"); }
+      else { v = AL[b.dataset.cmd]; if (!v) return; }
+      want = { k: kind, v };
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; if (want) pvApply(want); });
+    });
+    pop.addEventListener("mouseleave", pvEnd);
+    pop.addEventListener("click", pvEnd);   // 확정: 미리보기를 먼저 걷어내면 뒤따르는 기존 적용이 원래 상태 기준으로 동작
+    new MutationObserver(() => { if (pop.hidden) pvEnd(); }).observe(pop, { attributes: true, attributeFilter: ["hidden"] });
+  }
+  wire(sizePop, "size"); wire(alPop, "align");
+})();
+</script>
+
 </body>
 </html>
