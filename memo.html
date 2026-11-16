@@ -16,6 +16,10 @@ header{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center
 .fbbtn{flex:none;font:inherit;font-size:13px;font-weight:600;padding:2px 12px;border-radius:999px;background:transparent;color:var(--ink);border:1.5px solid var(--line);cursor:pointer}
 .fbbtn[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .fbbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+#dbGrp{display:inline-flex;gap:4px;align-items:center}
+#dbGrp[hidden]{display:none}
+.dbbtn{font-size:11px;padding:1px 9px}
+.dbbtn:disabled{opacity:.4;cursor:not-allowed}
 h1{font-size:17px;margin:0;letter-spacing:-.01em}
 #st{font-size:12px;color:var(--mute)}
 #st:empty{display:none}
@@ -275,7 +279,7 @@ body.has-max header .tr{display:none}
 </style>
 </head>
 <body>
-<header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
+<header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
@@ -907,9 +911,17 @@ function makeRich(el) {
   });
 }
 
-/* ▼▼ DB 를 쓰려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이) ▼▼ */
-const DB_URL = "https://pesdee00-2026-01-default-rtdb.asia-southeast1.firebasedatabase.app";
+/* ▼▼ DB 를 쓰려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요 ▼▼ */
+const DB_URLS = [
+  "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
+  "https://pesdee00-2026-01-default-rtdb.asia-southeast1.firebasedatabase.ap",     // DB2
+  "https://pesdee00-2027-01-default-rtdb.asia-southeast1.firebasedatabase.ap"      // DB3
+];
 /* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
+const DBSEL = "memo-db";   // 마지막으로 고른 DB 번호(0~2)를 이 PC(브라우저)에 기억 → 다음에 켜도 그 DB 로 시작
+const isSet = u => !u.includes("YOUR-PROJECT");
+let dbIdx = 0;             // 0=DB1, 1=DB2, 2=DB3 (기본 DB1)
+try { const v = parseInt(localStorage.getItem(DBSEL), 10); if (v >= 0 && v < DB_URLS.length && isSet(DB_URLS[v])) dbIdx = v; } catch (e) {}
 
 const MAX_BYTES = 10000000;   // 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요
 const utf8Len = s => new Blob([s]).size;   // 실제 UTF-8 바이트 수 (한글 3바이트, 영문·숫자·base64 1바이트)
@@ -918,7 +930,7 @@ const IDLE_MS = 3000;        // 입력을 멈춘 뒤 DB 저장까지 기다리�
 const MAX_WAIT_MS = 30000;   // 계속 입력해도 이 시간이 지나면 한 번 저장
 const KEY = "memo-state";    // 이 PC(브라우저)에 저장되는 이름
 
-const ed1 = document.getElementById("memo"), st = document.getElementById("st"), fbBtn = document.getElementById("fbBtn");
+const ed1 = document.getElementById("memo"), st = document.getElementById("st"), fbBtn = document.getElementById("fbBtn"), dbGrp = document.getElementById("dbGrp"), dbBtns = Array.from(dbGrp.querySelectorAll("button"));
 makeRich(ed1);
 /* ===== 메모 영역 2분할: 위(memo) / 아래(memo2). 툴바는 하나이고, 마지막으로 클릭한 영역(ta)에 적용돼요 ===== */
 const ed2 = document.getElementById("memo2"), ed3 = document.getElementById("memo3"), EDS = [ed1, ed2, ed3];
@@ -1059,10 +1071,19 @@ document.addEventListener("focusin", e => { if (EDS.includes(e.target)) { ta = e
    // 메모 칸을 표/이미지 붙여넣기가 되는 편집 영역으로
 const say = (t, c) => { st.textContent = t; st.className = c || ""; };
 const hhmm = () => new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
-const BASE = DB_URL.replace(/\/+$/, "");
-const URL_MEMO = BASE + "/memo.json";
-const URL_AT = BASE + "/memo/updatedAt.json";   // 수정 시각 숫자만 (아주 작음)
-const dbSet = !DB_URL.includes("YOUR-PROJECT");
+let BASE, URL_MEMO, URL_AT, dbSet;
+function applyDb() {   // 선택된 DB(dbIdx)의 주소로 맞춤
+  const u = DB_URLS[dbIdx];
+  BASE = u.replace(/\/+$/, "");
+  URL_MEMO = BASE + "/memo.json";
+  URL_AT = BASE + "/memo/updatedAt.json";   // 수정 시각 숫자만 (아주 작음)
+  dbSet = isSet(u);
+}
+applyDb();
+const dbName = () => "DB" + (dbIdx + 1);
+const needUrlMsg = () => dbName() + " 주소(DB_URLS)를 먼저 설정해 주세요";
+const stateKey = () => dbIdx === 0 ? KEY : KEY + "-" + (dbIdx + 1);   // DB 마다 이 PC 의 메모 사본을 따로 둬요 (DB1 은 예전 이름 그대로)
+let gen = 0, switching = false;   // gen: DB 를 바꾸면 올라가는 번호 (바꾸기 전 DB 의 진행 중 작업을 버리기 위함)
 let toastT = null;
 function toast(msg) {   // 저장 상태줄과 별개로 잠깐 떠 있다 사라지는 안내
   const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false;
@@ -1071,7 +1092,7 @@ function toast(msg) {   // 저장 상태줄과 별개로 잠깐 떠 있다 사�
 const localNote = () => say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
 
 /* 저장된 상태 복원: 사용/미사용 선택(처음엔 항상 미사용), 이 PC의 메모 사본 */
-let saved = null; try { saved = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+let saved = null; try { saved = JSON.parse(localStorage.getItem(stateKey())); } catch (e) {}
 let useFb = !!(saved && saved.fb === true);
 let dirty = !!(saved && useFb && saved.d), knownAt = (saved && useFb && +saved.at) || 0;
 let ready = false, saving = false, connecting = false, firstTry = false, idleT = null, maxT = null, localT = null;
@@ -1079,12 +1100,18 @@ if (saved && typeof saved.memo === "string") memoAll.value = saved.memo;
 
 function saveLocal() {
   clearTimeout(localT); localT = null;
-  try { localStorage.setItem(KEY, JSON.stringify({ fb: useFb, memo: memoAll.value, at: knownAt, d: dirty })); return true; }
+  try { localStorage.setItem(stateKey(), JSON.stringify({ fb: useFb, memo: memoAll.value, at: knownAt, d: dirty })); return true; }
   catch (e) { if (!useFb) say("브라우저 저장 공간이 가득 차서 저장하지 못했어요. 이미지를 줄여 주세요", "err"); return false; }
 }
 function renderFb() {
   fbBtn.textContent = "Firebase Realtime Database " + (useFb ? "사용" : "미사용");
   fbBtn.setAttribute("aria-pressed", String(useFb));
+  dbGrp.hidden = !useFb;   // DB1~3 버튼은 "사용"일 때만
+  dbBtns.forEach((b, i) => {
+    b.setAttribute("aria-pressed", String(i === dbIdx));
+    b.disabled = !isSet(DB_URLS[i]);
+    b.title = "DB" + (i + 1) + (b.disabled ? " — 주소가 설정되지 않았어요 (DB_URLS)" : " 로 전환");
+  });
 }
 function clearTimers() { clearTimeout(idleT); clearTimeout(maxT); idleT = maxT = null; }
 function schedule() {
@@ -1093,14 +1120,14 @@ function schedule() {
 }
 
 /* ===== 암호화: 비밀번호 → PBKDF2(SHA-256, 250000회) → AES-GCM 256. DB 에는 암호문만 올라가고 비밀번호는 저장하지 않아요 ===== */
-const PWK = "memo-pw";   // 비밀번호는 이 PC(브라우저)에 기억해요: 처음 한 번만 묻고, 틀리면 다시 물어요
+const pwKey = () => dbIdx === 0 ? "memo-pw" : "memo-pw-" + (dbIdx + 1);   // 비밀번호는 DB 마다 따로 이 PC(브라우저)에 기억해요: 처음 한 번만 묻고, 틀리면 다시 물어요 (DB1 은 예전 이름 그대로)
 let pw = null, dbSalt = null;
-try { pw = localStorage.getItem(PWK) || null; } catch (e) {}
-const setPw = p => { pw = p; try { localStorage.setItem(PWK, p); } catch (e) {} };
+try { pw = localStorage.getItem(pwKey()) || null; } catch (e) {}
+const setPw = p => { pw = p; try { localStorage.setItem(pwKey(), p); } catch (e) {} };
 const keyCache = new Map();
 const b64e = u => { let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
 const b64d = s => { const b = atob(s), u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; };
-function forgetPw() { pw = null; dbSalt = null; keyCache.clear(); try { localStorage.removeItem(PWK); } catch (e) {} }
+function forgetPw() { pw = null; dbSalt = null; keyCache.clear(); try { localStorage.removeItem(pwKey()); } catch (e) {} }
 async function getKey(saltB64) {
   let k = keyCache.get(saltB64);
   if (!k) {
@@ -1192,18 +1219,20 @@ async function save(unloading) {
 }
 
 async function poll() {
-  if (!useFb || !ready || dirty || saving || document.hidden) return;
+  if (!useFb || !ready || dirty || saving || switching || document.hidden) return;
+  const g = gen;
   try {
     const r = await fetch(URL_AT, { cache: "no-store" });
-    if (!r.ok) return;
+    if (!r.ok || g !== gen) return;
     const at = await r.json();
+    if (g !== gen) return;
     if (typeof at === "number" && at > knownAt) {
       say("다른 기기의 변경을 불러오는 중…");
       const d = await fetchRemote();
-      if (useFb && isEnc(d) && d.updatedAt > knownAt && !dirty) {
+      if (g === gen && useFb && isEnc(d) && d.updatedAt > knownAt && !dirty) {
         let t;
-        try { t = await decryptMemo(d); } catch (e) { say("다른 기기의 변경을 복호화하지 못했어요", "err"); return; }
-        if (!useFb || dirty) return;
+        try { t = await decryptMemo(d); } catch (e) { if (g === gen) say("다른 기기의 변경을 복호화하지 못했어요", "err"); return; }
+        if (!useFb || dirty || g !== gen) return;
         dbSalt = d.salt; knownAt = d.updatedAt;
         if (memoAll.value !== t) { memoAll.value = t; saveLocal(); say("다른 기기의 변경을 반영했어요", "ok"); }
         else say("저장됨 " + hhmm(), "ok");
@@ -1214,27 +1243,30 @@ async function poll() {
 
 /* DB 와 처음 연결: 어느 쪽 메모를 쓸지 정하고 자동저장을 시작 */
 async function connect() {
-  if (connecting || ready || !useFb || !dbSet) return;
+  if (connecting || ready || switching || !useFb || !dbSet) return;
   if (!(window.crypto && crypto.subtle)) { say("암호화를 쓸 수 없는 환경이에요 (https 주소에서 열어 주세요)", "err"); return; }
+  const g = gen;   // 도중에 DB 를 바꾸면(gen 이 달라지면) 이 연결 작업은 버려요
   connecting = true;
   if (firstTry) memoAll.disabled = true;
   try {
     const d = await fetchRemote();
-    if (!useFb) return;
+    if (!useFb || g !== gen) return;
     const enc = isEnc(d), plain = !enc && !!d && typeof d.text === "string" && d.updatedAt > 0;
     let rt = null;                                                   // DB 메모(복호화된 내용)
     if (enc) {
       say("비밀번호를 입력해 주세요");
       rt = await unlock(d);
+      if (g !== gen) return;
       if (rt === null) { setFb(false); return; }                      // 취소 → 미사용으로 복귀 (DB 내용은 표시하지 않음)
     } else {
       say("비밀번호를 정해 주세요");
       const p = await askPw(plain ? "legacy" : "new");
+      if (g !== gen) return;
       if (p === null) { setFb(false); return; }
       setPw(p); dbSalt = null; keyCache.clear();
       if (plain) rt = d.text;
     }
-    if (!useFb) return;
+    if (!useFb || g !== gen) return;
     const local = memoAll.value, has = rt !== null;
     if (!has) { if (local) dirty = true; }                           // DB 가 비어 있음 → 이 PC 메모를 올림
     else if (rt === local) { knownAt = Math.max(knownAt, d.updatedAt); dirty = false; }
@@ -1247,18 +1279,45 @@ async function connect() {
     ready = true; say("불러옴", "ok"); saveLocal();
     if (dirty) save();
   } catch (e) {
-    if (useFb) say("불러오기 실패. DB 주소와 규칙을 확인해 주세요", "err");
-  } finally { connecting = false; firstTry = false; memoAll.disabled = false; }
+    if (useFb && g === gen) say("불러오기 실패. " + dbName() + " 주소와 규칙을 확인해 주세요", "err");
+  } finally { if (g === gen) { connecting = false; firstTry = false; memoAll.disabled = false; } }
 }
 
 function setFb(on) {
   useFb = on; renderFb(); clearTimers(); ready = false;
   if (!on) { dirty = false; knownAt = 0; localNote(); saveLocal(); return; }
   knownAt = 0; dirty = false; saveLocal();
-  if (!dbSet) { say("DB_URL을 먼저 설정해 주세요", "err"); return; }
+  if (!dbSet) { say(needUrlMsg(), "err"); return; }
   say("불러오는 중…"); firstTry = true; connect();
 }
 fbBtn.addEventListener("click", () => setFb(!useFb));
+
+/* DB1/2/3 전환: 지금 DB 의 변경을 저장해 두고, 선택한 DB 의 주소·비밀번호·이 PC 사본으로 바꾼 뒤 다시 연결.
+   선택한 번호는 이 PC 에 기억돼서 다음에 켜도 그 DB 로 시작해요 */
+async function switchDb(i) {
+  if (switching || i === dbIdx || !useFb || !DB_URLS[i] || !isSet(DB_URLS[i])) return;
+  switching = true;
+  try {
+    clearTimers();
+    while (saving) await new Promise(r => setTimeout(r, 100));
+    if (!useFb) return;
+    if (ready && dirty) await save();             // 지금 DB 에 마지막 저장 (실패해도 이 PC 사본에 남아 있어요)
+    if (!useFb) return;
+    clearTimers(); saveLocal();                   // 지금 DB 의 이 PC 사본 보관
+    gen++; connecting = false; ready = false;     // 이전 DB 의 진행 중 작업은 버림
+    dbIdx = i; applyDb();
+    try { localStorage.setItem(DBSEL, String(i)); } catch (e) {}
+    pw = null; dbSalt = null; keyCache.clear();   // 비밀번호는 DB 마다 따로
+    try { pw = localStorage.getItem(pwKey()) || null; } catch (e) {}
+    let s = null; try { s = JSON.parse(localStorage.getItem(stateKey())); } catch (e) {}
+    memoAll.value = s && typeof s.memo === "string" ? s.memo : "";   // 선택한 DB 의 이 PC 사본 (처음 쓰는 DB 면 빈 메모)
+    knownAt = (s && +s.at) || 0; dirty = !!(s && s.d);
+    renderFb(); saveLocal();
+    say(dbName() + " 불러오는 중…"); firstTry = true; memoAll.disabled = false;
+  } finally { switching = false; }
+  if (useFb && dbIdx === i) connect();
+}
+dbBtns.forEach((b, i) => b.addEventListener("click", () => switchDb(i)));
 
 onEd("input", () => {
   if (useFb) { dirty = true; if (ready) { say("저장 대기 중…"); schedule(); } }
@@ -3171,7 +3230,7 @@ window.addEventListener("beforeunload", e => { if (useFb && dirty) { e.preventDe
 /* 시작 */
 renderFb();
 if (!useFb) localNote();
-else if (!dbSet) say("DB_URL을 먼저 설정해 주세요", "err");
+else if (!dbSet) say(needUrlMsg(), "err");
 else { say("불러오는 중…"); firstTry = true; connect(); }
 
 /* ===== 목표 시각까지 남은 시간 타이머 ===== */
