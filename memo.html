@@ -276,6 +276,58 @@ body.has-max header .tr{display:none}
 .tm .rm{white-space:nowrap}
 #rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
 #rem.neg{color:var(--err)}
+/* 표 셀 서식 (테두리 · 채우기) */
+#cfOv{position:fixed;inset:0;pointer-events:none;z-index:25}
+#cfOv div{position:absolute;background:rgba(51,154,240,.26);outline:1.5px solid #339af0;outline-offset:-1px}
+.rich.cfsel ::selection{background:transparent}
+.cfov{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.35)}
+.cfov[hidden]{display:none}
+.cfbox{width:min(470px,100%);max-height:calc(100vh - 24px);overflow:auto;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;box-shadow:0 10px 36px rgba(0,0,0,.35);font-size:13px}
+.cfbox button{font:inherit;color:inherit;cursor:pointer}
+.cfbox input[type=color]{width:34px;height:24px;padding:0;border:1px solid var(--line);border-radius:5px;background:transparent;cursor:pointer}
+.cfhd{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.cfhd b{font-size:14px}
+.cfhd .cfcnt{color:var(--mute);flex:1;font-size:12px}
+.cfhd button,.cfft button{height:28px;padding:0 10px;border:1px solid var(--line);border-radius:7px;background:transparent}
+.cfhd button:hover,.cfft button:hover{background:var(--line)}
+.cftabs{display:flex;gap:2px;padding:8px 12px 0;border-bottom:1px solid var(--line)}
+.cftabs button{height:28px;padding:0 16px;border:1px solid transparent;border-bottom:0;border-radius:7px 7px 0 0;background:transparent}
+.cftabs button.on{border-color:var(--line);background:var(--card);font-weight:700;margin-bottom:-1px;box-shadow:0 1px 0 var(--card)}
+.cfpg{padding:12px}
+.cfpg[hidden]{display:none}
+.cfcols{display:flex;gap:16px;flex-wrap:wrap}
+.cfl{flex:1 1 150px}.cfr{flex:1 1 210px}
+.cfsec{font-weight:600;margin:0 0 6px;color:var(--mute);font-size:12px}
+.cfsty{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px}
+.cfsty button{height:26px;border:1.5px solid var(--line);border-radius:6px;background:transparent;display:flex;align-items:center;justify-content:center;padding:0 6px}
+.cfsty button i{display:block;width:100%;height:0}
+.cfclr{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:12px}
+.cfbox .sw{width:20px;height:20px;min-width:0;padding:0;border:1.5px solid var(--line);border-radius:4px}
+.cfbox .sel{outline:2px solid #339af0;outline-offset:1px}
+.cfclr button.au{height:22px;padding:0 8px;border:1.5px solid var(--line);border-radius:5px;background:transparent}
+.cfpre{display:flex;gap:6px;margin-bottom:10px}
+.cfpre button{height:28px;padding:0 10px;border:1.5px solid var(--line);border-radius:6px;background:transparent}
+.cfpre button:disabled,.cfgrid button:disabled{opacity:.35;cursor:default}
+.cfgrid{display:grid;grid-template-columns:30px 150px 30px;grid-template-rows:30px 96px 30px;gap:5px}
+.cfgrid>button{border:1.5px solid var(--line);border-radius:6px;background:transparent;padding:0;display:flex;align-items:center;justify-content:center}
+.cfgrid>button.on{background:rgba(51,154,240,.22);border-color:#339af0}
+.cfgrid .g{display:block;width:14px;height:14px;border:1px dotted var(--mute);box-sizing:border-box}
+.cfgrid .g.t{border-top:2px solid currentColor}.cfgrid .g.b{border-bottom:2px solid currentColor}
+.cfgrid .g.l{border-left:2px solid currentColor}.cfgrid .g.r{border-right:2px solid currentColor}
+.cfgrid .g.h{background:linear-gradient(currentColor,currentColor) center/100% 2px no-repeat}
+.cfgrid .g.v{background:linear-gradient(currentColor,currentColor) center/2px 100% no-repeat}
+.cfpv{grid-area:2/2;position:relative;border:1px solid transparent;outline:1px dotted var(--line);outline-offset:-1px;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--mute);box-sizing:border-box}
+.cfpv i{position:absolute}
+.cfpv i.h{left:0;right:0;top:50%}.cfpv i.v{top:0;bottom:0;left:50%}
+.cfnote{font-size:11.5px;color:var(--mute);margin-top:8px}
+.cfpal{display:grid;grid-template-columns:repeat(10,22px);gap:4px;margin:6px 0}
+.cfpal+.cfpal{margin-top:10px}
+.cffbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.cffbar button.no{height:28px;flex:1;border:1.5px solid var(--line);border-radius:6px;background:transparent}
+.cffpv{width:100%;height:30px;border:1px solid var(--line);border-radius:6px;margin-top:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px}
+.cfft{display:flex;justify-content:flex-end;gap:6px;padding:10px 12px;border-top:1px solid var(--line)}
+.cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cfft button.ok:hover{opacity:.85;background:var(--ink)}
 </style>
 </head>
 <body>
@@ -297,7 +349,7 @@ body.has-max header .tr{display:none}
   <button type="button" data-cmd="clear" title="서식 지우기 (선택한 글자)" aria-label="서식 지우기"><svg viewBox="0 0 24 24"><path d="M4 5h10M9 5l-2.5 14M13 19h6M15.5 12.5l4 4M19.5 12.5l-4 4"/></svg></button>
   <i class="sep"></i>
   <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
-  <div class="menu" id="tblWrap"><button type="button" data-pal id="tblBtn" title="표: 표 삽입 / 표 편집" aria-label="표" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg><span>표</span></button><div class="pop" id="tblPop" hidden><div id="tblMv"><button type="button" data-cmd="table" title="행·열 수를 정해 표를 넣어요">표 삽입</button><button type="button" id="tblEditGo" data-needtbl title="행·열 추가/삭제 (표 안의 칸을 클릭하면 사용할 수 있어요)">표 편집</button></div><div id="tblLv" hidden><button type="button" data-tbl-back="1">← 뒤로</button><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div></div>
+  <div class="menu" id="tblWrap"><button type="button" data-pal id="tblBtn" title="표: 표 삽입 / 표 편집" aria-label="표" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg><span>표</span></button><div class="pop" id="tblPop" hidden><div id="tblMv"><button type="button" data-cmd="table" title="행·열 수를 정해 표를 넣어요">표 삽입</button><button type="button" id="tblEditGo" data-needtbl title="행·열 추가/삭제 (표 안의 칸을 클릭하면 사용할 수 있어요)">표 편집</button><button type="button" data-cfopen title="선택한 칸의 테두리·배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸을 고를 수 있어요)">셀 서식 (테두리·채우기)</button></div><div id="tblLv" hidden><button type="button" data-tbl-back="1">← 뒤로</button><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div></div>
   <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="image">파일 열기</button><div class="bgsec"><div class="bgttl" title="고른 색을 바탕으로 한 이미지를 메모에 넣어요 (손글씨·도형으로 그리기용)">바탕 이미지 넣기</div><div class="bgnote">색을 누르면 바로 들어가요</div><div class="bgrow"><button type="button" class="sw" data-bgc="#ffffff" style="background:#ffffff" title="흰색" aria-label="흰색"></button><button type="button" class="sw" data-bgc="#000000" style="background:#000000" title="검정색" aria-label="검정색"></button><button type="button" class="sw" data-bgc="#f1f3f5" style="background:#f1f3f5" title="아주 연한 회색" aria-label="아주 연한 회색"></button><button type="button" class="sw" data-bgc="#fffbe0" style="background:#fffbe0" title="아주 연한 노란색" aria-label="아주 연한 노란색"></button><button type="button" class="sw" data-bgc="#fff0f5" style="background:#fff0f5" title="아주 연한 핑크색" aria-label="아주 연한 핑크색"></button><button type="button" class="sw" data-bgc="#f0fff0" style="background:#f0fff0" title="아주 연한 녹색" aria-label="아주 연한 녹색"></button></div><button type="button" class="bgpk" data-bgpick title="색상 팔레트에서 원하는 색을 골라 넣어요">색상 팔레트에서 선택…</button><div class="bgsz"><span>크기</span><input type="number" id="bgW" min="24" max="4000" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" id="bgH" min="24" max="4000" step="1" aria-label="세로 픽셀"><span>px</span></div><button type="button" class="bgpk" data-bgreset title="현재 메모창 비율에 맞춘 크기로 되돌려요">기본 크기로</button></div></div></div>
   <input type="color" id="fcPick" value="#2b8a3e" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="color" id="bgPick" value="#ffffff" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
@@ -321,7 +373,7 @@ body.has-max header .tr{display:none}
   </div>
   <button class="expand" id="ex" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
 </div>
-<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><button type="button" data-t="rowAbove">↑ 행 추가</button><button type="button" data-t="rowBelow">↓ 행 추가</button><button type="button" data-t="colLeft">← 열 추가</button><button type="button" data-t="colRight">→ 열 추가</button><button type="button" class="del" data-t="delRow">행 삭제</button><button type="button" class="del" data-t="delCol">열 삭제</button><button type="button" class="del" data-t="delTable">표 삭제</button></div>
+<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><button type="button" data-t="rowAbove">↑ 행 추가</button><button type="button" data-t="rowBelow">↓ 행 추가</button><button type="button" data-t="colLeft">← 열 추가</button><button type="button" data-t="colRight">→ 열 추가</button><button type="button" data-cfopen title="테두리·채우기 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">셀 서식</button><button type="button" class="del" data-t="delRow">행 삭제</button><button type="button" class="del" data-t="delCol">열 삭제</button><button type="button" class="del" data-t="delTable">표 삭제</button></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
@@ -3135,6 +3187,238 @@ onEd("click", e => {
 });
 
 /* ===== 내보내기 (.html / .txt) ===== */
+/* ===== 표 셀 서식 (엑셀 '셀 서식'의 테두리 · 채우기) =====
+   - 칸을 드래그하거나 Shift+클릭하면 여러 칸을 고를 수 있어요 (선택 표시는 화면에만 있고 저장되지 않아요)
+   - 선택한 칸(커서가 있는 칸 1개도 가능)에 테두리·배경색을 칸의 style 로 저장해요 */
+(() => {
+  const OV = document.createElement("div"); OV.id = "cfOv"; document.body.appendChild(OV);
+  let anchor = null, drag = false, multi = null;   // multi = {a, b} (칸 2개 이상 선택했을 때)
+  const edOf = n => EDS.find(e => e.contains(n));
+  const cellAt = t => { const c = t && t.closest && t.closest("td,th"); return c && c.closest(".rich") ? c : null; };
+  const SIDES = ["top", "right", "bottom", "left"], OPP = { top: "bottom", bottom: "top", left: "right", right: "left" };
+
+  /* 표의 칸 배치(병합 포함)를 격자로 만들어요. 비교 모드의 줄맞춤용 빈 줄은 제외 */
+  function gridOf(tab) {
+    const g = [], info = new Map();
+    Array.from(tab.rows).filter(tr => !tr.classList.contains("cmpgap")).forEach((tr, r) => {
+      g[r] = g[r] || []; let c = 0;
+      Array.from(tr.cells).forEach(cell => {
+        while (g[r][c]) c++;
+        const rs = Math.max(1, cell.rowSpan || 1), cs = Math.max(1, cell.colSpan || 1);
+        for (let i = 0; i < rs; i++) { g[r + i] = g[r + i] || []; for (let j = 0; j < cs; j++) g[r + i][c + j] = cell; }
+        info.set(cell, { r, c, rs, cs }); c += cs;
+      });
+    });
+    return { g, info };
+  }
+  function rectOf(a, b) {
+    const tab = a.closest("table"); if (!tab || b.closest("table") !== tab) return null;
+    const G = gridOf(tab), A = G.info.get(a), B = G.info.get(b); if (!A || !B) return null;
+    let r1 = Math.min(A.r, B.r), c1 = Math.min(A.c, B.c), r2 = Math.max(A.r + A.rs - 1, B.r + B.rs - 1), c2 = Math.max(A.c + A.cs - 1, B.c + B.cs - 1);
+    for (let ch = true; ch;) {   // 병합된 칸이 걸치면 범위를 넓혀요
+      ch = false;
+      for (const i of G.info.values()) {
+        if (i.r + i.rs - 1 < r1 || i.r > r2 || i.c + i.cs - 1 < c1 || i.c > c2) continue;
+        const n1 = Math.min(r1, i.r), m1 = Math.min(c1, i.c), n2 = Math.max(r2, i.r + i.rs - 1), m2 = Math.max(c2, i.c + i.cs - 1);
+        if (n1 !== r1 || m1 !== c1 || n2 !== r2 || m2 !== c2) { r1 = n1; c1 = m1; r2 = n2; c2 = m2; ch = true; }
+      }
+    }
+    return { tab, G, r1, c1, r2, c2 };
+  }
+  const cellsIn = s => { const o = []; for (const [cell, i] of s.G.info) if (!(i.r + i.rs - 1 < s.r1 || i.r > s.r2 || i.c + i.cs - 1 < s.c1 || i.c > s.c2)) o.push(cell); return o; };
+  function neigh(G, cell, side) {   // 같은 선을 공유하는 맞은편 칸들
+    const i = G.info.get(cell), out = new Set();
+    if (side === "top" || side === "bottom") { const r = side === "top" ? i.r - 1 : i.r + i.rs; for (let j = i.c; j < i.c + i.cs; j++) { const n = G.g[r] && G.g[r][j]; if (n && n !== cell) out.add(n); } }
+    else { const c = side === "left" ? i.c - 1 : i.c + i.cs; for (let k = i.r; k < i.r + i.rs; k++) { const n = G.g[k] && G.g[k][c]; if (n && n !== cell) out.add(n); } }
+    return out;
+  }
+
+  /* style 속성을 직접 다뤄요 (브라우저가 border-width/style/color 로 쪼개 저장하면 저장 정리 단계에서 지워지기 때문) */
+  const getMap = el => { const m = new Map(); for (const d of (el.getAttribute("style") || "").split(";")) { const i = d.indexOf(":"); if (i > 0) m.set(d.slice(0, i).trim().toLowerCase(), d.slice(i + 1).trim()); } return m; };
+  const putMap = (el, m) => { const s = Array.from(m, ([k, v]) => k + ":" + v).join(";"); if (s) el.setAttribute("style", s); else el.removeAttribute("style"); };
+  function putBorder(cell, side, v) {
+    const m = getMap(cell);
+    if (m.has("border")) { const bv = m.get("border"); m.delete("border"); for (const sd of SIDES) if (!m.has("border-" + sd)) m.set("border-" + sd, bv); }
+    m.set("border-" + side, v); putMap(cell, m);
+  }
+  const fgFor = hex => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return (.299 * r + .587 * g + .114 * b) > 140 ? "#1c1b19" : "#fffefb"; };   // 다크 모드에서도 읽히도록 글자색을 함께 고정
+  function putFill(cell, v) {
+    const m = getMap(cell);
+    if (v) { m.set("background-color", v); m.set("color", fgFor(v)); }
+    else { m.delete("background-color"); const c = (m.get("color") || "").toLowerCase(); if (c === "#1c1b19" || c === "#fffefb") m.delete("color"); }
+    putMap(cell, m);
+  }
+
+  /* ---- 칸 여러 개 선택 (드래그 / Shift+클릭) ---- */
+  function paint() {
+    OV.textContent = "";
+    if (!multi) return;
+    if (!multi.a.isConnected || !multi.b.isConnected) { multi = null; return; }
+    const s = rectOf(multi.a, multi.b); if (!s) return;
+    const er = s.tab.closest(".rich").getBoundingClientRect();
+    OV.style.clipPath = "inset(" + er.top + "px " + (innerWidth - er.right) + "px " + (innerHeight - er.bottom) + "px " + er.left + "px)";
+    for (const c of cellsIn(s)) { const r = c.getBoundingClientRect(), d = document.createElement("div"); d.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px"; OV.appendChild(d); }
+  }
+  function setMulti(a, b) {
+    multi = a === b ? null : { a, b };
+    const ed = edOf(a); EDS.forEach(e => e.classList.toggle("cfsel", !!multi && e === ed));
+    paint();
+  }
+  onEd("mousedown", e => {
+    if (e.button !== 0) return;
+    const c = cellAt(e.target);
+    if (e.shiftKey && c) {
+      const cur = getSelection().rangeCount && closestIn(getSelection().anchorNode, "td,th"), base = anchor && anchor.isConnected ? anchor : cur;
+      if (base && base.closest("table") === c.closest("table")) { e.preventDefault(); anchor = base; setMulti(base, c); return; }
+    }
+    setMulti(c || document.body, c || document.body); anchor = c; drag = !!c && e.target.closest(".rich").isContentEditable;
+  });
+  document.addEventListener("mousemove", e => {
+    if (!drag) return;
+    if (!(e.buttons & 1)) { drag = false; return; }
+    const c = cellAt(document.elementFromPoint(e.clientX, e.clientY));
+    if (!c || !anchor || !anchor.isConnected || c.closest("table") !== anchor.closest("table")) return;
+    if (c === anchor && !multi) return;
+    setMulti(anchor, c); getSelection().removeAllRanges();
+  });
+  document.addEventListener("mouseup", () => {
+    if (drag && multi && anchor && anchor.isConnected) { const r = document.createRange(); r.selectNodeContents(anchor); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+    drag = false;
+  });
+  onEd("keydown", e => { if (multi && (e.key === "Escape" || (e.key.length === 1 && !e.ctrlKey && !e.metaKey))) setMulti(document.body, document.body); });
+  addEventListener("scroll", paint, true); addEventListener("resize", paint); onEd("input", paint);
+
+  /* ---- 셀 서식 창 ---- */
+  const STY = [["none", "없음", ""], ["thin", "", "1px solid"], ["dot", "", "1px dotted"], ["dash", "", "1px dashed"], ["med", "", "2px solid"], ["mdash", "", "2px dashed"], ["thick", "", "3px solid"], ["dbl", "", "3px double"]];
+  const PAL = [
+    "FFFFFF 000000 E7E6E6 44546A 4472C4 ED7D31 A5A5A5 FFC000 5B9BD5 70AD47", "F2F2F2 7F7F7F D0CECE D6DCE4 D9E2F3 FBE5D6 EDEDED FFF2CC DEEBF7 E2F0D9",
+    "D9D9D9 595959 AEAAAA ADB9CA B4C6E7 F8CBAD DBDBDB FFE699 BDD7EE C5E0B3", "BFBFBF 404040 757171 8497B0 8EAADB F4B183 C9C9C9 FFD966 9DC3E6 A9D18E",
+    "A6A6A6 262626 3B3838 333F4F 2F5597 C55A11 7B7B7B BF9000 2E75B6 548235"
+  ].map(r => r.split(" ")), STD = "C00000 FF0000 FFC000 FFFF00 92D050 00B050 00B0F0 0070C0 002060 7030A0".split(" ");
+  const sw = (cls, hex) => '<button type="button" class="sw" ' + cls + '="#' + hex.toLowerCase() + '" style="background:#' + hex + '" title="#' + hex + '"></button>';
+  let dlg = null, st = null;
+
+  function build() {
+    dlg = document.createElement("div"); dlg.className = "cfov"; dlg.hidden = true;
+    dlg.innerHTML =
+      '<div class="cfbox" role="dialog" aria-modal="true" aria-label="셀 서식">' +
+      '<div class="cfhd"><b>셀 서식</b><span class="cfcnt"></span><button type="button" data-cf="all" title="표의 모든 칸을 선택해요">표 전체 선택</button><button type="button" data-cf="x" aria-label="닫기">✕</button></div>' +
+      '<div class="cftabs"><button type="button" data-tab="b" class="on">테두리</button><button type="button" data-tab="f">채우기</button></div>' +
+      '<div class="cfpg" data-pg="b"><div class="cfcols"><div class="cfl">' +
+      '<div class="cfsec">선 스타일</div><div class="cfsty">' + STY.map(s => '<button type="button" data-sty="' + s[0] + '">' + (s[1] || '<i></i>') + '</button>').join("") + '</div>' +
+      '<div class="cfsec">색</div><div class="cfclr"><button type="button" class="au" data-lc="currentcolor" title="글자색을 따라가요 (다크 모드에서도 보여요)">자동</button>' + STD.map(h => sw("data-lc", h)).join("") + '<input type="color" data-cfc="line" value="#000000" title="다른 색"></div>' +
+      '</div><div class="cfr"><div class="cfsec">미리 설정</div><div class="cfpre"><button type="button" data-pre="none">없음</button><button type="button" data-pre="out">윤곽선</button><button type="button" data-pre="in">안쪽</button></div>' +
+      '<div class="cfsec">테두리</div><div class="cfgrid">' +
+      '<button type="button" data-edge="top" title="위쪽 테두리" style="grid-area:1/2"><i class="g t"></i></button>' +
+      '<button type="button" data-edge="left" title="왼쪽 테두리" style="grid-area:2/1"><i class="g l"></i></button>' +
+      '<div class="cfpv"><i class="h"></i><i class="v"></i><span>텍스트</span></div>' +
+      '<button type="button" data-edge="right" title="오른쪽 테두리" style="grid-area:2/3"><i class="g r"></i></button>' +
+      '<button type="button" data-edge="ih" title="안쪽 가로 테두리" style="grid-area:3/1"><i class="g h"></i></button>' +
+      '<button type="button" data-edge="bottom" title="아래쪽 테두리" style="grid-area:3/2"><i class="g b"></i></button>' +
+      '<button type="button" data-edge="iv" title="안쪽 세로 테두리" style="grid-area:3/3"><i class="g v"></i></button></div>' +
+      '</div></div><div class="cfnote">선 스타일과 색을 고른 뒤 미리 설정이나 테두리 단추를 누르면 적용돼요. 같은 단추를 다시 누르면 해제돼요.</div></div>' +
+      '<div class="cfpg" data-pg="f" hidden><div class="cfsec">배경색</div><div class="cffbar"><button type="button" class="no" data-fill="">색 없음</button><input type="color" data-cfc="fill" value="#ffff00" title="다른 색"></div>' +
+      '<div class="cfpal">' + PAL[0].map(h => sw("data-fill", h)).join("") + '</div><div class="cfpal" style="grid-template-rows:repeat(4,22px)">' + PAL.slice(1).map(r => r.map(h => sw("data-fill", h)).join("")).join("") + '</div>' +
+      '<div class="cfpal">' + STD.map(h => sw("data-fill", h)).join("") + '</div><div class="cffpv">미리 보기</div></div>' +
+      '<div class="cfft"><button type="button" class="ok" data-cf="ok">확인</button><button type="button" data-cf="x">취소</button></div></div>';
+    document.body.appendChild(dlg);
+    dlg.addEventListener("click", onClick);
+    dlg.addEventListener("input", e => {
+      const k = e.target.dataset && e.target.dataset.cfc; if (!k || !st) return;
+      if (k === "line") { st.clr = e.target.value.toLowerCase(); if (st.sty === "none") st.sty = "thin"; } else st.fill = { d: true, v: e.target.value.toLowerCase() };
+      render();
+    });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && dlg && !dlg.hidden) { e.preventDefault(); close(); } });
+  }
+  const specOf = (cell, side) => {   // 칸의 현재 테두리를 CSS 값으로
+    const cs = getComputedStyle(cell), w = parseFloat(cs.getPropertyValue("border-" + side + "-width")), s = cs.getPropertyValue("border-" + side + "-style");
+    return w > 0 && s !== "none" && s !== "hidden" ? Math.max(1, Math.round(w)) + "px " + s + " " + cs.getPropertyValue("border-" + side + "-color") : "none";
+  };
+  function readEdges() {
+    const s = rectOf(st.a, st.b), cs = cellsIn(s), I = s.G.info, E = {};
+    const side = (f, sd) => { const c = cs.find(f); return { v: c ? specOf(c, sd) : "none", d: false }; };
+    E.top = side(c => I.get(c).r === s.r1, "top");
+    E.bottom = side(c => { const i = I.get(c); return i.r + i.rs - 1 === s.r2; }, "bottom");
+    E.left = side(c => I.get(c).c === s.c1, "left");
+    E.right = side(c => { const i = I.get(c); return i.c + i.cs - 1 === s.c2; }, "right");
+    E.ih = side(c => { const i = I.get(c); return i.r + i.rs - 1 < s.r2; }, "bottom");
+    E.iv = side(c => { const i = I.get(c); return i.c + i.cs - 1 < s.c2; }, "right");
+    st.E = E; st.hasH = s.r2 > s.r1; st.hasV = s.c2 > s.c1; st.n = cs.length;
+  }
+  const spec = () => st.sty === "none" ? "none" : STY.find(s => s[0] === st.sty)[2] + " " + st.clr;
+  function render() {
+    const q = (sel, f) => dlg.querySelectorAll(sel).forEach(f);
+    dlg.querySelector(".cfcnt").textContent = st.n + "칸 선택";
+    q("[data-tab]", b => b.classList.toggle("on", b.dataset.tab === st.tab));
+    q("[data-pg]", p => { p.hidden = p.dataset.pg !== st.tab; });
+    q("[data-sty]", b => {
+      b.classList.toggle("sel", b.dataset.sty === st.sty);
+      const i = b.querySelector("i"), s = STY.find(x => x[0] === b.dataset.sty)[2]; if (i) i.style.borderTop = s + " currentcolor";
+    });
+    q("[data-lc]", b => b.classList.toggle("sel", b.dataset.lc === st.clr));
+    q("[data-edge]", b => { const k = b.dataset.edge, dis = (k === "ih" && !st.hasH) || (k === "iv" && !st.hasV); b.disabled = dis; b.classList.toggle("on", !dis && st.E[k].v !== "none"); });
+    q("[data-pre=in]", b => { b.disabled = !st.hasH && !st.hasV; });
+    const pv = dlg.querySelector(".cfpv"), E = st.E;
+    pv.style.borderTop = E.top.v; pv.style.borderBottom = E.bottom.v; pv.style.borderLeft = E.left.v; pv.style.borderRight = E.right.v;
+    pv.querySelector(".h").style.borderTop = st.hasH ? E.ih.v : "none"; pv.querySelector(".v").style.borderLeft = st.hasV ? E.iv.v : "none";
+    q("[data-fill]", b => b.classList.toggle("sel", st.fill.d && (b.dataset.fill || null) === st.fill.v));
+    const fp = dlg.querySelector(".cffpv"), fv = st.fill.d ? st.fill.v : st.curBg;
+    fp.style.background = fv || "transparent"; fp.style.color = fv && /^#[0-9a-f]{6}$/i.test(fv) ? fgFor(fv) : "var(--ink)";
+  }
+  function onClick(e) {
+    const b = e.target.closest("button"); if (!b) { if (e.target === dlg) close(); return; }
+    const d = b.dataset;
+    if (d.cf === "x") close();
+    else if (d.cf === "ok") apply();
+    else if (d.cf === "all") {
+      const G = gridOf(st.a.closest("table")), last = G.g[G.g.length - 1];
+      st.a = G.g[0][0]; st.b = last[last.length - 1]; setMulti(st.a, st.b); readEdges();
+    } else if (d.tab) st.tab = d.tab;
+    else if (d.sty) st.sty = d.sty;
+    else if (d.lc) st.clr = d.lc;
+    else if (d.pre) {
+      const v = spec(), set = k => { st.E[k] = { v, d: true }; };
+      if (d.pre === "none") ["top", "bottom", "left", "right", "ih", "iv"].forEach(k => { st.E[k] = { v: "none", d: true }; });
+      else if (d.pre === "out") ["top", "bottom", "left", "right"].forEach(set);
+      else { if (st.hasH) set("ih"); if (st.hasV) set("iv"); }
+    } else if (d.edge) { const v = spec(); st.E[d.edge] = { v: st.E[d.edge].v === v ? "none" : v, d: true }; }
+    else if ("fill" in d) st.fill = { d: true, v: d.fill || null };
+    render();
+  }
+  function close() { if (dlg) dlg.hidden = true; st = null; }
+  function apply() {
+    const s = rectOf(st.a, st.b); if (!s) { close(); return; }
+    const cs = cellsIn(s), I = s.G.info, E = st.E, F = st.fill;
+    const edge = (cell, side, v) => { putBorder(cell, side, v); for (const n of neigh(s.G, cell, side)) putBorder(n, OPP[side], v); };
+    for (const c of cs) {
+      const i = I.get(c);
+      if (E.top.d && i.r === s.r1) edge(c, "top", E.top.v);
+      if (E.bottom.d && i.r + i.rs - 1 === s.r2) edge(c, "bottom", E.bottom.v);
+      if (E.left.d && i.c === s.c1) edge(c, "left", E.left.v);
+      if (E.right.d && i.c + i.cs - 1 === s.c2) edge(c, "right", E.right.v);
+      if (E.ih.d && i.r + i.rs - 1 < s.r2) edge(c, "bottom", E.ih.v);
+      if (E.iv.d && i.c + i.cs - 1 < s.c2) edge(c, "right", E.iv.v);
+      if (F.d) putFill(c, F.v);
+    }
+    const ed = edOf(s.tab), changed = F.d || Object.values(E).some(x => x.d);
+    close(); paint();
+    if (changed && ed) { ed.dispatchEvent(new Event("input", { bubbles: true })); toast("셀 서식을 적용했어요"); }
+  }
+  function open() {
+    closePop();
+    const sl = getSelection(), cur = sl.rangeCount && closestIn(sl.anchorNode, "td,th");
+    let a, b;
+    if (multi && multi.a.isConnected && multi.b.isConnected) { a = multi.a; b = multi.b; }
+    else a = b = cur || (anchor && anchor.isConnected ? anchor : null);
+    if (!a) { toast("표 안의 칸을 먼저 클릭하면 테두리·채우기를 지정할 수 있어요"); return; }
+    const ed = edOf(a); if (!ed || !ed.isContentEditable) { toast("편집할 수 없는 상태예요"); return; }
+    if (!dlg) build();
+    st = { a, b, tab: "b", sty: "thin", clr: "currentcolor", fill: { d: false, v: null }, curBg: getMap(a).get("background-color") || "" };
+    readEdges(); render(); dlg.hidden = false;
+  }
+  document.addEventListener("click", e => { if (e.target.closest("[data-cfopen]")) { e.preventDefault(); open(); } });
+})();
+
 function closePop() {
   tb.querySelectorAll(".pop").forEach(p => { p.hidden = true; p.classList.remove("r"); });
   tb.querySelectorAll("[aria-expanded]").forEach(b => b.setAttribute("aria-expanded", "false"));
