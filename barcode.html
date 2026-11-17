@@ -303,8 +303,11 @@ body .rich{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans
 body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif)}
 .tb .menu{position:relative}
 .tb .menu.dim>button{opacity:.45}
-.tbar{position:fixed;z-index:30;display:flex;flex-wrap:wrap;gap:2px;max-width:calc(100vw - 16px);padding:3px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.tbar{position:fixed;z-index:30;display:flex;flex-direction:column;gap:2px;max-width:calc(100vw - 16px);padding:3px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
 .tbar[hidden]{display:none}
+.tbar .tbr{display:flex;flex-wrap:wrap;gap:2px}
+.tbar .tbr+.tbr{border-top:1px solid var(--line);padding-top:2px}
+.tbar .tbsep{width:1px;align-self:stretch;margin:4px 3px;background:var(--line)}
 .tbar button{font:inherit;font-size:12.5px;height:28px;padding:0 8px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap}
 .tbar button:hover{background:var(--line)}
 .tbar button.del{color:var(--warn)}
@@ -535,7 +538,7 @@ p{margin:6px 0 0}
   </div>
   <button class="expand" id="mex" type="button" title="메모 확대 / 축소 (Esc)" aria-label="메모 확대">⤢</button>
 </div>
-<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><button type="button" data-t="rowAbove">↑ 행 추가</button><button type="button" data-t="rowBelow">↓ 행 추가</button><button type="button" data-t="colLeft">← 열 추가</button><button type="button" data-t="colRight">→ 열 추가</button><button type="button" data-cfopen title="테두리·채우기 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">셀 서식</button><button type="button" data-t="toImg" title="표를 그림(PNG)으로 바꿔요 (표 메뉴에서는 표 유지도 고를 수 있어요)">이미지로</button><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button><button type="button" class="del" data-t="delRow">행 삭제</button><button type="button" class="del" data-t="delCol">열 삭제</button><button type="button" class="del" data-t="delTable">표 삭제</button></div>
+<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbr"><button type="button" data-t="rowAbove">↑ 행 추가</button><button type="button" data-t="rowBelow">↓ 행 추가</button><button type="button" data-t="colLeft">← 열 추가</button><button type="button" data-t="colRight">→ 열 추가</button><i class="tbsep"></i><button type="button" class="del" data-t="delRow">행 삭제</button><button type="button" class="del" data-t="delCol">열 삭제</button><button type="button" class="del" data-t="delTable">표 삭제</button></div><div class="tbr"><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
@@ -2025,6 +2028,7 @@ function tbl(op) {   // 표 편집: 커서가 있는 칸 기준
   if (!td) { say("표 안의 칸을 먼저 클릭해 주세요", "err"); return; }
   const tr = td.parentElement, tab = td.closest("table"), ci = td.cellIndex, rows = Array.from(tab.rows);
   const mk = () => { const c = document.createElement("td"); c.innerHTML = "<br>"; return c; };
+  if (op === "cpImg" || op === "svImg") { window.cfTableImgOut(tab, op === "cpImg"); return; }   // 표는 그대로 두고 이미지만 복사/저장
   let focus = null;
   if (op === "rowAbove" || op === "rowBelow") {
     const nr = document.createElement("tr");
@@ -3705,7 +3709,7 @@ onEd("click", e => {
     close(); paint();
     if (changed && ed) { ed.dispatchEvent(new Event("input", { bubbles: true })); toast("셀 서식을 적용했어요"); }
   }
-  function open() {
+  function open(tab) {   // tab: "b" 테두리 / "f" 채우기 (비우면 테두리)
     closePop();
     const sl = getSelection(), cur = sl.rangeCount && closestIn(sl.anchorNode, "td,th");
     let a, b;
@@ -3714,12 +3718,11 @@ onEd("click", e => {
     if (!a) { toast("표 안의 칸을 먼저 클릭하면 테두리·채우기를 지정할 수 있어요"); return; }
     const ed = edOf(a); if (!ed || !ed.isContentEditable) { toast("편집할 수 없는 상태예요"); return; }
     if (!dlg) build();
-    st = { a, b, tab: "b", sty: "thin", clr: "currentcolor", fill: { d: false, v: null }, curBg: getMap(a).get("background-color") || "" };
+    st = { a, b, tab: tab === "f" ? "f" : "b", sty: "thin", clr: "currentcolor", fill: { d: false, v: null }, curBg: getMap(a).get("background-color") || "" };
     readEdges(); render(); dlg.hidden = false;
   }
   /* ---- 표 → 이미지 (화면에 보이는 모양 그대로 PNG 로 그려서 메모에 넣어요) ---- */
-  function tableToImage(tab, keep) {
-    const ed = edOf(tab); if (!ed || !ed.isContentEditable) { toast("편집할 수 없는 상태예요"); return; }
+  function renderTable(tab) {   // 표를 화면 모양 그대로 canvas 에 그려요 → {cv, W}
     const G = gridOf(tab), tr = tab.getBoundingClientRect();
     if (!G.info.size || tr.width < 1 || tr.height < 1) { toast("변환할 표가 비어 있어요"); return; }
     const RANK = { double: 5, solid: 4, dashed: 3, dotted: 2 };
@@ -3789,6 +3792,12 @@ onEd("click", e => {
       const ln = off => { ctx.beginPath(); if (hz) { ctx.moveTo(a - ext, p + off); ctx.lineTo(z + ext, p + off); } else { ctx.moveTo(p + off, a - ext); ctx.lineTo(p + off, z + ext); } ctx.stroke(); };
       if (sp.s === "double") { ctx.lineWidth = Math.max(1, sp.w / 3); ln(-sp.w / 3); ln(sp.w / 3); } else { ctx.lineWidth = sp.w; ln(0); }
     }
+    return { cv, W };
+  }
+  function tableToImage(tab, keep) {
+    const ed = edOf(tab); if (!ed || !ed.isContentEditable) { toast("편집할 수 없는 상태예요"); return; }
+    const R = renderTable(tab); if (!R) return;
+    const cv = R.cv, W = R.W;
     let url; try { url = cv.toDataURL("image/png"); } catch (e) { toast("이미지로 만들지 못했어요"); return; }
     const img = '<img src="' + url + '" width="' + Math.min(4000, Math.max(16, Math.round(W))) + '">';
     ed.focus(); const sel = getSelection(), r = document.createRange();
@@ -3801,7 +3810,28 @@ onEd("click", e => {
     toast(keep ? "표 아래에 이미지로 추가했어요" : "표를 이미지로 바꿨어요" + (undoable ? " (Ctrl+Z 로 되돌릴 수 있어요)" : ""));
   }
   window.cfTableToImage = tableToImage;
-  document.addEventListener("click", e => { if (e.target.closest("[data-cfopen]")) { e.preventDefault(); open(); } });
+  /* 표 편집 막대의 [이미지 복사] / [이미지 저장]: 표는 그대로 두고 PNG 만 클립보드로 복사하거나 파일로 저장해요 */
+  window.cfTableImgOut = async function (tab, copy) {
+    const R = renderTable(tab); if (!R) return;
+    let blob;
+    try { blob = await new Promise((ok, no) => R.cv.toBlob(b => b ? ok(b) : no(new Error("png")), "image/png")); }
+    catch (e) { toast("이미지로 만들지 못했어요"); return; }
+    if (copy) {
+      try {
+        if (!navigator.clipboard || !window.ClipboardItem || !navigator.clipboard.write) throw new Error("noapi");
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        toast("표를 이미지로 복사했어요. 붙여넣을 곳에서 Ctrl+V를 누르세요");
+      } catch (e) { toast("복사하지 못했어요. [이미지 저장]을 이용해 주세요"); }
+    } else {
+      const n = new Date(), p = x => String(x).padStart(2, "0");
+      const name = "표_" + n.getFullYear() + p(n.getMonth() + 1) + p(n.getDate()) + "-" + p(n.getHours()) + p(n.getMinutes()) + p(n.getSeconds()) + ".png";
+      const url = URL.createObjectURL(blob), a = document.createElement("a");
+      a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      toast("표를 이미지로 PC에 저장했어요: " + name);
+    }
+  };
+  document.addEventListener("click", e => { const cb = e.target.closest("[data-cfopen]"); if (cb) { e.preventDefault(); open(cb.dataset.cfopen); } });
 })();
 
 function closePop() {
