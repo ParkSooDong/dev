@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="only light">
 <meta name="supported-color-schemes" content="light">
-<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000081548209b77172d88cd918f5%26fn%3Dbarcode_updated_alignfix.html%26cd%3Dattachment%26ts%3D498591%26p%3Dfs%26cid%3D1%26sig%3D013ecdde184b4bc5228b06e0effb8b34a122f5ff8a0ee69a61ad5b4b7dfe4c1e%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000935481f88792459dfada7440%26fn%3Dbarcode_updated_inline_table.html%26cd%3Dattachment%26ts%3D498592%26p%3Dfs%26cid%3D1%26sig%3D2c568fc4941b18a96c17d21461451b377ddf240a298b9430e07d1f41a47f8602%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="456b3786003c45c8806a4a9a168" src="//local.adguard.org?ts=1794917507370&amp;type=content-script&amp;dmn=fs.mybox.naver.com&amp;url=https%3A%2F%2Ffs.mybox.naver.com%2Ffile%2Fdownload.api%3FsvcType%3DMYBOX-WEB%26resourceKey%3DcGVzZGVlMDB8MzQ3MjYwMDMzNzE1MDQ2OTIwOHxGfDA%26time%3D1794926292517&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="456b3786003c45c8806a4a9a168" src="//local.adguard.org?ts=1794917507370&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
@@ -118,7 +118,7 @@ button:disabled{opacity:.35;cursor:default}
 .imgx-ov>canvas,.imgx-ov>svg{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
 .imgx-bar textarea{width:150px;height:44px;margin:0;padding:4px 6px;font:inherit;font-size:13px;line-height:1.3;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);resize:none}
 .imgx-bar textarea[hidden]{display:none}
-.rich table{border-collapse:collapse;margin:4px 0}
+.rich table{border-collapse:collapse;margin:4px 0;display:inline-table;vertical-align:top}
 .rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em}
 .rich a{color:inherit}
 /* 파일 첨부 칩 */
@@ -2008,20 +2008,21 @@ function clearAll() {
   fire(); refreshTb(); say("글자 서식을 기본값으로 되돌렸어요", "ok");
 }
 function tabAlign(tab, v) {
-  // 표는 블록 요소이므로 부모의 text-align 만으로는 위치가 이동하지 않아요.
-  // 표 자체의 좌우 margin 을 조절해 실제 표 위치를 바꿉니다.
-  tab.style.marginLeft = v === "right" || v === "center" ? "auto" : "0";
-  tab.style.marginRight = v === "left" || v === "center" ? "auto" : "0";
-  // 표와 같은 줄에 다른 내용이 있을 때의 기존 정렬 동작도 유지합니다.
+  // memo와 동일하게 표는 글자처럼 흐르는 inline-table입니다.
+  // 따라서 표 자체의 auto margin이 아니라 표가 놓인 한 줄의 정렬을 바꿉니다.
+  tab.style.marginLeft = "";
+  tab.style.marginRight = "";
   let blk = tab.parentElement;
   while (blk && blk !== ta && !BLK.test(blk.nodeName) && !/^(TD|TH)$/.test(blk.nodeName)) blk = blk.parentElement;
   if (!blk || blk === ta) {
-    const par = tab.parentNode, isBrk = n => n.nodeType === 1 && /^(BR|DIV|P|H[1-6]|UL|OL|LI|BLOCKQUOTE|PRE|HR)$/.test(n.nodeName);
+    const par = tab.parentNode;
+    const isBrk = n => n.nodeType === 1 && /^(BR|DIV|P|H[1-6]|UL|OL|LI|BLOCKQUOTE|PRE|HR)$/.test(n.nodeName);
     let a = tab, z = tab;
     while (a.previousSibling && !isBrk(a.previousSibling)) a = a.previousSibling;
     while (z.nextSibling && !isBrk(z.nextSibling)) z = z.nextSibling;
     if (z.nextSibling && z.nextSibling.nodeName === "BR") z = z.nextSibling;
-    blk = document.createElement("div"); par.insertBefore(blk, a);
+    blk = document.createElement("div");
+    par.insertBefore(blk, a);
     for (let n = a, nx; n; n = nx) { nx = n === z ? null : n.nextSibling; blk.appendChild(n); }
   }
   blk.style.textAlign = v;
