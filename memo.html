@@ -280,7 +280,7 @@ body.has-max header .tr{display:none}
 #rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
 #rem.neg{color:var(--err)}
 /* 표 셀 서식 (테두리 · 채우기) */
-#cfOv{position:fixed;inset:0;pointer-events:none;z-index:25}
+#cfOv{position:fixed;inset:0;pointer-events:none;z-index:105;overflow:hidden}
 #cfOv div{position:absolute;background:rgba(51,154,240,.26);outline:1.5px solid #339af0;outline-offset:-1px}
 .rich.cfsel ::selection{background:transparent}
 .cfov{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.35)}
@@ -332,7 +332,8 @@ body.has-max header .tr{display:none}
 .cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
 </style>
-</head>
+<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000fe348206974d980cb1e537cf%26fn%3Dmemo_shiftzoom_fixed%25281%2529.html%26cd%3Dattachment%26ts%3D498592%26p%3Dfs%26cid%3D1%26sig%3D8920cb9290101a02f9128ddebf5a3b19f8f8a48048bccd4037d4c21932062fee%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -3314,9 +3315,31 @@ onEd("click", e => {
     if (!multi) return;
     if (!multi.a.isConnected || !multi.b.isConnected) { multi = null; return; }
     const s = rectOf(multi.a, multi.b); if (!s) return;
-    const er = s.tab.closest(".rich").getBoundingClientRect();
-    OV.style.clipPath = "inset(" + er.top + "px " + (innerWidth - er.right) + "px " + (innerHeight - er.bottom) + "px " + er.left + "px)";
-    for (const c of cellsIn(s)) { const r = c.getBoundingClientRect(), d = document.createElement("div"); d.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px"; OV.appendChild(d); }
+    const ed = s.tab.closest(".rich");
+    if (!ed || !ed.isConnected) return;
+    const er = ed.getBoundingClientRect();
+    // 뷰포트와 실제 편집 영역의 교집합만 표시합니다. clip-path의 inset 계산에
+    // 의존하지 않아 확대/분할/화면 회전 후에도 잘못된 좌표가 남지 않습니다.
+    const L = Math.max(0, er.left), T = Math.max(0, er.top);
+    const R = Math.min(document.documentElement.clientWidth, er.right);
+    const B = Math.min(document.documentElement.clientHeight, er.bottom);
+    OV.style.clipPath = "none";
+    if (R <= L || B <= T) return;
+    for (const c of cellsIn(s)) {
+      const r = c.getBoundingClientRect();
+      const l = Math.max(L, r.left), t = Math.max(T, r.top);
+      const rr = Math.min(R, r.right), bb = Math.min(B, r.bottom);
+      if (rr <= l || bb <= t) continue;
+      const d = document.createElement("div");
+      d.style.cssText = "left:" + l + "px;top:" + t + "px;width:" + (rr-l) + "px;height:" + (bb-t) + "px";
+      OV.appendChild(d);
+    }
+  }
+  let paintPending = false;
+  function schedulePaint() {
+    if (paintPending) return;
+    paintPending = true;
+    requestAnimationFrame(() => { paintPending = false; paint(); });
   }
   function setMulti(a, b, keep) {   // keep: 같은 칸이어도 선택 표시 유지 (Shift+클릭)
     multi = a === b && !keep ? null : { a, b };
@@ -3327,8 +3350,10 @@ onEd("click", e => {
     if (e.button !== 0) return;
     const c = cellAt(e.target);
     if (e.shiftKey && c) {
-      const cur = getSelection().rangeCount && closestIn(getSelection().anchorNode, "td,th"), base = anchor && anchor.isConnected ? anchor : cur;
-      if (base && base.closest("table") === c.closest("table")) { e.preventDefault(); anchor = base; setMulti(base, c, true); return; }
+      const cur = getSelection().rangeCount && closestIn(getSelection().anchorNode, "td,th");
+      const sameTable = n => n && n.isConnected && n.closest("table") === c.closest("table");
+      const base = sameTable(anchor) ? anchor : (sameTable(cur) ? cur : null);
+      if (base) { e.preventDefault(); anchor = base; setMulti(base, c, true); return; }
     }
     setMulti(c || document.body, c || document.body); anchor = c; drag = !!c && e.target.closest(".rich").isContentEditable;
   });
@@ -3345,7 +3370,24 @@ onEd("click", e => {
     drag = false;
   });
   onEd("keydown", e => { if (multi && (e.key === "Escape" || (e.key.length === 1 && !e.ctrlKey && !e.metaKey))) setMulti(document.body, document.body); });
-  addEventListener("scroll", paint, true); addEventListener("resize", paint); onEd("input", paint);
+  // 영역별 크기 변경(분할선 드래그), 확대/축소, 방향 전환 및 모바일 뷰포트
+  // 변경을 모두 감지해 선택 표시를 새 좌표로 다시 그립니다.
+  addEventListener("scroll", schedulePaint, true);
+  addEventListener("resize", schedulePaint);
+  if (window.visualViewport) {
+    visualViewport.addEventListener("resize", schedulePaint);
+    visualViewport.addEventListener("scroll", schedulePaint);
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(schedulePaint);
+    EDS.forEach(e => ro.observe(e));
+    const paneForObserve = document.getElementById("pane");
+    if (paneForObserve) ro.observe(paneForObserve);
+  }
+  onEd("input", schedulePaint);
+  onEd("keyup", schedulePaint);
+  document.addEventListener("transitionend", schedulePaint, true);
+  if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", schedulePaint);
 
   /* ---- 셀 서식 창 ---- */
   const STY = [["none", "없음", ""], ["thin", "", "1px solid"], ["dot", "", "1px dotted"], ["dash", "", "1px dashed"], ["med", "", "2px solid"], ["mdash", "", "2px dashed"], ["thick", "", "3px solid"], ["dbl", "", "3px double"]];
