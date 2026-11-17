@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="only light">
 <meta name="supported-color-schemes" content="light">
-<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000935481f88792459dfada7440%26fn%3Dbarcode_updated_inline_table.html%26cd%3Dattachment%26ts%3D498592%26p%3Dfs%26cid%3D1%26sig%3D2c568fc4941b18a96c17d21461451b377ddf240a298b9430e07d1f41a47f8602%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000019a88211bfdc3522d3d48fa7%26fn%3Dbarcode_shiftzoom_fixed.html%26cd%3Dattachment%26ts%3D498592%26p%3Dfs%26cid%3D1%26sig%3D5176068d51d5cf7b95b46fcf808d9571745548f2374f6eebecab0efadfe966ce%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="456b3786003c45c8806a4a9a168" src="//local.adguard.org?ts=1794917507370&amp;type=content-script&amp;dmn=fs.mybox.naver.com&amp;url=https%3A%2F%2Ffs.mybox.naver.com%2Ffile%2Fdownload.api%3FsvcType%3DMYBOX-WEB%26resourceKey%3DcGVzZGVlMDB8MzQ3MjYwMDMzNzE1MDQ2OTIwOHxGfDA%26time%3D1794926292517&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="456b3786003c45c8806a4a9a168" src="//local.adguard.org?ts=1794917507370&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
@@ -421,7 +421,7 @@ p{margin:6px 0 0}
   .cell.wide .inrow input{font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:.02em;border-color:var(--ink)}
 }
 /* 표 셀 서식 (테두리 · 채우기) */
-#cfOv{position:fixed;inset:0;pointer-events:none;z-index:25}
+#cfOv{position:fixed;inset:0;pointer-events:none;z-index:105;overflow:hidden}
 #cfOv div{position:absolute;background:rgba(51,154,240,.26);outline:1.5px solid #339af0;outline-offset:-1px}
 .rich.cfsel ::selection{background:transparent}
 .cfov{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.35)}
@@ -1392,8 +1392,8 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.con
 /* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요. memo 파일과 같은 주소를 넣으세요 ▼▼ */
 const DB_URLS = [
   "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
+  "https://pesdee00-2026-01-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB2
+  "https://pesdee00-2027-01-default-rtdb.asia-southeast1.firebasedatabase.app"      // DB3
 ];
 /* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
 const DBSEL="bc9-db";   /* 마지막으로 고른 DB 번호(0~2)를 이 PC(브라우저)에 기억 → 다음에 켜도 그 DB 로 시작 */
@@ -3577,8 +3577,13 @@ onEd("click", e => {
     if (e.button !== 0) return;
     const c = cellAt(e.target);
     if (e.shiftKey && c) {
-      const cur = getSelection().rangeCount && closestIn(getSelection().anchorNode, "td,th"), base = anchor && anchor.isConnected ? anchor : cur;
-      if (base && base.closest("table") === c.closest("table")) { e.preventDefault(); anchor = base; setMulti(base, c, true); return; }
+      const cur = getSelection().rangeCount && closestIn(getSelection().anchorNode, "td,th");
+      const sameTable = n => !!(n && n.isConnected && n.closest("table") === c.closest("table") && edOf(n) === edOf(c));
+      /* 확대/축소로 분할 배치가 바뀌면 이전 편집기의 anchor가 남을 수 있어요.
+         현재 클릭한 셀과 같은 편집기·같은 표에 속하는 기준 셀만 사용하고,
+         아니면 현재 커서 셀을 기준으로 삼아요. */
+      const base = sameTable(anchor) ? anchor : (sameTable(cur) ? cur : null);
+      if (base) { e.preventDefault(); anchor = base; setMulti(base, c, true); return; }
     }
     setMulti(c || document.body, c || document.body); anchor = c; drag = !!c && e.target.closest(".rich").isContentEditable;
   });
@@ -3595,7 +3600,29 @@ onEd("click", e => {
     drag = false;
   });
   onEd("keydown", e => { if (multi && (e.key === "Escape" || (e.key.length === 1 && !e.ctrlKey && !e.metaKey))) setMulti(document.body, document.body); });
-  addEventListener("scroll", paint, true); addEventListener("resize", paint); onEd("input", paint);
+  // 화면 방향·뷰포트·확대/축소·분할 영역 크기 변경 뒤 선택 표시를 새 좌표로 다시 그립니다.
+  let paintPending = false;
+  function schedulePaint() {
+    if (paintPending) return;
+    paintPending = true;
+    requestAnimationFrame(() => { paintPending = false; paint(); });
+  }
+  addEventListener("scroll", schedulePaint, true);
+  addEventListener("resize", schedulePaint);
+  if (window.visualViewport) {
+    visualViewport.addEventListener("resize", schedulePaint);
+    visualViewport.addEventListener("scroll", schedulePaint);
+  }
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(schedulePaint);
+    EDS.forEach(e => ro.observe(e));
+    const paneForObserve = document.getElementById("mpane");
+    if (paneForObserve) ro.observe(paneForObserve);
+  }
+  onEd("input", schedulePaint);
+  onEd("keyup", schedulePaint);
+  document.addEventListener("transitionend", schedulePaint, true);
+  if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", schedulePaint);
 
   /* ---- 셀 서식 창 ---- */
   const STY = [["none", "없음", ""], ["thin", "", "1px solid"], ["dot", "", "1px dotted"], ["dash", "", "1px dashed"], ["med", "", "2px solid"], ["mdash", "", "2px dashed"], ["thick", "", "3px solid"], ["dbl", "", "3px double"]];
