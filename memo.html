@@ -3318,8 +3318,8 @@ onEd("click", e => {
     OV.style.clipPath = "inset(" + er.top + "px " + (innerWidth - er.right) + "px " + (innerHeight - er.bottom) + "px " + er.left + "px)";
     for (const c of cellsIn(s)) { const r = c.getBoundingClientRect(), d = document.createElement("div"); d.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px"; OV.appendChild(d); }
   }
-  function setMulti(a, b) {
-    multi = a === b ? null : { a, b };
+  function setMulti(a, b, keep) {   // keep: 같은 칸이어도 선택 표시 유지 (Shift+클릭)
+    multi = a === b && !keep ? null : { a, b };
     const ed = edOf(a); EDS.forEach(e => e.classList.toggle("cfsel", !!multi && e === ed));
     paint();
   }
@@ -3328,7 +3328,7 @@ onEd("click", e => {
     const c = cellAt(e.target);
     if (e.shiftKey && c) {
       const cur = getSelection().rangeCount && closestIn(getSelection().anchorNode, "td,th"), base = anchor && anchor.isConnected ? anchor : cur;
-      if (base && base.closest("table") === c.closest("table")) { e.preventDefault(); anchor = base; setMulti(base, c); return; }
+      if (base && base.closest("table") === c.closest("table")) { e.preventDefault(); anchor = base; setMulti(base, c, true); return; }
     }
     setMulti(c || document.body, c || document.body); anchor = c; drag = !!c && e.target.closest(".rich").isContentEditable;
   });
@@ -3406,6 +3406,7 @@ onEd("click", e => {
   }
   const spec = () => st.sty === "none" ? "none" : STY.find(s => s[0] === st.sty)[2] + " " + st.clr;
   function render() {
+    if (!st) return;   // 창을 닫은 뒤에는 다시 그리지 않아요
     const q = (sel, f) => dlg.querySelectorAll(sel).forEach(f);
     dlg.querySelector(".cfcnt").textContent = st.n + "칸 선택";
     q("[data-tab]", b => b.classList.toggle("on", b.dataset.tab === st.tab));
