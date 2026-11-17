@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="only light">
 <meta name="supported-color-schemes" content="light">
-<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000d49c8206abd5e304ddcc5300%26fn%3Dbarcode_updated_full.html%26cd%3Dattachment%26ts%3D498591%26p%3Dfs%26cid%3D1%26sig%3D117bc200cafd22d2eb5448b03d27f0235d0b572835dd96ae8d6d8342ea1bd4ea%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000081548209b77172d88cd918f5%26fn%3Dbarcode_updated_alignfix.html%26cd%3Dattachment%26ts%3D498591%26p%3Dfs%26cid%3D1%26sig%3D013ecdde184b4bc5228b06e0effb8b34a122f5ff8a0ee69a61ad5b4b7dfe4c1e%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="456b3786003c45c8806a4a9a168" src="//local.adguard.org?ts=1794917507370&amp;type=content-script&amp;dmn=fs.mybox.naver.com&amp;url=https%3A%2F%2Ffs.mybox.naver.com%2Ffile%2Fdownload.api%3FsvcType%3DMYBOX-WEB%26resourceKey%3DcGVzZGVlMDB8MzQ3MjYwMDMzNzE1MDQ2OTIwOHxGfDA%26time%3D1794926292517&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="456b3786003c45c8806a4a9a168" src="//local.adguard.org?ts=1794917507370&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
@@ -2008,9 +2008,14 @@ function clearAll() {
   fire(); refreshTb(); say("글자 서식을 기본값으로 되돌렸어요", "ok");
 }
 function tabAlign(tab, v) {
+  // 표는 블록 요소이므로 부모의 text-align 만으로는 위치가 이동하지 않아요.
+  // 표 자체의 좌우 margin 을 조절해 실제 표 위치를 바꿉니다.
+  tab.style.marginLeft = v === "right" || v === "center" ? "auto" : "0";
+  tab.style.marginRight = v === "left" || v === "center" ? "auto" : "0";
+  // 표와 같은 줄에 다른 내용이 있을 때의 기존 정렬 동작도 유지합니다.
   let blk = tab.parentElement;
   while (blk && blk !== ta && !BLK.test(blk.nodeName) && !/^(TD|TH)$/.test(blk.nodeName)) blk = blk.parentElement;
-  if (!blk || blk === ta) {   // 줄을 감싸는 블록이 없으면 같은 줄(앞 줄바꿈~뒤 줄바꿈)을 div 로 감싸요
+  if (!blk || blk === ta) {
     const par = tab.parentNode, isBrk = n => n.nodeType === 1 && /^(BR|DIV|P|H[1-6]|UL|OL|LI|BLOCKQUOTE|PRE|HR)$/.test(n.nodeName);
     let a = tab, z = tab;
     while (a.previousSibling && !isBrk(a.previousSibling)) a = a.previousSibling;
