@@ -3495,6 +3495,40 @@ onEd("keydown", e => {
   s.removeAllRanges(); s.addRange(r);
 });
 
+/* 표 안에서 ↑ / ↓ 로 위·아래 칸 이동: 칸 안에서 첫 줄(↑) / 마지막 줄(↓)에 커서가 있을 때, 그 방향에 칸이 있으면 그 칸으로 이동해요
+   (칸 안에 줄이 여러 개면 먼저 칸 안에서 줄 단위로 움직이고, 병합된 칸이 있어도 가로 위치가 겹치는 칸으로 가요. 표 맨 위/아래 칸에서는 기본 동작) */
+onEd("keydown", e => {
+  if ((e.key !== "ArrowUp" && e.key !== "ArrowDown") || e.shiftKey || e.ctrlKey || e.altKey || e.metaKey || e.isComposing) return;
+  const s = getSelection(); if (!s.rangeCount || !s.isCollapsed) return;
+  const td = closestIn(s.anchorNode, "td,th"); if (!td || td.closest(".cmpgap")) return;
+  const up = e.key === "ArrowUp", tab = td.closest("table"), cr = td.getBoundingClientRect(), cs = getComputedStyle(td);
+  const pr = s.getRangeAt(0).getClientRects()[0];   // 빈 칸처럼 커서 위치를 잴 수 없으면 칸 전체를 기준으로 해요
+  let px, atEdge;
+  if (pr && pr.height) {
+    px = pr.left; const h = pr.height * 0.6;
+    atEdge = up ? pr.top < cr.top + (parseFloat(cs.paddingTop) || 0) + h : pr.bottom > cr.bottom - (parseFloat(cs.paddingBottom) || 0) - h;
+  } else { px = cr.left + cr.width / 2; atEdge = true; }
+  if (!atEdge) return;
+  let best = null;
+  for (const c of tab.querySelectorAll("td,th")) {
+    if (c === td || c.closest(".cmpgap")) continue;
+    const r = c.getBoundingClientRect();
+    if (up ? r.bottom > cr.top + 1 : r.top < cr.bottom - 1) continue;
+    if (px < r.left - 1 || px > r.right + 1) continue;
+    if (!best || (up ? r.bottom > best.r.bottom : r.top < best.r.top)) best = { c, r };
+  }
+  if (!best) return;
+  e.preventDefault();
+  const x = Math.min(Math.max(px, best.r.left + 2), best.r.right - 2), y = up ? best.r.bottom - 4 : best.r.top + 4;
+  let nr = null;
+  try {
+    if (document.caretRangeFromPoint) nr = document.caretRangeFromPoint(x, y);
+    else if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(x, y); if (p) { nr = document.createRange(); nr.setStart(p.offsetNode, p.offset); nr.collapse(true); } }
+  } catch (x2) { nr = null; }
+  if (!nr || !best.c.contains(nr.startContainer)) { nr = document.createRange(); nr.selectNodeContents(best.c); nr.collapse(false); }
+  s.removeAllRanges(); s.addRange(nr);
+});
+
 /* Ctrl(⌘)+클릭으로 링크 열기 (편집 중에는 클릭만으로는 열리지 않아요) */
 onEd("click", e => {
   if (!(e.ctrlKey || e.metaKey)) return;
@@ -3629,6 +3663,67 @@ onEd("click", e => {
   onEd("keyup", schedulePaint);
   document.addEventListener("transitionend", schedulePaint, true);
   if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", schedulePaint);
+
+  /* ---- 선택한 칸 범위 복사(Ctrl+C) / 다른 칸에 붙여넣기(Ctrl+V) ----
+     - Shift+클릭·드래그로 잡은 칸 범위에서 Ctrl+C → 칸의 내용과 서식(테두리·배경색)을 함께 복사 (엑셀에 붙여넣으면 표로 들어가요)
+     - 같은 표나 다른 표(가·나·다 영역 어디든)의 아무 칸에 커서를 두고 Ctrl+V → 그 칸을 왼쪽 위로 해서 같은 모양으로 붙여넣어요
+       (표 밖으로 넘치면 행·열이 자동으로 늘어나요. 칸 범위를 다시 잡고 붙여넣으면 잡은 범위의 왼쪽 위 칸부터 붙여넣어요) */
+  let cfClip = null;
+  const escA = s => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  document.addEventListener("copy", e => {
+    if (!multi || !multi.a.isConnected || !multi.b.isConnected || !e.clipboardData) return;
+    const ed = edOf(multi.a); if (!ed || !ed.contains(document.activeElement)) return;
+    const s = rectOf(multi.a, multi.b); if (!s) return;
+    const rows = [];
+    for (let r = s.r1; r <= s.r2; r++) {
+      const row = [];
+      for (let c = s.c1; c <= s.c2; c++) {
+        const cell = s.G.g[r] && s.G.g[r][c], i = cell && s.G.info.get(cell);
+        row.push(i && i.r === r && i.c === c ? { html: cell.innerHTML, style: cell.getAttribute("style") || "", text: (cell.innerText || "").replace(/[\t\r\n]+/g, " ").trim() } : null);
+      }
+      rows.push(row);
+    }
+    const id = "cf" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const text = rows.map(r => r.map(x => x ? x.text : "").join("\t")).join("\n");
+    const html = '<table data-cfclip="' + id + '" border="1" cellspacing="0" style="border-collapse:collapse"><tbody>' +
+      rows.map(r => "<tr>" + r.map(x => '<td' + (x && x.style ? ' style="' + escA(x.style) + '"' : "") + ">" + (x ? x.html : "") + "</td>").join("") + "</tr>").join("") + "</tbody></table>";
+    e.preventDefault();
+    e.clipboardData.setData("text/plain", text); e.clipboardData.setData("text/html", html);
+    cfClip = { id, rows, text, nr: rows.length, nc: rows[0].length };
+    toast("칸 " + rows.length + "행 × " + rows[0].length + "열을 복사했어요. 붙여넣을 칸을 클릭하고 Ctrl+V 하세요");
+  }, true);
+  document.addEventListener("paste", e => {
+    if (!cfClip || !e.clipboardData) return;
+    const html = e.clipboardData.getData("text/html"), txt = e.clipboardData.getData("text/plain").replace(/\r\n/g, "\n");
+    if (!(html.includes('data-cfclip="' + cfClip.id + '"') || (txt && txt === cfClip.text))) return;   // 우리가 복사한 칸 범위가 아니면 기본 붙여넣기
+    let tgt = null;
+    if (multi && multi.a.isConnected && multi.b.isConnected) { const s = rectOf(multi.a, multi.b); tgt = s && s.G.g[s.r1][s.c1]; }
+    if (!tgt) { const sl = getSelection(); tgt = sl.rangeCount ? closestIn(sl.anchorNode, "td,th") : null; }
+    if (!tgt || tgt.closest(".cmpgap")) return;
+    const tab = tgt.closest("table"), ed = edOf(tab);
+    if (!ed || !ed.isContentEditable) return;
+    e.preventDefault(); e.stopPropagation();
+    let G = gridOf(tab); const i0 = G.info.get(tgt), r0 = i0.r, c0 = i0.c;
+    const mkRow = n => { const tr = document.createElement("tr"); for (let k = 0; k < n; k++) tr.appendChild(document.createElement("td")).innerHTML = "<br>"; return tr; };
+    const nrow = () => Array.from(tab.rows).filter(tr => !tr.classList.contains("cmpgap"));
+    const ncolsNow = () => G.g.reduce((m, r) => Math.max(m, r ? r.length : 0), 0);
+    const needR = r0 + cfClip.nr, needC = c0 + cfClip.nc;
+    while (nrow().length < needR) { const rs = nrow(), last = rs[rs.length - 1]; last.after(mkRow(Math.max(1, ncolsNow()))); G = gridOf(tab); }
+    if (ncolsNow() < needC) {   // 열이 모자라면 각 행 끝에 칸을 더해요
+      nrow().forEach((tr, r) => { const have = (G.g[r] || []).length; for (let k = have; k < needC; k++) tr.appendChild(document.createElement("td")).innerHTML = "<br>"; });
+      G = gridOf(tab);
+    }
+    for (let r = 0; r < cfClip.nr; r++) for (let c = 0; c < cfClip.nc; c++) {
+      const x = cfClip.rows[r][c], cell = x && G.g[r0 + r] && G.g[r0 + r][c0 + c]; if (!cell) continue;
+      cell.innerHTML = x.html || "<br>";
+      if (x.style) cell.setAttribute("style", x.style); else cell.removeAttribute("style");
+    }
+    const a = G.g[r0][c0], b = G.g[r0 + cfClip.nr - 1][c0 + cfClip.nc - 1];
+    ed.dispatchEvent(new Event("input", { bubbles: true }));
+    const rg = document.createRange(); rg.selectNodeContents(a); rg.collapse(false); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(rg);
+    anchor = a; setMulti(a, b, true);
+    toast("칸 " + cfClip.nr + "행 × " + cfClip.nc + "열을 붙여넣었어요");
+  }, true);
 
   /* ---- 셀 서식 창 ---- */
   const STY = [["none", "없음", ""], ["thin", "", "1px solid"], ["dot", "", "1px dotted"], ["dash", "", "1px dashed"], ["med", "", "2px solid"], ["mdash", "", "2px dashed"], ["thick", "", "3px solid"], ["dbl", "", "3px double"]];
