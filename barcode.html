@@ -982,14 +982,14 @@ function makeRich(el) {
     }
   }
 
-  /* 캡처/붙여넣기한 이미지는 화면에 보이는 가로·세로(안쪽 여백 제외) 모두 90% 이내로 넣음 (비율 유지, 더 작은 이미지는 원래 크기 그대로) */
+  /* 캡처/붙여넣기한 이미지는 화면에 보이는 가로·세로(안쪽 여백 제외) 가로는 50% 이내, 세로는 90% 이내로 넣음 (비율 유지, 더 작은 이미지는 원래 크기 그대로) */
   async function imgHtml(file) {
     const u = await imgToUrl(file);
     const sz = await new Promise(r => { const i = new Image(); i.onload = () => r([i.naturalWidth, i.naturalHeight]); i.onerror = () => r([0, 0]); i.src = u; });
     const nw = sz[0], nh = sz[1], cs = getComputedStyle(el);
     /* 이미지가 들어가며 세로 스크롤바가 새로 생기면 안쪽 폭이 줄어 남겨둔 10% 가 깎이므로, 아직 스크롤바가 없으면 그 폭만큼 미리 빼고 계산 */
     const sb = el.scrollHeight > el.clientHeight + 1 ? 0 : (() => { const t = document.createElement("div"); t.style.cssText = "position:absolute;visibility:hidden;width:60px;height:60px;overflow:scroll"; document.body.appendChild(t); const w = t.offsetWidth - t.clientWidth; t.remove(); return w; })();
-    const maxW = (el.clientWidth - sb - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.9;
+    const maxW = (el.clientWidth - sb - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.5;   /* 이미지 2개를 나란히 붙일 수 있게 가로는 50% 이하 */
     const maxH = (Math.min(el.clientHeight || innerHeight, innerHeight) - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) * 0.9;
     let w = nw;
     if (nw && nh) { if (maxW > 0) w = Math.min(w, maxW); if (maxH > 0) w = Math.min(w, maxH * nw / nh); }
@@ -1089,11 +1089,11 @@ function makeRich(el) {
     else if (n) say("파일 " + n + "개를 첨부했어요", "ok");
     return n;
   };
-  /* 바탕 이미지: 기본 크기는 이 메모 영역의 안쪽 가로·세로 각각 90% (붙여넣는 이미지와 같은 기준) */
+  /* 바탕 이미지: 기본 크기는 이 메모 영역의 안쪽 가로 50%·세로 90% (가로는 붙여넣는 이미지·표와 같은 기준 → 2개를 나란히 붙일 수 있어요) */
   el.blankSize = () => {
     const cs = getComputedStyle(el);
     const sb = el.scrollHeight > el.clientHeight + 1 ? 0 : (() => { const q = document.createElement("div"); q.style.cssText = "position:absolute;visibility:hidden;width:60px;height:60px;overflow:scroll"; document.body.appendChild(q); const w = q.offsetWidth - q.clientWidth; q.remove(); return w; })();
-    let W = Math.floor((el.clientWidth - sb - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.9);
+    let W = Math.floor((el.clientWidth - sb - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.5);
     let H = Math.floor((Math.min(el.clientHeight || innerHeight, innerHeight) - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) * 0.9);
     if (!(W >= 24)) W = 400; if (!(H >= 24)) H = 300;
     return { W: Math.min(W, 4000), H: Math.min(H, 4000) };
@@ -1724,15 +1724,15 @@ function table() {
   if (ta.disabled) return;
   ta.focus();
   const restore = saveRange();
-  const v = prompt("표 크기 (행x열)", "3x5");
+  const v = prompt("표 크기 (행x열)", "3x3");
   restore();
   if (v === null) return;
   const m = v.match(/(\d+)\s*[x×*,\s]\s*(\d+)/i);
-  if (!m) { alert("예: 3x5 (3행 5열)"); return; }
+  if (!m) { alert("예: 3x3 (3행 3열)"); return; }
   const r = Math.min(50, +m[1]), c = Math.min(20, +m[2]);
   if (r < 1 || c < 1) return;
   const old = new Set(ta.querySelectorAll("table"));
-  /* 만들 때만 이 메모 영역 안쪽 가로폭의 90%(이미지와 같은 기준)로 정하고, 그 뒤에는 화면 폭이 바뀌어도 그 px 폭을 그대로 유지해요 */
+  /* 만들 때만 이 메모 영역 안쪽 가로폭의 50%(이미지와 같은 기준, 표 2개를 나란히 붙일 수 있게)로 정하고, 그 뒤에는 화면 폭이 바뀌어도 그 px 폭을 그대로 유지해요 */
   const tw0 = (ta.blankSize ? ta.blankSize().W : 0) || 400;
   exec("insertHTML", '<table style="width:' + tw0 + 'px"><tbody>' + "" + ("<tr>" + "<td><br></td>".repeat(c) + "</tr>").repeat(r) + "</tbody></table><br>");
   const nt = Array.from(ta.querySelectorAll("table")).find(t => !old.has(t)), cell = nt && nt.querySelector("td,th");
@@ -3690,10 +3690,10 @@ onEd("click", e => {
   if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", schedulePaint);
 
   /* ---- 표 크기 조절 (마우스·터치·펜) ----
-     - 표 안에 커서가 있으면 표 오른쪽 테두리에 초록 손잡이(표 전체 너비), 아래쪽 테두리에 초록 손잡이(표 전체 높이)가 나타나요. 더블클릭하면 너비는 영역 가로폭의 90%로, 높이는 내용에 맞게 돌아가요
+     - 표 안에 커서가 있으면 표 오른쪽 테두리에 초록 손잡이(표 전체 너비), 아래쪽 테두리에 초록 손잡이(표 전체 높이)가 나타나요. 더블클릭하면 너비는 영역 가로폭의 50%로, 높이는 내용에 맞게 돌아가요
      - 칸과 칸 사이의 세로 경계선을 끌면 그 열의 너비, 가로 경계선을 끌면 그 행의 높이가 바뀌어요 (마우스를 경계선에 대면 커서가 바뀌어요)
      - 바뀐 크기는 저장돼요 */
-  const RZ = document.createElement("div"); RZ.id = "tblRz"; RZ.hidden = true; RZ.title = "끌어서 표 너비 조절 (더블클릭: 영역 가로폭의 90%)";
+  const RZ = document.createElement("div"); RZ.id = "tblRz"; RZ.hidden = true; RZ.title = "끌어서 표 너비 조절 (더블클릭: 영역 가로폭의 50%)";
   const BZ = document.createElement("div"); BZ.id = "tblBz"; BZ.hidden = true; BZ.title = "끌어서 표 높이 조절 (더블클릭: 내용에 맞춤)";
   document.body.appendChild(RZ); document.body.appendChild(BZ);
   let rzTab = null, rzDrag = null, bzDrag = null, cdrag = null, rzPend = false;
