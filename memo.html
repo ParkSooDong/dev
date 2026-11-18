@@ -73,6 +73,7 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .imgx-bar textarea[hidden]{display:none}
 .rich table{border-collapse:collapse;margin:4px 0;display:inline-table;vertical-align:top}   /* 표도 글자처럼: 앞뒤에 글자를 넣을 수 있고 줄 정렬을 따라가요 */
 .rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em}
+.rich table[style*="table-layout"] td,.rich table[style*="table-layout"] th{min-width:0;overflow-wrap:anywhere}
 .rich a{color:inherit}
 /* 파일 첨부 칩 */
 .rich .att{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);font-size:.95em;line-height:1.5;cursor:pointer;user-select:none}
@@ -332,8 +333,8 @@ body.has-max header .tr{display:none}
 .cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
 </style>
-<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000fe348206974d980cb1e537cf%26fn%3Dmemo_shiftzoom_fixed%25281%2529.html%26cd%3Dattachment%26ts%3D498592%26p%3Dfs%26cid%3D1%26sig%3D8920cb9290101a02f9128ddebf5a3b19f8f8a48048bccd4037d4c21932062fee%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+
+</head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -757,6 +758,10 @@ function makeRich(el) {
       if (t === "A") {
         const h = n.getAttribute("href") || "";
         if (/^(https?:|mailto:)/i.test(h)) { e.setAttribute("href", h); e.setAttribute("target", "_blank"); e.setAttribute("rel", "noopener noreferrer"); }
+      }
+      if (t === "TABLE") {   /* 영역 가로폭에 맞춘 표: 폭(%)과 균등 칸 배치는 유지 → 가/나/다 영역·창 크기가 바뀌면 같이 줄고 늘어요 */
+        const tw = (n.style && n.style.width) || "", tm = /^(\d{1,3}(?:\.\d+)?)%$/.exec(tw);
+        if (tm && +tm[1] >= 10 && +tm[1] <= 100) e.setAttribute("style", (e.getAttribute("style") ? e.getAttribute("style") + ";" : "") + "width:" + tm[1] + "%;table-layout:fixed");
       }
       if (t === "TD" || t === "TH") for (const k of ["colspan", "rowspan"]) { const v = parseInt(n.getAttribute(k), 10); if (v > 1 && v < 100) e.setAttribute(k, v); }
       walk(n, e); dst.appendChild(e);
@@ -1451,15 +1456,15 @@ function table() {
   if (ta.disabled) return;
   ta.focus();
   const restore = saveRange();
-  const v = prompt("표 크기 (행x열)", "3x3");
+  const v = prompt("표 크기 (행x열)", "3x5");
   restore();
   if (v === null) return;
   const m = v.match(/(\d+)\s*[x×*,\s]\s*(\d+)/i);
-  if (!m) { alert("예: 3x3 (3행 3열)"); return; }
+  if (!m) { alert("예: 3x5 (3행 5열)"); return; }
   const r = Math.min(50, +m[1]), c = Math.min(20, +m[2]);
   if (r < 1 || c < 1) return;
   const old = new Set(ta.querySelectorAll("table"));
-  exec("insertHTML", "<table><tbody>" + ("<tr>" + "<td><br></td>".repeat(c) + "</tr>").repeat(r) + "</tbody></table><br>");
+  exec("insertHTML", '<table style="width:90%;table-layout:fixed"><tbody>' + "" + ("<tr>" + "<td><br></td>".repeat(c) + "</tr>").repeat(r) + "</tbody></table><br>");
   const nt = Array.from(ta.querySelectorAll("table")).find(t => !old.has(t)), cell = nt && nt.querySelector("td,th");
   if (cell) {   // 첫 칸에 커서를 두면 바로 '표 편집'을 쓸 수 있어요
     const rg = document.createRange(); rg.selectNodeContents(cell); rg.collapse(true);
