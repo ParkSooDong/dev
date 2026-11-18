@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="only light">
 <meta name="supported-color-schemes" content="light">
-<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000019a88211bfdc3522d3d48fa7%26fn%3Dbarcode_shiftzoom_fixed.html%26cd%3Dattachment%26ts%3D498592%26p%3Dfs%26cid%3D1%26sig%3D5176068d51d5cf7b95b46fcf808d9571745548f2374f6eebecab0efadfe966ce%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="aa259fda901948ffa3bc8d22c84" src="//local.adguard.org?ts=1794928546177&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="456b3786003c45c8806a4a9a168" src="//local.adguard.org?ts=1794917507370&amp;type=content-script&amp;dmn=fs.mybox.naver.com&amp;url=https%3A%2F%2Ffs.mybox.naver.com%2Ffile%2Fdownload.api%3FsvcType%3DMYBOX-WEB%26resourceKey%3DcGVzZGVlMDB8MzQ3MjYwMDMzNzE1MDQ2OTIwOHxGfDA%26time%3D1794926292517&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="456b3786003c45c8806a4a9a168" src="//local.adguard.org?ts=1794917507370&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script>
+
+
+<script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
 window.armPicker = function (pk, apply) {
@@ -21,8 +21,8 @@ window.armPicker = function (pk, apply) {
   window.addEventListener("focus", flush);
 };
 </script>
-<script type="text/javascript" nonce="1f374108d9d541978cf3987fa2f" src="//local.adguard.org?ts=1794525945669&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000046ec820ba901601c0213a458%26fn%3Dbarcode_memo_fixed_memo_height.html%26cd%3Dattachment%26ts%3D498482%26p%3Dfs%26cid%3D1%26sig%3D04e1d66a76909eb0d1b8348085862632f87511ed8dbb47d61617545207438f50%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="1f374108d9d541978cf3987fa2f" src="//local.adguard.org?ts=1794525945669&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
+
+<script>
 /* 모바일 브라우저의 강제 다크모드 방지: 저장된 모드가 dark일 때만 dark, 그 외에는 항상 light */
 (function(){var m="light";try{var s=JSON.parse(localStorage.getItem("bc9-state"));if(s&&s.m==="dark")m="dark"}catch(e){}
 document.documentElement.setAttribute("data-theme",m);
@@ -120,6 +120,7 @@ button:disabled{opacity:.35;cursor:default}
 .imgx-bar textarea[hidden]{display:none}
 .rich table{border-collapse:collapse;margin:4px 0;display:inline-table;vertical-align:top}
 .rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em}
+.rich table[style*="table-layout"] td,.rich table[style*="table-layout"] th{min-width:0;overflow-wrap:anywhere}
 .rich a{color:inherit}
 /* 파일 첨부 칩 */
 .rich .att{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);font-size:.95em;line-height:1.5;cursor:pointer;user-select:none}
@@ -905,6 +906,10 @@ function makeRich(el) {
       if (t === "A") {
         const h = n.getAttribute("href") || "";
         if (/^(https?:|mailto:)/i.test(h)) { e.setAttribute("href", h); e.setAttribute("target", "_blank"); e.setAttribute("rel", "noopener noreferrer"); }
+      }
+      if (t === "TABLE") {   /* 영역 가로폭에 맞춘 표: 폭(%)과 균등 칸 배치는 유지 → 가/나/다 영역·창 크기가 바뀌면 같이 줄고 늘어요 */
+        const tw = (n.style && n.style.width) || "", tm = /^(\d{1,3}(?:\.\d+)?)%$/.exec(tw);
+        if (tm && +tm[1] >= 10 && +tm[1] <= 100) e.setAttribute("style", (e.getAttribute("style") ? e.getAttribute("style") + ";" : "") + "width:" + tm[1] + "%;table-layout:fixed");
       }
       if (t === "TD" || t === "TH") for (const k of ["colspan", "rowspan"]) { const v = parseInt(n.getAttribute(k), 10); if (v > 1 && v < 100) e.setAttribute(k, v); }
       walk(n, e); dst.appendChild(e);
@@ -1696,15 +1701,15 @@ function table() {
   if (ta.disabled) return;
   ta.focus();
   const restore = saveRange();
-  const v = prompt("표 크기 (행x열)", "3x3");
+  const v = prompt("표 크기 (행x열)", "3x5");
   restore();
   if (v === null) return;
   const m = v.match(/(\d+)\s*[x×*,\s]\s*(\d+)/i);
-  if (!m) { alert("예: 3x3 (3행 3열)"); return; }
+  if (!m) { alert("예: 3x5 (3행 5열)"); return; }
   const r = Math.min(50, +m[1]), c = Math.min(20, +m[2]);
   if (r < 1 || c < 1) return;
   const old = new Set(ta.querySelectorAll("table"));
-  exec("insertHTML", "<table><tbody>" + ("<tr>" + "<td><br></td>".repeat(c) + "</tr>").repeat(r) + "</tbody></table><br>");
+  exec("insertHTML", '<table style="width:90%;table-layout:fixed"><tbody>' + "" + ("<tr>" + "<td><br></td>".repeat(c) + "</tr>").repeat(r) + "</tbody></table><br>");
   const nt = Array.from(ta.querySelectorAll("table")).find(t => !old.has(t)), cell = nt && nt.querySelector("td,th");
   if (cell) {   // 첫 칸에 커서를 두면 바로 '표 편집'을 쓸 수 있어요
     const rg = document.createRange(); rg.selectNodeContents(cell); rg.collapse(true);
