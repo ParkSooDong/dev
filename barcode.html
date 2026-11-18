@@ -156,6 +156,10 @@ button:disabled{opacity:.35;cursor:default}
 .mhead>span:first-child::after{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px;margin-left:10px}
 #mst::before,#cnt::before{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px}
 body.has-max #mst::before,body.has-max #cnt::before{display:none}
+/* 평소에는 묶음이 배치에 영향을 주지 않고(display:contents), 메모 확대 중에는 PC(미사용)/DB1~3 전환 버튼을 화면 오른쪽 아래에 띄워 둠 */
+#dbCtl{display:contents}
+body.has-max #dbCtl{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px 6px;position:fixed;right:20px;bottom:calc(max(18px,env(safe-area-inset-bottom,0px)) + 68px);max-width:calc(100vw - 40px);z-index:101;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:4px 8px;opacity:.92}
+body.has-max #dbCtl:hover,body.has-max #dbCtl:focus-within{opacity:1}
 #mst.ok{color:#2e7d32}
 :root[data-theme="dark"] #mst.ok{color:#81c784}
 #mst.err{color:var(--warn)}
@@ -509,7 +513,7 @@ p{margin:6px 0 0}
 <label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
 </div>
 <div class="grid" id="g"></div>
-<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
+<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><span id="dbCtl"><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span></span><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
   <button type="button" data-cmd="redo" title="다시 실행 (Ctrl+Y)" aria-label="다시 실행"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
