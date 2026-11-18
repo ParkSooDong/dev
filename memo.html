@@ -73,10 +73,11 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 .imgx-bar textarea[hidden]{display:none}
 .rich table{border-collapse:collapse;margin:4px 0;display:inline-table;vertical-align:top}   /* 표도 글자처럼: 앞뒤에 글자를 넣을 수 있고 줄 정렬을 따라가요 */
 .rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em;box-sizing:border-box}
-#tblRz{position:fixed;z-index:60;width:12px;margin:0;padding:0;cursor:col-resize;touch-action:none;background:transparent;border-right:3px solid rgba(43,138,62,.5);border-radius:0 3px 3px 0}
+/* 확대된 메모(.pane.max, z-index:100) 위에 보이도록 조절 막대는 그보다 높게 */
+#tblRz{position:fixed;z-index:106;width:12px;margin:0;padding:0;cursor:col-resize;touch-action:none;background:transparent;border-right:3px solid rgba(43,138,62,.5);border-radius:0 3px 3px 0}
 #tblRz:hover,#tblRz.on{background:rgba(43,138,62,.25);border-right-color:rgba(43,138,62,.95)}
 #tblRz[hidden]{display:none}
-#tblBz{position:fixed;z-index:60;height:12px;margin:0;padding:0;cursor:row-resize;touch-action:none;background:transparent;border-bottom:3px solid rgba(43,138,62,.5);border-radius:0 0 3px 3px}
+#tblBz{position:fixed;z-index:106;height:12px;margin:0;padding:0;cursor:row-resize;touch-action:none;background:transparent;border-bottom:3px solid rgba(43,138,62,.5);border-radius:0 0 3px 3px}
 #tblBz:hover,#tblBz.on{background:rgba(43,138,62,.25);border-bottom-color:rgba(43,138,62,.95)}
 #tblBz[hidden]{display:none}
 .rich.rzc,.rich.rzc *{cursor:col-resize!important}
