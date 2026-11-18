@@ -1415,7 +1415,6 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.con
 /* ===== Firebase Realtime Database 사용/미사용 (memo 파일과 같은 DB 경로 /memo 를 사용해요) ===== */
 /* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요. memo 파일과 같은 주소를 넣으세요 ▼▼ */
 const DB_URLS = [
-const DB_URLS = [
   "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
@@ -1461,7 +1460,7 @@ let useFb=false,dirty=false,knownAt=0,ready=false,saving=false,connecting=false,
 const hhmm=()=>new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});
 const say=(t,c)=>{mst.textContent=t;mst.className=c||""};
 const localNote=()=>say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
-function renderFb(){ if (window.refreshSplit) window.refreshSplit();
+function renderFb(){ try { if (window.refreshSplit) window.refreshSplit(); } catch (e) { console.error("refreshSplit", e); }
   fbBtn.textContent="Firebase Realtime Database "+(useFb?"사용":"미사용");fbBtn.setAttribute("aria-pressed",String(useFb));
   dbGrp.hidden=!useFb;   /* DB1~3 버튼은 "사용"일 때만 */
   dbBtns.forEach((b,i)=>{b.setAttribute("aria-pressed",String(i===dbIdx));b.disabled=!isSet(DB_URLS[i]);b.title="DB"+(i+1)+(b.disabled?" — 주소가 설정되지 않았어요 (DB_URLS)":" 로 전환")});
