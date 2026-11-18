@@ -155,19 +155,18 @@ button:disabled{opacity:.35;cursor:default}
 /* 제목 줄: 메모 | Firebase 버튼 | 상태 | DB 글자 수 — 왼쪽부터 차례로, 구분선만 둠 */
 .mhead>span:first-child::after{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px;margin-left:10px}
 #mst::before,#cnt::before{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px}
-body.has-max #mst::before,body.has-max #cnt::before{display:none}
-/* 평소에는 묶음이 배치에 영향을 주지 않고(display:contents), 메모 확대 중에는 PC(미사용)/DB1~3 전환 버튼을 화면 오른쪽 아래에 띄워 둠 */
-#dbCtl{display:contents}
-body.has-max #dbCtl{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px 6px;position:fixed;right:20px;bottom:calc(max(18px,env(safe-area-inset-bottom,0px)) + 68px);max-width:calc(100vw - 40px);z-index:101;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:4px 8px;opacity:.92}
-body.has-max #dbCtl:hover,body.has-max #dbCtl:focus-within{opacity:1}
+#dbCtl{display:contents}   /* 버튼 묶음: 배치에는 영향 없음 */
 #mst.ok{color:#2e7d32}
 :root[data-theme="dark"] #mst.ok{color:#81c784}
 #mst.err{color:var(--warn)}
 #cnt{font-size:12px;font-weight:400;color:var(--mute);white-space:nowrap}
 #cnt.cw{color:#e8590c}
 #cnt.ce{color:var(--warn);font-weight:600}
-body.has-max #cnt{position:fixed;right:20px;bottom:calc(max(18px,env(safe-area-inset-bottom,0px)) + 34px);z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
-body.has-max #mst{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
+/* 메모 확대 중에는 제목줄 전체(Firebase 버튼 | DB1~3 | 저장 상태 | DB 크기)를 memo 파일처럼 한 줄 알약으로 오른쪽 아래에 띄워 둠 */
+body.has-max .mhead{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;max-width:calc(100vw - 40px);flex-wrap:nowrap;gap:6px 10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
+body.has-max .mhead:hover,body.has-max .mhead:focus-within{opacity:1}
+body.has-max .mhead>span:first-child{display:none}   /* "메모" 글자는 숨김 */
+@media (max-width:760px){body.has-max .mhead{flex-wrap:wrap;justify-content:flex-end;border-radius:16px}}   /* 좁은 화면은 넘치지 않게 줄바꿈 */
 .mslot{position:relative}
 .mpane{position:relative}
 .edsplit{display:grid;grid-template-rows:minmax(0,80fr) 10px minmax(0,10fr) 10px minmax(0,10fr);min-height:0}
