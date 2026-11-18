@@ -120,6 +120,9 @@ button:disabled{opacity:.35;cursor:default}
 .imgx-bar textarea[hidden]{display:none}
 .rich table{border-collapse:collapse;margin:4px 0;display:inline-table;vertical-align:top}
 .rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em}
+#tblRz{position:fixed;z-index:60;width:12px;margin:0;padding:0;cursor:col-resize;touch-action:none;background:transparent;border-right:3px solid rgba(43,138,62,.5);border-radius:0 3px 3px 0}
+#tblRz:hover,#tblRz.on{background:rgba(43,138,62,.25);border-right-color:rgba(43,138,62,.95)}
+#tblRz[hidden]{display:none}
 .rich a{color:inherit}
 /* 파일 첨부 칩 */
 .rich .att{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);font-size:.95em;line-height:1.5;cursor:pointer;user-select:none}
@@ -3663,6 +3666,57 @@ onEd("click", e => {
   onEd("keyup", schedulePaint);
   document.addEventListener("transitionend", schedulePaint, true);
   if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener("change", schedulePaint);
+
+  /* ---- 표 가로폭 조절: 표 안에 커서가 있으면 표 오른쪽 테두리에 초록 손잡이가 나타나요 ----
+     - 손잡이를 좌우로 끌면 표 폭이 바뀌고(마우스·터치·펜), 그 폭이 저장돼요
+     - 손잡이를 더블클릭하면 이 메모 영역 가로폭의 90%로 되돌려요 */
+  const RZ = document.createElement("div"); RZ.id = "tblRz"; RZ.hidden = true; RZ.title = "끌어서 표 가로폭 조절 (더블클릭: 영역 가로폭의 90%)";
+  document.body.appendChild(RZ);
+  let rzTab = null, rzDrag = null, rzPend = false;
+  function rzCur() {
+    const sl = getSelection(); let c = multi && multi.a.isConnected ? multi.a : (sl.rangeCount ? closestIn(sl.anchorNode, "td,th") : null);
+    const tab = c && c.closest("table"), ed = tab && edOf(tab);
+    return tab && ed && ed.isContentEditable && !tab.closest(".cmpgap") ? tab : null;
+  }
+  function rzPlace() {
+    rzPend = false;
+    if (!rzDrag) rzTab = rzCur();
+    if (!rzTab || !rzTab.isConnected) { RZ.hidden = true; return; }
+    const ed = edOf(rzTab), er = ed.getBoundingClientRect(), r = rzTab.getBoundingClientRect();
+    const T = Math.max(r.top, er.top), B = Math.min(r.bottom, er.bottom);
+    if (B - T < 8 || r.right < er.left || r.right - 6 > er.right) { RZ.hidden = true; return; }
+    RZ.hidden = false;
+    RZ.style.left = (Math.min(r.right, er.right) - 9) + "px"; RZ.style.top = T + "px"; RZ.style.height = (B - T) + "px";
+  }
+  const rzSched = () => { if (!rzPend) { rzPend = true; requestAnimationFrame(rzPlace); } };
+  document.addEventListener("selectionchange", rzSched);
+  addEventListener("scroll", rzSched, true); addEventListener("resize", rzSched);
+  onEd("input", rzSched); onEd("mouseup", rzSched); onEd("keyup", rzSched);
+  RZ.addEventListener("pointerdown", e => {
+    if (e.button > 0 || !rzTab) return;
+    e.preventDefault();
+    rzDrag = { x: e.clientX, w: rzTab.getBoundingClientRect().width, id: e.pointerId };
+    try { RZ.setPointerCapture(e.pointerId); } catch (x) {}
+    RZ.classList.add("on");
+  });
+  RZ.addEventListener("pointermove", e => {
+    if (!rzDrag || e.pointerId !== rzDrag.id || !rzTab) return;
+    const w = Math.round(Math.min(4000, Math.max(60, rzDrag.w + e.clientX - rzDrag.x)));
+    rzTab.style.width = w + "px"; rzPlace(); schedulePaint();
+  });
+  const rzEnd = e => {
+    if (!rzDrag || e.pointerId !== rzDrag.id) return;
+    rzDrag = null; RZ.classList.remove("on");
+    const ed = rzTab && edOf(rzTab); if (ed) ed.dispatchEvent(new Event("input", { bubbles: true }));   // 바뀐 폭 저장
+    rzPlace();
+  };
+  RZ.addEventListener("pointerup", rzEnd); RZ.addEventListener("pointercancel", rzEnd);
+  RZ.addEventListener("dblclick", e => {
+    e.preventDefault(); if (!rzTab) return;
+    const ed = edOf(rzTab); rzTab.style.width = ((ed && ed.blankSize ? ed.blankSize().W : 0) || 400) + "px";
+    if (ed) ed.dispatchEvent(new Event("input", { bubbles: true }));
+    rzPlace(); schedulePaint();
+  });
 
   /* ---- 선택한 칸 범위 복사(Ctrl+C) / 다른 칸에 붙여넣기(Ctrl+V) ----
      - Shift+클릭·드래그로 잡은 칸 범위에서 Ctrl+C → 칸의 내용과 서식(테두리·배경색)을 함께 복사 (엑셀에 붙여넣으면 표로 들어가요)
