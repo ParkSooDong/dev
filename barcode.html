@@ -393,6 +393,10 @@ p{margin:6px 0 0}
 
 /* 데스크톱 브라우저 공통: 가로 3분할 메모 행은 화면 높이에 따라 늘어나지 않도록 고정하고, 내용은 각 메모 내부에서 스크롤 */
 @media (min-width:561px){
+  /* 세로 분할(미리보기 포함)도 가로 분할과 같은 높이로 고정: 마우스를 올릴 때 화면 높이가 바뀌어 흔들리는 것을 막음 */
+  .mpane:not(.max) .edwrap.lv:not(.cmpm){flex:0 0 190px!important;height:190px!important;min-height:190px!important;max-height:190px!important;overflow:hidden}
+  .mpane:not(.max) .edwrap.lv:not(.cmpm) .edsplit{flex:1 1 0!important;height:100%!important;min-height:0!important;max-height:100%;overflow:hidden}
+  .mpane:not(.max) .edwrap.lv:not(.cmpm) .edsplit>.rich{height:100%!important;min-height:0!important;max-height:100%!important;overflow:auto!important;resize:none!important}
   .mpane:not(.max) .edwrap.lh:not(.cmpm){
     flex:0 0 190px!important;
     height:190px!important;
@@ -1415,7 +1419,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.con
 /* ===== Firebase Realtime Database 사용/미사용 (memo 파일과 같은 DB 경로 /memo 를 사용해요) ===== */
 /* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요. memo 파일과 같은 주소를 넣으세요 ▼▼ */
 const DB_URLS = [
-  "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
+  "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB1 (처음 기본값)
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
 ];
