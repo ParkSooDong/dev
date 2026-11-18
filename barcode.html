@@ -531,7 +531,7 @@ p{margin:6px 0 0}
   <button type="button" data-cmd="find" title="찾기" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
   <div class="menu" id="listMenu"><button type="button" data-pal id="listBtn" title="글 목록: 글머리 기호 / 번호 매기기 / 체크리스트" aria-label="글 목록" aria-haspopup="true" aria-expanded="false" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg><span>글 목록</span></button><div class="pop" hidden><button type="button" data-cmd="ul" title="글머리 기호 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M10 7h10M10 12h10M10 17h10"/></svg>글머리 기호 목록</button><button type="button" data-cmd="ol" title="번호 매기기 목록" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 7h10M10 12h10M10 17h10M4.5 5.5l1.2-.8v4.6M4 14.5h3l-3 4h3.2"/></svg>번호 매기기 목록</button><button type="button" data-cmd="check" title="체크리스트 (☐ 를 클릭하면 체크)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>체크리스트</button></div></div>
   <div class="menu"><button type="button" data-pal title="더보기" aria-label="더보기" aria-haspopup="true" aria-expanded="false">⋯</button><div class="pop" hidden><button type="button" data-cmd="indent">들여쓰기</button><button type="button" data-cmd="outdent">내어쓰기</button><button type="button" data-cmd="hr">구분선</button><button type="button" data-cmd="quote" aria-pressed="false">인용</button><button type="button" data-cmd="code" aria-pressed="false">코드 블록</button><button type="button" data-cmd="clearall" title="메모 전체의 글자 서식을 기본값으로 되돌려요 (글자·이미지·표는 그대로)">전체 서식 초기화</button></div></div>
-  <div class="menu" id="layMenu"><button type="button" data-pal id="layBtn" title="분할: 가로 또는 세로로 가·나·다 영역을 나눠 보여요 (마우스를 올리면 미리 보이고, 클릭하면 적용됩니다)" aria-label="분할" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M12 5v14M3.5 12h17"/></svg><span>분할</span></button><div class="pop" hidden><button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 35 : 35 : 30 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button><button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 80 : 10 : 10 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button></div></div>
+  <div class="menu" id="layMenu"><button type="button" data-pal id="layBtn" title="분할: 가로 또는 세로로 가·나·다 영역을 나눠 보여요 (마우스를 올리면 미리 보이고, 클릭하면 적용됩니다)" aria-label="분할" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M12 5v14M3.5 12h17"/></svg><span>분할</span></button><div class="pop" hidden><button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 균등하게 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button><button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 6 : 2 : 2 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button></div></div>
   <button type="button" id="cmpBtn" title="비교: 가(원본)를 기준으로 나(변경본)가 일치하는지 확인하고, 비교 내역은 다 영역에 표시" aria-label="비교"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 8h5M15 16h5M4 16l3-3M20 8l-3 3"/></svg><span>비교</span></button>
   <i class="sep"></i>
   <button type="button" id="impBtn" title="열기 (.html / .txt)" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
@@ -1164,20 +1164,28 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
   const box = gid("edsplit"), wrap = gid("edwrap"), gut = gid("edgut"), mp = gid("mpane");
   const SPL = [gid("spl"), gid("spl2")], LB = [gid("lbA"), gid("lbB"), gid("lbC")], ED = [ed1, ed2, ed3];
   const layH = gid("layH"), layV = gid("layV");
-  const DEFV = [80, 10, 10], DEFH = [35, 35, 30], KV = "memo-split-v", KH = "memo-split-h", KL = "memo-layout-";
+  const MP = !!mp, EQ = [100 / 3, 100 / 3, 100 / 3];
+  /* 기본 비율: memo 파일은 세로 10:80:10(1:8:1) / barcode 파일은 세로 60:20:20(6:2:2), 가로 균등 */
+  const DEFV = MP ? [60, 20, 20] : [10, 80, 10], DEFH = MP ? EQ : [35, 35, 30], KP = "memo-lay2-";
   const ctx = () => mp ? (mp.classList.contains("max") ? "x" : "n") : "m";   // m: memo 파일 / n: barcode 세 줄 모드 / x: barcode 확대
-  const load = (k, d) => {
-    try { const a = JSON.parse(localStorage.getItem(k)); if (Array.isArray(a) && a.length === 3 && a.every(x => typeof x === "number" && x >= 0) && Math.abs(a[0] + a[1] + a[2] - 100) < 0.5) return a; } catch (e) {}
-    return d.slice();
-  };
-  const V = load(KV, DEFV), Hh = load(KH, DEFH);
-  const keep = () => { try { localStorage.setItem(KV, JSON.stringify(V)); localStorage.setItem(KH, JSON.stringify(Hh)); } catch (e) {} };
+  const scope = () => { try { return useFb ? "d" + (dbIdx + 1) : "pc"; } catch (e) { return "pc"; } };   // PC(미사용) / DB1~3
+  const okA = a => Array.isArray(a) && a.length === 3 && a.every(x => typeof x === "number" && x >= 0) && Math.abs(a[0] + a[1] + a[2] - 100) < 0.5;
+  const defMode = () => ctx() === "n" ? "h" : "v";   // barcode 기본화면: 가로 / barcode 확대·memo: 세로
+  let cur = null;   // 현재 (DB × 화면모드)의 분할 상태 {k, m, V, H}
+  function stOf() {
+    const k = KP + scope() + "-" + ctx();
+    if (cur && cur.k === k) return cur;
+    let s = null; try { s = JSON.parse(localStorage.getItem(k)); } catch (e) {}
+    cur = { k, m: s && (s.m === "h" || s.m === "v") ? s.m : defMode(), V: s && okA(s.V) ? s.V.slice() : DEFV.slice(), H: s && okA(s.H) ? s.H.slice() : DEFH.slice() };
+    return cur;
+  }
+  const keep = () => { const s = stOf(); try { localStorage.setItem(s.k, JSON.stringify({ m: s.m, V: s.V, H: s.H })); } catch (e) {} };
   const compare = () => wrap.classList.contains("cmpm");
   let pvm = null;   // [분할] 목록 미리보기 중인 방식 ("h" / "v"). 저장하지 않는 임시 값이에요
-  const saved = () => { let m = null; try { m = localStorage.getItem(KL + ctx()); } catch (e) {} return m === "h" || m === "v" ? m : (ctx() === "n" ? "h" : "v"); };   // 실제로 고른(저장된) 방식
+  const saved = () => stOf().m;   // 실제로 고른(저장된) 방식
   const pref = () => pvm || saved();
   const mode = () => compare() ? "h" : pref();
-  const arr = () => mode() === "v" ? V : Hh;
+  const arr = () => mode() === "v" ? stOf().V : stOf().H;
   const dflt = () => mode() === "v" ? DEFV : DEFH;
   const trk = (a, min) => a.map(x => "minmax(" + min + "px," + x + "fr)").join(" 10px ");
   const sync = () => {
@@ -1200,7 +1208,7 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
     sync();
   };
   window.refreshSplit = apply;
-  window.clearLayoutPrefs = () => { try { [KV, KH, KL + "m", KL + "n", KL + "x"].forEach(k => localStorage.removeItem(k)); } catch (e) {} };
+  window.clearLayoutPrefs = () => { try { const ks = ["memo-split-v", "memo-split-h", "memo-split", "memo-layout-m", "memo-layout-n", "memo-layout-x"], re = MP ? /-[nx]$/ : /-m$/; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.indexOf(KP) === 0 && re.test(k)) ks.push(k); } ks.forEach(k => localStorage.removeItem(k)); } catch (e) {} cur = null; };
   const clamp = v => Math.min(100, Math.max(0, v));
   const setB = (i, pct) => {   // i 0: 가|나 경계(가의 %), 1: 나|다 경계(가+나의 %). 끝에 가까우면 붙임
     const a = arr();
@@ -1234,7 +1242,7 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
     b.addEventListener("click", () => {
       pvm = null;   // 확정: 미리보기 값을 먼저 걷어내고 아래에서 선택한 방식을 저장·적용
       closePop();   // [분할] 메뉴를 닫음
-      try { localStorage.setItem(KL + ctx(), m); } catch (e) {}
+      stOf().m = m; keep();
       if (compare()) toast("비교 중에는 가로로 나란히 보여요. 비교를 끝내면 " + (m === "h" ? "가로" : "세로") + " 분할로 바뀌어요");
       apply();
     });
@@ -1407,6 +1415,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.con
 /* ===== Firebase Realtime Database 사용/미사용 (memo 파일과 같은 DB 경로 /memo 를 사용해요) ===== */
 /* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요. memo 파일과 같은 주소를 넣으세요 ▼▼ */
 const DB_URLS = [
+const DB_URLS = [
   "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
@@ -1452,7 +1461,7 @@ let useFb=false,dirty=false,knownAt=0,ready=false,saving=false,connecting=false,
 const hhmm=()=>new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});
 const say=(t,c)=>{mst.textContent=t;mst.className=c||""};
 const localNote=()=>say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
-function renderFb(){
+function renderFb(){ if (window.refreshSplit) window.refreshSplit();
   fbBtn.textContent="Firebase Realtime Database "+(useFb?"사용":"미사용");fbBtn.setAttribute("aria-pressed",String(useFb));
   dbGrp.hidden=!useFb;   /* DB1~3 버튼은 "사용"일 때만 */
   dbBtns.forEach((b,i)=>{b.setAttribute("aria-pressed",String(i===dbIdx));b.disabled=!isSet(DB_URLS[i]);b.title="DB"+(i+1)+(b.disabled?" — 주소가 설정되지 않았어요 (DB_URLS)":" 로 전환")});
