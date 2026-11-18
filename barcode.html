@@ -1408,8 +1408,8 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.con
 /* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요. memo 파일과 같은 주소를 넣으세요 ▼▼ */
 const DB_URLS = [
   "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
+  "https://pesdee00-2026-01-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB2
+  "https://pesdee00-2027-01-default-rtdb.asia-southeast1.firebasedatabase.app"      // DB3
 ];
 /* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
 const DBSEL="bc9-db";   /* 마지막으로 고른 DB 번호(0~2)를 이 PC(브라우저)에 기억 → 다음에 켜도 그 DB 로 시작 */
@@ -3759,24 +3759,30 @@ onEd("click", e => {
     const nR = Math.abs(x - r.right) <= E, nL = Math.abs(x - r.left) <= E, nB = Math.abs(y - r.bottom) <= E, nT = Math.abs(y - r.top) <= E;
     if (!(nR || nL || nB || nT)) return null;
     const G = gridOf(c.closest("table")), i = G.info.get(c); if (!i) return null;
-    if (nR) return { k: "col", c, G, j: i.c + i.cs - 1, ed };
-    if (nL && i.c > 0) return { k: "col", c, G, j: i.c - 1, ed };
-    if (nB) return { k: "row", c, G, j: i.r + i.rs - 1, ed };
-    if (nT && i.r > 0) return { k: "row", c, G, j: i.r - 1, ed };
+    /* 표 전체 크기는 그대로 두고 맞닿은 두 열(행)의 경계만 옮겨요. 표의 맨 바깥 테두리는 표 전체 크기 손잡이가 맡아요 */
+    const ncol = G.g.reduce((m, rr) => Math.max(m, rr ? rr.length : 0), 0), nrow = G.g.length;
+    const jc = nR ? i.c + i.cs - 1 : (nL && i.c > 0 ? i.c - 1 : -1), jr = nB ? i.r + i.rs - 1 : (nT && i.r > 0 ? i.r - 1 : -1);
+    if (jc >= 0 && jc < ncol - 1) return { k: "col", c, G, j: jc, ed };
+    if (jr >= 0 && jr < nrow - 1) return { k: "row", c, G, j: jr, ed };
     return null;
   }
   let hovEd = null, hovK = "";
+  /* 경계선 드래그: 표 전체 너비·높이는 고정하고, 경계 양옆의 두 열(행)이 늘고 준 만큼 서로 나눠 가져요 */
+  const repCol = (G, j) => { for (const [cl, i] of G.info) if (i.c === j && i.cs === 1) return cl; return null; };
+  const repRow = (G, j) => { for (const [cl, i] of G.info) if (i.r === j && i.rs === 1) return cl; return null; };
+  const setCol = (G, j, v) => { v = Math.round(v); for (const [cl, i] of G.info) if (i.cs === 1 && i.c === j) cfSet(cl, "width", v); };
+  const setRow = (G, j, v) => { v = Math.round(v); for (const [cl, i] of G.info) if (i.rs === 1 && i.r === j) cfSet(cl, "height", v); };
   document.addEventListener("mousemove", e => {
     if (cdrag) {
       if (!(e.buttons & 1)) { cdEnd(); return; }
-      if (cdrag.k === "col") {
-        const nw = Math.round(Math.min(2000, Math.max(24, cdrag.w[cdrag.j] + e.clientX - cdrag.x)));
-        for (const [cl, i] of cdrag.G.info) if (i.cs === 1 && i.c === cdrag.j) cfSet(cl, "width", nw);
-        cdrag.tab.style.width = Math.round(cdrag.tw + nw - cdrag.w[cdrag.j]) + "px";
-      } else {
-        const nh = Math.round(Math.min(2000, Math.max(16, cdrag.h0 + e.clientY - cdrag.y)));
-        for (const [cl, i] of cdrag.G.info) if (i.rs === 1 && i.r === cdrag.j) cfSet(cl, "height", nh);
-      }
+      const D = cdrag, col = D.k === "col", j = D.j, G = D.G, min = col ? 24 : 16, tot = D.v[j] + D.v[j + 1];
+      const d = Math.round(Math.min(D.v[j + 1] - min, Math.max(min - D.v[j], (col ? e.clientX - D.x : e.clientY - D.y))));
+      const set = col ? setCol : setRow, rep = col ? repCol : repRow, size = c => c ? c.getBoundingClientRect()[col ? "width" : "height"] : null;
+      let a = D.v[j] + d, b = tot - a;
+      set(G, j, a); set(G, j + 1, b);
+      const bc = size(rep(G, j + 1)), ac = size(rep(G, j));   // 칸 안 내용 때문에 더 줄어들지 못하면 그만큼만 옮겨요
+      if (bc != null && bc > b + 0.5) { b = bc; a = tot - b; set(G, j, a); set(G, j + 1, b); }
+      else if (ac != null && ac > a + 0.5) { a = ac; b = tot - a; set(G, j, a); set(G, j + 1, b); }
       rzPlace(); schedulePaint(); return;
     }
     const h = e.buttons ? null : hitAt(e), k = h ? h.k : "";
@@ -3786,21 +3792,16 @@ onEd("click", e => {
   document.addEventListener("mousedown", e => {
     const h = hitAt(e); if (!h) return;
     e.preventDefault(); e.stopPropagation();
-    const tab = h.c.closest("table"), G = h.G;
+    const tab = h.c.closest("table"), G = h.G, col = h.k === "col";
     rzTab = tab;
-    if (h.k === "col") {
-      const ncol = G.g.reduce((m, r) => Math.max(m, r ? r.length : 0), 0), w = [];
-      for (let j = 0; j < ncol; j++) { let cell = null; for (const [cl, i] of G.info) if (i.c === j && i.cs === 1) { cell = cl; break; } w[j] = cell ? cell.getBoundingClientRect().width : 0; }
-      const known = w.filter(v => v > 0), avg = known.length ? known.reduce((a, b) => a + b, 0) / known.length : 60;
-      for (let j = 0; j < ncol; j++) if (!(w[j] > 0)) w[j] = avg;
-      for (const [cl, i] of G.info) if (i.cs === 1) cfSet(cl, "width", Math.round(w[i.c]));   // 먼저 모든 열의 현재 너비를 고정해 두면 다른 열은 그대로 있어요
-      const tw = Math.round(w.reduce((a, b) => a + b, 0)); tab.style.width = tw + "px";
-      cdrag = { k: "col", tab, G, j: h.j, w, x: e.clientX, tw, ed: h.ed };
-    } else {
-      let cell = null; for (const [cl, i] of G.info) if (i.r === h.j && i.rs === 1) { cell = cl; break; }
-      cdrag = { k: "row", tab, G, j: h.j, y: e.clientY, h0: (cell || h.c).getBoundingClientRect().height, ed: h.ed };
-      tab.style.height = ""; if (!tab.getAttribute("style")) tab.removeAttribute("style");   // 표 전체 높이를 지정해 둔 상태면 행 높이가 먹히지 않으므로 풀어요
-    }
+    const n = col ? G.g.reduce((m, r) => Math.max(m, r ? r.length : 0), 0) : G.g.length, v = [];
+    for (let j = 0; j < n; j++) { const cl = (col ? repCol : repRow)(G, j); v[j] = cl ? cl.getBoundingClientRect()[col ? "width" : "height"] : 0; }
+    const known = v.filter(x => x > 0), avg = known.length ? known.reduce((a, b) => a + b, 0) / known.length : (col ? 60 : 24);
+    for (let j = 0; j < n; j++) if (!(v[j] > 0)) v[j] = avg;
+    const tr = tab.getBoundingClientRect();
+    for (let j = 0; j < n; j++) (col ? setCol : setRow)(G, j, v[j]);   // 모든 열(행)의 현재 크기를 먼저 고정하고, 표 전체 크기도 지금 크기로 고정
+    tab.style[col ? "width" : "height"] = Math.round(col ? tr.width : tr.height) + "px";
+    cdrag = { k: h.k, tab, G, j: h.j, v, x: e.clientX, y: e.clientY, ed: h.ed };
   }, true);
   function cdEnd() {
     if (!cdrag) return;
