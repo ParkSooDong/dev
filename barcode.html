@@ -94,6 +94,7 @@ button:disabled{opacity:.35;cursor:default}
 .imgx-pop button{flex:none;width:auto;height:auto;margin:0;font:inherit;font-size:13px;font-weight:400;padding:5px 12px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap;text-align:left}
 .imgx-pop button:hover{background:var(--line)}
 .imgx-pop{color:var(--ink)}
+.imgx-sl{display:inline-flex;align-items:center;gap:5px;font-size:13px;white-space:nowrap}.imgx-sl input{width:130px;margin:0;vertical-align:middle}.imgx-bar .imgx-sl input[type=number]{width:58px}
 .imgx-grip.gr{right:-10px;bottom:auto;top:calc(50% - 10px);border-radius:6px;cursor:ew-resize}.imgx-grip.gb{bottom:-10px;right:auto;left:calc(50% - 10px);border-radius:6px;cursor:ns-resize}
 .imgx-grip{position:absolute;right:-10px;bottom:-10px;width:20px;height:20px;border-radius:50%;background:#339af0;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);cursor:nwse-resize;pointer-events:auto;touch-action:none}
 .imgx-bar{flex:none;position:static;margin-bottom:6px;padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;color:var(--ink)}
@@ -913,6 +914,7 @@ function makeRich(el) {
         const a = n.getAttribute("alt"); if (a) im.alt = a.slice(0, 200);
         const wv = n.getAttribute("width");   // 크기 조절한 이미지의 가로 크기(px)는 유지
         if (/^\d+(\.\d+)?(px)?$/i.test(wv || "")) { const w = Math.round(parseFloat(wv)); if (w >= 16 && w <= 4000) { im.setAttribute("width", w); const hv = n.getAttribute("height"); if (/^\d+(\.\d+)?(px)?$/i.test(hv || "")) { const h = Math.round(parseFloat(hv)); if (h >= 16 && h <= 4000) im.setAttribute("height", h); } } }
+        { const ow = parseInt(n.getAttribute("data-ow"), 10), oh = parseInt(n.getAttribute("data-oh"), 10); if (ow >= 16 && ow <= 4000 && oh >= 1 && oh <= 4000) { im.setAttribute("data-ow", ow); im.setAttribute("data-oh", oh); } }   // 처음 삽입했을 때의 크기(원본 크기)
         const lay = n.getAttribute("data-layers"), bs = n.getAttribute("data-base");   // 레이어 정보(원본 + 추가 요소)
         if (lay && bs && IMG.test(bs)) { const L = cleanLayers(lay); if (L) { im.setAttribute("data-base", bs); im.setAttribute("data-layers", L); } }
         dst.appendChild(im); continue;
@@ -1023,7 +1025,7 @@ function makeRich(el) {
     let w = nw;
     if (nw && nh) { if (maxW > 0) w = Math.min(w, maxW); if (maxH > 0) w = Math.min(w, maxH * nw / nh); }
     w = Math.floor(w);
-    return '<img src="' + u + '"' + (nw && w >= 24 && w < nw ? ' width="' + w + '"' : '') + '>';
+    return '<img src="' + u + '"' + (nw && w >= 24 && w < nw ? ' width="' + w + '"' : '') + (nw && nh && w >= 24 ? ' data-ow="' + w + '" data-oh="' + Math.max(1, Math.round(w * nh / nw)) + '"' : '') + '>';
   }
 
   /* 엑셀 등의 HTML: 보이지 않는 iframe 에서 계산된 스타일(굵게/글자색/배경색/테두리/정렬)을 인라인으로 옮김 */
@@ -1132,7 +1134,7 @@ function makeRich(el) {
     const W = Math.max(24, Math.min(4000, Math.round(+w) || d.W)), H = Math.max(24, Math.min(4000, Math.round(+h) || d.H));
     const c = document.createElement("canvas"); c.width = W; c.height = H;
     const x = c.getContext("2d"); x.fillStyle = color || "#ffffff"; x.fillRect(0, 0, W, H);
-    insert(clean('<img src="' + c.toDataURL("image/png") + '" width="' + W + '">'));
+    insert(clean('<img src="' + c.toDataURL("image/png") + '" width="' + W + '" data-ow="' + W + '" data-oh="' + H + '">'));
     return { W, H };
   };
   el.insertImages = async files => {
@@ -2117,7 +2119,7 @@ function tbl(op) {   // 표 편집: 커서가 있는 칸 기준
 const imgFile = document.getElementById("imgFile"), tblWrap = document.getElementById("tblWrap"), tblEditGo = document.getElementById("tblEditGo"), listBtn = document.getElementById("listBtn");
 let imgBack = null;
 /* ===== 이미지: 크기 조절 / 도형 넣기 =====
-   - 이미지를 클릭하면 파란 테두리와 모서리 손잡이(끌어서 크기 조절), 그리고 25%·50%·75%·100%·원본 크기 버튼이 나와요
+   - 이미지를 클릭하면 파란 테두리와 모서리 손잡이(끌어서 크기 조절), 그리고 원본 크기 버튼과 크기 비율 슬라이드(10%~500%)가 나와요
    - [글자 넣기] 글자·말풍선 3종·손글씨(마우스/펜으로 직접 쓰기), [도형 넣기] 도형 6종, [선 넣기] 선 6종: 아이콘을 골라 이미지 위에 놓고 손잡이로 조절한 뒤 [적용]하면 레이어로 저장돼요(원본 이미지는 그대로 두고, 글자·도형·선은 따로 보관 → 다시 열어 옮기거나 지울 수 있음)
    - [지우개]는 원본 이미지 레이어를 지우고, [올가미]는 둘러싼 영역에 걸친 글자·도형·선(추가 요소 레이어)을 삭제해요. 그릴 때 선 굵기와 지울 때 굵기는 따로 정해요
    - 크기는 <img width> 로 저장돼서 저장/내보내기/불러오기에서도 유지돼요 */
@@ -2135,14 +2137,14 @@ let imgBack = null;
     if (sh) { if (dir === "undo") popUndo(); else popRedo(); return true; }
     const h = hget(img), from = dir === "undo" ? h.u : h.r, to = dir === "undo" ? h.r : h.u;
     if (!from.length) { toast(dir === "undo" ? "되돌릴 이미지 작업이 없어요" : "다시 실행할 이미지 작업이 없어요"); return true; }
-    to.push(stateOf(img)); putState(img, from.pop()); fire(); sched(); return true;
+    to.push(stateOf(img)); putState(img, from.pop()); baseSync(); fire(); sched(); return true;
   };
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const fire = () => ta.dispatchEvent(new Event("input", { bubbles: true }));
   const box = el("div", "imgx-box"), grip = el("div", "imgx-grip"), gripR = el("div", "imgx-grip gr"), gripB = el("div", "imgx-grip gb"), bar = el("div", "imgx-bar");
   const main = el("div", "imgx-row",
-    '<button type="button" data-w="25">25%</button><button type="button" data-w="50">50%</button><button type="button" data-w="75">75%</button><button type="button" data-w="100">100%</button><button type="button" data-w="0">원본 크기</button><button type="button" data-ar="1" title="가로·세로를 따로 늘리거나 줄인 이미지를 원래 비율로 되돌려요 (현재 가로 크기 기준)">비율 복원</button><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="lin">선 넣기</button><button type="button" class="ic" data-a="fil" aria-label="페인트" title="페인트: 색·투명도를 고르고 칠할 곳을 클릭하면, 그 자리에서 글자·도형·선으로 막힌 범위가 칠해져요"><svg viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg></button><button type="button" data-a="pic" title="캡처·파일 이미지를 이 이미지 위에 올려요 (바탕 이미지 위에 붙여넣기)">이미지 넣기</button><button type="button" data-a="cpy" aria-haspopup="true" title="글자·도형·올린 이미지가 합쳐진 전체 이미지를 복사하거나 PC에 파일로 저장해요">이미지 저장</button><button type="button" class="ic" data-a="era" aria-label="지우개" title="지우개: 원본 이미지를 지워요"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button type="button" class="ic" data-a="las" aria-label="올가미" title="올가미: 둘러싼 영역에 걸친 글자·도형·선을 삭제해요"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><i class="sep"></i><button type="button" data-sa="vbase" aria-pressed="false" disabled title="원본 이미지 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">원본</button><button type="button" data-sa="vitems" aria-pressed="false" disabled title="추가 요소(글자·도형·선) 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">추가 요소</button><button type="button" data-sa="eundo" disabled title="편집 중인 글자·도형·선·지우개 실행 취소 (Ctrl+Z / 다시 실행 Ctrl+Y)">실행 취소</button><button type="button" data-sa="reset" disabled title="색·선 굵기·글자 크기·지우개 굵기 등 도구 설정을 기본값으로 되돌려요 (이미 넣은 요소는 그대로). 도구를 연 동안에만 쓸 수 있어요">설정 초기화</button>');
+    '<button type="button" data-o="1" title="처음 삽입했을 때의 크기로 되돌려요 (이 크기가 슬라이드의 100%가 돼요)">원본 크기</button><label class="imgx-sl" title="크기 비율: 지금 크기가 100%예요 (가로·세로를 직접 조절하면 그 크기가 새 100%). [원본 크기]를 누르면 원본이 100%예요">크기 <input type="range" data-sl min="10" max="500" step="1" value="100" aria-label="크기 비율"><input type="number" data-sn min="10" max="500" step="1" value="100" aria-label="크기 비율 숫자 입력" title="숫자로 입력하고 Enter (10~500)">%</label><button type="button" data-ar="1" title="가로·세로를 따로 늘리거나 줄인 이미지를 원래 비율로 되돌려요 (현재 가로 크기 기준)">비율 복원</button><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="lin">선 넣기</button><button type="button" class="ic" data-a="fil" aria-label="페인트" title="페인트: 색·투명도를 고르고 칠할 곳을 클릭하면, 그 자리에서 글자·도형·선으로 막힌 범위가 칠해져요"><svg viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg></button><button type="button" data-a="pic" title="캡처·파일 이미지를 이 이미지 위에 올려요 (바탕 이미지 위에 붙여넣기)">이미지 넣기</button><button type="button" data-a="cpy" aria-haspopup="true" title="글자·도형·올린 이미지가 합쳐진 전체 이미지를 복사하거나 PC에 파일로 저장해요">이미지 저장</button><button type="button" class="ic" data-a="era" aria-label="지우개" title="지우개: 원본 이미지를 지워요"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button type="button" class="ic" data-a="las" aria-label="올가미" title="올가미: 둘러싼 영역에 걸친 글자·도형·선을 삭제해요"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><i class="sep"></i><button type="button" data-sa="vbase" aria-pressed="false" disabled title="원본 이미지 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">원본</button><button type="button" data-sa="vitems" aria-pressed="false" disabled title="추가 요소(글자·도형·선) 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">추가 요소</button><button type="button" data-sa="eundo" disabled title="편집 중인 글자·도형·선·지우개 실행 취소 (Ctrl+Z / 다시 실행 Ctrl+Y)">실행 취소</button><button type="button" data-sa="reset" disabled title="색·선 굵기·글자 크기·지우개 굵기 등 도구 설정을 기본값으로 되돌려요 (이미 넣은 요소는 그대로). 도구를 연 동안에만 쓸 수 있어요">설정 초기화</button>');
 
   box.hidden = bar.hidden = true;
   const shp = el("div", "imgx-row",
@@ -2159,16 +2161,64 @@ let imgBack = null;
   const isOn = b => b.getAttribute("aria-pressed") === "true";
   try { document.execCommand("enableObjectResizing", false, false); } catch (e) {}   // 파이어폭스 기본 손잡이는 끔
 
+  /* 크기 비율 슬라이드: 지금 크기(또는 [원본 크기]를 누른 크기)가 100%, 가로·세로가 같은 비율로 10%~500% */
+  const sl = bar.querySelector("[data-sl]"), sn = bar.querySelector("[data-sn]");
+  let base = null, spre = null;
+  function ensureOrigin(i) {   // 처음 삽입한 크기가 기록돼 있지 않은 이미지는 지금 크기를 원본으로 기록
+    if (i.hasAttribute("data-ow") && i.hasAttribute("data-oh")) return;
+    const r = i.getBoundingClientRect(); if (!(r.width >= 1 && r.height >= 1)) return;
+    i.setAttribute("data-ow", Math.round(r.width)); i.setAttribute("data-oh", Math.round(r.height));
+  }
+  function baseSync() {   // 지금 크기를 100%로
+    if (!img) return;
+    const r = img.getBoundingClientRect(); base = r.width >= 1 && r.height >= 1 ? { w: r.width, h: r.height } : null;
+    sl.value = 100; sn.value = 100;
+  }
+  function setSz(W, H) {   // 원래 그림 비율과 같으면 세로 지정은 빼서(자동) 화면 폭에 맞춰 줄어들 때도 비율이 유지되게 함
+    W = Math.round(W); H = Math.round(H);
+    img.setAttribute("width", W);
+    const nw = img.naturalWidth, nh = img.naturalHeight;
+    if (nw && nh && Math.abs(W * nh / nw - H) < 1.5) img.removeAttribute("height"); else img.setAttribute("height", H);
+    place();
+  }
+  function applyPct(p) {   // base 크기의 p% 로 (가로·세로 같은 비율). 화면 폭·최소 크기를 넘지 않는 값으로 맞춰 실제 적용된 % 를 돌려줘요
+    const lo = Math.max(MINW / base.w, MINW / base.h), hi = Math.max(lo, Math.min(Math.max(MINW, Math.floor(inner())) / base.w, 4000 / base.h));
+    const s = clamp(p / 100, lo, hi);
+    setSz(base.w * s, base.h * s);
+    sl.value = sn.value = Math.round(s * 100);
+  }
+  sl.addEventListener("input", () => {
+    if (!img || !base) return;
+    if (!spre) spre = stateOf(img);
+    applyPct(+sl.value);
+  });
+  sl.addEventListener("change", () => { if (img && spre && !sameSz(spre, img)) hpush(img, spre); spre = null; fire(); });
+  /* 숫자칸: 입력 후 Enter(또는 칸을 벗어날 때)·화살표 버튼으로 적용 — 타이핑 중간 값(예: 5→50)이 바로 적용되지 않게 change 에서 처리 */
+  sn.addEventListener("keydown", e => { e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); sn.blur(); } });
+  sn.addEventListener("change", () => {
+    if (!img || !base) return;
+    const v = parseFloat(sn.value);
+    if (!(v > 0)) { const r = img.getBoundingClientRect(); sn.value = sl.value = Math.round(base.w ? r.width / base.w * 100 : 100); return; }
+    const pre = stateOf(img);
+    applyPct(clamp(v, 10, 500));
+    if (!sameSz(pre, img)) hpush(img, pre);
+    fire();
+  });
+
   const inner = () => { const cs = getComputedStyle(ta); return ta.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); };
-  function setW(px) {
-    img.setAttribute("width", clamp(Math.round(px), MINW, Math.max(MINW, Math.floor(inner()))));
-    img.removeAttribute("height"); place();
+  /* 가로 크기를 바꿀 때 세로는 "지금 보이는(수정본) 가로:세로 비율"을 따라가요. 가로·세로를 따로 조절한 적이 없으면 원래 비율이에요 (rt: 세로/가로, 0 이면 원래 비율) */
+  function setW(px, rt) {
+    if (rt === undefined) { const r = img.getBoundingClientRect(); rt = img.hasAttribute("height") && r.width ? r.height / r.width : 0; }
+    const W = clamp(Math.round(px), MINW, Math.max(MINW, Math.floor(inner())));
+    img.setAttribute("width", W);
+    if (rt > 0) img.setAttribute("height", clamp(Math.round(W * rt), MINW, 4000)); else img.removeAttribute("height");
+    place();
   }
   function hide() { closeSave(); closeShp(); img = null; box.hidden = bar.hidden = true; }
   function show(i) {
     if (img !== i) closeShp();
     img = i; box.hidden = bar.hidden = false;
-    place();
+    place(); ensureOrigin(i); baseSync();
   }
   function place() {
     raf = 0;
@@ -2220,29 +2270,33 @@ let imgBack = null;
     });
     g.addEventListener("pointermove", e => {
       if (!drag || !img || drag.k !== k) return;
-      if (k === "c") setW(drag.w + (e.clientX - drag.x));
+      if (k === "c") setW(drag.w + (e.clientX - drag.x), drag.pre.h ? drag.h / drag.w : 0);
       else if (k === "w") setWH(drag.w + (e.clientX - drag.x), drag.h);
       else setWH(drag.w, drag.h + (e.clientY - drag.y));
     });
     g.addEventListener("pointerup", endDrag); g.addEventListener("pointercancel", endDrag);
   };
   const sameSz = (a, t) => a.w === t.getAttribute("width") && a.h === t.getAttribute("height");
-  function endDrag() { if (!drag) return; const d = drag; drag = null; if (img && !sameSz(d.pre, img)) hpush(img, d.pre); fire(); }
+  function endDrag() { if (!drag) return; const d = drag; drag = null; if (img && !sameSz(d.pre, img)) hpush(img, d.pre); baseSync(); fire(); }
   gripOf(grip, "c"); gripOf(gripR, "w"); gripOf(gripB, "h");
 
   bar.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서/포커스 유지
   bar.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b || !img) return;
     if (b.dataset.s || b.dataset.q || b.dataset.sa || b.hasAttribute("data-none")) { shpClick(b); return; }
-    if (b.dataset.w !== undefined) {
-      const p = +b.dataset.w, pre = stateOf(img);
-      if (p) setW(inner() * p / 100); else { img.removeAttribute("width"); img.removeAttribute("height"); place(); }
+    if (b.dataset.o !== undefined) {   // 원본 크기: 처음 삽입했을 때의 크기 (화면 폭보다 크면 같은 비율로 줄여요) → 이 크기가 100%
+      const pre = stateOf(img); ensureOrigin(img);
+      let W = +img.getAttribute("data-ow"), H = +img.getAttribute("data-oh");
+      if (W >= 1 && H >= 1) {
+        const lim = Math.max(MINW, Math.floor(inner())); if (W > lim) { H = H * lim / W; W = lim; }
+        setSz(W, H);
+      }
       if (!sameSz(pre, img)) hpush(img, pre);
-      fire(); sched(); return;
+      baseSync(); fire(); sched(); return;
     }
     if (b.dataset.ar !== undefined) {   // 비율 복원: 세로를 지우면 원래 비율로 자동 계산돼요
       const pre = stateOf(img); const w = img.getBoundingClientRect().width;
-      img.setAttribute("width", Math.round(w)); img.removeAttribute("height"); place();
+      img.setAttribute("width", Math.round(w)); img.removeAttribute("height"); place(); baseSync();
       if (!sameSz(pre, img)) hpush(img, pre);
       fire(); sched(); return;
     }
