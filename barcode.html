@@ -552,6 +552,21 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-info{display:flex;flex-wrap:wrap;gap:2px 18px;font-size:13px;margin:10px 0 0}
 .fo-info b{font-variant-numeric:tabular-nums}
 .fo-btns{display:flex;flex-wrap:wrap;gap:0 6px}
+/* 크기 조정 창: 제목·확인/취소 버튼은 항상 보이고, 가운데만 스크롤돼요 */
+.cfbox.fo{display:flex;flex-direction:column;overflow:hidden}
+.cfbox.fo .cfhd,.cfbox.fo .cfft{flex:none}
+.cfbox.fo .cfpg{flex:1 1 auto;min-height:0;overflow:auto;padding:8px 12px}
+.cfbox.fo .cs-stage{margin:6px 0;padding:4px}
+.cfbox.fo .cs-sz{margin:0 0 6px}
+.cfbox.fo .cs-btn{margin-top:6px}
+.cfbox.fo .fo-info{margin:6px 0 0}
+.fo-pad{margin:2px 0 0}
+.fo-pad>summary{cursor:pointer;font-weight:600;color:var(--mute);font-size:12px;padding:3px 0;display:flex;align-items:center;gap:8px;list-style:none}
+.fo-pad>summary::-webkit-details-marker{display:none}
+.fo-pad>summary::before{content:"▸";font-size:10px}
+.fo-pad[open]>summary::before{content:"▾"}
+.fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
+.fo-pad .cpk{margin-top:4px}
 </style>
 </head>
 <body>
@@ -3814,7 +3829,7 @@ function foHasAlpha(c) {   // 투명한 픽셀이 있는지 (큰 그림도 부�
 }
 function foBuild() {
   foDlg = document.createElement("div"); foDlg.className = "cfov"; foDlg.hidden = true;
-  foDlg.innerHTML = '<div class="cfbox cs" role="dialog" aria-modal="true" aria-label="이미지 크기 조정">' +
+  foDlg.innerHTML = '<div class="cfbox cs fo" role="dialog" aria-modal="true" aria-label="이미지 크기 조정">' +
     '<div class="cfhd"><b>이미지 크기 조정</b><span class="cfcnt" data-foi></span></div><div class="cfpg">' +
     '<div class="cfnote" style="margin:0">원본은 줄이지 않고 그대로 열었어요. 붙여넣을 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌거나 위치를 입력해서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 박스 안은 원본 픽셀 그대로 들어가고, 원본 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.</div>' +
     '<div class="fo-info"><span>원본 크기 <b data-foo></b></span><span>붙여넣을 크기 <b data-fop></b></span></div>' +
@@ -3823,14 +3838,14 @@ function foBuild() {
     '<div class="cs-sz" title="원본의 왼쪽 위 모서리를 (0, 0) 으로 본 박스의 왼쪽 위 위치예요. 음수면 원본 밖이에요"><span>범위 위치(원본 기준)</span><span>X</span><input type="number" data-fopx step="1" aria-label="범위 X 위치"><span>Y</span><input type="number" data-fopy step="1" aria-label="범위 Y 위치"><span>px</span></div>' +
     '<div class="cs-sz" title="최종 저장 크기를 이 비율로 줄여요. 저장 공간이 부족하다는 안내가 나오면 비율을 낮춰 보세요"><span>저장 크기 비율</span><input type="number" data-fosc min="1" max="100" step="1" value="100" aria-label="저장 크기 비율"><span>%</span></div>' +
     '<div class="cfnote" data-fomsg hidden style="margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--err,var(--warn,#b3261e))"></div>' +
-    '<div class="cfsec">빈 곳을 채울 색</div><div class="cpk" data-focpk></div>' +
+    '<details class="fo-pad"><summary>빈 곳을 채울 색 <i data-fopv></i></summary><div class="cpk" data-focpk></div></details>' +
     '<div class="fo-btns"><button type="button" class="cs-btn" data-fo="orig" title="원본 이미지의 실제 가로·세로 크기를 칸에 넣어요 (제한 없음)">원본 크기로</button>' +
     '<button type="button" class="cs-btn" data-fo="all" title="범위를 정하지 않고, 이미지 전체를 가로 ' + FODEF + 'px 이하로 줄여서 바로 넣어요 (예전 방식)">전체를 줄여서 넣기</button></div></div>' +
     '<div class="cfft"><button type="button" class="ok" data-fo="ok">확인</button><button type="button" data-fo="x">취소</button></div></div>';
   document.body.appendChild(foDlg);
   const q = s => foDlg.querySelector(s);
   foW = q("[data-fow]"); foH = q("[data-foh]"); foPX = q("[data-fopx]"); foPY = q("[data-fopy]"); foSC = q("[data-fosc]"); foMsg = q("[data-fomsg]");
-  foCpk = cpkInit(q("[data-focpk]"), foPad, v => { foPad = v; if (foSt) { foSt.pad = v || null; foDraw(); } });
+  foCpk = cpkInit(q("[data-focpk]"), foPad, v => { foPad = v; if (foSt) { foSt.pad = v || null; foDraw(); foSync(); } });
   const cv = q("canvas");
   foDlg.addEventListener("pointerdown", e => { if (foSt) foSt.dn = e.target; }, true);
   foDlg.addEventListener("click", e => {
@@ -3875,7 +3890,7 @@ function foClampPos() {   // 박스는 원본과 겹친 채, 자기 크기의 �
 }
 function foLayout() {
   const c = foSt, st = foDlg.querySelector(".cs-stage"), uw = c.iw + c.fw, uh = c.ih + c.fh;
-  const aw = Math.max(200, st.clientWidth - 18), ah = Math.max(140, Math.min(innerHeight * 0.4, 380));
+  const aw = Math.max(200, st.clientWidth - 18), ah = Math.max(100, Math.min(innerHeight * 0.3, 300));
   c.s = Math.min(1, aw / uw, ah / uh); c.dpr = window.devicePixelRatio || 1;
   const w = Math.max(1, Math.round(uw * c.s)), h = Math.max(1, Math.round(uh * c.s));
   c.cv.style.width = w + "px"; c.cv.style.height = h + "px"; c.cv.width = Math.round(w * c.dpr); c.cv.height = Math.round(h * c.dpr);
@@ -3892,6 +3907,7 @@ function foSync() {   // 칸·안내 글자를 지금 값에 맞춤 (입력 중�
   const ow = Math.max(1, Math.round(c.fw * c.sc)), oh = Math.max(1, Math.round(c.fh * c.sc));
   foDlg.querySelector("[data-fop]").textContent = ow + " × " + oh + " px" + (c.sc < 1 ? " (범위 " + c.fw + " × " + c.fh + "의 " + Math.round(c.sc * 100) + "%)" : "");
   if (a !== foSC) foSC.value = Math.round(c.sc * 100);
+  const pv = foDlg.querySelector("[data-fopv]"); if (pv) pv.style.background = c.pad ? c.pad : "";
 }
 function foDraw() {
   const c = foSt, x = c.cv.getContext("2d"), d = c.dpr, k = c.s * d, ox = c.fw / 2, oy = c.fh / 2;
