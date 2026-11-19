@@ -20,6 +20,26 @@ window.armPicker = function (pk, apply) {
   document.addEventListener("keydown", flush, true);
   window.addEventListener("focus", flush);
 };
+/* #색상값 입력칸 공통: '#rrggbb'(rrggbb, #rgb 도 가능)를 직접 입력하고 Enter 를 치면 그 색이 선택된 것으로 해요.
+   - 값이 올바르지 않으면 빨간 테두리만 보이고 아무것도 바뀌지 않아요
+   - 입력 중 다른 곳을 누르면(칸을 벗어나면) 입력하던 글은 버리고 원래 색 표시로 돌아가요 */
+window.hexParse = function (s) {
+  s = String(s == null ? "" : s).trim().replace(/^#/, "");
+  if (/^[0-9a-f]{3}$/i.test(s)) s = s.replace(/./g, "$&$&");
+  return /^[0-9a-f]{6}$/i.test(s) ? "#" + s.toLowerCase() : null;
+};
+window.hexInput = function (inp, commit, resync) {
+  const ok = () => { inp.classList.remove("bad"); inp.removeAttribute("aria-invalid"); };
+  inp.addEventListener("keydown", e => {
+    if (e.key !== "Enter" || e.isComposing) return;
+    e.preventDefault(); e.stopPropagation();
+    const v = window.hexParse(inp.value);
+    if (!v) { inp.classList.add("bad"); inp.setAttribute("aria-invalid", "true"); return; }
+    ok(); commit(v);
+  });
+  inp.addEventListener("input", ok);
+  inp.addEventListener("blur", () => { ok(); if (resync) resync(); });
+};
 </script>
 
 <script>
@@ -504,6 +524,13 @@ body .cpk button.sw:hover{outline:2px solid #339af0}
 body .cpk button.sw.cur,body .cpk button.no.cur{outline:2px solid var(--ink);outline-offset:1px}
 .cpk .cpv{height:28px;border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:var(--mute)}
 .cpk .cpv.ck,.bgprev.ck{background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/12px 12px;color:#444}
+/* #색상값 직접 입력칸 */
+body input.hexin{width:86px;height:24px;min-width:0;padding:0 6px;margin:0;box-sizing:border-box;border:1px solid var(--line);border-radius:5px;background:transparent;color:inherit;font:inherit;font-size:12.5px;text-align:center;flex:none}
+body input.hexin::placeholder{color:inherit;opacity:.45}
+body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
+.cpk .cpv{gap:8px}
+.cpk .cpv input.hexin{border-color:currentColor}
+.hexnote{font-size:12px}
 /* 바탕 이미지 넣기 */
 .tb .pop .bgsec{min-width:276px}
 .tb .pop .bgprev{display:flex;align-items:center;justify-content:center;align-self:center;max-width:100%;border:1px solid var(--line);border-radius:6px;font-size:11.5px;overflow:hidden;box-sizing:border-box}
@@ -555,7 +582,7 @@ body .cpk button.sw.cur,body .cpk button.no.cur{outline:2px solid var(--ink);out
   <select id="fontSel" hidden tabindex="-1" aria-hidden="true" title="글꼴 (메모 글자와 이미지 '글자 넣기'에 쓰여요 · 기본 맑은 고딕)" aria-label="글꼴"><option value="Malgun Gothic">맑은 고딕</option></select>
   <div class="menu" id="fontMenu"><button type="button" data-pal id="fontBtn" title="글꼴 (목록에서 마우스를 올리면 선택한 글자에 미리 적용돼요 · 클릭하면 확정, 그냥 나가면 원래 글꼴 유지)" aria-label="글꼴" aria-haspopup="true" aria-expanded="false"><span id="fontLbl">맑은 고딕</span><span class="fcar">▼</span></button><div class="pop" id="fontPop" hidden></div></div>
   <div class="menu"><button type="button" data-pal title="글자 크기" aria-label="글자 크기" aria-haspopup="true" aria-expanded="false"><span style="font-size:11px">가</span><span style="font-size:17px;font-weight:600">가</span></button><div class="pop" hidden style="min-width:110px;max-height:50vh;overflow:auto"><button type="button" data-fs="8">8</button><button type="button" data-fs="13">13</button><button type="button" data-fs="21">21</button><button type="button" data-fs="34">34</button><button type="button" data-fs="55">55</button><button type="button" data-fs="89">89</button><button type="button" data-fs="144">144</button><button type="button" data-fs="238">238</button><button type="button" data-fs="" style="font-size:13px">기본 크기</button></div></div>
-  <div class="menu"><button type="button" data-pal id="fcBtn" title="글자색 (진한 색)" aria-label="글자색" aria-haspopup="true" aria-expanded="false"><b style="border-bottom:3px solid #2b8a3e;line-height:1.1">A</b></button><div class="pop cpal" id="popFc" hidden><div class="bgttl">글자 색</div><div class="bgnote">진한 색 · 누르면 바로 적용돼요</div><div class="cpsw"><button type="button" class="sw" data-fc="#2b8a3e" style="background:#2b8a3e" title="#2b8a3e" aria-label="#2b8a3e"></button><button type="button" class="sw" data-fc="#087f5b" style="background:#087f5b" title="#087f5b" aria-label="#087f5b"></button><button type="button" class="sw" data-fc="#5c940d" style="background:#5c940d" title="#5c940d" aria-label="#5c940d"></button><button type="button" class="sw" data-fc="#1b5e20" style="background:#1b5e20" title="#1b5e20" aria-label="#1b5e20"></button><button type="button" class="sw" data-fc="#000000" style="background:#000000" title="#000000" aria-label="#000000"></button><button type="button" class="sw" data-fc="#343a40" style="background:#343a40" title="#343a40" aria-label="#343a40"></button><button type="button" class="sw" data-fc="#c92a2a" style="background:#c92a2a" title="#c92a2a" aria-label="#c92a2a"></button><button type="button" class="sw" data-fc="#a61e4d" style="background:#a61e4d" title="#a61e4d" aria-label="#a61e4d"></button><button type="button" class="sw" data-fc="#862e9c" style="background:#862e9c" title="#862e9c" aria-label="#862e9c"></button><button type="button" class="sw" data-fc="#5f3dc4" style="background:#5f3dc4" title="#5f3dc4" aria-label="#5f3dc4"></button><button type="button" class="sw" data-fc="#364fc7" style="background:#364fc7" title="#364fc7" aria-label="#364fc7"></button><button type="button" class="sw" data-fc="#1864ab" style="background:#1864ab" title="#1864ab" aria-label="#1864ab"></button><button type="button" class="sw" data-fc="#0b7285" style="background:#0b7285" title="#0b7285" aria-label="#0b7285"></button><button type="button" class="sw" data-fc="#d9480f" style="background:#d9480f" title="#d9480f" aria-label="#d9480f"></button></div><button type="button" class="bgpk" data-fcpick title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div class="cpcur" style="display:flex;align-items:center;gap:6px;font-size:12.5px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid var(--line);border-radius:4px"></i><span></span></div><div class="cpa"><span>투명</span><input type="range" id="alFc" min="0" max="90" step="5" value="0" aria-label="글자색 투명도"><span id="alFcV">0%</span></div><button type="button" class="bgpk" data-fc="" title="선택한 글자의 색을 기본(녹색)으로 되돌려요">기본 글자색으로</button></div></div><div class="menu"><button type="button" data-pal id="bgBtn" title="배경색(형광펜, 연한 색)" aria-label="배경색" aria-haspopup="true" aria-expanded="false"><b style="background:#f6cbed;color:#1c1b19;padding:0 4px;border-radius:3px;line-height:1.3">A</b></button><div class="pop cpal" id="popBg" hidden><div class="bgttl">바탕 색</div><div class="bgnote">연한 색 · 누르면 바로 적용돼요</div><div class="cpsw"><button type="button" class="sw" data-bg="#f6cbed" style="background:#f6cbed" title="#f6cbed" aria-label="#f6cbed"></button><button type="button" class="sw" data-bg="#f6cbd8" style="background:#f6cbd8" title="#f6cbd8" aria-label="#f6cbd8"></button><button type="button" class="sw" data-bg="#ddcbf6" style="background:#ddcbf6" title="#ddcbf6" aria-label="#ddcbf6"></button><button type="button" class="sw" data-bg="#f6cbf3" style="background:#f6cbf3" title="#f6cbf3" aria-label="#f6cbf3"></button><button type="button" class="sw" data-bg="#f4f1ea" style="background:#f4f1ea" title="#f4f1ea" aria-label="#f4f1ea"></button><button type="button" class="sw" data-bg="#f1ece4" style="background:#f1ece4" title="#f1ece4" aria-label="#f1ece4"></button><button type="button" class="sw" data-bg="#cbf6f6" style="background:#cbf6f6" title="#cbf6f6" aria-label="#cbf6f6"></button><button type="button" class="sw" data-bg="#cbf6e7" style="background:#cbf6e7" title="#cbf6e7" aria-label="#cbf6e7"></button><button type="button" class="sw" data-bg="#d4f6cb" style="background:#d4f6cb" title="#d4f6cb" aria-label="#d4f6cb"></button><button type="button" class="sw" data-bg="#ebf6cb" style="background:#ebf6cb" title="#ebf6cb" aria-label="#ebf6cb"></button><button type="button" class="sw" data-bg="#f6eecb" style="background:#f6eecb" title="#f6eecb" aria-label="#f6eecb"></button><button type="button" class="sw" data-bg="#f6e0cb" style="background:#f6e0cb" title="#f6e0cb" aria-label="#f6e0cb"></button><button type="button" class="sw" data-bg="#f6d2cb" style="background:#f6d2cb" title="#f6d2cb" aria-label="#f6d2cb"></button><button type="button" class="sw" data-bg="#cbeaf6" style="background:#cbeaf6" title="#cbeaf6" aria-label="#cbeaf6"></button></div><button type="button" class="bgpk" data-bgcpick title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div class="cpcur" style="display:flex;align-items:center;gap:6px;font-size:12.5px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid var(--line);border-radius:4px"></i><span></span></div><div class="cpa"><span>투명</span><input type="range" id="alBg" min="0" max="90" step="5" value="0" aria-label="바탕색 투명도"><span id="alBgV">0%</span></div><button type="button" class="bgpk" data-bg="">배경색 없음</button></div></div>
+  <div class="menu"><button type="button" data-pal id="fcBtn" title="글자색 (진한 색)" aria-label="글자색" aria-haspopup="true" aria-expanded="false"><b style="border-bottom:3px solid #2b8a3e;line-height:1.1">A</b></button><div class="pop cpal" id="popFc" hidden><div class="bgttl">글자 색</div><div class="bgnote">진한 색 · 누르면 바로 적용돼요</div><div class="cpsw"><button type="button" class="sw" data-fc="#2b8a3e" style="background:#2b8a3e" title="#2b8a3e" aria-label="#2b8a3e"></button><button type="button" class="sw" data-fc="#087f5b" style="background:#087f5b" title="#087f5b" aria-label="#087f5b"></button><button type="button" class="sw" data-fc="#5c940d" style="background:#5c940d" title="#5c940d" aria-label="#5c940d"></button><button type="button" class="sw" data-fc="#1b5e20" style="background:#1b5e20" title="#1b5e20" aria-label="#1b5e20"></button><button type="button" class="sw" data-fc="#000000" style="background:#000000" title="#000000" aria-label="#000000"></button><button type="button" class="sw" data-fc="#343a40" style="background:#343a40" title="#343a40" aria-label="#343a40"></button><button type="button" class="sw" data-fc="#c92a2a" style="background:#c92a2a" title="#c92a2a" aria-label="#c92a2a"></button><button type="button" class="sw" data-fc="#a61e4d" style="background:#a61e4d" title="#a61e4d" aria-label="#a61e4d"></button><button type="button" class="sw" data-fc="#862e9c" style="background:#862e9c" title="#862e9c" aria-label="#862e9c"></button><button type="button" class="sw" data-fc="#5f3dc4" style="background:#5f3dc4" title="#5f3dc4" aria-label="#5f3dc4"></button><button type="button" class="sw" data-fc="#364fc7" style="background:#364fc7" title="#364fc7" aria-label="#364fc7"></button><button type="button" class="sw" data-fc="#1864ab" style="background:#1864ab" title="#1864ab" aria-label="#1864ab"></button><button type="button" class="sw" data-fc="#0b7285" style="background:#0b7285" title="#0b7285" aria-label="#0b7285"></button><button type="button" class="sw" data-fc="#d9480f" style="background:#d9480f" title="#d9480f" aria-label="#d9480f"></button></div><button type="button" class="bgpk" data-fcpick title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div class="cpcur" style="display:flex;align-items:center;gap:6px;font-size:12.5px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid var(--line);border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><div class="cpa"><span>투명</span><input type="range" id="alFc" min="0" max="90" step="5" value="0" aria-label="글자색 투명도"><span id="alFcV">0%</span></div><button type="button" class="bgpk" data-fc="" title="선택한 글자의 색을 기본(녹색)으로 되돌려요">기본 글자색으로</button></div></div><div class="menu"><button type="button" data-pal id="bgBtn" title="배경색(형광펜, 연한 색)" aria-label="배경색" aria-haspopup="true" aria-expanded="false"><b style="background:#f6cbed;color:#1c1b19;padding:0 4px;border-radius:3px;line-height:1.3">A</b></button><div class="pop cpal" id="popBg" hidden><div class="bgttl">바탕 색</div><div class="bgnote">연한 색 · 누르면 바로 적용돼요</div><div class="cpsw"><button type="button" class="sw" data-bg="#f6cbed" style="background:#f6cbed" title="#f6cbed" aria-label="#f6cbed"></button><button type="button" class="sw" data-bg="#f6cbd8" style="background:#f6cbd8" title="#f6cbd8" aria-label="#f6cbd8"></button><button type="button" class="sw" data-bg="#ddcbf6" style="background:#ddcbf6" title="#ddcbf6" aria-label="#ddcbf6"></button><button type="button" class="sw" data-bg="#f6cbf3" style="background:#f6cbf3" title="#f6cbf3" aria-label="#f6cbf3"></button><button type="button" class="sw" data-bg="#f4f1ea" style="background:#f4f1ea" title="#f4f1ea" aria-label="#f4f1ea"></button><button type="button" class="sw" data-bg="#f1ece4" style="background:#f1ece4" title="#f1ece4" aria-label="#f1ece4"></button><button type="button" class="sw" data-bg="#cbf6f6" style="background:#cbf6f6" title="#cbf6f6" aria-label="#cbf6f6"></button><button type="button" class="sw" data-bg="#cbf6e7" style="background:#cbf6e7" title="#cbf6e7" aria-label="#cbf6e7"></button><button type="button" class="sw" data-bg="#d4f6cb" style="background:#d4f6cb" title="#d4f6cb" aria-label="#d4f6cb"></button><button type="button" class="sw" data-bg="#ebf6cb" style="background:#ebf6cb" title="#ebf6cb" aria-label="#ebf6cb"></button><button type="button" class="sw" data-bg="#f6eecb" style="background:#f6eecb" title="#f6eecb" aria-label="#f6eecb"></button><button type="button" class="sw" data-bg="#f6e0cb" style="background:#f6e0cb" title="#f6e0cb" aria-label="#f6e0cb"></button><button type="button" class="sw" data-bg="#f6d2cb" style="background:#f6d2cb" title="#f6d2cb" aria-label="#f6d2cb"></button><button type="button" class="sw" data-bg="#cbeaf6" style="background:#cbeaf6" title="#cbeaf6" aria-label="#cbeaf6"></button></div><button type="button" class="bgpk" data-bgcpick title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div class="cpcur" style="display:flex;align-items:center;gap:6px;font-size:12.5px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid var(--line);border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><div class="cpa"><span>투명</span><input type="range" id="alBg" min="0" max="90" step="5" value="0" aria-label="바탕색 투명도"><span id="alBgV">0%</span></div><button type="button" class="bgpk" data-bg="">배경색 없음</button></div></div>
   <div class="menu"><button type="button" data-pal title="정렬" aria-label="정렬" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h14"/></svg></button><div class="pop" hidden><button type="button" data-cmd="alL">왼쪽 정렬</button><button type="button" data-cmd="alC">가운데 정렬</button><button type="button" data-cmd="alR">오른쪽 정렬</button></div></div>
   <button type="button" data-cmd="clear" title="서식 지우기 (선택한 글자)" aria-label="서식 지우기"><svg viewBox="0 0 24 24"><path d="M4 5h10M9 5l-2.5 14M13 19h6M15.5 12.5l4 4M19.5 12.5l-4 4"/></svg></button>
   <i class="sep"></i>
@@ -1852,7 +1879,8 @@ function syncPal(p) {   // 팝업을 열 때: 현재 색 표시 + 투명도 슬�
   const r = document.getElementById("al" + id); r.value = String(Math.round((1 - st.a) * 100));
   document.getElementById("al" + id + "V").textContent = r.value + "%";
   const cc = p.querySelector(".cpcur");
-  if (cc) { const col = st.off ? "" : rgbaOf(st.c, st.a); cc.querySelector("i").style.background = col || "transparent"; cc.querySelector("span").textContent = st.off ? (kind === "fc" ? "기본 글자색 " + FC_DEF : "배경색 없음") : st.c + (st.a < 1 ? " · " + Math.round((1 - st.a) * 100) + "% 투명" : ""); }
+  if (cc) { const col = st.off ? "" : rgbaOf(st.c, st.a); cc.querySelector("i").style.background = col || "transparent"; const hi = cc.querySelector("input"); if (hi) { hi.value = st.off ? (kind === "fc" ? FC_DEF : "") : st.c; hi.classList.remove("bad"); }
+    cc.querySelector(".hexnote").textContent = st.off ? (kind === "fc" ? "기본 글자색" : "배경색 없음") : (st.a < 1 ? "· " + Math.round((1 - st.a) * 100) + "% 투명" : ""); }
 }
 function leaveSpans(prop) {   // 커서가 배경색 span 안에 있으면 그 span 밖으로 빼서(앞뒤로 나눠서) 부모 배경이 비치지 않게
   const sel = getSelection(); if (!sel.rangeCount || !sel.isCollapsed) return null;
@@ -1907,6 +1935,12 @@ for (const [k, id] of [["fc", "Fc"], ["bg", "Bg"]]) {   // 투명도 슬라이�
     applyColor(k, cst[k].c); palBack = saveRange(); syncPal(document.getElementById(k === "fc" ? "popFc" : "popBg"));
   });
 }
+/* 글자색·배경색 목록의 #색상값 입력칸: 입력 후 Enter 를 치면 선택한 글자(없으면 이어서 쓰는 글자)에 그 색을 적용해요 (목록은 열린 채 유지) */
+for (const kind of ["fc", "bg"]) {
+  const pop = document.getElementById(kind === "fc" ? "popFc" : "popBg"), hi = pop && pop.querySelector(".cpcur input");
+  if (hi) window.hexInput(hi, v => { if (palBack) palBack(); applyColor(kind, v); palBack = saveRange(); syncPal(pop); }, () => syncPal(pop));
+}
+function palRestore() { const a = document.activeElement; if (a && a.classList && a.classList.contains("hexin") && palBack) palBack(); }   // 입력칸에 커서가 있었으면 메모의 선택 범위를 먼저 되돌려요
 /* 글자 크기: 선택한 글자를 px 단위로 지정 (execCommand 는 1~7 단계만 지원해서, 만든 뒤 px 로 바꿔 줘요) */
 function unspan(sp) { while (sp.firstChild) sp.before(sp.firstChild); sp.remove(); }
 /* 선택 없이 크기만 고른 경우: 커서 자리에 보이지 않는 글자(ZWSP)가 든 span 을 만들고 그 안에 커서를 둬서,
@@ -2157,22 +2191,23 @@ function cpkHtml() {
   const sw = h => '<button type="button" class="sw" data-ck="#' + h.toLowerCase() + '" style="background:#' + h + '" title="#' + h + '" aria-label="#' + h + '"></button>';
   return '<div class="cpr"><button type="button" class="no" data-ck="">색 없음</button><input type="color" value="#ffff00" title="다른 색" aria-label="다른 색 고르기"></div>' +
     '<div class="cpg">' + PAL[0].map(sw).join("") + '</div><div class="cpg" style="grid-template-rows:repeat(4,22px)">' + PAL.slice(1).map(r => r.map(sw).join("")).join("") + '</div>' +
-    '<div class="cpg">' + STD.map(sw).join("") + '</div><div class="cpv"></div>';
+    '<div class="cpg">' + STD.map(sw).join("") + '</div><div class="cpv"><span class="cpvl"></span><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"></div>';
 }
 /* root 안에 색 고르기를 만들고, 색을 누르면 cb(색) 를 불러줌 (색 없음 = ""). 누르기만 해서는 아무것도 확정되지 않아요 — 확정은 쓰는 쪽의 [확인] */
 function cpkInit(root, val, cb) {
   root.innerHTML = cpkHtml();
-  const cp = root.querySelector("input[type=color]"), pv = root.querySelector(".cpv");
+  const cp = root.querySelector("input[type=color]"), pv = root.querySelector(".cpv"), pl = pv.querySelector(".cpvl"), ci = pv.querySelector("input.hexin");
   let cur = val || "";
   const ink = h => { const n = parseInt(h.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; return (r * 299 + g * 587 + b * 114) / 1000 > 140 ? "#111" : "#fff"; };
   const paint = () => {
     root.querySelectorAll("[data-ck]").forEach(b => b.classList.toggle("cur", b.dataset.ck === cur));
     pv.classList.toggle("ck", !cur); pv.style.background = cur || ""; pv.style.color = cur ? ink(cur) : "";
-    pv.textContent = cur ? "미리 보기  " + cur : "색 없음 (투명)";
+    pl.textContent = cur ? "미리 보기" : "색 없음 (투명)"; ci.value = cur;
     if (cur) cp.value = cur;
   };
   root.addEventListener("click", e => { const b = e.target.closest("[data-ck]"); if (!b) return; cur = b.dataset.ck; paint(); cb(cur); });
   cp.addEventListener("input", () => { cur = cp.value.toLowerCase(); paint(); cb(cur); });
+  window.hexInput(ci, v => { cur = v; paint(); cb(cur); }, paint);   // #값 입력 + Enter: 그 색을 선택 (확정은 쓰는 쪽의 [확인])
   paint();
   return { get: () => cur, set: v => { cur = v || ""; paint(); } };
 }
@@ -2586,7 +2621,7 @@ let imgBack = null;
 
   /* 배경색 버튼(글자 넣기·도형 넣기): 색 고르기 + 투명 비율 슬라이드바(기본 50%) */
   const BPAL = ["#fff3a3", "#ffffff", "#000000", "#f1f3f5", "#fffbe0", "#fff0f5", "#f0fff0"];
-  const bpop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">배경색</div><div style="font-size:11.5px;opacity:.7">색을 누르면 바로 적용돼요</div><div style="display:flex;gap:6px">' + BPAL.map(c => '<button type="button" data-bpc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-bpk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-bpcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><span></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-bpr min="0" max="100" step="5" value="50" style="flex:1;min-width:110px"><span data-bpv style="min-width:36px;text-align:right">50%</span></label><button type="button" data-bpn title="배경을 칠하지 않아요">배경 없음</button>');
+  const bpop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">배경색</div><div style="font-size:11.5px;opacity:.7">색을 누르면 바로 적용돼요</div><div style="display:flex;gap:6px">' + BPAL.map(c => '<button type="button" data-bpc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-bpk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-bpcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-bpr min="0" max="100" step="5" value="50" style="flex:1;min-width:110px"><span data-bpv style="min-width:36px;text-align:right">50%</span></label><button type="button" data-bpn title="배경을 칠하지 않아요">배경 없음</button>');
   bpop.hidden = true; document.body.appendChild(bpop);   /* 이미지 편집 화면(overlay) 위에 보이도록 body 에 둠 */
   bpop.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
   const bpk = document.createElement("input"); bpk.type = "color"; bpk.tabIndex = -1; bpk.setAttribute("aria-hidden", "true");
@@ -2598,7 +2633,8 @@ let imgBack = null;
     const it = sh && sh.items[sh.sel], o = it && it.t !== "hand" && it.t !== "pic" && bgOf(it) > 0 ? bgOf(it) : sd.bgo;
     bpr.value = String(Math.round((1 - o) * 100)); bpv.textContent = bpr.value + "%";
     const bc = bpop.querySelector("[data-bpcur]");
-    if (bc) { const c = it && it.t !== "hand" && it.t !== "pic" && !LINEM.has(it.t) && it.bgc ? it.bgc : sd.bgc; bc.querySelector("i").style.background = sd.bgOn === false && !it ? "transparent" : c; bc.querySelector("span").textContent = (sd.bgOn === false && !it ? "배경 없음" : c) + (o > 0 && o < 1 ? " · " + Math.round((1 - o) * 100) + "% 투명" : ""); }
+    if (bc) { const c = it && it.t !== "hand" && it.t !== "pic" && !LINEM.has(it.t) && it.bgc ? it.bgc : sd.bgc; bc.querySelector("i").style.background = sd.bgOn === false && !it ? "transparent" : c; const bnone = sd.bgOn === false && !it, bi = bc.querySelector("input"); if (bi) { bi.value = bnone ? "" : c; bi.classList.remove("bad"); }
+      bc.querySelector(".hexnote").textContent = (bnone ? "배경 없음 " : "") + (o > 0 && o < 1 ? "· " + Math.round((1 - o) * 100) + "% 투명" : ""); }
   }
   function bgApply(c, t, none) {
     if (!sh) return;
@@ -2630,11 +2666,12 @@ let imgBack = null;
   bpk.addEventListener("input", () => bgApply(bpk.value, null, false));
   bpk.addEventListener("change", () => bgApply(bpk.value, null, false));
   document.addEventListener("pointerdown", e => { if (!bpop.hidden && !bpop.contains(e.target) && !(e.target.closest && e.target.closest('[data-sa="bgmenu"]')) && !(e.target.closest && e.target.closest(".cfov"))) closeBg(); }, true);
+  { const hi = bpop.querySelector("[data-bpcur] input"); if (hi) window.hexInput(hi, v => bgApply(v, null, false), bgSync); }   // #값 입력 + Enter: 그 배경색 선택
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !bpop.hidden) { e.preventDefault(); e.stopImmediatePropagation(); closeBg(); } }, true);
   window.addEventListener("scroll", closeBg, true); window.addEventListener("resize", closeBg);
   /* 페인트 색(바탕색): 글자·도형·선의 색(sd.color)과 완전히 따로 저장. 페인트 색을 바꾸면 글자·도형·선의 기본 색만 보색으로 맞추고, 그 반대(글자·도형·선 색 → 페인트 색)는 하지 않음 */
   const PPAL = ["#fff3a3", "#ffffff", "#000000", "#f1f3f5", "#ffe3e3", "#d0ebff", "#d3f9d8", "#e5dbff"];
-  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><span></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="이 창을 연 뒤에 바꾼 페인트 색·투명도·글자/도형/선 색을 모두 취소하고, 연 때의 상태로 되돌려요">기존 페인트 색 유지</button>');
+  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="이 창을 연 뒤에 바꾼 페인트 색·투명도·글자/도형/선 색을 모두 취소하고, 연 때의 상태로 되돌려요">기존 페인트 색 유지</button>');
   ppop.hidden = true; document.body.appendChild(ppop);
   ppop.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
   const ppk = document.createElement("input"); ppk.type = "color"; ppk.tabIndex = -1; ppk.setAttribute("aria-hidden", "true");
@@ -2656,7 +2693,8 @@ let imgBack = null;
   }
   function ppSync() {
     const chip = bar.querySelector("[data-pchip]"); if (chip) chip.style.background = sd.pcolor;
-    const pcc = ppop.querySelector("[data-ppcur]"); if (pcc) { pcc.querySelector("i").style.background = sd.pcolor; pcc.querySelector("span").textContent = sd.pcolor + (sd.fop < 1 ? " · " + Math.round((1 - sd.fop) * 100) + "% 투명" : ""); }
+    const pcc = ppop.querySelector("[data-ppcur]"); if (pcc) { pcc.querySelector("i").style.background = sd.pcolor; const pi = pcc.querySelector("input"); if (pi) { pi.value = sd.pcolor; pi.classList.remove("bad"); }
+      pcc.querySelector(".hexnote").textContent = sd.fop < 1 ? "· " + Math.round((1 - sd.fop) * 100) + "% 투명" : ""; }
     ppr.value = String(Math.round((1 - sd.fop) * 100)); ppv.textContent = ppr.value + "%";
   }
   function ppApply(c, t, quiet) {
@@ -2691,6 +2729,7 @@ let imgBack = null;
   ppk.addEventListener("input", () => ppApply(ppk.value, null, true));   // 고르는 즉시 반영 (안내 문구는 생략)
   ppk.addEventListener("change", () => ppApply(ppk.value, null));
   document.addEventListener("pointerdown", e => { if (!ppop.hidden && !ppop.contains(e.target) && !(e.target.closest && e.target.closest('[data-sa="pmenu"]')) && !(e.target.closest && e.target.closest(".cfov"))) closePp(); }, true);
+  { const hi = ppop.querySelector("[data-ppcur] input"); if (hi) window.hexInput(hi, v => ppApply(v, null), ppSync); }   // #값 입력 + Enter: 그 페인트 색 선택
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !ppop.hidden) { e.preventDefault(); e.stopImmediatePropagation(); closePp(); } }, true);
   window.addEventListener("scroll", closePp, true); window.addEventListener("resize", closePp);
   function toggleSave(b) {
@@ -3838,17 +3877,17 @@ tb.addEventListener("click", e => {
   if (b.dataset.t) { closePop(); tbl(b.dataset.t); return; }
   if ("fs" in b.dataset) { closePop(); setSize(b.dataset.fs); return; }
   if ("fcpick" in b.dataset) {   // 60색 선택 창 (확인 시 적용, 이 메뉴는 열린 채 유지)
-    const restore = saveRange();
+    palRestore(); const restore = saveRange();
     openColorDlg({ title: "글자 색 선택 (60색)", value: cst.fc.off ? FC_DEF : cst.fc.c, onOk: v => { restore(); applyColor("fc", v); syncPal(document.getElementById("popFc")); palBack = saveRange(); } });
     return;
   }
-  if ("fc" in b.dataset) { closePop(); applyColor("fc", b.dataset.fc); return; }
+  if ("fc" in b.dataset) { palRestore(); closePop(); applyColor("fc", b.dataset.fc); return; }
   if ("bgcpick" in b.dataset) {   // 60색 선택 창 (확인 시 적용, 이 메뉴는 열린 채 유지)
-    const restore = saveRange();
+    palRestore(); const restore = saveRange();
     openColorDlg({ title: "바탕 색 선택 (60색)", value: cst.bg.off ? "" : cst.bg.c, onOk: v => { restore(); applyColor("bg", v); syncPal(document.getElementById("popBg")); palBack = saveRange(); } });
     return;
   }
-  if ("bg" in b.dataset) { closePop(); applyColor("bg", b.dataset.bg); return; }
+  if ("bg" in b.dataset) { palRestore(); closePop(); applyColor("bg", b.dataset.bg); return; }
   if ("bgok" in b.dataset) { closePop(); blankImage(bgColor); return; }   // [확인]: 미리 보기 그대로 넣기
   if ("bgx" in b.dataset) { closePop(); return; }   // [취소]
   if ("bgreset" in b.dataset) { bgDefaults(); return; }
