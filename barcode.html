@@ -548,6 +548,10 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .cs-sz input{width:78px;height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px;text-align:right}
 .cs-btn{height:28px;padding:0 12px;border:1px solid var(--line);border-radius:7px;background:transparent;margin-top:12px}
 .cs-btn:hover{background:var(--line)}
+/* 이미지 파일 열기 ▸ 크기 조정 창 (기본 크기 조정과 같은 화면) */
+.fo-info{display:flex;flex-wrap:wrap;gap:2px 18px;font-size:13px;margin:10px 0 0}
+.fo-info b{font-variant-numeric:tabular-nums}
+.fo-btns{display:flex;flex-wrap:wrap;gap:0 6px}
 </style>
 </head>
 <body>
@@ -1075,7 +1079,11 @@ function makeRich(el) {
   async function imgHtml(file) {
     const u = await imgToUrl(file);
     const sz = await new Promise(r => { const i = new Image(); i.onload = () => r([i.naturalWidth, i.naturalHeight]); i.onerror = () => r([0, 0]); i.src = u; });
-    const nw = sz[0], nh = sz[1], cs = getComputedStyle(el);
+    return imgTag(u, sz[0], sz[1]);
+  }
+  /* 이미지 주소와 그림 자체의 가로·세로로 <img> 를 만듦 (화면에 보이는 크기만 위 규칙대로 맞추고, 그림 픽셀은 그대로) */
+  function imgTag(u, nw, nh) {
+    const cs = getComputedStyle(el);
     /* 이미지가 들어가며 세로 스크롤바가 새로 생기면 안쪽 폭이 줄어 남겨둔 10% 가 깎이므로, 아직 스크롤바가 없으면 그 폭만큼 미리 빼고 계산 */
     const sb = el.scrollHeight > el.clientHeight + 1 ? 0 : (() => { const t = document.createElement("div"); t.style.cssText = "position:absolute;visibility:hidden;width:60px;height:60px;overflow:scroll"; document.body.appendChild(t); const w = t.offsetWidth - t.clientWidth; t.remove(); return w; })();
     const maxW = (el.clientWidth - sb - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) * 0.5;   /* 이미지 2개를 나란히 붙일 수 있게 가로는 50% 이하 */
@@ -1198,6 +1206,12 @@ function makeRich(el) {
   el.insertImages = async files => {
     let h = "";
     for (const f of files) { try { h += await imgHtml(f); } catch (e) {} }
+    insert(clean(h));
+  };
+  /* 크기 조정 창을 거친 이미지들: items = [{url, W, H}(이미 원하는 범위로 만든 그림) | {file}(예전처럼 줄여서 넣기)] → 한 번에 삽입 */
+  el.insertPickedAll = async items => {
+    let h = "";
+    for (const it of items) { try { h += it.file ? await imgHtml(it.file) : imgTag(it.url, it.W, it.H); } catch (e) {} }
     insert(clean(h));
   };
   el.addEventListener("paste", e => {
@@ -3769,10 +3783,202 @@ function pickImage() {
   if (ta.disabled) return;
   imgBack = saveRange(); imgFile.value = ""; imgFile.click();
 }
+/* ===== 이미지 ▸ 파일 열기: 원본 크기 그대로 열고, [기본 크기 조정]과 같은 화면에서 붙여넣을 범위를 정해요 =====
+   예전에는 파일을 고르는 순간 가로 1600px 로 줄여 버려서, 큰 원본의 일부분을 들여다보면 흐릿했어요.
+   - 파일은 줄이지 않고 원본 그대로 읽어요 (원본 크기를 창에 보여줘요)
+   - 파란 박스 = 붙여넣을 범위. 박스 안은 원본 픽셀을 1:1 로 복사해요 (축소 없음 → 큰 원본의 일부도 선명)
+   - 박스가 원본 밖으로 나가면 그 부분은 고른 색(없으면 투명)으로 채워져요
+   - [전체를 줄여서 넣기] 는 예전 방식(가로 1600px 이하로 줄여서 넣기)이에요 */
+const FOMIN = 1, FOMAX = 8000, FOLIM = 2600000, FODEF = 1600;
+let foDlg = null, foSt = null, foPad = "#ffffff", foCpk = null, foW = null, foH = null, foPX = null, foPY = null;
+const foMk = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; };
+const foClamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const foWait = () => new Promise(r => setTimeout(r, 30));
+function foLoad(file) {   // 줄이지 않고 원본 그대로 읽기
+  return new Promise(ok => {
+    const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { URL.revokeObjectURL(u); ok(im); };
+    im.onerror = () => { URL.revokeObjectURL(u); ok(null); };
+    im.src = u;
+  });
+}
+function foHasAlpha(c) {   // 투명한 픽셀이 있는지 (큰 그림도 부담 없게 띠 단위로 검사)
+  try {
+    const x = c.getContext("2d"), W = c.width, H = c.height, rows = Math.max(1, Math.floor(2000000 / W));
+    for (let y = 0; y < H; y += rows) {
+      const d = x.getImageData(0, y, W, Math.min(rows, H - y)).data;
+      for (let i = 3; i < d.length; i += 4) if (d[i] < 250) return true;
+    }
+    return false;
+  } catch (e) { return true; }
+}
+function foBuild() {
+  foDlg = document.createElement("div"); foDlg.className = "cfov"; foDlg.hidden = true;
+  foDlg.innerHTML = '<div class="cfbox cs" role="dialog" aria-modal="true" aria-label="이미지 크기 조정">' +
+    '<div class="cfhd"><b>이미지 크기 조정</b><span class="cfcnt" data-foi></span></div><div class="cfpg">' +
+    '<div class="cfnote" style="margin:0">원본은 줄이지 않고 그대로 열었어요. 붙여넣을 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌거나 위치를 입력해서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 박스 안은 원본 픽셀 그대로 들어가고, 원본 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.</div>' +
+    '<div class="fo-info"><span>원본 크기 <b data-foo></b></span><span>붙여넣을 크기 <b data-fop></b></span></div>' +
+    '<div class="cs-stage"><canvas></canvas></div>' +
+    '<div class="cs-sz"><span>붙여넣을 크기</span><input type="number" data-fow min="' + FOMIN + '" max="' + FOMAX + '" step="1" aria-label="붙여넣을 가로 픽셀"><span>×</span><input type="number" data-foh min="' + FOMIN + '" max="' + FOMAX + '" step="1" aria-label="붙여넣을 세로 픽셀"><span>px</span></div>' +
+    '<div class="cs-sz" title="원본의 왼쪽 위 모서리를 (0, 0) 으로 본 박스의 왼쪽 위 위치예요. 음수면 원본 밖이에요"><span>범위 위치(원본 기준)</span><span>X</span><input type="number" data-fopx step="1" aria-label="범위 X 위치"><span>Y</span><input type="number" data-fopy step="1" aria-label="범위 Y 위치"><span>px</span></div>' +
+    '<div class="cfsec">빈 곳을 채울 색</div><div class="cpk" data-focpk></div>' +
+    '<div class="fo-btns"><button type="button" class="cs-btn" data-fo="orig" title="원본의 가로·세로 크기를 칸에 넣어요 (최대 ' + FOMAX + 'px)">원본 크기로</button>' +
+    '<button type="button" class="cs-btn" data-fo="all" title="범위를 정하지 않고, 이미지 전체를 가로 ' + FODEF + 'px 이하로 줄여서 바로 넣어요 (예전 방식)">전체를 줄여서 넣기</button></div></div>' +
+    '<div class="cfft"><button type="button" class="ok" data-fo="ok">확인</button><button type="button" data-fo="x">취소</button></div></div>';
+  document.body.appendChild(foDlg);
+  const q = s => foDlg.querySelector(s);
+  foW = q("[data-fow]"); foH = q("[data-foh]"); foPX = q("[data-fopx]"); foPY = q("[data-fopy]");
+  foCpk = cpkInit(q("[data-focpk]"), foPad, v => { foPad = v; if (foSt) { foSt.pad = v || null; foDraw(); } });
+  const cv = q("canvas");
+  foDlg.addEventListener("pointerdown", e => { if (foSt) foSt.dn = e.target; }, true);
+  foDlg.addEventListener("click", e => {
+    if (e.target === foDlg) { if (foSt && foSt.dn === foDlg) foOk(); return; }   // 창 바깥: 확정
+    const b = e.target.closest("[data-fo]"); if (!b || !foSt) return;
+    const a = b.dataset.fo;
+    if (a === "ok") foOk(); else if (a === "x") foClose(false); else if (a === "orig") foOrig(); else if (a === "all") foClose({ file: foSt.file });
+  });
+  const sz = (box, which) => {
+    box.addEventListener("input", () => { const v = parseInt(box.value, 10); if (foSt && v >= FOMIN && v <= FOMAX) foSetSize(which === "w" ? v : foSt.fw, which === "h" ? v : foSt.fh, false, true); });
+    box.addEventListener("change", () => { if (foSt) { foW.value = foSt.fw; foH.value = foSt.fh; } });
+  };
+  sz(foW, "w"); sz(foH, "h");
+  const ps = (box, which) => {
+    box.addEventListener("input", () => { const v = parseInt(box.value, 10); if (!foSt || isNaN(v)) return; foSt[which] = v; foClampPos(); foDraw(); });
+    box.addEventListener("change", () => { if (foSt) { foPX.value = foSt.fx; foPY.value = foSt.fy; } });
+  };
+  ps(foPX, "fx"); ps(foPY, "fy");
+  const inside = e => { const r = cv.getBoundingClientRect(), lx = (e.clientX - r.left) / foSt.s - foSt.fw / 2, ly = (e.clientY - r.top) / foSt.s - foSt.fh / 2; return lx >= foSt.fx && lx <= foSt.fx + foSt.fw && ly >= foSt.fy && ly <= foSt.fy + foSt.fh; };
+  cv.addEventListener("pointerdown", e => {
+    if (!foSt || !inside(e)) return;
+    e.preventDefault(); cv.setPointerCapture(e.pointerId);
+    foSt.dg = { x: e.clientX, y: e.clientY, fx: foSt.fx, fy: foSt.fy };
+  });
+  cv.addEventListener("pointermove", e => {
+    const c = foSt; if (!c) return;
+    if (!c.dg) { cv.style.cursor = inside(e) ? "move" : "default"; return; }
+    const th = 6 / c.s, sn = (v, cand) => { for (const t of cand) if (Math.abs(v - t) <= th) return t; return v; };   // 원본 가장자리·가운데에 살짝 달라붙게
+    c.fx = sn(c.dg.fx + (e.clientX - c.dg.x) / c.s, [0, c.iw - c.fw, (c.iw - c.fw) / 2]);
+    c.fy = sn(c.dg.fy + (e.clientY - c.dg.y) / c.s, [0, c.ih - c.fh, (c.ih - c.fh) / 2]);
+    foClampPos(); foDraw();
+  });
+  const up = () => { if (foSt) foSt.dg = null; };
+  cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", up);
+}
+function foClampPos() {   // 박스는 원본과 겹친 채, 자기 크기의 절반까지만 밖으로 나갈 수 있어요
+  const c = foSt;
+  c.fx = foClamp(Math.round(c.fx), Math.ceil(-c.fw / 2), Math.floor(c.iw - c.fw / 2));
+  c.fy = foClamp(Math.round(c.fy), Math.ceil(-c.fh / 2), Math.floor(c.ih - c.fh / 2));
+}
+function foLayout() {
+  const c = foSt, st = foDlg.querySelector(".cs-stage"), uw = c.iw + c.fw, uh = c.ih + c.fh;
+  const aw = Math.max(200, st.clientWidth - 18), ah = Math.max(140, Math.min(innerHeight * 0.4, 380));
+  c.s = Math.min(1, aw / uw, ah / uh); c.dpr = window.devicePixelRatio || 1;
+  const w = Math.max(1, Math.round(uw * c.s)), h = Math.max(1, Math.round(uh * c.s));
+  c.cv.style.width = w + "px"; c.cv.style.height = h + "px"; c.cv.width = Math.round(w * c.dpr); c.cv.height = Math.round(h * c.dpr);
+}
+function foChecker(x, X, Y, W, H, q) {
+  x.fillStyle = "#fff"; x.fillRect(X, Y, W, H); x.fillStyle = "#cfcfcf";
+  for (let j = 0; j * q < H; j++) for (let i = j & 1; i * q < W; i += 2) x.fillRect(X + i * q, Y + j * q, q, q);
+}
+function foSync() {   // 칸·안내 글자를 지금 값에 맞춤 (입력 중인 칸은 건드리지 않아요)
+  const c = foSt, a = document.activeElement;
+  if (a !== foW) foW.value = c.fw; if (a !== foH) foH.value = c.fh;
+  if (a !== foPX) foPX.value = c.fx; if (a !== foPY) foPY.value = c.fy;
+  foDlg.querySelector("[data-foo]").textContent = c.iw + " × " + c.ih + " px";
+  foDlg.querySelector("[data-fop]").textContent = c.fw + " × " + c.fh + " px";
+}
+function foDraw() {
+  const c = foSt, x = c.cv.getContext("2d"), d = c.dpr, k = c.s * d, ox = c.fw / 2, oy = c.fh / 2;
+  const IX = ox * k, IY = oy * k, IW = c.iw * k, IH = c.ih * k, FX = (c.fx + ox) * k, FY = (c.fy + oy) * k, FW = c.fw * k, FH = c.fh * k;
+  x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, c.cv.width, c.cv.height);
+  x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high";
+  x.fillStyle = "rgba(128,128,128,.22)"; x.fillRect(0, 0, c.cv.width, c.cv.height);
+  x.globalAlpha = 0.4; x.drawImage(c.pv, IX, IY, IW, IH); x.globalAlpha = 1;   // 박스 밖(잘릴 부분)은 흐리게
+  x.save(); x.beginPath(); x.rect(FX, FY, FW, FH); x.clip();   // 박스 안: 결과 미리 보기 (작게 줄인 미리 보기 그림이에요 — 실제로는 원본 픽셀 그대로 들어가요)
+  if (c.pad) { x.fillStyle = c.pad; x.fillRect(FX, FY, FW, FH); } else foChecker(x, FX, FY, FW, FH, 8 * d);
+  x.drawImage(c.pv, IX, IY, IW, IH); x.restore();
+  x.save(); x.setLineDash([4 * d, 3 * d]); x.lineWidth = d; x.strokeStyle = "rgba(90,90,90,.9)"; x.strokeRect(IX + .5, IY + .5, IW - 1, IH - 1); x.restore();   // 원본의 경계
+  x.lineWidth = 2 * d; x.strokeStyle = "#339af0"; x.strokeRect(FX + d, FY + d, FW - 2 * d, FH - 2 * d);
+  const t = c.fw + " × " + c.fh; x.font = "600 " + 12 * d + "px sans-serif"; x.textBaseline = "middle";
+  x.fillStyle = "#339af0"; x.fillRect(FX, FY, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, FX + 5 * d, FY + 9 * d);
+  foSync();
+}
+function foSetSize(w, h, center, keepCenter) {
+  const c = foSt, cx = c.fx + c.fw / 2, cy = c.fy + c.fh / 2;
+  c.fw = foClamp(Math.round(w), FOMIN, FOMAX); c.fh = foClamp(Math.round(h), FOMIN, FOMAX);
+  if (center) { c.fx = (c.iw - c.fw) / 2; c.fy = (c.ih - c.fh) / 2; } else if (keepCenter) { c.fx = cx - c.fw / 2; c.fy = cy - c.fh / 2; }
+  foClampPos(); foLayout(); foDraw();
+}
+function foOrig() {   // 원본 크기로: 원본의 가로·세로를 칸에 넣고 박스를 원본 가운데로
+  const c = foSt;
+  if (c.iw > FOMAX || c.ih > FOMAX) toast("한 번에 넣을 수 있는 최대 크기는 " + FOMAX + "px 예요");
+  foSetSize(c.iw, c.ih, true, false);
+}
+function foKey(e) {
+  if (!foSt) return;
+  if (e.key === "Escape") { e.preventDefault(); e.stopImmediatePropagation(); foClose(false); return; }
+  const m = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+  if (!m || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  e.preventDefault(); const n = e.ctrlKey || e.metaKey ? 100 : e.shiftKey ? 10 : 1;
+  foSt.fx += m[0] * n; foSt.fy += m[1] * n; foClampPos(); foDraw();
+}
+function foClose(r) { const c = foSt; if (!c) return; foDlg.hidden = true; foSt = null; document.removeEventListener("keydown", foKey, true); c.res(r); }
+/* 박스 범위를 원본 픽셀 그대로(1:1) 복사해서 그림을 만듦 → 데이터 주소. 투명한 부분이 없으면 PNG(용량이 크면 JPEG), 있으면 WebP(안 되면 PNG). 여기서는 다시 줄이지 않아요 */
+function foRender(c) {
+  const { im, iw, ih, fx, fy, fw, fh, pad } = c, cv = foMk(fw, fh), x = cv.getContext("2d");
+  if (pad) { x.fillStyle = pad; x.fillRect(0, 0, fw, fh); }
+  const sx = Math.max(0, fx), sy = Math.max(0, fy), ex = Math.min(iw, fx + fw), ey = Math.min(ih, fy + fh);
+  if (ex > sx && ey > sy) x.drawImage(im, sx, sy, ex - sx, ey - sy, sx - fx, sy - fy, ex - sx, ey - sy);
+  let u;
+  if (!foHasAlpha(cv)) {
+    u = cv.toDataURL("image/png");
+    if (u.length > 300000) { const c2 = foMk(fw, fh), x2 = c2.getContext("2d"); x2.fillStyle = "#fff"; x2.fillRect(0, 0, fw, fh); x2.drawImage(cv, 0, 0); u = c2.toDataURL("image/jpeg", 0.85); }
+  } else {
+    u = cv.toDataURL("image/webp", 0.9);
+    if (u.indexOf("data:image/webp") !== 0) u = cv.toDataURL("image/png");
+  }
+  return /^data:image\//.test(u) ? u : "";
+}
+async function foOk() {
+  const c = foSt; if (!c || c.busy) return;
+  c.busy = true; say("이미지를 만드는 중…"); await foWait();
+  let u = ""; try { u = foRender(c); } catch (e) {}
+  if (foSt !== c) return;
+  c.busy = false;
+  if (!u) { toast("이미지를 만들지 못했어요. 붙여넣을 크기를 줄여 주세요"); return; }
+  if (u.length > FOLIM) { toast("이미지 용량이 너무 커서 넣지 못했어요. 붙여넣을 크기를 줄여 주세요"); return; }
+  foClose({ url: u, W: c.fw, H: c.fh });
+}
+/* 파일 하나를 원본 그대로 열어 창을 띄움 → false(취소) / null(읽지 못함) / {url,W,H}(범위를 정해 만든 그림) / {file}(예전 방식으로 줄여서 넣기) */
+async function foAsk(file, i, n) {
+  const im = await foLoad(file);
+  if (!im) { toast((file.name || "이미지") + " 을(를) 읽지 못했어요"); return null; }
+  const iw = im.naturalWidth, ih = im.naturalHeight;
+  if (!(iw > 0 && ih > 0)) return { file };   // 크기를 알 수 없는 그림(SVG 등)은 예전 방식 그대로
+  if (!foDlg) foBuild();
+  const kp = Math.min(1, 2000 / Math.max(iw, ih)), pv = foMk(Math.max(1, Math.round(iw * kp)), Math.max(1, Math.round(ih * kp)));   // 창에 보여줄 작은 미리 보기 (한 번만 만들어요)
+  { const px = pv.getContext("2d"); px.imageSmoothingQuality = "high"; px.drawImage(im, 0, 0, pv.width, pv.height); }
+  const k = Math.min(1, FODEF / iw), fw = foClamp(Math.round(iw * k), FOMIN, FOMAX), fh = foClamp(Math.round(ih * k), FOMIN, 3000);   // 처음 박스: 가로 1600px 이하(예전 크기), 원본이 더 작으면 원본 그대로
+  return new Promise(res => {
+    foSt = { file, im, pv, iw, ih, fw, fh, fx: (iw - fw) / 2, fy: (ih - fh) / 2, pad: foPad || null, cv: foDlg.querySelector("canvas"), dg: null, dn: null, s: 1, dpr: 1, res, busy: false };
+    foClampPos();
+    foCpk.set(foPad);
+    foDlg.querySelector("[data-foi]").textContent = (n > 1 ? (i + 1) + " / " + n + " · " : "") + (file.name || "");
+    foDlg.hidden = false; document.addEventListener("keydown", foKey, true);
+    foLayout(); foDraw();
+  });
+}
 imgFile.addEventListener("change", async () => {
   const fs = Array.from(imgFile.files || []).filter(f => /^image\//.test(f.type)); if (!fs.length) return;
-  if (imgBack) imgBack();
-  say("이미지를 넣는 중…"); await ta.insertImages(fs); say("이미지를 넣었어요", "ok");
+  const ed = ta, back = imgBack, items = [];
+  for (let i = 0; i < fs.length; i++) {   // 파일마다 크기 조정 창을 거침 (취소하면 남은 파일은 넣지 않아요)
+    const r = await foAsk(fs[i], i, fs.length);
+    if (r === false) break;
+    if (r) items.push(r);
+  }
+  if (!items.length) { say("이미지 넣기를 취소했어요"); return; }
+  if (back) back();
+  say("이미지를 넣는 중…"); await ed.insertPickedAll(items); say("이미지를 넣었어요", "ok");
 });
 
 /* 찾기: 메모 내용을 바꾸지 않고 CSS 하이라이트로 표시 (지원하지 않는 브라우저는 선택으로 표시) */
