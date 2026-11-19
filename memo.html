@@ -338,7 +338,9 @@ body.has-max header .tr{display:none}
 .cfpal+.cfpal{margin-top:10px}
 .cffbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .cffbar button.no{height:28px;flex:1;border:1.5px solid var(--line);border-radius:6px;background:transparent}
-.cffpv{width:100%;height:30px;border:1px solid var(--line);border-radius:6px;margin-top:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px}
+.cffpv{width:100%;height:30px;border:1px solid var(--line);border-radius:6px;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px}
+.cffpv input.hexin{border-color:currentColor}
+.cfhexrow{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12.5px}
 .cfft{display:flex;justify-content:flex-end;gap:6px;padding:10px 12px;border-top:1px solid var(--line)}
 .cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
@@ -4082,7 +4084,7 @@ onEd("click", e => {
       '<div class="cftabs"><button type="button" data-tab="b" class="on">테두리</button><button type="button" data-tab="f">채우기</button></div>' +
       '<div class="cfpg" data-pg="b"><div class="cfcols"><div class="cfl">' +
       '<div class="cfsec">선 스타일</div><div class="cfsty">' + STY.map(s => '<button type="button" data-sty="' + s[0] + '">' + (s[1] || '<i></i>') + '</button>').join("") + '</div>' +
-      '<div class="cfsec">색</div><div class="cfclr"><button type="button" class="au" data-lc="currentcolor" title="글자색을 따라가요 (다크 모드에서도 보여요)">자동</button>' + STD.map(h => sw("data-lc", h)).join("") + '<input type="color" data-cfc="line" value="#000000" title="다른 색"></div>' +
+      '<div class="cfsec">색</div><div class="cfclr"><button type="button" class="au" data-lc="currentcolor" title="글자색을 따라가요 (다크 모드에서도 보여요)">자동</button>' + STD.map(h => sw("data-lc", h)).join("") + '<input type="color" data-cfc="line" value="#000000" title="다른 색"></div><div class="cfhexrow"><span>선택한 색</span><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" placeholder="자동" data-hexl="1" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"></div>' +
       '</div><div class="cfr"><div class="cfsec">미리 설정</div><div class="cfpre"><button type="button" data-pre="none">없음</button><button type="button" data-pre="out">윤곽선</button><button type="button" data-pre="in">안쪽</button></div>' +
       '<div class="cfsec">테두리</div><div class="cfgrid">' +
       '<button type="button" data-edge="top" title="위쪽 테두리" style="grid-area:1/2"><i class="g t"></i></button>' +
@@ -4095,7 +4097,7 @@ onEd("click", e => {
       '</div></div><div class="cfnote">선 스타일과 색을 고른 뒤 미리 설정이나 테두리 단추를 누르면 적용돼요. 같은 단추를 다시 누르면 해제돼요.</div></div>' +
       '<div class="cfpg" data-pg="f" hidden><div class="cfsec">배경색</div><div class="cffbar"><button type="button" class="no" data-fill="">색 없음</button><input type="color" data-cfc="fill" value="#ffff00" title="다른 색"></div>' +
       '<div class="cfpal">' + PAL[0].map(h => sw("data-fill", h)).join("") + '</div><div class="cfpal" style="grid-template-rows:repeat(4,22px)">' + PAL.slice(1).map(r => r.map(h => sw("data-fill", h)).join("")).join("") + '</div>' +
-      '<div class="cfpal">' + STD.map(h => sw("data-fill", h)).join("") + '</div><div class="cffpv">미리 보기</div></div>' +
+      '<div class="cfpal">' + STD.map(h => sw("data-fill", h)).join("") + '</div><div class="cffpv"><span class="cffl">미리 보기</span><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력" data-hexf="1"></div></div>' +
       '<div class="cfft"><button type="button" class="ok" data-cf="ok">확인</button><button type="button" data-cf="x">취소</button></div></div>';
     document.body.appendChild(dlg);
     dlg.addEventListener("click", onClick);
@@ -4104,6 +4106,9 @@ onEd("click", e => {
       if (k === "line") { st.clr = e.target.value.toLowerCase(); if (st.sty === "none") st.sty = "thin"; } else st.fill = { d: true, v: e.target.value.toLowerCase() };
       render();
     });
+    /* #색상값 직접 입력 + Enter: 테두리 색 / 채우기(배경색)로 선택 */
+    window.hexInput(dlg.querySelector("[data-hexl]"), v => { if (!st) return; st.clr = v; if (st.sty === "none") st.sty = "thin"; render(); }, () => render());
+    window.hexInput(dlg.querySelector("[data-hexf]"), v => { if (!st) return; st.fill = { d: true, v }; render(); }, () => render());
     document.addEventListener("keydown", e => { if (e.key === "Escape" && dlg && !dlg.hidden) { e.preventDefault(); close(); } });
   }
   const specOf = (cell, side) => {   // 칸의 현재 테두리를 CSS 값으로
@@ -4133,6 +4138,7 @@ onEd("click", e => {
       const i = b.querySelector("i"), s = STY.find(x => x[0] === b.dataset.sty)[2]; if (i) i.style.borderTop = s + " currentcolor";
     });
     q("[data-lc]", b => b.classList.toggle("sel", b.dataset.lc === st.clr));
+    const hl = dlg.querySelector("[data-hexl]"); if (hl) { hl.value = /^#[0-9a-f]{6}$/i.test(st.clr) ? st.clr : ""; hl.classList.remove("bad"); }   // 자동(글자색 따라감)이면 비워 둠
     q("[data-edge]", b => { const k = b.dataset.edge, dis = (k === "ih" && !st.hasH) || (k === "iv" && !st.hasV); b.disabled = dis; b.classList.toggle("on", !dis && st.E[k].v !== "none"); });
     q("[data-pre=in]", b => { b.disabled = !st.hasH && !st.hasV; });
     const pv = dlg.querySelector(".cfpv"), E = st.E;
@@ -4140,7 +4146,10 @@ onEd("click", e => {
     pv.querySelector(".h").style.borderTop = st.hasH ? E.ih.v : "none"; pv.querySelector(".v").style.borderLeft = st.hasV ? E.iv.v : "none";
     q("[data-fill]", b => b.classList.toggle("sel", st.fill.d && (b.dataset.fill || null) === st.fill.v));
     const fp = dlg.querySelector(".cffpv"), fv = st.fill.d ? st.fill.v : st.curBg;
-    fp.style.background = fv || "transparent"; fp.style.color = fv && /^#[0-9a-f]{6}$/i.test(fv) ? fgFor(fv) : "var(--ink)";
+    const fx = (() => { if (!fv) return ""; if (/^#[0-9a-f]{6}$/i.test(fv)) return fv.toLowerCase(); const m = /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i.exec(fv); return m ? "#" + [m[1], m[2], m[3]].map(n => (+n).toString(16).padStart(2, "0")).join("") : ""; })();
+    fp.style.background = fv || "transparent"; fp.style.color = fx ? fgFor(fx) : "var(--ink)";
+    const fi = fp.querySelector("input"); if (fi) { fi.value = fx; fi.classList.remove("bad"); }
+    fp.querySelector(".cffl").textContent = fv ? "미리 보기" : "색 없음";
   }
   function onClick(e) {
     const b = e.target.closest("button"); if (!b) { if (e.target === dlg) close(); return; }
