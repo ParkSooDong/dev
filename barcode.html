@@ -3850,7 +3850,7 @@ function pickImage() {
    - 박스가 원본 밖으로 나가면 그 부분은 고른 색(없으면 투명)으로 채워져요
    - [전체를 줄여서 넣기] 는 예전 방식(가로 1600px 이하로 줄여서 넣기)이에요 */
 const FOMIN = 1, FOMAX = 8000, FOLIM = 2600000, FODEF = 1600, FOCV = 16000;
-let foDlg = null, foSt = null, foPad = "#ffffff", foCpk = null, foW = null, foH = null, foPX = null, foPY = null, foSC = null, foMsg = null;
+let foDlg = null, foSt = null, foPad = "#ffffff", foCpk = null, foW = null, foH = null, foPX = null, foPY = null, foSC = null, foMsg = null, foRot = null, foFlip = null;
 const foMk = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; };
 const foClamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const foWait = () => new Promise(r => setTimeout(r, 30));
@@ -3881,6 +3881,7 @@ function foBuild() {
     '<div class="cs-stage"><canvas></canvas></div>' +
     '<div class="cs-sz"><span>붙여넣을 크기</span><input type="number" data-fow min="' + FOMIN + '" step="1" aria-label="붙여넣을 가로 픽셀"><span>×</span><input type="number" data-foh min="' + FOMIN + '" step="1" aria-label="붙여넣을 세로 픽셀"><span>px</span></div>' +
     '<div class="cs-sz" title="원본의 왼쪽 위 모서리를 (0, 0) 으로 본 박스의 왼쪽 위 위치예요. 음수면 원본 밖이에요"><span>범위 위치(원본 기준)</span><span>X</span><input type="number" data-fopx step="1" aria-label="범위 X 위치"><span>Y</span><input type="number" data-fopy step="1" aria-label="범위 Y 위치"><span>px</span></div>' +
+    '<div class="cs-sz" title="붙여넣을 이미지를 시계 방향으로 돌려요 (0~359도, 계속 순환). [확인]을 누르기 전에만 조절할 수 있어요"><span>각도</span><input type="number" data-forot step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="cs-btn" data-fo="flip" aria-pressed="false" style="margin-left:8px" title="붙여넣을 이미지를 좌우로 뒤집어요">좌우 반전</button></div>' +
     '<div class="cs-sz" title="최종 저장 크기를 이 비율로 줄여요. 저장 공간이 부족하다는 안내가 나오면 비율을 낮춰 보세요"><span>저장 크기 비율</span><input type="number" data-fosc min="1" max="100" step="1" value="100" aria-label="저장 크기 비율"><span>%</span></div>' +
     '<div class="cfnote" data-fomsg hidden style="margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--err,var(--warn,#b3261e))"></div>' +
     '<details class="fo-pad"><summary>빈 곳을 채울 색 <i data-fopv></i></summary><div class="cpk" data-focpk></div></details>' +
@@ -3889,7 +3890,7 @@ function foBuild() {
     '<div class="cfft"><button type="button" class="ok" data-fo="ok">확인</button><button type="button" data-fo="x">취소</button></div></div>';
   document.body.appendChild(foDlg);
   const q = s => foDlg.querySelector(s);
-  foW = q("[data-fow]"); foH = q("[data-foh]"); foPX = q("[data-fopx]"); foPY = q("[data-fopy]"); foSC = q("[data-fosc]"); foMsg = q("[data-fomsg]");
+  foW = q("[data-fow]"); foH = q("[data-foh]"); foPX = q("[data-fopx]"); foPY = q("[data-fopy]"); foSC = q("[data-fosc]"); foMsg = q("[data-fomsg]"); foRot = q("[data-forot]"); foFlip = foDlg.querySelector('[data-fo="flip"]');
   foCpk = cpkInit(q("[data-focpk]"), foPad, v => { foPad = v; if (foSt) { foSt.pad = v || null; foDraw(); foSync(); } });
   const cv = q("canvas");
   foDlg.addEventListener("pointerdown", e => { if (foSt) foSt.dn = e.target; }, true);
@@ -3897,7 +3898,10 @@ function foBuild() {
     if (e.target === foDlg) { if (foSt && foSt.dn === foDlg) foOk(); return; }   // 창 바깥: 확정
     const b = e.target.closest("[data-fo]"); if (!b || !foSt) return;
     const a = b.dataset.fo;
-    if (a === "ok") foOk(); else if (a === "x") foClose(false); else if (a === "orig") foOrig(); else if (a === "all") foClose({ file: foSt.file }); else if (a === "fit") { const p = +b.dataset.pct; if (p >= 1) { foSt.sc = p / 100; foMsgClear(); foSync(); } }
+    if (a === "ok") foOk(); else if (a === "x") foClose(false); else if (a === "orig") foOrig(); else if (a === "all") {
+      if (foXf(foSt)) { const c = foSt; c.fw = c.iw; c.fh = c.ih; c.fx = 0; c.fy = 0; c.sc = Math.min(1, FODEF / c.iw); foLayout(); foDraw(); foOk(); }   // 각도·반전을 쓰는 중이면 이미지 전체를 줄인 크기로 만들어 같은 변환을 적용
+      else foClose({ file: foSt.file });
+    } else if (a === "flip") { foSt.flip = !foSt.flip; foFlipSet(foSt.flip); foDraw(); } else if (a === "fit") { const p = +b.dataset.pct; if (p >= 1) { foSt.sc = p / 100; foMsgClear(); foSync(); } }
   });
   const sz = (box, which) => {
     box.addEventListener("input", () => { const v = parseInt(box.value, 10); if (foSt && v >= FOMIN && v <= foMx(foSt)) foSetSize(which === "w" ? v : foSt.fw, which === "h" ? v : foSt.fh, false, true); });
@@ -3911,7 +3915,19 @@ function foBuild() {
   ps(foPX, "fx"); ps(foPY, "fy");
   foSC.addEventListener("input", () => { const v = parseInt(foSC.value, 10); if (!foSt || !(v >= 1 && v <= 100)) return; foSt.sc = v / 100; foMsgClear(); foSync(); });
   foSC.addEventListener("change", () => { if (foSt) foSC.value = Math.round(foSt.sc * 100); });
-  const inside = e => { const r = cv.getBoundingClientRect(), lx = (e.clientX - r.left) / foSt.s - foSt.fw / 2, ly = (e.clientY - r.top) / foSt.s - foSt.fh / 2; return lx >= foSt.fx && lx <= foSt.fx + foSt.fw && ly >= foSt.fy && ly <= foSt.fy + foSt.fh; };
+  foRot.addEventListener("input", () => {   // 각도: 359 다음은 0, 0 아래는 359 (순환)
+    if (!foSt) return;
+    const v = foRot.value; let r = Math.round(+v) || 0;
+    if (v !== "" && (r > 359 || r < 0)) { r = ((r % 360) + 360) % 360; foRot.value = String(r); }
+    foSt.rot = r; foLayout(); foDraw();
+  });
+  foRot.addEventListener("change", () => { if (foSt) foRot.value = foSt.rot ? String(foSt.rot) : ""; });
+  const inside = e => {   // 각도가 있으면 돌아간 박스 안인지 확인
+    const c = foSt, r = cv.getBoundingClientRect(), ex = foExt(c), a = foRotOf(c) * Math.PI / 180;
+    const dx = (e.clientX - r.left) / c.s - ex[0] / 2 - (c.fx + c.fw / 2), dy = (e.clientY - r.top) / c.s - ex[1] / 2 - (c.fy + c.fh / 2);
+    const lx = dx * Math.cos(a) + dy * Math.sin(a), ly = -dx * Math.sin(a) + dy * Math.cos(a);
+    return Math.abs(lx) <= c.fw / 2 && Math.abs(ly) <= c.fh / 2;
+  };
   cv.addEventListener("pointerdown", e => {
     if (!foSt || !inside(e)) return;
     e.preventDefault(); cv.setPointerCapture(e.pointerId);
@@ -3933,8 +3949,19 @@ function foClampPos() {   // 박스는 원본과 겹친 채, 자기 크기의 �
   c.fx = foClamp(Math.round(c.fx), Math.ceil(-c.fw / 2), Math.floor(c.iw - c.fw / 2));
   c.fy = foClamp(Math.round(c.fy), Math.ceil(-c.fh / 2), Math.floor(c.ih - c.fh / 2));
 }
+/* 각도·좌우반전: 박스 안의 그림을 '좌우반전 → 시계 방향 회전' 순서로 바꿔 넣어요 (확인 전에만 조절). 돌린 결과는 모서리가 투명한 그림이에요 */
+const foRotOf = c => ((Math.round(+c.rot) || 0) % 360 + 360) % 360;
+const foXf = c => !!(c && (foRotOf(c) || c.flip));
+function foExt(c) { const a = foRotOf(c) * Math.PI / 180, co = Math.abs(Math.cos(a)), si = Math.abs(Math.sin(a)); return [c.fw * co + c.fh * si, c.fw * si + c.fh * co]; }   // 돌린 박스를 감싸는 크기
+function foOut(c) {   // 최종 그림 크기 (저장 크기 비율 적용, 돌렸으면 감싸는 크기)
+  const sc = c.sc || 1, ow = Math.max(1, Math.round(c.fw * sc)), oh = Math.max(1, Math.round(c.fh * sc));
+  if (!foRotOf(c)) return [ow, oh];
+  const a = foRotOf(c) * Math.PI / 180, co = Math.abs(Math.cos(a)), si = Math.abs(Math.sin(a));
+  return [Math.max(1, Math.ceil(ow * co + oh * si - 1e-6)), Math.max(1, Math.ceil(ow * si + oh * co - 1e-6))];
+}
+function foFlipSet(on) { foFlip.setAttribute("aria-pressed", String(!!on)); foFlip.style.background = on ? "#339af0" : ""; foFlip.style.color = on ? "#fff" : ""; foFlip.style.borderColor = on ? "#339af0" : ""; }
 function foLayout() {
-  const c = foSt, st = foDlg.querySelector(".cs-stage"), uw = c.iw + c.fw, uh = c.ih + c.fh;
+  const c = foSt, st = foDlg.querySelector(".cs-stage"), ex = foExt(c), uw = c.iw + ex[0], uh = c.ih + ex[1];
   const aw = Math.max(200, st.clientWidth - 18), ah = Math.max(100, Math.min(innerHeight * 0.3, 300));
   c.s = Math.min(1, aw / uw, ah / uh); c.dpr = window.devicePixelRatio || 1;
   const w = Math.max(1, Math.round(uw * c.s)), h = Math.max(1, Math.round(uh * c.s));
@@ -3949,25 +3976,42 @@ function foSync() {   // 칸·안내 글자를 지금 값에 맞춤 (입력 중�
   if (a !== foW) foW.value = c.fw; if (a !== foH) foH.value = c.fh;
   if (a !== foPX) foPX.value = c.fx; if (a !== foPY) foPY.value = c.fy;
   foDlg.querySelector("[data-foo]").textContent = c.iw + " × " + c.ih + " px";
-  const ow = Math.max(1, Math.round(c.fw * c.sc)), oh = Math.max(1, Math.round(c.fh * c.sc));
+  const [ow, oh] = foOut(c);
   foDlg.querySelector("[data-fop]").textContent = ow + " × " + oh + " px" + (c.sc < 1 ? " (범위 " + c.fw + " × " + c.fh + "의 " + Math.round(c.sc * 100) + "%)" : "");
   if (a !== foSC) foSC.value = Math.round(c.sc * 100);
+  if (a !== foRot) foRot.value = c.rot ? String(c.rot) : "";
+  foFlipSet(c.flip);
   const pv = foDlg.querySelector("[data-fopv]"); if (pv) pv.style.background = c.pad ? c.pad : "";
 }
 function foDraw() {
-  const c = foSt, x = c.cv.getContext("2d"), d = c.dpr, k = c.s * d, ox = c.fw / 2, oy = c.fh / 2;
+  const c = foSt, x = c.cv.getContext("2d"), d = c.dpr, k = c.s * d, ext = foExt(c), ox = ext[0] / 2, oy = ext[1] / 2;
   const IX = ox * k, IY = oy * k, IW = c.iw * k, IH = c.ih * k, FX = (c.fx + ox) * k, FY = (c.fy + oy) * k, FW = c.fw * k, FH = c.fh * k;
+  const xf = foXf(c), t = c.fw + " × " + c.fh;
   x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, c.cv.width, c.cv.height);
   x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high";
   x.fillStyle = "rgba(128,128,128,.22)"; x.fillRect(0, 0, c.cv.width, c.cv.height);
   x.globalAlpha = 0.4; x.drawImage(c.pv, IX, IY, IW, IH); x.globalAlpha = 1;   // 박스 밖(잘릴 부분)은 흐리게
-  x.save(); x.beginPath(); x.rect(FX, FY, FW, FH); x.clip();   // 박스 안: 결과 미리 보기 (작게 줄인 미리 보기 그림이에요 — 실제로는 원본 픽셀 그대로 들어가요)
-  if (c.pad) { x.fillStyle = c.pad; x.fillRect(FX, FY, FW, FH); } else foChecker(x, FX, FY, FW, FH, 8 * d);
-  x.drawImage(c.pv, IX, IY, IW, IH); x.restore();
+  if (!xf) {
+    x.save(); x.beginPath(); x.rect(FX, FY, FW, FH); x.clip();   // 박스 안: 결과 미리 보기 (작게 줄인 미리 보기 그림이에요 — 실제로는 원본 픽셀 그대로 들어가요)
+    if (c.pad) { x.fillStyle = c.pad; x.fillRect(FX, FY, FW, FH); } else foChecker(x, FX, FY, FW, FH, 8 * d);
+    x.drawImage(c.pv, IX, IY, IW, IH); x.restore();
+  } else {   // 각도·반전: 박스 안 그림을 따로 만들어 박스 중심 기준으로 뒤집고 돌려서 그림
+    const tm = foMk(Math.max(1, Math.round(FW)), Math.max(1, Math.round(FH))), tx = tm.getContext("2d");
+    if (c.pad) { tx.fillStyle = c.pad; tx.fillRect(0, 0, tm.width, tm.height); } else foChecker(tx, 0, 0, tm.width, tm.height, 8 * d);
+    tx.imageSmoothingQuality = "high"; tx.drawImage(c.pv, IX - FX, IY - FY, IW, IH);
+    x.save(); x.translate(FX + FW / 2, FY + FH / 2); if (foRotOf(c)) x.rotate(foRotOf(c) * Math.PI / 180);
+    x.save(); if (c.flip) x.scale(-1, 1); x.drawImage(tm, -FW / 2, -FH / 2, FW, FH); x.restore();
+    x.lineWidth = 2 * d; x.strokeStyle = "#339af0"; x.strokeRect(-FW / 2 + d, -FH / 2 + d, FW - 2 * d, FH - 2 * d);
+    x.font = "600 " + 12 * d + "px sans-serif"; x.textBaseline = "middle";
+    x.fillStyle = "#339af0"; x.fillRect(-FW / 2, -FH / 2, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, -FW / 2 + 5 * d, -FH / 2 + 9 * d);
+    x.restore();
+  }
   x.save(); x.setLineDash([4 * d, 3 * d]); x.lineWidth = d; x.strokeStyle = "rgba(90,90,90,.9)"; x.strokeRect(IX + .5, IY + .5, IW - 1, IH - 1); x.restore();   // 원본의 경계
-  x.lineWidth = 2 * d; x.strokeStyle = "#339af0"; x.strokeRect(FX + d, FY + d, FW - 2 * d, FH - 2 * d);
-  const t = c.fw + " × " + c.fh; x.font = "600 " + 12 * d + "px sans-serif"; x.textBaseline = "middle";
-  x.fillStyle = "#339af0"; x.fillRect(FX, FY, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, FX + 5 * d, FY + 9 * d);
+  if (!xf) {
+    x.lineWidth = 2 * d; x.strokeStyle = "#339af0"; x.strokeRect(FX + d, FY + d, FW - 2 * d, FH - 2 * d);
+    x.font = "600 " + 12 * d + "px sans-serif"; x.textBaseline = "middle";
+    x.fillStyle = "#339af0"; x.fillRect(FX, FY, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, FX + 5 * d, FY + 9 * d);
+  }
   foSync();
 }
 function foSetSize(w, h, center, keepCenter) {
@@ -4019,12 +4063,18 @@ function foFail(c, len, lim) {   // 용량/크기 때문에 못 넣을 때: 창�
 /* 박스 범위를 원본 픽셀 그대로(1:1) 복사해서 그림을 만듦 → 데이터 주소 (저장 크기 비율이 100% 미만이면 그 비율로 줄여서). 투명한 부분이 없으면 PNG(용량이 크면 JPEG), 있으면 WebP(안 되면 PNG) */
 function foRender(c) {
   const { im, iw, ih, fx, fy, fw, fh, pad } = c, sc = c.sc || 1, ow = Math.max(1, Math.round(fw * sc)), oh = Math.max(1, Math.round(fh * sc));
-  const cv = foMk(ow, oh), x = cv.getContext("2d");
+  let cv = foMk(ow, oh); const x = cv.getContext("2d");
   if (!x) return "";
   x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high";
   if (pad) { x.fillStyle = pad; x.fillRect(0, 0, ow, oh); }
   const sx = Math.max(0, fx), sy = Math.max(0, fy), ex = Math.min(iw, fx + fw), ey = Math.min(ih, fy + fh);
   if (ex > sx && ey > sy) x.drawImage(im, sx, sy, ex - sx, ey - sy, (sx - fx) * sc, (sy - fy) * sc, (ex - sx) * sc, (ey - sy) * sc);
+  if (foXf(c)) {   // 각도·좌우반전: 좌우반전 → 시계 방향 회전, 모서리는 투명
+    const o = foOut(c), rc = foMk(o[0], o[1]), rx = rc.getContext("2d"); if (!rx) return "";
+    rx.imageSmoothingEnabled = true; rx.imageSmoothingQuality = "high";
+    rx.translate(o[0] / 2, o[1] / 2); if (foRotOf(c)) rx.rotate(foRotOf(c) * Math.PI / 180); if (c.flip) rx.scale(-1, 1);
+    rx.drawImage(cv, -ow / 2, -oh / 2); cv = rc;
+  }
   let u;
   if (!foHasAlpha(cv)) {
     u = cv.toDataURL("image/png");
@@ -4044,7 +4094,7 @@ async function foOk() {
   const lim = foLimit();
   if (!u) { foFail(c, 0, lim); return; }
   if (u.length > lim) { foFail(c, u.length, lim); return; }
-  foClose({ url: u, W: Math.max(1, Math.round(c.fw * c.sc)), H: Math.max(1, Math.round(c.fh * c.sc)) });
+  const o = foOut(c); foClose({ url: u, W: o[0], H: o[1] });
 }
 /* 파일 하나를 원본 그대로 열어 창을 띄움 → false(취소) / null(읽지 못함) / {url,W,H}(범위를 정해 만든 그림) / {file}(예전 방식으로 줄여서 넣기) */
 async function foAsk(file, i, n) {
@@ -4057,9 +4107,9 @@ async function foAsk(file, i, n) {
   { const px = pv.getContext("2d"); px.imageSmoothingQuality = "high"; px.drawImage(im, 0, 0, pv.width, pv.height); }
   const k = Math.min(1, FODEF / iw), fw = foClamp(Math.round(iw * k), FOMIN, FOMAX), fh = foClamp(Math.round(ih * k), FOMIN, 3000);   // 처음 박스: 가로 1600px 이하(예전 크기), 원본이 더 작으면 원본 그대로
   return new Promise(res => {
-    foSt = { file, im, pv, iw, ih, fw, fh, sc: 1, fx: (iw - fw) / 2, fy: (ih - fh) / 2, pad: foPad || null, cv: foDlg.querySelector("canvas"), dg: null, dn: null, s: 1, dpr: 1, res, busy: false };
+    foSt = { file, im, pv, iw, ih, fw, fh, sc: 1, rot: 0, flip: false, fx: (iw - fw) / 2, fy: (ih - fh) / 2, pad: foPad || null, cv: foDlg.querySelector("canvas"), dg: null, dn: null, s: 1, dpr: 1, res, busy: false };
     foClampPos();
-    foCpk.set(foPad); foSC.value = 100; foMsgClear();
+    foCpk.set(foPad); foSC.value = 100; foRot.value = ""; foFlipSet(false); foMsgClear();
     foDlg.querySelector("[data-foi]").textContent = (n > 1 ? (i + 1) + " / " + n + " · " : "") + (file.name || "");
     foDlg.hidden = false; document.addEventListener("keydown", foKey, true);
     foLayout(); foDraw();
