@@ -3409,9 +3409,9 @@ let imgBack = null;
     if (sd.tool || s.erased || JSON.stringify(outItems(s)) !== s.orig) { commit(); endTool(); } else closeShp();
   }
   /* ---- 이미지 넣기: 붙여넣기(Ctrl+V·버튼) / 파일 선택 / 끌어다 놓기 → 바탕 이미지 위의 요소로 ---- */
-  const readImgFile = f => new Promise((ok, no) => {
-    const u = URL.createObjectURL(f), im = new Image();
-    im.onload = () => { URL.revokeObjectURL(u); ok(im); }; im.onerror = () => { URL.revokeObjectURL(u); no(); }; im.src = u;
+  const readImgFile = f => new Promise((ok, no) => {   // f: File | {url}(파일 열기 창에서 도형·각도·색을 적용해 만든 그림)
+    const isU = !(f instanceof Blob), u = isU ? f.url : URL.createObjectURL(f), im = new Image(), rv = () => { if (!isU) URL.revokeObjectURL(u); };
+    im.onload = () => { rv(); ok(im); }; im.onerror = () => { rv(); no(); }; im.src = u;
   });
   /* 클립보드 PNG 중 알파가 전부 0인 것(Excel '그림으로 복사' 등)을 불투명하게 복구: canvas 는 알파 0 픽셀의 색을 지우므로 PNG 를 직접 풀어서 읽음 */
   async function fixAlphaPng(f) {
@@ -3461,7 +3461,7 @@ let imgBack = null;
         const k = Math.min(1, 2000 / Math.max(nw, nh)), c = document.createElement("canvas");   // 저장 용량을 위해 긴 변 2000px 이하로
         c.width = Math.max(1, Math.round(nw * k)); c.height = Math.max(1, Math.round(nh * k));
         c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
-        try { const fx = await fixAlphaPng(f); if (fx) { const q = c.getContext("2d"); q.clearRect(0, 0, c.width, c.height); q.drawImage(fx, 0, 0, c.width, c.height); } } catch (e2) {}   // 알파 0 으로 들어온 클립보드 PNG 복구
+        try { const fx = f instanceof Blob ? await fixAlphaPng(f) : null; if (fx) { const q = c.getContext("2d"); q.clearRect(0, 0, c.width, c.height); q.drawImage(fx, 0, 0, c.width, c.height); } } catch (e2) {}   // 알파 0 으로 들어온 클립보드 PNG 복구
         const e = encodeCv(c, true);
         const sc = Math.min(1, 0.8 * s.W / nw, 0.8 * s.H / nh), w = Math.max(8, nw * sc), h = Math.max(8, nh * sc);   // 바탕보다 크면 가로세로 80% 안으로 줄여서 올림
         const cx = (at ? at.x : s.W / 2) + n * 24, cy = (at ? at.y : s.H / 2) + n * 24;
@@ -3481,21 +3481,34 @@ let imgBack = null;
       const arr = await navigator.clipboard.read(), fs = [];
       for (const ci of arr) { const ty = ci.types.find(x => /^image\//.test(x)); if (ty) fs.push(new File([await ci.getType(ty)], "clip", { type: ty })); }
       if (!fs.length) { toast("클립보드에 이미지가 없어요. 이미지를 캡처하거나 복사한 뒤 다시 눌러 주세요"); return; }
-      addPics(fs);
+      addPicsAsk(fs);
     } catch (err) { toast("클립보드를 읽지 못했어요. 이미지를 복사한 뒤 Ctrl+V를 눌러 주세요"); }
   }
   const picFile = document.createElement("input");
   picFile.type = "file"; picFile.accept = "image/*"; picFile.multiple = true; picFile.style.display = "none"; document.body.appendChild(picFile);
+  async function addPicsAsk(fs) {   // 파일 선택·붙여넣기(버튼·Ctrl+V): [이미지]-[파일 열기]와 같은 창(범위·도형·각도·색)을 거쳐서 올림. 끌어다 놓기는 그대로
+    if (!fs.length) return;
+    if (foSt) return;   // 창이 이미 떠 있으면 중복해서 열지 않음
+    const s0 = sh, out = [];
+    for (let i = 0; i < fs.length; i++) {
+      let r = null;
+      try { r = await foAsk(fs[i], i, fs.length); } catch (e) { r = { file: fs[i] }; }
+      if (r === false) break;   // 취소하면 남은 파일은 올리지 않아요
+      if (r && r.url) out.push({ url: r.url }); else if (r && r.file) out.push(r.file);
+    }
+    if (!out.length || sh !== s0) return;
+    addPics(out);
+  }
   picFile.addEventListener("change", () => {
     const fs = Array.from(picFile.files || []).filter(f => /^image\//.test(f.type)); picFile.value = "";
-    if (fs.length) addPics(fs);
+    addPicsAsk(fs);
   });
   document.addEventListener("paste", e => {   // 편집 중 Ctrl+V: 클립보드에 이미지가 있으면 메모에 넣지 않고 이 이미지 위에 올림
     if (!sh) return;
     const t = e.target; if (t && /^(TEXTAREA|INPUT|SELECT)$/.test(t.nodeName)) return;
     const cd = e.clipboardData, fs = Array.from((cd && cd.files) || []).filter(f => /^image\//.test(f.type));
     if (!fs.length) return;
-    e.preventDefault(); e.stopPropagation(); addPics(fs);
+    e.preventDefault(); e.stopPropagation(); addPicsAsk(fs);
   }, true);
   shp.addEventListener("input", e => {
     const q = e.target.getAttribute && e.target.getAttribute("data-q"); if (!q || !sh) return;
