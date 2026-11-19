@@ -4188,7 +4188,7 @@ function foRender(c) {
   let u;
   if (!foHasAlpha(cv)) {
     u = cv.toDataURL("image/png");
-    if (u.length > 300000) { const c2 = foMk(ow, oh), x2 = c2.getContext("2d"); x2.fillStyle = "#fff"; x2.fillRect(0, 0, ow, oh); x2.drawImage(cv, 0, 0); u = c2.toDataURL("image/jpeg", 0.85); }
+    if (u.length > 300000) { const c2 = foMk(cv.width, cv.height), x2 = c2.getContext("2d"); x2.fillStyle = "#fff"; x2.fillRect(0, 0, c2.width, c2.height); x2.drawImage(cv, 0, 0); u = c2.toDataURL("image/jpeg", 0.85); }
   } else {
     u = cv.toDataURL("image/webp", 0.9);
     if (u.indexOf("data:image/webp") !== 0) u = cv.toDataURL("image/png");
