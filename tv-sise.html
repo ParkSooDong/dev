@@ -603,15 +603,24 @@
       if (st.mult) { st.cm = st.mult; st.cd = st.dir; }   // 멈춘 게 아니라면 이 상태를 기억
       }
       box.style.touchAction = "pan-y pinch-zoom";   // 터치: 세로 스크롤·두 손가락 확대는 브라우저가, 좌우로 미는 동작은 여기서 마우스와 똑같이 처리
-      let downX = 0, moved = false;
-      box.addEventListener("pointerenter", e => { st.hover = true; st.ax = st.lx = downX = e.clientX; st.mult = 0; moved = false; });   // 터치는 손가락을 댄 순간이 "마우스를 올린 것"
-      box.addEventListener("pointermove", e => {
-        if (!st.hover) { st.hover = true; st.ax = downX = e.clientX; moved = false; }
+      let downX = 0, moved = false, ly = 0;
+      // 테이프가 얇아서 마우스·손가락이 위아래로 조금 벗어나도, 한번 시작한 동작은 테이프 둘레 여유 구간(세로 70px·가로 60px) 안에서는 이어져요
+      const PADY = 70, PADX = 60;
+      const inZone = (x, y, px, py) => { const r = box.getBoundingClientRect(); return x >= r.left - px && x <= r.right + px && y >= r.top - py && y <= r.bottom + py; };
+      const leave = () => { st.hover = false; st.mult = 0; clearTimeout(st.idle); };   // 바뀐 속도·방향은 그대로 이어짐
+      const engage = e => { st.hover = true; st.ax = st.lx = downX = e.clientX; ly = e.clientY; st.mult = 0; moved = false; };   // 터치는 손가락을 댄 순간이 "마우스를 올린 것"
+      box.addEventListener("pointerenter", engage);
+      box.addEventListener("pointermove", e => { if (!st.hover) engage(e); });
+      document.addEventListener("pointermove", e => {
+        if (!st.hover) return;
+        if (!inZone(e.clientX, e.clientY, PADX, PADY)) { leave(); return; }
+        st.lx = e.clientX; ly = e.clientY; level(e.clientX);
         if (e.pointerType !== "mouse" && Math.abs(e.clientX - downX) > 8) moved = true;
-        st.lx = e.clientX; level(e.clientX);
-        clearTimeout(st.idle); st.idle = setTimeout(() => { st.ax = st.lx; st.mult = 0; }, 350);
+        clearTimeout(st.idle);
+        st.idle = setTimeout(() => { st.ax = st.lx; st.mult = 0; if (!inZone(st.lx, ly, 0, 0)) leave(); }, 350);   // 멈춤: 테이프 위면 그 자리에서 정지, 테이프 밖이면 마지막 상태로 계속 흐름
       });
-      ["pointerleave", "pointercancel"].forEach(ev => box.addEventListener(ev, () => { st.hover = false; st.mult = 0; clearTimeout(st.idle); }));   // 터치는 손가락을 떼면 이 상태   // 마우스를 빼도 바뀐 속도·방향은 그대로 이어짐
+      ["pointerup", "pointercancel"].forEach(ev => document.addEventListener(ev, e => { if (e.pointerType !== "mouse") leave(); }));   // 터치는 손가락을 떼면 이 상태
+      document.documentElement.addEventListener("pointerleave", leave);   // 마우스가 창 밖으로 나감
       box.addEventListener("click", e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);   // 터치로 밀었을 때 항목이 눌리지 않게
       let last = 0;
       function frame(now) {
