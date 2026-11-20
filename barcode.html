@@ -7,7 +7,7 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000f1cc820695001d1370b2bfc7%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498667%26p%3Dfs%26cid%3D1%26sig%3D861e6954a6b1b7090906a02df8b4e670a9fc5eb053e3d4145a1f3264858c5be4%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000032248206889dfcce0b06e484%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25EA%25B0%2580%25EB%258F%2585%25EC%2584%25B1%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498667%26p%3Dfs%26cid%3D1%26sig%3D356421a32431c67ccb9dd23f6a72ff657f5f078001e5f59e4e5bbbfdc4971dcd%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
@@ -545,6 +545,52 @@ p{margin:6px 0 0}
 .cfft{display:flex;justify-content:flex-end;gap:6px;padding:10px 12px;border-top:1px solid var(--line)}
 .cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
+
+/* 좁은 화면의 QR: 코드 아래에 문자열을 두지 않고 오른쪽에 배치해 QR 인식 크기 확보 */
+@media (max-width:560px){
+  .view[data-k="qr"]{
+    flex-direction:row;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    padding:6px 8px;
+  }
+  .view[data-k="qr"] svg{
+    display:block;
+    flex:0 0 clamp(104px,22vw,128px);
+    width:clamp(104px,22vw,128px)!important;
+    height:auto!important;
+    max-width:none;
+    min-height:0;
+    aspect-ratio:1;
+  }
+  .view[data-k="qr"] .txt{
+    flex:1 1 0;
+    min-width:0;
+    margin:0;
+    text-align:left;
+    overflow-wrap:anywhere;
+    word-break:break-all;
+    line-height:1.35;
+  }
+}
+
+/* 매우 좁은 휴대전화에서는 QR 카드만 한 행 전체를 사용해 코드 크기를 유지 */
+@media (max-width:400px){
+  .cell:has(.view[data-k="qr"]){
+    grid-column:1/-1;
+  }
+  .view[data-k="qr"]{
+    justify-content:flex-start;
+    gap:12px;
+    min-height:128px;
+  }
+  .view[data-k="qr"] svg{
+    flex-basis:116px;
+    width:116px!important;
+  }
+}
+
 </style>
 <style id="imgx-cs-css">
 /* 색 고르기 묶음 (단일 색상의 이미지를 메모에 넣기 · 기본 크기 조정 공통) */
