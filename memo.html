@@ -394,6 +394,12 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .cfbox.fo .cs-btn{margin-top:6px}
 .cfbox.fo .fo-info{margin:6px 0 0}
 .fo-pad{margin:2px 0 0}
+.fo-dest{flex:none;margin:8px 12px 0;padding:6px 10px;border-radius:7px;font-size:12.5px;font-weight:600;color:#fff;background:#2b8a3e}
+.fo-dest[data-d="img"]{background:#d9480f}
+.cfft button.dst-memo{background:#2b8a3e;color:#fff;border-color:#2b8a3e;font-weight:600}
+.cfft button.dst-memo:hover{background:#237032}
+.cfft button.dst-img{background:#d9480f;color:#fff;border-color:#d9480f;font-weight:600}
+.cfft button.dst-img:hover{background:#bf3f0c}
 /* 이미지 형태 변경 (같은 창을 다른 모드로 씀) */
 .cfft[hidden],.fo-empty[hidden]{display:none}
 .cfbox.fo .cfft{flex-wrap:wrap}
@@ -2065,12 +2071,12 @@ let imgBack = null;
   const fire = () => ta.dispatchEvent(new Event("input", { bubbles: true }));
   const box = el("div", "imgx-box"), grip = el("div", "imgx-grip"), gripR = el("div", "imgx-grip gr"), gripB = el("div", "imgx-grip gb"), bar = el("div", "imgx-bar");
   const main = el("div", "imgx-row",
-    '<button type="button" data-cs="1" title="이미지 그림 자체의 가로·세로 크기를 바꿔요 (박스를 끌어 남길 범위를 정해요)">기본 크기 조정</button><label class="imgx-sl" title="크기 비율: 지금 크기가 100%예요 (가로·세로를 직접 조절하면 그 크기가 새 100%). [원본 크기]를 누르면 원본이 100%예요">크기 <input type="range" data-sl min="10" max="500" step="1" value="100" aria-label="크기 비율"><input type="number" data-sn min="10" max="500" step="1" value="100" aria-label="크기 비율 숫자 입력" title="숫자로 입력하고 Enter (10~500)">%</label><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="lin">선 넣기</button><button type="button" class="ic" data-a="fil" aria-label="페인트" title="페인트: 색·투명도를 고르고 칠할 곳을 클릭하면, 그 자리에서 글자·도형·선으로 막힌 범위가 칠해져요"><svg viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg></button><button type="button" data-a="pic" title="캡처·파일 이미지를 이 이미지 위에 올려요 (단일 색상의 이미지 위에 붙여넣기)">이미지 넣기</button><button type="button" data-a="cpy" aria-haspopup="true" title="글자·도형·올린 이미지가 합쳐진 전체 이미지를 복사하거나 PC에 파일로 저장해요">이미지 저장</button><button type="button" class="ic" data-a="era" aria-label="지우개" title="지우개: 원본 이미지를 지워요"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button type="button" class="ic" data-a="las" aria-label="올가미" title="올가미: 둘러싼 영역에 걸친 글자·도형·선을 삭제해요"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><i class="sep"></i><button type="button" data-sa="vbase" aria-pressed="false" disabled title="원본 이미지 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">원본</button><button type="button" data-sa="vitems" aria-pressed="false" disabled title="추가 요소(글자·도형·선) 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">추가 요소</button><button type="button" data-sa="eundo" disabled title="편집 중인 글자·도형·선·지우개 실행 취소 (Ctrl+Z / 다시 실행 Ctrl+Y)">실행 취소</button><button type="button" data-sa="reset" disabled title="색·선 굵기·글자 크기·지우개 굵기 등 도구 설정을 기본값으로 되돌려요 (이미 넣은 요소는 그대로). 도구를 연 동안에만 쓸 수 있어요">설정 초기화</button>');
+    '<button type="button" data-cs="1" title="이미지 그림 자체의 가로·세로 크기를 바꿔요 (박스를 끌어 남길 범위를 정해요)">기본 크기 조정</button><label class="imgx-sl" title="크기 비율: 지금 크기가 100%예요 (가로·세로를 직접 조절하면 그 크기가 새 100%). [원본 크기]를 누르면 원본이 100%예요">크기 <input type="range" data-sl min="10" max="500" step="1" value="100" aria-label="크기 비율"><input type="number" data-sn min="10" max="500" step="1" value="100" aria-label="크기 비율 숫자 입력" title="숫자로 입력하고 Enter (10~500)">%</label><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="lin">선 넣기</button><button type="button" class="ic" data-a="fil" aria-label="페인트" title="페인트: 색·투명도를 고르고 칠할 곳을 클릭하면, 그 자리에서 글자·도형·선으로 막힌 범위가 칠해져요"><svg viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg></button><button type="button" data-a="pic" title="캡처·파일 이미지를 붙여넣거나 열어서, 형태를 바꾼 뒤 이 이미지 위에 올려요">이미지 넣기</button><button type="button" data-a="cpy" aria-haspopup="true" title="글자·도형·올린 이미지가 합쳐진 전체 이미지를 복사하거나 PC에 파일로 저장해요">이미지 저장</button><button type="button" class="ic" data-a="era" aria-label="지우개" title="지우개: 원본 이미지를 지워요"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button type="button" class="ic" data-a="las" aria-label="올가미" title="올가미: 둘러싼 영역에 걸친 글자·도형·선을 삭제해요"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><i class="sep"></i><button type="button" data-sa="vbase" aria-pressed="false" disabled title="원본 이미지 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">원본</button><button type="button" data-sa="vitems" aria-pressed="false" disabled title="추가 요소(글자·도형·선) 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">추가 요소</button><button type="button" data-sa="eundo" disabled title="편집 중인 글자·도형·선·지우개 실행 취소 (Ctrl+Z / 다시 실행 Ctrl+Y)">실행 취소</button><button type="button" data-sa="reset" disabled title="색·선 굵기·글자 크기·지우개 굵기 등 도구 설정을 기본값으로 되돌려요 (이미 넣은 요소는 그대로). 도구를 연 동안에만 쓸 수 있어요">설정 초기화</button>');
 
   box.hidden = bar.hidden = true;
   const shp = el("div", "imgx-row",
     '<button type="button" class="ic" data-none aria-label="선택 해제" title="선택 해제: 지금까지 편집한 내용을 이미지에 반영하고, 고른 아이콘을 풀어요 (Esc, 이미지 밖 클릭도 같음)" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M5 3l5.5 15 2.3-6.2L19 9.5z"/><path d="m13.5 13.5 5 5"/></svg></button><button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="hand" aria-label="손글씨" title="손글씨: 마우스나 펜으로 이미지 위에 자유롭게 글씨를 써요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="heart" aria-label="heart" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 19.5C5.5 15 4 11.8 4 9a3.7 3.7 0 0 1 8-1.3A3.7 3.7 0 0 1 20 9c0 2.8-1.5 6-8 10.5z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="star" aria-label="star" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4.5l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.7z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="burst" aria-label="burst" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3.5l1.9 4.3 3.9-2.6-.4 4.7 4.6.5-3.2 3.4 3 3.7-4.6.2.3 4.6-4-2.4-3.5 3-.8-4.6-4.5.9 1.8-4.4-3.8-2.9 4.7-.9-1.4-4.5 4 2.3z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="clover" aria-label="clover" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5.7A4.5 4.5 0 1 1 18.3 12A4.5 4.5 0 1 1 12 18.3A4.5 4.5 0 1 1 5.7 12A4.5 4.5 0 1 1 12 5.7z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
-    '<button type="button" data-m="pic" data-sa="picpaste" title="클립보드에 복사한 캡처 이미지를 올려요 (Ctrl+V도 돼요)">붙여넣기</button><button type="button" data-m="pic" data-sa="picfile" title="이미지 파일을 골라서 올려요 (파일을 끌어다 놓아도 돼요)">파일 선택</button><i class="sep" data-m="pic"></i><button type="button" data-m="text shape line pic" data-sa="pback" title="선택한 요소를 맨 뒤로 보내요 (다른 요소 아래로)">뒤로</button><button type="button" data-m="text shape line pic" data-sa="pfront" title="선택한 요소를 맨 앞으로 가져와요 (다른 요소 위로)">앞으로</button><button type="button" data-m="text shape line pic" data-sa="pdel" title="선택한 요소를 삭제해요 (Delete 키도 같음)">삭제</button><i class="sep" data-m="text shape line pic"></i>' +
+    '<button type="button" data-m="text shape line pic" data-sa="pback" title="선택한 요소를 맨 뒤로 보내요 (다른 요소 아래로)">뒤로</button><button type="button" data-m="text shape line pic" data-sa="pfront" title="선택한 요소를 맨 앞으로 가져와요 (다른 요소 위로)">앞으로</button><button type="button" data-m="text shape line pic" data-sa="pdel" title="선택한 요소를 삭제해요 (Delete 키도 같음)">삭제</button><i class="sep" data-m="text shape line pic"></i>' +
     '<button type="button" data-m="fill" data-sa="pmenu" title="페인트 색: 바탕을 칠할 색을 고르고 투명 비율을 슬라이드바로 정해요. 색을 바꾸면 글자·도형·선 넣기의 기본 색은 보색으로 바뀌어요">페인트 색 <i data-pchip style="display:inline-block;width:12px;height:12px;vertical-align:-1px;border:1px solid #888;border-radius:2px;background:#fff3a3"></i></button><input type="color" data-q="color" data-m="text shape line" value="#2b8a3e" title="색 (글자·도형·선 공통)" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><select data-m="text" data-q="fs" title="글자 크기" aria-label="글자 크기"><option>13</option><option selected>21</option><option>34</option><option>55</option><option>89</option></select><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><input type="color" data-m="none" data-q="bg" value="#fff3a3" hidden aria-hidden="true" tabindex="-1"><button type="button" data-m="text shape" data-sa="bgmenu" title="배경색: 색을 고르고 투명 비율을 슬라이드바로 정해요">배경색</button><select data-q="op" data-m="line pic" title="투명도" aria-label="투명도"></select><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><input type="color" data-m="text" data-q="oc" value="#000000" title="외곽선 색 (고르면 외곽선이 켜져요)" aria-label="외곽선 색"><input type="number" data-m="text shape pic" data-q="rot" step="1" placeholder="각도°" title="각도 (0~359도, 계속 순환): 359 다음은 0, 0 아래는 359예요. 요소 전체가 이 각도만큼 시계 방향으로 기울어요" aria-label="각도"><button type="button" data-m="text shape pic" data-q="fh" aria-pressed="false" title="요소 전체를 좌우로 뒤집어요">좌우 반전</button>' +
     '<textarea data-q="text" rows="2" placeholder="글자 입력" aria-label="글자" hidden></textarea><i class="sep" data-m="text shape line"></i>' +
     '<button type="button" class="ic" data-s="eraser" aria-label="지우개" title="지우개: 원본 이미지를 끌어서 지워요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>' +
@@ -2380,6 +2386,7 @@ let imgBack = null;
     if (b.dataset.cs !== undefined) { openCs(); return; }   // 기본 크기 조정
     const a = b.dataset.a;
     const TL = { txt: ["text"], shp: ["shape"], lin: ["line"], fil: ["fill", "fill"], era: ["edit", "eraser"], las: ["edit", "lasso"], pic: ["pic"] };
+    if (a === "pic") { openPicDlg(); return; }   // [이미지 넣기]: [이미지 형태 변경 및 메모 삽입]과 같은 창을 열어요 (결과는 이 이미지 위에 올라가요)
     if (TL[a]) {   // 2행(공통)의 도구 버튼은 편집 중에도 보여요: 열려 있는 도구를 다시 누르면 닫고, 다른 도구를 누르면 지금까지 편집을 반영한 뒤 그 도구로 바꿔요
       const m2 = TL[a][0], t2 = TL[a][1];
       if (sh) { const same = sh.mode === m2 && (m2 !== "edit" || sd.tool === t2); finishPoly(); commit(); closeShp(); if (same) return; }
@@ -3265,7 +3272,7 @@ let imgBack = null;
     });
     wrap.addEventListener("pointerleave", () => { if (sh && !sh.drag) { sh.cur = null; drawCur(); } });
     syncCtl(); render(); drawCur(); place();
-    toast(mode === "fill" ? "페인트: 색과 투명도를 고른 뒤 칠할 곳을 클릭하세요. 클릭한 곳에서 시작해 글자·도형·선으로 막힌 범위가 칠해지고, 막히지 않은 쪽은 이미지 끝까지 칠해져요. 색이 마음에 안 들면 [실행 취소]로 되돌릴 수 있어요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "pic" ? "이미지 넣기: 캡처한 이미지는 Ctrl+V로 붙여넣고, 파일은 [파일 선택]이나 끌어다 놓아서 올려요. 올린 이미지는 끌어서 옮기고, 모서리를 끌면 비율을 유지한 채 크기가 바뀌어요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)"
+    toast(mode === "fill" ? "페인트: 색과 투명도를 고른 뒤 칠할 곳을 클릭하세요. 클릭한 곳에서 시작해 글자·도형·선으로 막힌 범위가 칠해지고, 막히지 않은 쪽은 이미지 끝까지 칠해져요. 색이 마음에 안 들면 [실행 취소]로 되돌릴 수 있어요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "pic" ? "이미지 넣기: 이미지를 더 올리려면 [이미지 넣기]를 다시 누르거나 Ctrl+V·끌어다 놓기를 쓰세요. 올린 이미지는 끌어서 옮기고, 모서리를 끌면 비율을 유지한 채, 변을 끌면 가로·세로로 늘이고 줄여요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)"
       : mode === "edit" ? (tool === "lasso" ? "올가미: 지울 글자·도형·선을 감싸듯 끌어서 그리면, 걸친 요소가 모두 삭제돼요" : "지우개: 이미지 위를 끌어서 원본 이미지를 지워요. 굵기는 오른쪽에서 골라요")
       : mode === "text" ? "글자: 이미지 위를 클릭해 놓고 글자를 입력하세요. 연필 아이콘은 마우스나 펜으로 직접 글씨를 써요. 말풍선은 꼬리 손잡이를 끌어 방향을 정해요 (고른 아이콘은 유지돼요. 기존 요소 위에 새로 넣으려면 Shift를 누른 채 클릭하세요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "line" ? "아이콘을 고른 뒤 이미지 위를 클릭하세요. 손잡이를 끌면 위치를 옮길 수 있어요 (고른 아이콘은 유지돼요. 기존 요소 위에 새로 넣으려면 Shift를 누른 채 클릭하세요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : "아이콘을 고른 뒤 이미지 위를 클릭하거나 끌어서 넣으세요 (자유형 도형: 점을 차례로 클릭하고 더블클릭으로 마침. 고른 아이콘은 유지돼요. 기존 요소 위에 새로 넣으려면 Shift를 누른 채 클릭하세요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)");
   }
@@ -3324,7 +3331,6 @@ let imgBack = null;
     else if (a === "bgauto") { pushUndo(false, "bgauto"); sd.bgc = DEF_BG; qc("bg").value = DEF_BG; if (it) it.bgc = DEF_BG; syncCtl(); render(); }
     else if (a === "eundo") popUndo(); else if (a === "reset") resetSd();
     else if (a === "vbase") { sh.showBase = !sh.showBase; setP(b, sh.showBase); sh.cv.style.visibility = sh.showBase ? "" : "hidden"; drawCur(); }   // 레이어 보기/숨기기 (편집 화면에서만, 저장되는 내용은 그대로)
-    else if (a === "picpaste") pastePics(); else if (a === "picfile") picFile.click();
     else if (a === "pback" || a === "pfront") {   // 겹침 순서: 선택한 요소를 맨 뒤/맨 앞으로
       const i = sh.sel, it = sh.items[i];
       if (!it) { toast("먼저 이미지나 요소를 클릭해서 선택해 주세요"); return; }
@@ -3496,36 +3502,31 @@ let imgBack = null;
     }
     if (!n || sh !== s) return;
     syncCtl(); render();
-    toast("이미지를 올렸어요. 끌어서 옮기고, 모서리를 끌어 크기를 바꾸세요 (Delete: 삭제)");
+    toast("이미지를 올렸어요. 끌어서 옮기고, 모서리를 끌면 비율을 유지한 채, 변을 끌면 가로·세로로 늘이고 줄여요 (Delete: 삭제)");
   }
-  async function pastePics() {
-    if (!navigator.clipboard || !navigator.clipboard.read) { toast("이 브라우저에서는 버튼으로 붙여넣을 수 없어요. 이미지를 복사한 뒤 Ctrl+V를 눌러 주세요"); return; }
-    try {
-      const arr = await navigator.clipboard.read(), fs = [];
-      for (const ci of arr) { const ty = ci.types.find(x => /^image\//.test(x)); if (ty) fs.push(new File([await ci.getType(ty)], "clip", { type: ty })); }
-      if (!fs.length) { toast("클립보드에 이미지가 없어요. 이미지를 캡처하거나 복사한 뒤 다시 눌러 주세요"); return; }
-      addPicsAsk(fs);
-    } catch (err) { toast("클립보드를 읽지 못했어요. 이미지를 복사한 뒤 Ctrl+V를 눌러 주세요"); }
+  /* [이미지 넣기]: [이미지] ▸ [이미지 형태 변경 및 메모 삽입]과 같은 창을 열어요. 붙여넣기(Ctrl+V·[클립보드에서 붙여넣기])와 파일 열기가 모두 되고,
+     창 아래의 [메모의 이미지에 붙여넣기]를 누르면 만든 그림이 지금 선택한 이미지 위에 올라가요 */
+  function openPicDlg(file) {
+    if (!img) { toast("먼저 이미지를 클릭해서 선택해 주세요"); return; }
+    if (foSt || (foDlg && !foDlg.hidden)) return;   // 창이 이미 떠 있으면 중복해서 열지 않음
+    const target = img;
+    openShapeImage({
+      dest: "img", file: file || null,
+      done: async res => {
+        if (img !== target || !res || !res.url) { toast("이미지가 선택 해제되어 올리지 못했어요. 이미지를 다시 클릭한 뒤 [이미지 넣기]를 눌러 주세요"); return; }
+        if (sh && sh.mode !== "pic") { finishPoly(); commit(); closeShp(); }   // 다른 도구를 쓰던 중이면 지금까지의 편집을 반영하고 닫아요
+        if (!sh) openShp("pic");
+        for (let i = 0; i < 60 && !sh; i++) await new Promise(r => setTimeout(r, 50));   // 앞선 반영이 끝나기를 기다림
+        if (!sh) { toast("이미지 위에 올리지 못했어요. [이미지 넣기]를 다시 눌러 주세요"); return; }
+        await addPics([{ url: res.url }]);
+      }
+    });
   }
-  const picFile = document.createElement("input");
-  picFile.type = "file"; picFile.accept = "image/*"; picFile.multiple = true; picFile.style.display = "none"; document.body.appendChild(picFile);
-  async function addPicsAsk(fs) {   // 파일 선택·붙여넣기(버튼·Ctrl+V): [이미지]-[파일 열기]와 같은 창(범위·도형·각도·색)을 거쳐서 올림. 끌어다 놓기는 그대로
+  function addPicsAsk(fs) {   // 편집 중 Ctrl+V: 붙여넣은 이미지를 같은 창에서 형태를 정한 뒤 올림 (끌어다 놓기는 바로 올려요)
     if (!fs.length) return;
-    if (foSt) return;   // 창이 이미 떠 있으면 중복해서 열지 않음
-    const s0 = sh, out = [];
-    for (let i = 0; i < fs.length; i++) {
-      let r = null;
-      try { r = await foAsk(fs[i], i, fs.length); } catch (e) { r = { file: fs[i] }; }
-      if (r === false) break;   // 취소하면 남은 파일은 올리지 않아요
-      if (r && r.url) out.push({ url: r.url }); else if (r && r.file) out.push(r.file);
-    }
-    if (!out.length || sh !== s0) return;
-    addPics(out);
+    openPicDlg(fs[0]);
+    if (fs.length > 1) toast("이미지가 여러 장이라 첫 장만 열었어요. 나머지는 하나씩 넣어 주세요");
   }
-  picFile.addEventListener("change", () => {
-    const fs = Array.from(picFile.files || []).filter(f => /^image\//.test(f.type)); picFile.value = "";
-    addPicsAsk(fs);
-  });
   document.addEventListener("paste", e => {   // 편집 중 Ctrl+V: 클립보드에 이미지가 있으면 메모에 넣지 않고 이 이미지 위에 올림
     if (!sh || foShape) return;
     const t = e.target; if (t && /^(TEXTAREA|INPUT|SELECT)$/.test(t.nodeName)) return;
@@ -3756,9 +3757,9 @@ function foHasAlpha(c) {   // 투명한 픽셀이 있는지 (큰 그림도 부�
 function foBuild() {
   foDlg = document.createElement("div"); foDlg.className = "cfov"; foDlg.hidden = true;
   foDlg.innerHTML = '<div class="cfbox cs fo" role="dialog" aria-modal="true" aria-label="이미지 크기 조정">' +
-    '<div class="cfhd"><b data-fottl>이미지 크기 조정</b><span class="cfcnt" data-foi></span></div><div class="cfpg">' +
-    '<div class="fo-empty" data-foempty hidden><div class="fo-drop" data-fodrop><b>이미지를 Ctrl+V로 붙여넣거나, 아래 [파일 열기]로 가져오세요</b><span>이 창에 이미지 파일을 끌어다 놓아도 돼요.<br>가져온 뒤에는 [이미지 크기 조정]의 모든 기능(범위·도형·각도·색·크기)을 쓸 수 있어요.</span><button type="button" class="cs-btn" data-fo="open">파일 열기</button></div><input type="file" accept="image/*" data-fofile hidden></div><div data-fobody>' +
-    '<div class="cfnote" data-fonote style="margin:0">원본은 줄이지 않고 그대로 열었어요. 붙여넣을 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌거나 위치를 입력해서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 박스 안은 원본 픽셀 그대로 들어가고, 원본 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.</div>' +
+    '<div class="cfhd"><b data-fottl>이미지 크기 조정</b><span class="cfcnt" data-foi></span></div><div class="fo-dest" data-fodest hidden></div><div class="cfpg">' +
+    '<div class="fo-empty" data-foempty hidden><div class="fo-drop" data-fodrop><b>이미지를 Ctrl+V로 붙여넣거나, 아래 [클립보드에서 붙여넣기]·[파일 열기]로 가져오세요</b><span>이 창에 이미지 파일을 끌어다 놓아도 돼요.<br>가져온 뒤에는 [이미지 크기 조정]의 모든 기능(범위·도형·각도·색·크기)을 쓸 수 있어요.</span><div class="fo-btns" style="justify-content:center"><button type="button" class="cs-btn" data-fo="paste" title="복사해 둔 이미지(캡처 포함)를 클립보드에서 가져와요 (Ctrl+V도 돼요)">클립보드에서 붙여넣기</button><button type="button" class="cs-btn" data-fo="open">파일 열기</button></div></div><input type="file" accept="image/*" data-fofile hidden></div><div data-fobody>' +
+    '<div class="cfnote" data-fonote style="margin:0">원본은 줄이지 않고 그대로 열었어요. 붙여넣을 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스 안쪽을 끌어 통째로 옮기거나, 오른쪽·아래쪽 변(작은 사각 손잡이)을 끌어 가로·세로로 늘이고 줄이거나(바뀐 크기는 아래 크기 칸에 바로 반영돼요), 위치를 입력해서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 박스 안은 원본 픽셀 그대로 들어가고, 원본 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.</div>' +
     '<div class="fo-info"><span>원본 크기 <b data-foo></b></span><span><i data-folab style="font-style:normal">붙여넣을 크기</i> <b data-fop></b></span></div>' +
     '<div class="cs-stage"><canvas></canvas></div>' +
     '<div class="cs-sz"><span data-folab>붙여넣을 크기</span><input type="number" data-fow min="' + FOMIN + '" step="1" aria-label="붙여넣을 가로 픽셀"><span>×</span><input type="number" data-foh min="' + FOMIN + '" step="1" aria-label="붙여넣을 세로 픽셀"><span>px</span></div>' +
@@ -3772,7 +3773,7 @@ function foBuild() {
     '<div class="fo-btns"><button type="button" class="cs-btn" data-fo="orig" title="원본 이미지의 실제 가로·세로 크기를 칸에 넣어요 (제한 없음)">원본 크기로</button>' +
     '<button type="button" class="cs-btn" data-fo="all" title="범위를 정하지 않고, 이미지 전체를 가로 ' + FODEF + 'px 이하로 줄여서 바로 넣어요 (예전 방식)">전체를 줄여서 넣기</button></div></div></div>' +
     '<div class="cfft" data-fonft><button type="button" class="ok" data-fo="ok">확인</button><button type="button" data-fo="x">취소</button></div>' +
-    '<div class="cfft" data-fosft hidden><button type="button" data-fo="memo" title="결과 이미지를 창을 열기 전의 메모 커서 위치에 넣고 창을 닫아요">메모에 붙여넣기</button><button type="button" class="ok" data-fo="copy" title="결과 이미지를 클립보드에 복사해요 (Ctrl+C와 같아요). 메모나 다른 프로그램에 Ctrl+V로 붙여넣을 수 있어요">이미지 복사하기</button><button type="button" data-fo="save" title="결과 이미지를 PNG 파일로 PC에 저장해요">이미지 저장하기</button><button type="button" data-fo="restart" title="지금까지의 작업을 지우고 처음 열었을 때 상태로 돌아가요">형태 변경 재시작</button><button type="button" data-fo="end" title="지금까지의 작업을 모두 취소하고 창을 닫아요">작업종료</button></div></div>';
+    '<div class="cfft" data-fosft hidden><button type="button" class="dst-memo" data-fo="memo" title="결과 이미지를 창을 열기 전의 메모 커서 위치에 넣고 창을 닫아요">메모에 붙여넣기</button><button type="button" class="dst-img" data-fo="toimg" title="결과 이미지를 [이미지 넣기]를 누른 메모의 이미지 위에 올리고 창을 닫아요" hidden>메모의 이미지에 붙여넣기</button><button type="button" class="ok" data-fo="copy" title="결과 이미지를 클립보드에 복사해요 (Ctrl+C와 같아요). 메모나 다른 프로그램에 Ctrl+V로 붙여넣을 수 있어요">이미지 복사하기</button><button type="button" data-fo="save" title="결과 이미지를 PNG 파일로 PC에 저장해요">이미지 저장하기</button><button type="button" data-fo="restart" title="지금까지의 작업을 지우고 처음 열었을 때 상태로 돌아가요">형태 변경 재시작</button><button type="button" data-fo="end" title="지금까지의 작업을 모두 취소하고 창을 닫아요">작업종료</button></div></div>';
   document.body.appendChild(foDlg);
   const q = s => foDlg.querySelector(s);
   foW = q("[data-fow]"); foH = q("[data-foh]"); foPX = q("[data-fopx]"); foPY = q("[data-fopy]"); foSC = q("[data-fosc]"); foMsg = q("[data-fomsg]"); foRot = q("[data-forot]"); foFlip = foDlg.querySelector('[data-fo="flip"]'); foShp = q("[data-foshp]");
@@ -3797,6 +3798,8 @@ function foBuild() {
       if (a === "copy") { foShapeCopy(); return; }
       if (a === "save") { foShapeSave(); return; }
       if (a === "memo") { foShapeToMemo(); return; }
+      if (a === "toimg") { foShapeToImg(); return; }
+      if (a === "paste") { foShapePasteBtn(); return; }
     }
     if (!foSt) return;
     if (a === "ok") foOk(); else if (a === "x") foClose(false); else if (a === "orig") foOrig(); else if (a === "all") {
@@ -3824,26 +3827,53 @@ function foBuild() {
   });
   foRot.addEventListener("change", () => { if (foSt) foRot.value = foSt.rot ? String(foSt.rot) : ""; });
   foShp.addEventListener("change", () => { if (foSt) { foSt.shp = foShp.value; foDraw(); } });
-  const inside = e => {   // 각도가 있으면 돌아간 박스 안인지 확인
-    const c = foSt, r = cv.getBoundingClientRect(), ex = foExt(c), a = foRotOf(c) * Math.PI / 180;
+  /* 파란 박스: 안쪽을 끌면 통째로 이동, 오른쪽 변·아래쪽 변·오른쪽 아래 모서리를 끌면 가로·세로로 늘이고 줄여요 (각도가 있으면 박스 방향 기준).
+     왼쪽·위쪽 변은 제자리에 있고, 바뀐 크기는 아래 [결과 크기] 칸에 바로 반영돼요 */
+  const hit = e => {   // "r"(오른쪽 변) / "b"(아래쪽 변) / "rb"(모서리) / "m"(안쪽: 이동) / ""(밖)
+    const c = foSt, r = cv.getBoundingClientRect(), ex = foExtL(c), a = foRotOf(c) * Math.PI / 180;
     const dx = (e.clientX - r.left) / c.s - ex[0] / 2 - (c.fx + c.fw / 2), dy = (e.clientY - r.top) / c.s - ex[1] / 2 - (c.fy + c.fh / 2);
     const lx = dx * Math.cos(a) + dy * Math.sin(a), ly = -dx * Math.sin(a) + dy * Math.cos(a);
-    return Math.abs(lx) <= c.fw / 2 && Math.abs(ly) <= c.fh / 2;
+    const tol = Math.min(10 / c.s, Math.max(2, Math.min(c.fw, c.fh) / 3));
+    const nr = Math.abs(lx - c.fw / 2) <= tol && Math.abs(ly) <= c.fh / 2 + tol, nb = Math.abs(ly - c.fh / 2) <= tol && Math.abs(lx) <= c.fw / 2 + tol;
+    if (nr && nb) return "rb"; if (nr) return "r"; if (nb) return "b";
+    return Math.abs(lx) <= c.fw / 2 && Math.abs(ly) <= c.fh / 2 ? "m" : "";
   };
   cv.addEventListener("pointerdown", e => {
-    if (!foSt || !inside(e)) return;
+    if (!foSt) return;
+    const h = hit(e); if (!h) return;
     e.preventDefault(); cv.setPointerCapture(e.pointerId);
-    foSt.dg = { x: e.clientX, y: e.clientY, fx: foSt.fx, fy: foSt.fy };
+    const ae = document.activeElement; if (ae && ae !== document.body && foDlg.contains(ae) && ae.blur) ae.blur();   // 크기 칸에 커서가 있어도 끄는 동안 값이 바뀌어 보이게
+    const c = foSt, ex = foExt(c);
+    c.dg = { h, x: e.clientX, y: e.clientY, fx: c.fx, fy: c.fy, fw: c.fw, fh: c.fh, s: c.s, ex };
+    if (h !== "m") c.lk = ex;   // 크기를 바꾸는 동안에는 화면 배율·위치가 흔들리지 않게 고정 (손을 떼면 다시 맞춰요)
   });
   cv.addEventListener("pointermove", e => {
     const c = foSt; if (!c) return;
-    if (!c.dg) { cv.style.cursor = inside(e) ? "move" : "default"; return; }
+    if (!c.dg) { const h = hit(e); cv.style.cursor = h === "r" ? "ew-resize" : h === "b" ? "ns-resize" : h === "rb" ? "nwse-resize" : h === "m" ? "move" : "default"; return; }
+    const d = c.dg;
+    if (d.h !== "m") {   // 변·모서리를 끌어 크기 바꾸기
+      const a = foRotOf(c) * Math.PI / 180, co = Math.cos(a), si = Math.sin(a), mx = foMx(c);
+      const ddx = (e.clientX - d.x) / d.s, ddy = (e.clientY - d.y) / d.s, dl = ddx * co + ddy * si, dv = -ddx * si + ddy * co;
+      let loW = FOMIN, hiW = mx, loH = FOMIN, hiH = mx;
+      if (!foRotOf(c)) {   // 박스 가운데가 원본 안에 있도록 (이동 때와 같은 규칙) + 지금 화면 안에서
+        loW = Math.max(FOMIN, Math.ceil(-2 * d.fx)); hiW = Math.min(mx, Math.floor(2 * (c.iw - d.fx)), Math.floor(c.iw + d.ex[0] / 2 - d.fx));
+        loH = Math.max(FOMIN, Math.ceil(-2 * d.fy)); hiH = Math.min(mx, Math.floor(2 * (c.ih - d.fy)), Math.floor(c.ih + d.ex[1] / 2 - d.fy));
+        hiW = Math.max(hiW, loW); hiH = Math.max(hiH, loH);
+      }
+      let nw = d.fw, nh = d.fh;
+      if (d.h === "r" || d.h === "rb") nw = foClamp(Math.round(d.fw + dl), loW, hiW);
+      if (d.h === "b" || d.h === "rb") nh = foClamp(Math.round(d.fh + dv), loH, hiH);
+      const cw = nw - d.fw, ch = nh - d.fh;   // 늘어난 양 → 왼쪽·위쪽 변이 화면에서 제자리에 있도록 중심을 이동
+      const cx = d.fx + d.fw / 2 + (cw / 2) * co - (ch / 2) * si, cy = d.fy + d.fh / 2 + (cw / 2) * si + (ch / 2) * co;
+      c.fw = nw; c.fh = nh; c.fx = cx - nw / 2; c.fy = cy - nh / 2;
+      foClampPos(); foMsgClear(); foDraw(); return;
+    }
     const th = 6 / c.s, sn = (v, cand) => { for (const t of cand) if (Math.abs(v - t) <= th) return t; return v; };   // 원본 가장자리·가운데에 살짝 달라붙게
-    c.fx = sn(c.dg.fx + (e.clientX - c.dg.x) / c.s, [0, c.iw - c.fw, (c.iw - c.fw) / 2]);
-    c.fy = sn(c.dg.fy + (e.clientY - c.dg.y) / c.s, [0, c.ih - c.fh, (c.ih - c.fh) / 2]);
+    c.fx = sn(d.fx + (e.clientX - d.x) / c.s, [0, c.iw - c.fw, (c.iw - c.fw) / 2]);
+    c.fy = sn(d.fy + (e.clientY - d.y) / c.s, [0, c.ih - c.fh, (c.ih - c.fh) / 2]);
     foClampPos(); foDraw();
   });
-  const up = () => { if (foSt) foSt.dg = null; };
+  const up = () => { const c = foSt; if (!c) return; const sz = c.dg && c.dg.h !== "m"; c.dg = null; if (sz) { c.lk = null; foLayout(); foDraw(); } };
   cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", up);
 }
 function foClampPos() {   // 박스는 원본과 겹친 채, 자기 크기의 절반까지만 밖으로 나갈 수 있어요
@@ -3855,6 +3885,11 @@ function foClampPos() {   // 박스는 원본과 겹친 채, 자기 크기의 �
 const foRotOf = c => ((Math.round(+c.rot) || 0) % 360 + 360) % 360;
 const foXf = c => !!(c && (foRotOf(c) || c.flip));
 function foExt(c) { const a = foRotOf(c) * Math.PI / 180, co = Math.abs(Math.cos(a)), si = Math.abs(Math.sin(a)); return [c.fw * co + c.fh * si, c.fw * si + c.fh * co]; }   // 돌린 박스를 감싸는 크기
+function foExtL(c) { return c.lk || foExt(c); }   // 크기를 끌어 바꾸는 동안은 화면 배치를 고정
+function foHandles(x, d, FW, FH) {   // 원점이 박스 가운데인 좌표에서 오른쪽 변·아래쪽 변·오른쪽 아래 모서리의 손잡이
+  const z = 9 * d;
+  [[FW / 2, 0], [0, FH / 2], [FW / 2, FH / 2]].forEach(p => { x.fillStyle = "#fff"; x.strokeStyle = "#339af0"; x.lineWidth = 2 * d; x.fillRect(p[0] - z / 2, p[1] - z / 2, z, z); x.strokeRect(p[0] - z / 2, p[1] - z / 2, z, z); });
+}
 function foOut(c) {   // 최종 그림 크기 (저장 크기 비율 적용, 돌렸으면 감싸는 크기)
   const sc = c.sc || 1, ow = Math.max(1, Math.round(c.fw * sc)), oh = Math.max(1, Math.round(c.fh * sc));
   if (!foRotOf(c)) return [ow, oh];
@@ -3863,7 +3898,7 @@ function foOut(c) {   // 최종 그림 크기 (저장 크기 비율 적용, 돌�
 }
 function foFlipSet(on) { foFlip.setAttribute("aria-pressed", String(!!on)); foFlip.style.background = on ? "#339af0" : ""; foFlip.style.color = on ? "#fff" : ""; foFlip.style.borderColor = on ? "#339af0" : ""; }
 function foLayout() {
-  const c = foSt, st = foDlg.querySelector(".cs-stage"), ex = foExt(c), uw = c.iw + ex[0], uh = c.ih + ex[1];
+  const c = foSt, st = foDlg.querySelector(".cs-stage"), ex = foExtL(c), uw = c.iw + ex[0], uh = c.ih + ex[1];
   const aw = Math.max(200, st.clientWidth - 18), ah = Math.max(100, Math.min(innerHeight * 0.3, 300));
   c.s = Math.min(1, aw / uw, ah / uh); c.dpr = window.devicePixelRatio || 1;
   const w = Math.max(1, Math.round(uw * c.s)), h = Math.max(1, Math.round(uh * c.s));
@@ -3887,7 +3922,7 @@ function foSync() {   // 칸·안내 글자를 지금 값에 맞춤 (입력 중�
   const bv = foDlg.querySelector("[data-fobv]"); if (bv) bv.style.background = c.bg ? c.bg : "";
 }
 function foDraw() {
-  const c = foSt, x = c.cv.getContext("2d"), d = c.dpr, k = c.s * d, ext = foExt(c), ox = ext[0] / 2, oy = ext[1] / 2;
+  const c = foSt, x = c.cv.getContext("2d"), d = c.dpr, k = c.s * d, ext = foExtL(c), ox = ext[0] / 2, oy = ext[1] / 2;
   const IX = ox * k, IY = oy * k, IW = c.iw * k, IH = c.ih * k, FX = (c.fx + ox) * k, FY = (c.fy + oy) * k, FW = c.fw * k, FH = c.fh * k;
   const xf = foXf(c), t = c.fw + " × " + c.fh;
   x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, c.cv.width, c.cv.height);
@@ -3907,7 +3942,7 @@ function foDraw() {
     x.save(); if (c.flip) x.scale(-1, 1); x.drawImage(tm, -FW / 2, -FH / 2, FW, FH); x.restore();
     x.lineWidth = 2 * d; x.strokeStyle = "#339af0"; if (c.shp === "rect") x.strokeRect(-FW / 2 + d, -FH / 2 + d, FW - 2 * d, FH - 2 * d); else { x.save(); x.translate(-FW / 2, -FH / 2); x.stroke(imShapePath(c.shp, FW, FH)); x.restore(); }
     x.font = "600 " + 12 * d + "px sans-serif"; x.textBaseline = "middle";
-    x.fillStyle = "#339af0"; x.fillRect(-FW / 2, -FH / 2, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, -FW / 2 + 5 * d, -FH / 2 + 9 * d);
+    x.fillStyle = "#339af0"; x.fillRect(-FW / 2, -FH / 2, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, -FW / 2 + 5 * d, -FH / 2 + 9 * d); foHandles(x, d, FW, FH);
     x.restore();
   }
   x.save(); x.setLineDash([4 * d, 3 * d]); x.lineWidth = d; x.strokeStyle = "rgba(90,90,90,.9)"; x.strokeRect(IX + .5, IY + .5, IW - 1, IH - 1); x.restore();   // 원본의 경계
@@ -3915,6 +3950,7 @@ function foDraw() {
     x.lineWidth = 2 * d; x.strokeStyle = "#339af0"; if (c.shp === "rect") x.strokeRect(FX + d, FY + d, FW - 2 * d, FH - 2 * d); else { x.save(); x.translate(FX, FY); x.stroke(imShapePath(c.shp, FW, FH)); x.restore(); }
     x.font = "600 " + 12 * d + "px sans-serif"; x.textBaseline = "middle";
     x.fillStyle = "#339af0"; x.fillRect(FX, FY, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, FX + 5 * d, FY + 9 * d);
+    x.save(); x.translate(FX + FW / 2, FY + FH / 2); foHandles(x, d, FW, FH); x.restore();
   }
   foSync();
 }
@@ -4014,18 +4050,22 @@ async function foOk() {
 }
 /* 파일 하나를 원본 그대로 열어 창을 띄움 → false(취소) / null(읽지 못함) / {url,W,H}(범위를 정해 만든 그림) / {file}(예전 방식으로 줄여서 넣기) */
 /* 창 하나(foDlg)를 두 가지로 써요: ① 이미지 크기 조정(메모에 넣기 전: 확인/취소) ② 이미지 형태 변경(foShape: 복사/저장/재시작/작업종료) */
-let foShape = false, foFileIn = null, foShapeBack = null, foShapeEd = null;
+let foShape = false, foFileIn = null, foShapeBack = null, foShapeEd = null, foDest = "memo", foDone = null;   // foDest: "memo"(메모에 바로 삽입) / "img"([이미지 넣기]: 메모의 이미지 위에 삽입)
 function foModeUI() {   // 모드와 그림 유무에 맞게 화면 구성을 바꿈
-  const q = s => foDlg.querySelector(s), sh = foShape, has = !!foSt;
-  q("[data-fottl]").textContent = sh ? "이미지 형태 변경 및 메모 삽입" : "이미지 크기 조정"; foDlg.firstChild.setAttribute("aria-label", sh ? "이미지 형태 변경 및 메모 삽입" : "이미지 크기 조정");
+  const q = s => foDlg.querySelector(s), sh = foShape, has = !!foSt, di = sh && foDest === "img";
+  const ttl = sh ? (di ? "이미지 형태 변경 및 이미지 삽입" : "이미지 형태 변경 및 메모 삽입") : "이미지 크기 조정";
+  q("[data-fottl]").textContent = ttl; foDlg.firstChild.setAttribute("aria-label", ttl);
   q("[data-foempty]").hidden = !(sh && !has); q("[data-fobody]").style.display = sh && !has ? "none" : "";
   q("[data-fonft]").hidden = sh; q("[data-fosft]").hidden = !sh;
+  q('[data-fo="memo"]').hidden = di; q('[data-fo="toimg"]').hidden = !di;   // 결과가 들어갈 곳에 따라 색이 다른 버튼 하나만 보여요 (메모=초록, 메모의 이미지=주황)
+  const bn = q("[data-fodest]"); bn.hidden = !sh; bn.dataset.d = di ? "img" : "memo";
+  bn.textContent = di ? "▶ 만든 이미지는 [메모의 이미지] 위에 올라가요 (선택한 이미지 안에 삽입)" : "▶ 만든 이미지는 [메모]의 커서 위치에 바로 들어가요";
   q('[data-fo="all"]').style.display = sh ? "none" : "";
   foDlg.querySelectorAll("[data-folab]").forEach(e => { e.textContent = sh ? "결과 크기" : "붙여넣을 크기"; });
-  foDlg.querySelectorAll('[data-fo="copy"],[data-fo="save"],[data-fo="memo"]').forEach(b => { b.disabled = !has; b.style.opacity = has ? "" : ".45"; });
+  foDlg.querySelectorAll('[data-fo="copy"],[data-fo="save"],[data-fo="memo"],[data-fo="toimg"]').forEach(b => { b.disabled = !has; b.style.opacity = has ? "" : ".45"; });
   q("[data-fonote]").textContent = sh
-    ? "원본은 줄이지 않고 그대로 열었어요. 만들 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌거나 위치를 입력해서 남길 범위를 정하고, 도형·각도·색을 바꾸세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 다 됐으면 [이미지 복사하기](Ctrl+C), [이미지 저장하기] 또는 [메모에 붙여넣기]를 누르세요."
-    : "원본은 줄이지 않고 그대로 열었어요. 붙여넣을 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌거나 위치를 입력해서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 박스 안은 원본 픽셀 그대로 들어가고, 원본 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.";
+    ? "원본은 줄이지 않고 그대로 열었어요. 만들 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스 안쪽을 끌어 통째로 옮기거나, 오른쪽·아래쪽 변(작은 사각 손잡이)을 끌어 가로·세로로 늘이고 줄이거나(바뀐 크기는 아래 크기 칸에 바로 반영돼요), 위치를 입력해서 남길 범위를 정하고, 도형·각도·색을 바꾸세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 다 됐으면 [이미지 복사하기](Ctrl+C), [이미지 저장하기] 또는 [" + (di ? "메모의 이미지에 붙여넣기" : "메모에 붙여넣기") + "]를 누르세요."
+    : "원본은 줄이지 않고 그대로 열었어요. 붙여넣을 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스 안쪽을 끌어 통째로 옮기거나, 오른쪽·아래쪽 변(작은 사각 손잡이)을 끌어 가로·세로로 늘이고 줄이거나(바뀐 크기는 아래 크기 칸에 바로 반영돼요), 위치를 입력해서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 박스 안은 원본 픽셀 그대로 들어가고, 원본 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.";
   if (!has) q("[data-foi]").textContent = "";
 }
 function foInit(file, im, res, i, n) {   // 읽어 둔 그림으로 작업 상태를 만들고 입력 칸을 처음 값으로 (창 표시·그리기는 부른 쪽에서)
@@ -4052,13 +4092,16 @@ async function foAsk(file, i, n) {
   });
 }
 /* ===== 이미지 ▸ 이미지 형태 변경: 같은 창에서 그림을 붙여넣거나 열어 범위·도형·각도·색·크기를 바꾼 뒤, 복사하거나 PC에 저장 (메모에는 넣지 않아요) ===== */
-function openShapeImage() {
+function openShapeImage(opt) {   // 인자 없음: [이미지 형태 변경 및 메모 삽입] / {dest:"img", done, file}: [이미지 넣기] (결과를 메모의 이미지 위에 올림)
   if (!foDlg) foBuild();
   if (foSt || !foDlg.hidden) return;
-  foShapeEd = ta; foShapeBack = saveRange();
+  const toImg = !!(opt && opt.dest === "img");
+  foDest = toImg ? "img" : "memo"; foDone = toImg ? (opt.done || null) : null;
+  if (toImg) { foShapeEd = null; foShapeBack = null; } else { foShapeEd = ta; foShapeBack = saveRange(); }
   foShape = true; foSt = null; foModeUI();
   foDlg.hidden = false; document.addEventListener("keydown", foKey, true); document.addEventListener("paste", foShapePaste, true);
-  say("이미지를 Ctrl+V로 붙여넣거나 [파일 열기]로 가져오세요");
+  if (toImg && opt.file) foShapeLoad(opt.file);
+  else say("이미지를 Ctrl+V로 붙여넣거나 [클립보드에서 붙여넣기]·[파일 열기]로 가져오세요");
 }
 function foShapePaste(e) {   // 창이 열려 있는 동안의 Ctrl+V
   if (!foShape) return;
@@ -4076,11 +4119,11 @@ async function foShapeLoad(file) {
   if (!im) { toast((file.name || "이미지") + " 을(를) 읽지 못했어요"); return; }
   if (!(im.naturalWidth > 0 && im.naturalHeight > 0)) { toast("크기를 알 수 없는 이미지는 형태를 바꿀 수 없어요"); return; }
   foInit(file, im, () => {}, 0, 1); foModeUI(); foLayout(); foDraw();
-  say("이미지를 가져왔어요. 형태를 바꾼 뒤 [이미지 복사하기]·[이미지 저장하기]·[메모에 붙여넣기] 중 하나를 누르세요", "ok");
+  say("이미지를 가져왔어요. 형태를 바꾼 뒤 [이미지 복사하기]·[이미지 저장하기]·[" + (foDest === "img" ? "메모의 이미지에 붙여넣기" : "메모에 붙여넣기") + "] 중 하나를 누르세요", "ok");
 }
 function foShapeEnd() {   // 작업종료: 지금까지의 작업을 모두 버리고 창을 닫음
   if (!foShape) return;
-  foDlg.hidden = true; foSt = null; foShape = false; foMsgClear();
+  foDlg.hidden = true; foSt = null; foShape = false; foDest = "memo"; foDone = null; foMsgClear();
   document.removeEventListener("keydown", foKey, true); document.removeEventListener("paste", foShapePaste, true);
   say("이미지 형태 변경을 마쳤어요");
 }
@@ -4118,6 +4161,33 @@ async function foShapeSave() {
     say("이미지를 PC에 저장했어요: " + name, "ok");
   } catch (e) { if (foSt === c) { toast("이미지를 저장하지 못했어요. 크기를 줄여 보세요"); say("이미지를 저장하지 못했어요", "err"); } }
   c.busy = false;
+}
+/* [클립보드에서 붙여넣기] 버튼: 클립보드의 이미지를 가져옴 (이 창에서 Ctrl+V 하는 것과 같아요) */
+async function foShapePasteBtn() {
+  if (!foShape || foSt) return;
+  if (!navigator.clipboard || !navigator.clipboard.read) { toast("이 브라우저에서는 버튼으로 붙여넣을 수 없어요. 이미지를 복사한 뒤 이 창에서 Ctrl+V를 눌러 주세요"); return; }
+  try {
+    const arr = await navigator.clipboard.read();
+    for (const ci of arr) { const ty = ci.types.find(x => /^image\//.test(x)); if (ty) { foShapeLoad(new File([await ci.getType(ty)], "image.png", { type: ty })); return; } }
+    toast("클립보드에 이미지가 없어요. 이미지를 캡처하거나 복사한 뒤 다시 눌러 주세요");
+  } catch (err) { toast("클립보드를 읽지 못했어요. 이미지를 복사한 뒤 이 창에서 Ctrl+V를 눌러 주세요"); }
+}
+/* [메모의 이미지에 붙여넣기]: 결과 이미지를 [이미지 넣기]를 누른 이미지 위에 올리고 창을 닫음 (올리는 일은 부른 쪽의 done 이 해요) */
+async function foShapeToImg() {
+  const c = foSt; if (!foShape || foDest !== "img" || !c || c.busy) return;
+  const done = foDone;
+  if (!done) { toast("이미지 위에 올릴 수 없어요. [이미지 넣기]를 다시 눌러 주세요"); return; }
+  c.busy = true; say("이미지를 만드는 중…"); await foWait();
+  let u = ""; try { u = foRender(c); } catch (e) {}
+  if (foSt !== c) return;
+  c.busy = false;
+  const lim = foLimit();
+  if (!u) { foFail(c, 0, lim); return; }
+  if (u.length > lim) { foFail(c, u.length, lim); return; }
+  const o = foOut(c);
+  foShapeEnd();
+  say("이미지를 메모의 이미지에 올리는 중…");
+  await done({ url: u, W: o[0], H: o[1] });
 }
 /* [메모에 붙여넣기]: 결과 이미지를 창을 열기 전의 커서 위치에 메모로 넣고 창을 닫음 */
 async function foShapeToMemo() {
