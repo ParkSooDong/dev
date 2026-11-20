@@ -111,7 +111,7 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 ::highlight(find){background:#ffe066;color:#1c1b19}
 ::highlight(findcur){background:#ff922b;color:#1c1b19}
 .edwrap{flex:1}
-.rich{flex:1;min-height:0;width:100%;font:inherit;font-size:18px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--mfg)}
+.rich{flex:1;min-height:0;width:100%;font:inherit;font-size:15px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--mfg)}
 /* 서식 툴바 */
 .edsplit{display:grid;grid-template-rows:minmax(0,1fr) 10px minmax(0,8fr) 10px minmax(0,1fr);min-height:0}
 /* 비교 모드: 위/아래 → 왼쪽(원본)/오른쪽(변경본), 스크롤바는 하나(두 영역이 함께 스크롤) */
@@ -303,7 +303,14 @@ body.has-max header .tr{display:none}
 .tb .szbar #szIc{padding:0 4px;gap:1px;align-items:baseline}
 .szbar #szNum{width:54px;height:28px;box-sizing:border-box;margin:0;padding:0 4px;font:inherit;font-size:13px;text-align:center;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);-moz-appearance:textfield;appearance:textfield}
 .szbar #szNum::-webkit-inner-spin-button,.szbar #szNum::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-.szbar #szRng{width:110px;margin:0;padding:0;border:0;background:transparent}
+.szbar #szRng{width:220px;margin:0;padding:0;border:0;background:transparent}
+.tb .szbar #szDn,.tb .szbar #szUp{min-width:24px;width:24px;height:28px;padding:0;font-size:11px;border:1px solid var(--line);background:var(--card)}
+.tb .szbar #szDn:hover,.tb .szbar #szUp:hover{background:var(--line)}
+#szIc .fcar{flex:none;font-size:10px;opacity:.6;margin-left:3px}
+.tb .pop#szPop{min-width:84px;max-height:min(60vh,420px);overflow:auto;position:fixed;inset:auto;margin:0;color:var(--ink);z-index:140}
+.tb .pop#szPop button{flex:none;width:100%;height:30px;font-size:14px;border-radius:6px}
+.tb .pop#szPop button:hover{background:var(--line)}
+.tb .pop#szPop button[aria-current]{box-shadow:inset 3px 0 0 #339af0;font-weight:700}
 .szrow{display:flex;align-items:center;gap:8px;padding:4px 6px}
 .szrow input[type=range]{flex:1;min-width:110px;margin:0;padding:0;border:0;background:transparent}
 .szrow input[type=number]{width:66px;height:30px;box-sizing:border-box;margin:0;padding:0 6px;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
@@ -445,7 +452,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   <button type="button" data-cmd="strike" title="취소선" aria-label="취소선" aria-pressed="false"><s>S</s></button>
   <select id="fontSel" hidden tabindex="-1" aria-hidden="true" title="글꼴 (메모 글자와 이미지 '글자 넣기'에 쓰여요 · 기본 맑은 고딕)" aria-label="글꼴"><option value="Malgun Gothic">맑은 고딕</option></select>
   <div class="menu" id="fontMenu"><button type="button" data-pal id="fontBtn" title="글꼴 (목록에서 마우스를 올리면 선택한 글자에 미리 적용돼요 · 클릭하면 확정, 그냥 나가면 원래 글꼴 유지)" aria-label="글꼴" aria-haspopup="true" aria-expanded="false"><span id="fontLbl">맑은 고딕</span><span class="fcar">▼</span></button><div class="pop" id="fontPop" hidden></div></div>
-  <div class="szbar" id="szBar"><button type="button" id="szIc" data-fs="18" title="글자 크기 (누르면 기본값 18로 적용돼요)" aria-label="글자 크기 기본값(18)"><span style="font-size:11px">가</span><span style="font-size:17px;font-weight:600">가</span></button><input type="number" id="szNum" min="5" max="300" step="1" value="18" inputmode="numeric" aria-label="글자 크기 숫자 (커서 위치의 글자 크기가 표시돼요)" title="숫자를 입력하고 Enter (5~300)"><input type="range" id="szRng" min="5" max="300" step="1" value="18" aria-label="글자 크기 슬라이드 (놓으면 적용돼요)"></div>
+  <div class="szbar" id="szBar"><div class="menu" id="szMenu"><button type="button" data-pal id="szIc" title="글자 크기 (목록에서 마우스를 올리면 선택한 글자에 미리 적용돼요 · 클릭하면 확정, 그냥 나가면 원래 크기 유지 · 기본 15)" aria-label="글자 크기 목록" aria-haspopup="true" aria-expanded="false"><span style="font-size:11px">가</span><span style="font-size:17px;font-weight:600">가</span><span class="fcar">▼</span></button><div class="pop" id="szPop" hidden><button type="button" data-fs="8">8</button><button type="button" data-fs="10">10</button><button type="button" data-fs="12">12</button><button type="button" data-fs="15">15</button><button type="button" data-fs="18">18</button><button type="button" data-fs="21">21</button><button type="button" data-fs="34">34</button><button type="button" data-fs="55">55</button><button type="button" data-fs="89">89</button><button type="button" data-fs="144">144</button><button type="button" data-fs="238">238</button></div></div><input type="number" id="szNum" min="5" max="300" step="1" value="15" inputmode="numeric" aria-label="글자 크기 숫자 (커서 위치의 글자 크기가 표시돼요)" title="숫자를 입력하고 Enter (5~300)"><button type="button" id="szDn" title="글자 크기 1 줄이기" aria-label="글자 크기 1 줄이기">◀</button><input type="range" id="szRng" min="5" max="300" step="1" value="15" aria-label="글자 크기 슬라이드 (놓으면 적용돼요)"><button type="button" id="szUp" title="글자 크기 1 키우기" aria-label="글자 크기 1 키우기">▶</button></div>
   <div class="menu"><button type="button" data-pal id="fcBtn" title="글자색 (진한 색)" aria-label="글자색" aria-haspopup="true" aria-expanded="false"><b style="border-bottom:3px solid #2b8a3e;line-height:1.1">A</b></button><div class="pop cpal" id="popFc" hidden><div class="bgttl">글자 색</div><div class="bgnote">진한 색 · 누르면 바로 적용돼요</div><div class="cpsw"><button type="button" class="sw" data-fc="#2b8a3e" style="background:#2b8a3e" title="#2b8a3e" aria-label="#2b8a3e"></button><button type="button" class="sw" data-fc="#087f5b" style="background:#087f5b" title="#087f5b" aria-label="#087f5b"></button><button type="button" class="sw" data-fc="#5c940d" style="background:#5c940d" title="#5c940d" aria-label="#5c940d"></button><button type="button" class="sw" data-fc="#1b5e20" style="background:#1b5e20" title="#1b5e20" aria-label="#1b5e20"></button><button type="button" class="sw" data-fc="#000000" style="background:#000000" title="#000000" aria-label="#000000"></button><button type="button" class="sw" data-fc="#343a40" style="background:#343a40" title="#343a40" aria-label="#343a40"></button><button type="button" class="sw" data-fc="#c92a2a" style="background:#c92a2a" title="#c92a2a" aria-label="#c92a2a"></button><button type="button" class="sw" data-fc="#a61e4d" style="background:#a61e4d" title="#a61e4d" aria-label="#a61e4d"></button><button type="button" class="sw" data-fc="#862e9c" style="background:#862e9c" title="#862e9c" aria-label="#862e9c"></button><button type="button" class="sw" data-fc="#5f3dc4" style="background:#5f3dc4" title="#5f3dc4" aria-label="#5f3dc4"></button><button type="button" class="sw" data-fc="#364fc7" style="background:#364fc7" title="#364fc7" aria-label="#364fc7"></button><button type="button" class="sw" data-fc="#1864ab" style="background:#1864ab" title="#1864ab" aria-label="#1864ab"></button><button type="button" class="sw" data-fc="#0b7285" style="background:#0b7285" title="#0b7285" aria-label="#0b7285"></button><button type="button" class="sw" data-fc="#d9480f" style="background:#d9480f" title="#d9480f" aria-label="#d9480f"></button></div><button type="button" class="bgpk" data-fcpick title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div class="cpcur" style="display:flex;align-items:center;gap:6px;font-size:12.5px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid var(--line);border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><div class="cpa"><span>투명</span><input type="range" id="alFc" min="0" max="90" step="5" value="0" aria-label="글자색 투명도"><span id="alFcV">0%</span></div><button type="button" class="bgpk" data-fc="" title="선택한 글자의 색을 기본(녹색)으로 되돌려요">기본 글자색으로</button></div></div><div class="menu"><button type="button" data-pal id="bgBtn" title="배경색(형광펜, 연한 색)" aria-label="배경색" aria-haspopup="true" aria-expanded="false"><b style="background:#f6cbed;color:#1c1b19;padding:0 4px;border-radius:3px;line-height:1.3">A</b></button><div class="pop cpal" id="popBg" hidden><div class="bgttl">바탕 색</div><div class="bgnote">연한 색 · 누르면 바로 적용돼요</div><div class="cpsw"><button type="button" class="sw" data-bg="#f6cbed" style="background:#f6cbed" title="#f6cbed" aria-label="#f6cbed"></button><button type="button" class="sw" data-bg="#f6cbd8" style="background:#f6cbd8" title="#f6cbd8" aria-label="#f6cbd8"></button><button type="button" class="sw" data-bg="#ddcbf6" style="background:#ddcbf6" title="#ddcbf6" aria-label="#ddcbf6"></button><button type="button" class="sw" data-bg="#f6cbf3" style="background:#f6cbf3" title="#f6cbf3" aria-label="#f6cbf3"></button><button type="button" class="sw" data-bg="#f4f1ea" style="background:#f4f1ea" title="#f4f1ea" aria-label="#f4f1ea"></button><button type="button" class="sw" data-bg="#f1ece4" style="background:#f1ece4" title="#f1ece4" aria-label="#f1ece4"></button><button type="button" class="sw" data-bg="#cbf6f6" style="background:#cbf6f6" title="#cbf6f6" aria-label="#cbf6f6"></button><button type="button" class="sw" data-bg="#cbf6e7" style="background:#cbf6e7" title="#cbf6e7" aria-label="#cbf6e7"></button><button type="button" class="sw" data-bg="#d4f6cb" style="background:#d4f6cb" title="#d4f6cb" aria-label="#d4f6cb"></button><button type="button" class="sw" data-bg="#ebf6cb" style="background:#ebf6cb" title="#ebf6cb" aria-label="#ebf6cb"></button><button type="button" class="sw" data-bg="#f6eecb" style="background:#f6eecb" title="#f6eecb" aria-label="#f6eecb"></button><button type="button" class="sw" data-bg="#f6e0cb" style="background:#f6e0cb" title="#f6e0cb" aria-label="#f6e0cb"></button><button type="button" class="sw" data-bg="#f6d2cb" style="background:#f6d2cb" title="#f6d2cb" aria-label="#f6d2cb"></button><button type="button" class="sw" data-bg="#cbeaf6" style="background:#cbeaf6" title="#cbeaf6" aria-label="#cbeaf6"></button></div><button type="button" class="bgpk" data-bgcpick title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div class="cpcur" style="display:flex;align-items:center;gap:6px;font-size:12.5px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid var(--line);border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><div class="cpa"><span>투명</span><input type="range" id="alBg" min="0" max="90" step="5" value="0" aria-label="바탕색 투명도"><span id="alBgV">0%</span></div><button type="button" class="bgpk" data-bg="">배경색 없음</button></div></div>
   <div class="menu"><button type="button" data-pal title="정렬" aria-label="정렬" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h14"/></svg></button><div class="pop" hidden><button type="button" data-cmd="alL">왼쪽 정렬</button><button type="button" data-cmd="alC">가운데 정렬</button><button type="button" data-cmd="alR">오른쪽 정렬</button></div></div>
   <button type="button" data-cmd="clear" title="서식 지우기 (선택한 글자)" aria-label="서식 지우기"><svg viewBox="0 0 24 24"><path d="M4 5h10M9 5l-2.5 14M13 19h6M15.5 12.5l4 4M19.5 12.5l-4 4"/></svg></button>
@@ -1721,8 +1728,8 @@ const INK = "#1c1b19", MARK = "#010203";
 const FC_DEF = "#2b8a3e", BG_DEF = "#f6cbed";
 const cst = { fc: { c: FC_DEF, a: 1 }, bg: { c: BG_DEF, a: 1 } };
 let palBack = null;
-/* 글자 크기: 툴바 1행에 항상 표시. [기본]=18, 숫자칸(Enter·벗어날 때 적용), 슬라이드(놓을 때 적용). 커서 위치의 글자 크기는 숫자칸·슬라이드에 자동 표시 */
-const SZ_DEF = 18;
+/* 글자 크기: 툴바 1행에 항상 표시. 기본=15, 목록(8~238, 마우스 올리면 미리보기), 숫자칸(Enter·벗어날 때 적용), 슬라이드(놓을 때 적용). 커서 위치의 글자 크기는 숫자칸·슬라이드에 자동 표시 */
+const SZ_DEF = 15;
 let szLast = SZ_DEF, szRange = null, szRangeEd = null;
 const szRng = document.getElementById("szRng"), szNum = document.getElementById("szNum");
 const szClamp = v => { v = Math.round(parseFloat(v)); return isNaN(v) ? null : Math.min(300, Math.max(5, v)); };
@@ -1734,6 +1741,7 @@ function szStartEl(s) {   // 범위가 있으면 범위 시작 위치, 없으면
 }
 function szFromCaret() {
   const a = document.activeElement; if (a === szNum || a === szRng) return;
+  const xs = window.imgxTextSz && window.imgxTextSz(); if (xs != null) { szSync(Math.round(xs)); return; }   // 이미지 글자 넣기 중에는 그 글자 크기를 표시
   const s = getSelection(); if (!s.rangeCount) return;
   const e = szStartEl(s); if (!e || !EDS.some(x => x.contains(e))) return;
   const v = Math.round(parseFloat(getComputedStyle(e).fontSize)); if (!(v > 0)) return;
@@ -1749,6 +1757,9 @@ function szApply(raw) {
   const v = szClamp(raw);
   if (v === null) { szSync(szLast); return; }
   szLast = v; szSync(v);
+  const ev = new CustomEvent("memosizechange", { detail: { v, handled: false } });
+  document.dispatchEvent(ev);   // 이미지 '글자 넣기' 중이면 그쪽(선택한 글자 요소 / 이어서 넣을 기본 크기)에 적용
+  if (ev.detail.handled) return;
   const cells = window.cfSel && window.cfSel();
   if (!(cells && cells.length) && szRange && szRangeEd && szRangeEd.isConnected) {
     ta = szRangeEd; ta.focus();
@@ -1757,6 +1768,9 @@ function szApply(raw) {
   setSize(String(v));
 }
 szRng.addEventListener("input", () => { szNum.value = szRng.value; });
+const szStep = d => { const c = szClamp(szNum.value); szApply((c === null ? szLast : c) + d); };   // ◀ 1 작게, ▶ 1 크게
+document.getElementById("szDn").addEventListener("click", () => szStep(-1));
+document.getElementById("szUp").addEventListener("click", () => szStep(1));
 szRng.addEventListener("change", () => szApply(szRng.value));
 szNum.addEventListener("input", () => { const v = szClamp(szNum.value); if (v !== null && /^\d+$/.test(szNum.value.trim())) szRng.value = v; });
 szNum.addEventListener("keydown", e => { if (e.key !== "Enter" || e.isComposing) return; e.preventDefault(); e.stopPropagation(); szApply(szNum.value); });
@@ -1901,7 +1915,7 @@ function caretStyle(prop, val) {   // 선택 없이 색·크기를 고른 경우
   ta.dispatchEvent(new Event("input", { bubbles: true }));
 }
 function sizeAtCaret(px) {
-  caretStyle("fontSize", (px || Math.round(parseFloat(getComputedStyle(ta).fontSize)) || 18) + "px");   // 기본 크기: 메모의 기본 글자 크기(18)
+  caretStyle("fontSize", (px || Math.round(parseFloat(getComputedStyle(ta).fontSize)) || 15) + "px");   // 기본 크기: 메모의 기본 글자 크기(15)
 }
 /* 칸을 여러 개 고른 상태(드래그/Shift+클릭)에서는 고른 칸 안의 모든 글자에 크기를 적용해요 (빈 칸은 칸 자체에 지정해 이어 입력하는 글자에도 적용) */
 function sizeCells(cells, px) {
@@ -2229,7 +2243,7 @@ let imgBack = null;
   const shp = el("div", "imgx-row",
     '<button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="hand" aria-label="손글씨" title="손글씨: 마우스나 펜으로 이미지 위에 자유롭게 글씨를 써요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="heart" aria-label="heart" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 19.5C5.5 15 4 11.8 4 9a3.7 3.7 0 0 1 8-1.3A3.7 3.7 0 0 1 20 9c0 2.8-1.5 6-8 10.5z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="star" aria-label="star" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4.5l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.7z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="burst" aria-label="burst" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3.5l1.9 4.3 3.9-2.6-.4 4.7 4.6.5-3.2 3.4 3 3.7-4.6.2.3 4.6-4-2.4-3.5 3-.8-4.6-4.5.9 1.8-4.4-3.8-2.9 4.7-.9-1.4-4.5 4 2.3z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="clover" aria-label="clover" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5.7A4.5 4.5 0 1 1 18.3 12A4.5 4.5 0 1 1 12 18.3A4.5 4.5 0 1 1 5.7 12A4.5 4.5 0 1 1 12 5.7z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
     '' +
-    '<button type="button" data-m="fill" data-sa="pmenu" title="페인트 색: 바탕을 칠할 색을 고르고 투명 비율을 슬라이드바로 정해요. 색을 바꾸면 글자·도형·선 넣기의 기본 색은 보색으로 바뀌어요">페인트 색 <i data-pchip style="display:inline-block;width:12px;height:12px;vertical-align:-1px;border:1px solid #888;border-radius:2px;background:#fff3a3"></i></button><input type="color" data-q="color" data-m="text shape line" value="#2b8a3e" title="색 (글자·도형·선 공통)" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><span class="imgx-sl imgx-fs" data-m="text"><button type="button" data-q="fsdef" title="글자 크기 (누르면 기본값 18로 적용돼요)" aria-label="글자 크기 기본값(18)"><span style="font-size:11px">가</span><span style="font-size:17px;font-weight:600">가</span></button><input type="number" data-q="fs" min="5" max="300" step="1" value="18" inputmode="numeric" aria-label="글자 크기 숫자" title="숫자를 입력하고 Enter (5~300)"><input type="range" data-q="fsr" min="5" max="300" step="1" value="18" style="width:90px" aria-label="글자 크기 슬라이드 (놓으면 적용돼요)"></span><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><input type="color" data-m="none" data-q="bg" value="#fff3a3" hidden aria-hidden="true" tabindex="-1"><button type="button" data-m="text shape" data-sa="bgmenu" title="배경색: 색을 고르고 투명 비율을 슬라이드바로 정해요">배경색</button><select data-q="op" data-m="none" hidden aria-hidden="true" tabindex="-1" title="투명도" aria-label="투명도"></select><label class="imgx-sl" data-m="line pic" title="투명도: 0%는 불투명, 올릴수록 투명해져요 (선택한 요소·이미지에 바로 적용돼요)">투명도 <input type="range" data-q="pop" min="0" max="95" step="1" value="0" aria-label="투명도"><input type="number" data-q="pn" min="0" max="95" step="1" value="0" aria-label="투명도 숫자 입력" title="숫자로 입력하고 Enter (0~95)">%</label><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><input type="color" data-m="text" data-q="oc" value="#000000" title="외곽선 색 (고르면 외곽선이 켜져요)" aria-label="외곽선 색"><input type="number" data-m="text shape pic" data-q="rot" step="1" placeholder="각도°" title="각도 (0~359도, 계속 순환): 359 다음은 0, 0 아래는 359예요. 요소 전체가 이 각도만큼 시계 방향으로 기울어요" aria-label="각도"><button type="button" data-m="text shape pic" data-q="fh" aria-pressed="false" title="요소 전체를 좌우로 뒤집어요">좌우 반전</button>' +
+    '<button type="button" data-m="fill" data-sa="pmenu" title="페인트 색: 바탕을 칠할 색을 고르고 투명 비율을 슬라이드바로 정해요. 색을 바꾸면 글자·도형·선 넣기의 기본 색은 보색으로 바뀌어요">페인트 색 <i data-pchip style="display:inline-block;width:12px;height:12px;vertical-align:-1px;border:1px solid #888;border-radius:2px;background:#fff3a3"></i></button><input type="color" data-q="color" data-m="text shape line" value="#2b8a3e" title="색 (글자·도형·선 공통)" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><span hidden data-m="none"><input type="number" data-q="fs" value="15" tabindex="-1" aria-hidden="true"><input type="range" data-q="fsr" min="5" max="300" value="15" tabindex="-1" aria-hidden="true"></span><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><input type="color" data-m="none" data-q="bg" value="#fff3a3" hidden aria-hidden="true" tabindex="-1"><button type="button" data-m="text shape" data-sa="bgmenu" title="배경색: 색을 고르고 투명 비율을 슬라이드바로 정해요">배경색</button><select data-q="op" data-m="none" hidden aria-hidden="true" tabindex="-1" title="투명도" aria-label="투명도"></select><label class="imgx-sl" data-m="line pic" title="투명도: 0%는 불투명, 올릴수록 투명해져요 (선택한 요소·이미지에 바로 적용돼요)">투명도 <input type="range" data-q="pop" min="0" max="95" step="1" value="0" aria-label="투명도"><input type="number" data-q="pn" min="0" max="95" step="1" value="0" aria-label="투명도 숫자 입력" title="숫자로 입력하고 Enter (0~95)">%</label><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><input type="color" data-m="text" data-q="oc" value="#000000" title="외곽선 색 (고르면 외곽선이 켜져요)" aria-label="외곽선 색"><input type="number" data-m="text shape pic" data-q="rot" step="1" placeholder="각도°" title="각도 (0~359도, 계속 순환): 359 다음은 0, 0 아래는 359예요. 요소 전체가 이 각도만큼 시계 방향으로 기울어요" aria-label="각도"><button type="button" data-m="text shape pic" data-q="fh" aria-pressed="false" title="요소 전체를 좌우로 뒤집어요">좌우 반전</button>' +
     '<textarea data-q="text" rows="2" placeholder="글자 입력" aria-label="글자" hidden></textarea>');
   shp.hidden = true;
   box.append(grip, gripR, gripB); bar.append(main, shp); document.body.append(box); document.getElementById("tb").after(bar);
@@ -2599,6 +2613,7 @@ let imgBack = null;
     const t = e.target;
     if (t === img || box.contains(t) || bar.contains(t) || tbg.contains(t) || (typeof bpop !== "undefined" && bpop.contains(t)) || (typeof ppop !== "undefined" && ppop.contains(t)) || (sh && sh.wrap.contains(t)) || (csDlg && csDlg.contains(t)) || (t.closest && t.closest(".cfov"))) return;
     if (t.closest && t.closest('#tb [data-cmd="undo"],#tb [data-cmd="redo"],#tb #fontSel,#tb #fontMenu')) return;   // 실행 취소·다시 실행 버튼, 글꼴 선택은 이미지 선택을 유지
+    if (sh && sh.mode === "text" && t.closest && t.closest("#tb")) return;   // 글자 넣기 중에는 툴바 1행을 눌러도 글자 넣기를 유지
     if (sh) { finishPoly(); commit(); }   // 편집 중 밖을 눌러도 버리지 않고 이미지에 반영
     hide();
   }, true);
@@ -2630,7 +2645,7 @@ let imgBack = null;
   bar.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서/포커스 유지
   const barClick = e => {
     const b = e.target.closest("button"); if (!b || !img) return;
-    if (b.dataset.q === "fsdef") { fsApply(18); return; }
+    if (b.dataset.q === "fsdef") { fsApply(15); return; }
     if (b.dataset.s || b.dataset.q || b.dataset.sa || b.hasAttribute("data-none")) { shpClick(b); return; }
     if (b.dataset.cs !== undefined) { openCs(); return; }   // 기본 크기 조정
     const a = b.dataset.a;
@@ -2835,7 +2850,7 @@ let imgBack = null;
   }
   const DEF_BG = "#fff3a3";   // 배경·채움 기본색(연한 노랑)
   const LINEM = new Set("arrow darrow trend vline hline cross".split(" "));   // 선 넣기 도구(도형 넣기와 투명도 기본값을 따로 둠)
-  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, ol: false, top: null, color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 18, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, ew: 16 };
+  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, ol: false, top: null, color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, ew: 16 };
   const HM = [["x1", "y1"], ["y1"], ["x2", "y1"], ["x2"], ["x2", "y2"], ["y2"], ["x1", "y2"], ["x1"]];   // 상자형 도형의 8개 손잡이가 움직이는 좌표
   const HLN = [["x1", "y1"], ["x2", "y2"]];                                                              // 선형 도형의 양 끝 손잡이
   const HCUR = ["nwse-resize", "ns-resize", "nesw-resize", "ew-resize", "nwse-resize", "ns-resize", "nesw-resize", "ew-resize"];
@@ -3210,7 +3225,7 @@ let imgBack = null;
     popSync(it && (it.t === "pic" || (sh.mode === "line" && it.t !== "pic")) ? it.op : sh.mode === "line" ? sd.op : sd.pop);
     t.hidden = !(it && isCall(it.t));
     if (it) {
-      qc("color").value = it.color; qc("lw").value = String(it.lw); qc("fs").value = String(it.fs); qc("fsr").value = String(Math.min(300, it.fs)); qc("op").value = String(it.op); qc("bg").value = it.bgc || (isCall(it.t) ? "#ffffff" : it.color);
+      qc("color").value = it.color; qc("lw").value = String(it.lw); qc("fs").value = String(it.fs); qc("fsr").value = String(Math.min(300, it.fs)); if ((sh.mode === "text" || isCall(it.t)) && typeof szSync === "function") szSync(Math.round(it.fs)); qc("op").value = String(it.op); qc("bg").value = it.bgc || (isCall(it.t) ? "#ffffff" : it.color);
       setP(qc("dash"), it.dash); setP(qc("bold"), it.bold); setP(qc("ol"), it.ol);
       qc("oc").value = /^#[0-9a-f]{6}$/i.test(it.oc) ? it.oc : (lum(it.color) > 0.55 ? "#000000" : "#ffffff"); qc("rot").value = it.rot ? String(it.rot) : ""; setP(qc("fh"), it.fh);
       if (isCall(it.t)) { t.value = it.text; t.style.textAlign = alOf(it); }
@@ -3516,7 +3531,7 @@ let imgBack = null;
     op.innerHTML = ops.map(o => '<option value="' + o[0] + '">' + o[1] + "</option>").join("");
     popSync(mode === "line" ? sd.op : sd.pop);
     op.value = mode === "text" ? String(sd.top != null ? sd.top : sd.tool === "ctext" ? 0 : 0.5) : String(mode === "shape" ? sd.sop : mode === "pic" ? sd.pop : mode === "fill" ? sd.fop : sd.op);
-    qc("ew").value = String(sd.ew); qc("fs").value = qc("fsr").value = String(sd.fs); qc("color").value = sd.color; ppSync();   // 글자·도형·선 색과 페인트 색은 각자 마지막 값으로
+    qc("ew").value = String(sd.ew); qc("fs").value = qc("fsr").value = String(sd.fs); if (mode === "text" && typeof szSync === "function") szSync(sd.fs); qc("color").value = sd.color; ppSync();   // 글자·도형·선 색과 페인트 색은 각자 마지막 값으로
     shp.querySelectorAll("[data-s]").forEach(x => setP(x, x.dataset.s === sd.tool)); syncNone();
     shp.hidden = mode === "edit"; syncMainPressed();
     wrap.addEventListener("pointerdown", onDown); wrap.addEventListener("pointermove", onMove);
@@ -3536,7 +3551,7 @@ let imgBack = null;
   function closeShp() {
     closeBg(); closePp();
     if (!sh) return;
-    sh.wrap.remove(); sh = null; hintEl.hidden = true; shp.hidden = true; main.querySelectorAll("[data-m]").forEach(x => { x.hidden = true; }); syncMainPressed(); sched();
+    sh.wrap.remove(); sh = null; hintEl.hidden = true; shp.hidden = true; main.querySelectorAll("[data-m]").forEach(x => { x.hidden = true; }); syncMainPressed(); sched(); try { szFromCaret(); } catch (e) {}
   }
   /* 2행(공통)의 도구 버튼 중 지금 열려 있는 도구를 눌린 모양으로 */
   function syncMainPressed() {
@@ -3560,8 +3575,8 @@ let imgBack = null;
   /* 도구 설정을 기본값으로: 색 빨강, 선 굵기 보통, 글자 크기 21, 배경·채움 연한 노랑(도형 투명도 50%), 점선·굵게·외곽선 해제, 지우개 보통 (이미 넣은 요소는 건드리지 않음) */
   function resetSd() {
     if (!sh) return;
-    Object.assign(sd, { color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 18, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, bold: false, ol: false, top: null, ew: 16 });
-    qc("color").value = "#2b8a3e"; ppSync(); qc("lw").value = "3"; qc("fs").value = "18"; qc("fsr").value = "18"; qc("ew").value = "16"; qc("bg").value = DEF_BG;
+    Object.assign(sd, { color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, bold: false, ol: false, top: null, ew: 16 });
+    qc("color").value = "#2b8a3e"; ppSync(); qc("lw").value = "3"; qc("fs").value = "15"; qc("fsr").value = "15"; if (typeof szSync === "function") szSync(15); qc("ew").value = "16"; qc("bg").value = DEF_BG;
     qc("op").value = sh.mode === "text" ? String(sd.tool === "ctext" ? 0 : 0.5) : sh.mode === "shape" ? "0.5" : "1"; popSync(1);
     ["dash", "bold", "ol"].forEach(k => setP(qc(k), false));
     drawCur(); toast("도구 설정을 기본값으로 되돌렸어요");
@@ -3858,6 +3873,31 @@ let imgBack = null;
     pushUndo(false, "ff" + sh.sel);
     keepAnchor(it, () => { it.ff = e.detail.name; }); e.detail.handled = true; if (it.auto) autoTail(it);
     render();
+  });
+  /* 툴바 1행의 글자 크기(목록·숫자·슬라이드·◀▶)를 글자 넣기에서도 공통으로 써요: 선택한 글자 요소에, 없으면 이어서 넣을 기본 크기에 적용 */
+  window.imgxTextSz = () => { if (!sh || sh.mode !== "text") return null; const it = sh.items[sh.sel]; return it && isCall(it.t) ? it.fs : sd.fs; };
+  document.addEventListener("memosizechange", e => {
+    const d = e.detail || {}; if (!sh) return;
+    const it = sh.items[sh.sel];
+    if (!(sh.mode === "text" || (it && isCall(it.t)))) return;
+    d.handled = true; fsApply(d.v);
+  });
+  /* 크기 목록에 마우스를 올리면 선택한 글자 요소를 임시로 그 크기로 보여주고(기록에 남지 않음), v 가 null 이면 원래대로 */
+  let spv = null;
+  document.addEventListener("memosizepreview", e => {
+    const d = e.detail || {};
+    if (d.v == null) {
+      if (spv) { const f = spv; spv = null; const it = sh && sh.items[f.i]; if (it) { Object.keys(it).forEach(k => { if (!(k in f.o)) delete it[k]; }); Object.assign(it, f.o); render(); } }
+      return;
+    }
+    if (!sh) return;
+    const it = sh.items[sh.sel], ok = it && isCall(it.t);
+    if (!(sh.mode === "text" || ok)) return;
+    d.handled = true; if (!ok) return;
+    if (!spv) spv = { i: sh.sel, o: JSON.parse(JSON.stringify(it)) }; else if (spv.i !== sh.sel) return;
+    Object.keys(it).forEach(k => { if (!(k in spv.o)) delete it[k]; }); Object.assign(it, spv.o);   // 늘 원래 모습에서 시작
+    const v = Math.min(300, Math.max(5, Math.round(d.v)));
+    keepAnchor(it, () => { it.fs = v; }); if (it.auto) autoTail(it); render();
   });
   document.addEventListener("keydown", e => {   // 편집 중: Esc 반영 / Ctrl+Enter 반영 후 닫기 / Enter 자유형 도형 마침 / Delete 선택 삭제 / Ctrl+Z·Y 편집 실행 취소·다시 실행
     const typing = /^(TEXTAREA|INPUT|SELECT)$/.test(e.target.nodeName), ctrl = (e.ctrlKey || e.metaKey) && !e.altKey, k = (e.key || "").toLowerCase();
@@ -6000,6 +6040,12 @@ updateAttN();
   const alignSet = al => { if (pv.wrap) pv.wrap.div.style.textAlign = al; else pv.saved.forEach(x => { x[0].style.textAlign = al; }); };
 
   function pvApply(item) {
+    if (item.k === "size" && (!pv || pv.k === "img")) {   // 이미지 '글자 넣기' 중이면 선택한 글자 요소를 미리보기
+      const ev = new CustomEvent("memosizepreview", { detail: { v: +item.v, handled: false } });
+      document.dispatchEvent(ev);
+      if (ev.detail.handled) { pv = { k: "img" }; return; }
+      if (pv) return;
+    }
     if (!pv && !(item.k === "size" ? sizeStart(item.v) : alignStart(item.v))) return;
     if (pv.k === "size") sizeSet(item.v); else alignSet(item.v);
   }
@@ -6007,6 +6053,7 @@ updateAttN();
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
     want = null;
     const p = pv; if (!p) return; pv = null;
+    if (p.k === "img") { document.dispatchEvent(new CustomEvent("memosizepreview", { detail: { v: null } })); return; }
     if (p.k === "size") { for (let i = p.recs.length - 1; i >= 0; i--) undoWrap(p.recs[i]); setSel(ta, p.a, p.b); }
     else if (p.wrap) { const d = p.wrap.div; p.wrap.nodes.forEach(n => d.parentNode && d.parentNode.insertBefore(n, d)); d.remove(); setSel(ta, p.a, p.b); }
     else p.saved.forEach(x => { if (x[1] === null) x[0].removeAttribute("style"); else x[0].setAttribute("style", x[1]); });
@@ -6026,6 +6073,33 @@ updateAttN();
     new MutationObserver(() => { if (pop.hidden) pvEnd(); }).observe(pop, { attributes: true, attributeFilter: ["hidden"] });
   }
   if (sizePop) wire(sizePop, "size"); wire(alPop, "align");
+})();
+</script>
+<script>
+/* 글자 크기 목록: 글꼴 목록처럼 버튼 아래로 열려요 (이미지 편집 중에도 가려지지 않게 최상단 레이어) */
+(function () {
+  const btn = document.getElementById("szIc"), pop = document.getElementById("szPop"), num = document.getElementById("szNum");
+  if (!btn || !pop) return;
+  pop.addEventListener("mousedown", e => e.preventDefault());   // 목록을 눌러도 메모의 선택·커서 유지
+  const canPop = typeof pop.showPopover === "function";
+  if (canPop) pop.setAttribute("popover", "manual");
+  const place = () => {
+    const r = btn.getBoundingClientRect(), st = pop.style;
+    st.position = "fixed"; st.right = "auto"; st.bottom = "auto"; st.margin = "0";
+    st.maxHeight = Math.max(120, Math.min(420, innerHeight * 0.6, innerHeight - r.bottom - 16)) + "px";
+    st.top = (r.bottom + 4) + "px";
+    st.left = Math.max(8, Math.min(r.left, innerWidth - pop.offsetWidth - 8)) + "px";
+  };
+  const isOpen = () => { try { return pop.matches(":popover-open"); } catch (e) { return false; } };
+  new MutationObserver(() => {
+    if (pop.hidden) { if (canPop && isOpen()) { try { pop.hidePopover(); } catch (e) {} } }
+    else { if (canPop && !isOpen()) { try { pop.showPopover(); } catch (e) {} } place(); }
+  }).observe(pop, { attributes: true, attributeFilter: ["hidden"] });
+  window.addEventListener("resize", () => { if (!pop.hidden) place(); });
+  btn.addEventListener("click", () => setTimeout(() => {   // 열 때 현재 크기를 표시
+    if (pop.hidden) return;
+    pop.querySelectorAll("button[data-fs]").forEach(b => { if (b.dataset.fs === String(Math.round(parseFloat(num.value)))) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
+  }, 0));
 })();
 </script>
 
