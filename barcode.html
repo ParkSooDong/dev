@@ -7,7 +7,7 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000036c48206924bbbecfe7b9dde%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_%25EB%25B0%2594%25EC%25BD%2594%25EB%2593%259C%25EB%25B3%25B5%25EA%25B5%25AC_QR%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498668%26p%3Dfs%26cid%3D1%26sig%3Ddc4d8441c667de2c7c2895c60f29539de21f7523746fb63e4570aa0f68c87101%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000d39c8206bcfa6a7028d2c9b4%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25ED%2581%25AC%25EA%25B8%25B0%25EC%259C%25A0%25EC%25A7%2580_%25EC%25B5%259C%25EC%25A2%2585.html%26cd%3Dattachment%26ts%3D498668%26p%3Dfs%26cid%3D1%26sig%3Ddabc910eae8c177d3b96412d97854e20be3ecf0c8f0c67e2821e036722ea439c%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
@@ -539,35 +539,41 @@ p{margin:6px 0 0}
 .cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
 
-/* QR 미리보기: 넓은 화면에서도 코드 전체를 정사각형으로 유지하고 문자열은 오른쪽에 표시.
-   메인/메모 영역의 높이나 페이지 레이아웃은 변경하지 않는다. */
-@media (min-width:1280px){
-  .view[data-k=qr]{
-    flex-direction:row!important;
-    align-items:center!important;
-    justify-content:flex-start!important;
-    gap:12px!important;
-    padding:4px 10px!important;
-    min-width:0!important;
+
+
+/* 넓은 브라우저에서 QR 미리보기 크기 유지.
+   데스크톱 공통 SVG flex 규칙이 QR을 축소하지 못하도록 QR에만 고정 정사각형 크기를 지정한다.
+   페이지/메모 영역의 높이와 3x3 그리드 전체 높이는 변경하지 않는다. */
+@media (min-width:1280px) {
+  .view[data-k="qr"] {
+    box-sizing: border-box !important;
+    min-height: 64px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    padding: 4px 10px !important;
   }
-  .view[data-k=qr] svg{
-    display:block!important;
-    flex:0 0 auto!important;
-    width:auto!important;
-    height:100%!important;
-    max-width:none!important;
-    max-height:100%!important;
-    min-width:0!important;
-    min-height:0!important;
-    aspect-ratio:1 / 1!important;
+  .view[data-k="qr"] > svg {
+    display: block !important;
+    box-sizing: border-box !important;
+    flex: 0 0 54px !important;
+    width: 54px !important;
+    min-width: 54px !important;
+    max-width: 54px !important;
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: contain !important;
   }
-  .view[data-k=qr] .txt{
-    flex:1 1 0!important;
-    min-width:0!important;
-    margin:0 0 0 2px!important;
-    text-align:left!important;
-    overflow-wrap:anywhere;
-    word-break:break-all;
+  .view[data-k="qr"] > .txt {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+    word-break: break-all;
   }
 }
 
