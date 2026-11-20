@@ -2150,47 +2150,100 @@ let imgBack = null;
     } catch (e) { return true; }
   }
   const CSMIN = 8, CSMAX = 8000;
-  let cs = null, csPad = "#ffffff", csCpk = null, csW = null, csH = null;
+  let cs = null, csPad = "#ffffff", csCpk = null, csW = null, csH = null, csBgC = "", csBCpk = null, csRot = null, csShp = null, csFlip = null;
+  /* 도형·각도·좌우반전: [이미지 형태 변경]과 같아요. 박스(범위)는 늘 반듯하고, 결과 그림에 '도형 → 좌우반전 → 시계 방향 회전'을 적용해요 */
+  const csRotOf = c => ((Math.round(+c.rot) || 0) % 360 + 360) % 360;
+  const csXf = c => !!(csRotOf(c) || c.flip);
+  const csFlat = c => csXf(c) || c.shp !== "rect";
+  const csExt = c => { const a = csRotOf(c) * Math.PI / 180, co = Math.abs(Math.cos(a)), si = Math.abs(Math.sin(a)); return [c.fw * co + c.fh * si, c.fw * si + c.fh * co]; };
+  const csExtL = c => c.lk || csExt(c);
+  const csFlipSet = on => { csFlip.setAttribute("aria-pressed", String(!!on)); csFlip.style.background = on ? "#339af0" : ""; csFlip.style.color = on ? "#fff" : ""; csFlip.style.borderColor = on ? "#339af0" : ""; };
+  function csSync() {
+    const c = cs, a = document.activeElement;
+    if (a !== csRot) csRot.value = c.rot ? String(c.rot) : "";
+    csFlipSet(c.flip); if (csShp.value !== c.shp) csShp.value = c.shp;
+    const bv = csDlg.querySelector("[data-csbv]"); if (bv) bv.style.background = c.bg ? c.bg : "";
+    const e = imExt(c.fw, c.fh, c.rot), o = csDlg.querySelector("[data-cso]"); if (o) o.textContent = "결과 " + e[0] + " × " + e[1] + " px";
+  }
   function csBuild() {
     csDlg = el("div", "cfov"); csDlg.hidden = true;
     csDlg.innerHTML = '<div class="cfbox cs" role="dialog" aria-modal="true" aria-label="기본 크기 조정">' +
       '<div class="cfhd"><b>기본 크기 조정</b><span class="cfcnt" data-csi></span></div><div class="cfpg">' +
-      '<div class="cfnote" style="margin:0">가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌어서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px). 박스 밖은 잘리고, 이미지 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.</div>' +
+      '<div class="cfnote" style="margin:0">가로·세로 크기를 넣으면 파란 박스가 나와요. 박스 안쪽을 끌어 옮기고, 오른쪽·아래쪽 변(작은 사각 손잡이)을 끌어 가로만·세로만(모서리는 둘 다) 줄이거나 늘일 수 있어요 (화살표 키는 1px, Shift+화살표는 10px). 박스 밖은 잘리고, 이미지 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.</div>' +
       '<div class="cs-stage"><canvas></canvas></div>' +
-      '<div class="cs-sz"><span>크기</span><input type="number" data-csw min="' + CSMIN + '" max="' + CSMAX + '" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" data-csh min="' + CSMIN + '" max="' + CSMAX + '" step="1" aria-label="세로 픽셀"><span>px</span></div>' +
+      '<div class="cs-sz"><span>크기</span><input type="number" data-csw min="' + CSMIN + '" max="' + CSMAX + '" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" data-csh min="' + CSMIN + '" max="' + CSMAX + '" step="1" aria-label="세로 픽셀"><span>px</span><span data-cso style="margin-left:8px;opacity:.7"></span></div>' +
+      '<div class="cs-sz" title="결과 이미지를 담을 도형이에요. 도형 밖은 투명해요"><span>도형</span><select data-csshp aria-label="도형" style="height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px"><option value="rect">사각형</option><option value="circle">원</option><option value="tri">삼각형</option><option value="cloud">구름</option><option value="pent">오각형</option><option value="heart">하트</option><option value="star">별</option><option value="burst">폭발</option><option value="clover">클로버</option></select></div>' +
+      '<div class="cs-sz" title="결과 이미지를 시계 방향으로 돌려요 (0~359도, 계속 순환)"><span>각도</span><input type="number" data-csrot step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="cs-btn" data-cs="flip" aria-pressed="false" style="margin-left:8px" title="결과 이미지를 좌우로 뒤집어요">좌우 반전</button></div>' +
+      '<div class="cfnote" style="margin:0 0 8px;font-size:12px">도형·각도·좌우반전을 쓰면 글자·도형 레이어는 하나의 그림으로 합쳐져요.</div>' +
       '<div class="cfsec">빈 곳을 채울 색</div><div class="cpk" data-cscpk></div>' +
+      '<details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 색 없음) <i data-csbv></i></summary><div class="cpk" data-csbcpk></div></details>' +
       '<button type="button" class="cs-btn" data-cs="orig" title="처음 삽입했을 때의 가로·세로 크기를 칸에 넣어요 (확인을 눌러야 적용돼요)">원본 크기로</button></div>' +
       '<div class="cfft"><button type="button" class="ok" data-cs="ok">확인</button><button type="button" data-cs="x">취소</button></div></div>';
     document.body.appendChild(csDlg);
     csW = csDlg.querySelector("[data-csw]"); csH = csDlg.querySelector("[data-csh]");
     csCpk = cpkInit(csDlg.querySelector("[data-cscpk]"), csPad, v => { csPad = v; if (cs) { cs.pad = v || null; csDraw(); } });
+    csBCpk = cpkInit(csDlg.querySelector("[data-csbcpk]"), csBgC, v => { csBgC = v || ""; if (cs) { cs.bg = v || null; csDraw(); } });
+    csRot = csDlg.querySelector("[data-csrot]"); csShp = csDlg.querySelector("[data-csshp]"); csFlip = csDlg.querySelector('[data-cs="flip"]');
+    csRot.addEventListener("input", () => {
+      if (!cs) return;
+      const v = csRot.value; let r = Math.round(+v) || 0;
+      if (v !== "" && (r > 359 || r < 0)) { r = ((r % 360) + 360) % 360; csRot.value = String(r); }
+      cs.rot = r; csClampPos(); csLayout(); csDraw();
+    });
+    csRot.addEventListener("change", () => { if (cs) csRot.value = cs.rot ? String(cs.rot) : ""; });
+    csShp.addEventListener("change", () => { if (cs) { cs.shp = csShp.value; csDraw(); } });
     const cv = csDlg.querySelector("canvas");
     csDlg.addEventListener("pointerdown", e => { if (cs) cs.dn = e.target; }, true);
     csDlg.addEventListener("click", e => {
       if (e.target === csDlg) { if (cs && cs.dn === csDlg) csOk(); return; }   // 창 바깥: 확정
       const b = e.target.closest("[data-cs]"); if (!b || !cs) return;
-      if (b.dataset.cs === "ok") csOk(); else if (b.dataset.cs === "x") csClose(); else if (b.dataset.cs === "orig") csOrig();
+      if (b.dataset.cs === "ok") csOk(); else if (b.dataset.cs === "x") csClose(); else if (b.dataset.cs === "orig") csOrig(); else if (b.dataset.cs === "flip") { cs.flip = !cs.flip; csDraw(); }
     });
     const inp = (box, which) => {
       box.addEventListener("input", () => { const v = parseInt(box.value, 10); if (cs && v >= CSMIN && v <= CSMAX) csSetSize(which === "w" ? v : cs.fw, which === "h" ? v : cs.fh, false, true); });
       box.addEventListener("change", () => { if (!cs) return; csW.value = cs.fw; csH.value = cs.fh; });
     };
     inp(csW, "w"); inp(csH, "h");
-    const inside = e => { const r = cv.getBoundingClientRect(), lx = (e.clientX - r.left) / cs.s - cs.fw / 2, ly = (e.clientY - r.top) / cs.s - cs.fh / 2; return lx >= cs.fx && lx <= cs.fx + cs.fw && ly >= cs.fy && ly <= cs.fy + cs.fh; };
+    const hit = e => {   // "r"=오른쪽 변, "b"=아래쪽 변, "rb"=오른쪽 아래 모서리, "m"=안쪽(이동) — 각도가 있으면 박스 방향 기준
+      const c = cs, r = cv.getBoundingClientRect(), ex = csExtL(c), a = csRotOf(c) * Math.PI / 180;
+      const dx = (e.clientX - r.left) / c.s - ex[0] / 2 - (c.fx + c.fw / 2), dy = (e.clientY - r.top) / c.s - ex[1] / 2 - (c.fy + c.fh / 2);
+      const lx = dx * Math.cos(a) + dy * Math.sin(a), ly = -dx * Math.sin(a) + dy * Math.cos(a);
+      const tol = Math.min(10 / c.s, Math.max(2, Math.min(c.fw, c.fh) / 3));
+      const nr = Math.abs(lx - c.fw / 2) <= tol && Math.abs(ly) <= c.fh / 2 + tol, nb = Math.abs(ly - c.fh / 2) <= tol && Math.abs(lx) <= c.fw / 2 + tol;
+      if (nr && nb) return "rb"; if (nr) return "r"; if (nb) return "b";
+      return Math.abs(lx) <= c.fw / 2 && Math.abs(ly) <= c.fh / 2 ? "m" : "";
+    };
+    const curs = { r: "ew-resize", b: "ns-resize", rb: "nwse-resize", m: "move", "": "default" };
     cv.addEventListener("pointerdown", e => {
-      if (!cs || !inside(e)) return;
+      if (!cs) return;
+      const h = hit(e); if (!h) return;
       e.preventDefault(); cv.setPointerCapture(e.pointerId);
-      cs.dg = { x: e.clientX, y: e.clientY, fx: cs.fx, fy: cs.fy };
+      cs.dg = { h, x: e.clientX, y: e.clientY, fx: cs.fx, fy: cs.fy, fw: cs.fw, fh: cs.fh, s: cs.s };
+      if (h !== "m") cs.lk = csExt(cs);   // 크기를 바꾸는 동안 화면 배율이 출렁이지 않게 고정
     });
     cv.addEventListener("pointermove", e => {
       if (!cs) return;
-      if (!cs.dg) { cv.style.cursor = inside(e) ? "move" : "default"; return; }
-      const th = 6 / cs.s, sn = (v, cand) => { for (const q of cand) if (Math.abs(v - q) <= th) return q; return v; };   // 이미지 가장자리·가운데에 살짝 달라붙게
-      cs.fx = sn(cs.dg.fx + (e.clientX - cs.dg.x) / cs.s, [0, cs.iw - cs.fw, (cs.iw - cs.fw) / 2]);
-      cs.fy = sn(cs.dg.fy + (e.clientY - cs.dg.y) / cs.s, [0, cs.ih - cs.fh, (cs.ih - cs.fh) / 2]);
-      csClampPos(); csDraw();
+      const d = cs.dg;
+      if (!d) { cv.style.cursor = curs[hit(e)]; return; }
+      if (d.h === "m") {
+        const th = 6 / cs.s, sn = (v, cand) => { for (const q of cand) if (Math.abs(v - q) <= th) return q; return v; };   // 이미지 가장자리·가운데에 살짝 달라붙게
+        cs.fx = sn(d.fx + (e.clientX - d.x) / cs.s, [0, cs.iw - cs.fw, (cs.iw - cs.fw) / 2]);
+        cs.fy = sn(d.fy + (e.clientY - d.y) / cs.s, [0, cs.ih - cs.fh, (cs.ih - cs.fh) / 2]);
+        csClampPos(); csDraw(); return;
+      }
+      const c = cs, lk = c.lk, a = csRotOf(c) * Math.PI / 180, co = Math.cos(a), si = Math.sin(a);
+      const ddx = (e.clientX - d.x) / d.s, ddy = (e.clientY - d.y) / d.s, dl = ddx * co + ddy * si, dv = -ddx * si + ddy * co;
+      let hiW = CSMAX, hiH = CSMAX;
+      if (!csRotOf(c)) { hiW = Math.max(CSMIN, Math.min(CSMAX, Math.floor(c.iw + lk[0] / 2 - d.fx))); hiH = Math.max(CSMIN, Math.min(CSMAX, Math.floor(c.ih + lk[1] / 2 - d.fy))); }
+      let nw = d.fw, nh = d.fh;
+      if (d.h.includes("r")) nw = clamp(Math.round(d.fw + dl), CSMIN, hiW);
+      if (d.h.includes("b")) nh = clamp(Math.round(d.fh + dv), CSMIN, hiH);
+      const cw = nw - d.fw, ch = nh - d.fh;   // 왼쪽·위쪽 변이 화면에서 제자리에 있도록 중심 이동
+      const cx = d.fx + d.fw / 2 + (cw / 2) * co - (ch / 2) * si, cy = d.fy + d.fh / 2 + (cw / 2) * si + (ch / 2) * co;
+      c.fw = nw; c.fh = nh; c.fx = cx - nw / 2; c.fy = cy - nh / 2;
+      csClampPos(); csW.value = c.fw; csH.value = c.fh; csDraw();
     });
-    const up = () => { if (cs) cs.dg = null; };
+    const up = () => { if (!cs) return; const had = cs.lk; cs.dg = null; cs.lk = null; if (had) { csClampPos(); csLayout(); csDraw(); } };
     cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", up);
   }
   function csClampPos() {   // 박스는 이미지와 겹친 채, 자기 크기의 절반까지만 밖으로 나갈 수 있어요
@@ -2199,7 +2252,7 @@ let imgBack = null;
     c.fy = clamp(Math.round(c.fy), Math.ceil(-c.fh / 2), Math.floor(c.ih - c.fh / 2));
   }
   function csLayout() {
-    const c = cs, st = csDlg.querySelector(".cs-stage"), uw = c.iw + c.fw, uh = c.ih + c.fh;
+    const c = cs, st = csDlg.querySelector(".cs-stage"), ex = csExtL(c), uw = c.iw + ex[0], uh = c.ih + ex[1];
     const aw = Math.max(200, st.clientWidth - 18), ah = Math.max(140, Math.min(innerHeight * 0.4, 380));
     c.s = Math.min(1, aw / uw, ah / uh); c.dpr = window.devicePixelRatio || 1;
     const w = Math.max(1, Math.round(uw * c.s)), h = Math.max(1, Math.round(uh * c.s));
@@ -2210,19 +2263,38 @@ let imgBack = null;
     for (let j = 0; j * q < H; j++) for (let i = j & 1; i * q < W; i += 2) x.fillRect(X + i * q, Y + j * q, q, q);
   }
   function csDraw() {
-    const c = cs, x = c.cv.getContext("2d"), d = c.dpr, k = c.s * d, ox = c.fw / 2, oy = c.fh / 2;
+    const c = cs, x = c.cv.getContext("2d"), d = c.dpr, k = c.s * d, ext = csExtL(c), ox = ext[0] / 2, oy = ext[1] / 2;
     const IX = ox * k, IY = oy * k, IW = c.iw * k, IH = c.ih * k, FX = (c.fx + ox) * k, FY = (c.fy + oy) * k, FW = c.fw * k, FH = c.fh * k;
+    const xf = csXf(c), t = c.fw + " × " + c.fh, shp = c.shp;
     x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, c.cv.width, c.cv.height);
+    x.imageSmoothingEnabled = true; x.imageSmoothingQuality = "high";
     x.fillStyle = "rgba(128,128,128,.22)"; x.fillRect(0, 0, c.cv.width, c.cv.height);
     x.globalAlpha = 0.4; x.drawImage(c.im, IX, IY, IW, IH); x.globalAlpha = 1;   // 박스 밖(잘릴 부분)은 흐리게
-    x.save(); x.beginPath(); x.rect(FX, FY, FW, FH); x.clip();   // 박스 안: 결과 미리 보기
-    if (c.pad) { x.fillStyle = c.pad; x.fillRect(FX, FY, FW, FH); } else csChecker(x, FX, FY, FW, FH, 8 * d);
-    x.drawImage(c.im, IX, IY, IW, IH); x.restore();
+    if (c.bg) { x.fillStyle = c.bg; x.fillRect(FX + FW / 2 - ext[0] * k / 2, FY + FH / 2 - ext[1] * k / 2, ext[0] * k, ext[1] * k); }
+    if (!xf) {
+      x.save(); x.translate(FX, FY); x.clip(imShapePath(shp, FW, FH)); x.translate(-FX, -FY);   // 박스 안: 결과 미리 보기
+      if (c.pad) { x.fillStyle = c.pad; x.fillRect(FX, FY, FW, FH); } else csChecker(x, FX, FY, FW, FH, 8 * d);
+      x.drawImage(c.im, IX, IY, IW, IH); x.restore();
+    } else {   // 각도·반전: 박스 안 그림을 따로 만들어 박스 중심 기준으로 뒤집고 돌려서 그림
+      const tm = mkCv(Math.max(1, Math.round(FW)), Math.max(1, Math.round(FH))), tx = tm.getContext("2d"); tx.save(); tx.clip(imShapePath(shp, tm.width, tm.height));
+      if (c.pad) { tx.fillStyle = c.pad; tx.fillRect(0, 0, tm.width, tm.height); } else csChecker(tx, 0, 0, tm.width, tm.height, 8 * d);
+      tx.imageSmoothingQuality = "high"; tx.drawImage(c.im, IX - FX, IY - FY, IW, IH); tx.restore();
+      x.save(); x.translate(FX + FW / 2, FY + FH / 2); if (csRotOf(c)) x.rotate(csRotOf(c) * Math.PI / 180);
+      x.save(); if (c.flip) x.scale(-1, 1); x.drawImage(tm, -FW / 2, -FH / 2, FW, FH); x.restore();
+      x.lineWidth = 2 * d; x.strokeStyle = "#339af0"; if (shp === "rect") x.strokeRect(-FW / 2 + d, -FH / 2 + d, FW - 2 * d, FH - 2 * d); else { x.save(); x.translate(-FW / 2, -FH / 2); x.stroke(imShapePath(shp, FW, FH)); x.restore(); }
+      x.font = "600 " + 12 * d + "px sans-serif"; x.textBaseline = "middle";
+      x.fillStyle = "#339af0"; x.fillRect(-FW / 2, -FH / 2, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, -FW / 2 + 5 * d, -FH / 2 + 9 * d); foHandles(x, d, FW, FH);
+      x.restore();
+    }
     x.save(); x.setLineDash([4 * d, 3 * d]); x.lineWidth = d; x.strokeStyle = "rgba(90,90,90,.9)"; x.strokeRect(IX + .5, IY + .5, IW - 1, IH - 1); x.restore();   // 지금 이미지의 경계
-    x.lineWidth = 2 * d; x.strokeStyle = "#339af0"; x.strokeRect(FX + d, FY + d, FW - 2 * d, FH - 2 * d);
-    const t = c.fw + " × " + c.fh; x.font = "600 " + 12 * d + "px sans-serif"; x.textBaseline = "middle";
-    x.fillStyle = "#339af0"; x.fillRect(FX, FY, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, FX + 5 * d, FY + 9 * d);
-    csDlg.querySelector("[data-csi]").textContent = "현재 " + c.iw + " × " + c.ih + " px · 박스 위치 (" + c.fx + ", " + c.fy + ")";
+    if (!xf) {
+      x.lineWidth = 2 * d; x.strokeStyle = "#339af0"; if (shp === "rect") x.strokeRect(FX + d, FY + d, FW - 2 * d, FH - 2 * d); else { x.save(); x.translate(FX, FY); x.stroke(imShapePath(shp, FW, FH)); x.restore(); }
+      x.font = "600 " + 12 * d + "px sans-serif"; x.textBaseline = "middle";
+      x.fillStyle = "#339af0"; x.fillRect(FX, FY, Math.min(x.measureText(t).width + 10 * d, FW), 18 * d); x.fillStyle = "#fff"; x.fillText(t, FX + 5 * d, FY + 9 * d);
+      x.save(); x.translate(FX + FW / 2, FY + FH / 2); foHandles(x, d, FW, FH); x.restore();
+    }
+    csDlg.querySelector("[data-csi]").textContent = "현재 " + c.iw + " × " + c.ih + " px · 박스 위치 (" + Math.round(c.fx) + ", " + Math.round(c.fy) + ")";
+    csSync();
   }
   function csSetSize(w, h, center, keepCenter) {
     const c = cs, cx = c.fx + c.fw / 2, cy = c.fy + c.fh / 2;
@@ -2248,8 +2320,9 @@ let imgBack = null;
   function csClose() { if (!cs) return; csDlg.hidden = true; cs = null; document.removeEventListener("keydown", csKey, true); }
   function csOk() {
     const c = cs; if (!c) return;
+    if (csFlat(c) && (c.t.getAttribute("data-layers") || c.t.getAttribute("data-base")) && !confirm("도형·각도·좌우반전을 쓰면 글자·도형 레이어가 하나의 그림으로 합쳐져 더는 따로 고칠 수 없어요. 계속할까요?")) return;
     csClose();
-    if (c.fw === c.iw && c.fh === c.ih && c.fx === 0 && c.fy === 0) return;   // 바뀐 게 없음
+    if (c.fw === c.iw && c.fh === c.ih && c.fx === 0 && c.fy === 0 && !csFlat(c) && !c.bg) return;   // 바뀐 게 없음
     csApply(c).catch(() => toast("기본 크기를 바꾸지 못했어요"));
   }
   async function openCs() {
@@ -2261,8 +2334,8 @@ let imgBack = null;
     const im = await ldImg(t.src);
     if (!im || !im.naturalWidth) { toast("이미지를 읽지 못했어요"); return; }
     if (!csDlg) csBuild();
-    cs = { t, im, iw: im.naturalWidth, ih: im.naturalHeight, fw: im.naturalWidth, fh: im.naturalHeight, fx: 0, fy: 0, pad: csPad || null, cv: csDlg.querySelector("canvas"), dg: null, dn: null, s: 1, dpr: 1 };
-    csCpk.set(csPad); csW.value = cs.fw; csH.value = cs.fh;
+    cs = { t, im, iw: im.naturalWidth, ih: im.naturalHeight, fw: im.naturalWidth, fh: im.naturalHeight, fx: 0, fy: 0, pad: csPad || null, bg: csBgC || null, rot: 0, flip: false, shp: "rect", cv: csDlg.querySelector("canvas"), dg: null, dn: null, s: 1, dpr: 1 };
+    csCpk.set(csPad); csBCpk.set(csBgC); csW.value = cs.fw; csH.value = cs.fh;
     csDlg.hidden = false; document.addEventListener("keydown", csKey, true);
     csLayout(); csDraw();
   }
@@ -2271,6 +2344,29 @@ let imgBack = null;
     const { iw, ih, fx, fy, fw, fh, pad } = c, srcU = t.getAttribute("src");
     say("기본 크기를 바꾸는 중…");
     const paint = (w, h, im, ox, oy) => { const cv = mkCv(Math.max(1, w), Math.max(1, h)), x = cv.getContext("2d"); if (pad) { x.fillStyle = pad; x.fillRect(0, 0, cv.width, cv.height); } x.drawImage(im, ox, oy); return cv; };
+    if (csFlat(c) || c.bg) {   // 도형·각도·반전: 레이어를 합친 한 장의 그림으로 (자르기 → 도형 → 반전 → 회전 → 바깥 색)
+      let cv = paint(fw, fh, c.im, -fx, -fy);
+      if (c.shp !== "rect") { const x = cv.getContext("2d"); x.save(); x.globalCompositeOperation = "destination-in"; x.fill(imShapePath(c.shp, cv.width, cv.height)); x.restore(); }
+      if (csXf(c)) {
+        const e = imExt(cv.width, cv.height, c.rot), rc = mkCv(e[0], e[1]), rx = rc.getContext("2d");
+        rx.imageSmoothingQuality = "high"; rx.translate(e[0] / 2, e[1] / 2); if (csRotOf(c)) rx.rotate(csRotOf(c) * Math.PI / 180); if (c.flip) rx.scale(-1, 1);
+        rx.drawImage(cv, -cv.width / 2, -cv.height / 2); cv = rc;
+      }
+      if (c.bg) { const c3 = mkCv(cv.width, cv.height), x3 = c3.getContext("2d"); x3.fillStyle = c.bg; x3.fillRect(0, 0, c3.width, c3.height); x3.drawImage(cv, 0, 0); cv = c3; }
+      const enc = encodeCv(cv, true);
+      if (enc.url.length > 2600000) { toast("이미지 용량이 너무 커서 적용하지 못했어요. 크기를 줄여 주세요"); return; }
+      const r = t.getBoundingClientRect(), kx = r.width / iw, ky = r.height / ih;
+      let dw = cv.width * kx, dh = cv.height * ky; const lim = Math.max(MINW, Math.floor(inner()));
+      if (dw > lim) { dh = dh * lim / dw; dw = lim; }
+      if (!t.isConnected) return;
+      hpush(t); putState(t, { src: enc.url, base: null, layers: null });
+      if (img !== t) show(t);
+      setSz(dw, dh, enc.c.width, enc.c.height);
+      t.addEventListener("load", sched, { once: true });
+      baseSync(); fire(); sched();
+      say("기본 크기를 " + cv.width + " × " + cv.height + " px 로 바꿨어요", "ok");
+      return;
+    }
     const enc1 = encodeCv(paint(fw, fh, c.im, -fx, -fy), !pad || imgHasAlpha(c.im, srcU));   // 화면에 보이는 그림(합성본)
     let newBase = null, layers = null;
     const lay = t.getAttribute("data-layers"), baseU = t.getAttribute("data-base");
