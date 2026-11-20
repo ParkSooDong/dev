@@ -3216,7 +3216,7 @@ let imgBack = null;
   function syncCtl() {
     if (!sh) return;
     const it = sh.items[sh.sel], t = qc("text");
-    popSync(it && (sh.mode === "pic" ? it.t === "pic" : sh.mode === "line" && it.t !== "pic") ? it.op : sh.mode === "line" ? sd.op : sd.pop);
+    popSync(it && (it.t === "pic" || (sh.mode === "line" && it.t !== "pic")) ? it.op : sh.mode === "line" ? sd.op : sd.pop);
     t.hidden = !(it && isCall(it.t));
     if (it) {
       qc("color").value = it.color; qc("lw").value = String(it.lw); qc("fs").value = String(it.fs); qc("op").value = String(it.op); qc("bg").value = it.bgc || (isCall(it.t) ? "#ffffff" : it.color);
@@ -3224,7 +3224,8 @@ let imgBack = null;
       qc("oc").value = /^#[0-9a-f]{6}$/i.test(it.oc) ? it.oc : (lum(it.color) > 0.55 ? "#000000" : "#ffffff"); qc("rot").value = it.rot ? String(it.rot) : ""; setP(qc("fh"), it.fh);
       if (isCall(it.t)) { t.value = it.text; t.style.textAlign = alOf(it); }
     }
-    handUi(); if (!bpop.hidden) bgSync(); sched();
+    handUi(); { const lb = qc("pop") && qc("pop").parentNode; if (lb) lb.hidden = !(sh.mode === "line" || sh.mode === "pic" || (it && it.t === "pic")); }   // 투명도 막대: 선·이미지 넣기 모드이거나, 어떤 모드에서든 올린 이미지를 선택했을 때
+    if (!bpop.hidden) bgSync(); sched();
   }
   /* 말풍선 꼬리: 직접 옮기기 전에는 글자(상자 크기)가 바뀔 때마다 상자 아래쪽에 자동으로 맞춤 */
   /* 상자 위치도 본문 정렬을 따라요: 왼쪽 정렬은 왼쪽 끝, 가운데는 가운데, 오른쪽은 오른쪽 끝을 고정한 채 글자 수에 따라 늘고 줄어요 */
@@ -3806,9 +3807,9 @@ let imgBack = null;
     if (q === "pop" || q === "pn") {   // [이미지 넣기] 투명도 (막대·숫자): 올린 이미지 투명도% → 불투명도
       const tp = Math.max(0, Math.min(95, Math.round(+v)));
       if (v === "" || isNaN(tp)) return;
-      const o = Math.round((1 - tp / 100) * 100) / 100, pm = sh.mode === "pic";
+      const o = Math.round((1 - tp / 100) * 100) / 100, isP = !!(it && it.t === "pic"), pm = sh.mode === "pic" || isP;
       if (pm) sd.pop = o; else sd.op = o;
-      if (it && (pm ? it.t === "pic" : it.t !== "pic")) { pushUndo(false, "pop" + sh.sel); it.op = o; }
+      if (it && (isP || (sh.mode === "line" && it.t !== "pic"))) { pushUndo(false, "pop" + sh.sel); it.op = o; }
       const r = qc("pop"), n = qc("pn"); if (r && q !== "pop") r.value = String(tp); if (n && q !== "pn") n.value = String(tp);
       render(); return;
     }
