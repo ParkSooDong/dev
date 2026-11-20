@@ -7,7 +7,7 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000d39c8206bcfa6a7028d2c9b4%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25ED%2581%25AC%25EA%25B8%25B0%25EC%259C%25A0%25EC%25A7%2580_%25EC%25B5%259C%25EC%25A2%2585.html%26cd%3Dattachment%26ts%3D498668%26p%3Dfs%26cid%3D1%26sig%3Ddabc910eae8c177d3b96412d97854e20be3ecf0c8f0c67e2821e036722ea439c%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000b8948206a1e8bac60fbfb469%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25ED%2581%25AC%25EA%25B8%25B0%25ED%2599%2595%25EB%258C%2580%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498668%26p%3Dfs%26cid%3D1%26sig%3D922fd9d5478f15724ae0dbeaaa5026fa0746f5b980c9a659151777c929b8f043%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
@@ -540,35 +540,42 @@ p{margin:6px 0 0}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
 
 
-
-/* 넓은 브라우저에서 QR 미리보기 크기 유지.
-   데스크톱 공통 SVG flex 규칙이 QR을 축소하지 못하도록 QR에만 고정 정사각형 크기를 지정한다.
-   페이지/메모 영역의 높이와 3x3 그리드 전체 높이는 변경하지 않는다. */
+/* QR 가독성 보정: 1280px 이상에서 QR 미리보기의 세로 공간을 확보한다.
+   기존 54px 강제 축소 규칙을 사용하지 않는다. 메인/브라우저 높이는 그대로 유지한다. */
 @media (min-width:1280px) {
+  .cell:has(.view[data-k="qr"]) {
+    padding: 4px !important;
+    gap: 4px !important;
+  }
   .view[data-k="qr"] {
     box-sizing: border-box !important;
-    min-height: 64px !important;
+    display: flex !important;
+    flex: 0 0 76px !important;
+    min-height: 76px !important;
+    height: 76px !important;
+    max-height: 76px !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    gap: 12px !important;
-    padding: 4px 10px !important;
+    gap: 10px !important;
+    padding: 3px 8px !important;
+    overflow: hidden !important;
   }
   .view[data-k="qr"] > svg {
     display: block !important;
     box-sizing: border-box !important;
-    flex: 0 0 54px !important;
-    width: 54px !important;
-    min-width: 54px !important;
-    max-width: 54px !important;
-    height: 54px !important;
-    min-height: 54px !important;
-    max-height: 54px !important;
+    flex: 0 0 70px !important;
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
+    height: 70px !important;
+    min-height: 70px !important;
+    max-height: 70px !important;
     aspect-ratio: 1 / 1 !important;
     object-fit: contain !important;
   }
   .view[data-k="qr"] > .txt {
-    flex: 1 1 auto !important;
+    flex: 1 1 0 !important;
     min-width: 0 !important;
     margin: 0 !important;
     text-align: left !important;
