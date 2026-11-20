@@ -2534,7 +2534,7 @@ let imgBack = null;
   shp.hidden = true;
   box.append(grip, gripR, gripB); bar.append(main, shp); document.body.append(box); document.getElementById("tb").after(bar);
   const tbg = el("span", "imgx-tbg", '<i class="sep"></i>' + '<button type="button" data-a="pic" title="캡처·파일 이미지를 붙여넣거나 열어서, 형태를 바꾼 뒤 이 이미지 위에 올려요">이미지 넣기</button><button type="button" data-a="cpy" aria-haspopup="true" title="글자·도형·올린 이미지가 합쳐진 전체 이미지를 복사하거나 PC에 파일로 저장해요">이미지 저장</button><button type="button" data-cs="1" title="이미지 그림 자체의 가로·세로 크기를 바꿔요 (박스를 끌어 남길 범위를 정해요)">기본 크기 조정</button>' + '<label class="imgx-sl" title="크기 비율: 지금 크기가 100%예요 (가로·세로를 직접 조절하면 그 크기가 새 100%). [원본 크기]를 누르면 원본이 100%예요">크기 <input type="range" data-sl min="10" max="500" step="1" value="100" aria-label="크기 비율"><input type="number" data-sn min="10" max="500" step="1" value="100" aria-label="크기 비율 숫자 입력" title="숫자로 입력하고 Enter (10~500)">%</label>');   // 기본 툴바 2행 끝: [이미지 넣기] [이미지 저장] [기본 크기 조정] (이미지를 선택했을 때만 보여요)
-  tbg.hidden = true; document.getElementById("ex").before(tbg);
+  tbg.hidden = true; (document.getElementById("mex") || document.getElementById("ex")).before(tbg);
   tbg.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서/포커스 유지   // 이미지 툴바: 기본 툴바 바로 아래 2번째 행
   const eundoBtn = bar.querySelector('[data-sa="eundo"]');
   const isOn = b => b.getAttribute("aria-pressed") === "true";
