@@ -95,15 +95,9 @@
       display: flex;
       flex: none;
       width: max-content;
-      animation: mq-scroll var(--mq-dur, 40s) linear infinite;
-      will-change: transform;
+      will-change: transform;   /* 이동은 JS(tapeMotion)가 담당 */
     }
-    .mq-viewport:hover .mq-track { animation-play-state: paused; }
     .mq-group { display: flex; flex: none; }
-    @keyframes mq-scroll {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
     .mq-item {
       cursor: pointer;
       display: flex;
@@ -594,10 +588,49 @@
       { code: 'USOIL',  sym: 'TVC:USOIL',     name: 'WTI Crude $' }
     ];
     const MQ_SPEED_PX_S = 70;
+    // ── 티커 테이프 이동 (마우스·터치 공통: 터치는 손가락을 댄 채 좌우로 미는 것이 마우스 올림+이동과 같아요) ──
+    // 기본: 오른쪽 → 왼쪽으로 원래 속도(1배). 마우스를 올리고 가만히 있으면 멈춰서 클릭할 수 있어요.
+    // 올린 채로 좌우로 움직인 거리(티커 개수 기준, 마지막으로 멈춘 자리에서부터)에 따라 마우스 방향으로 흘러요:
+    //   1개 미만 = 멈춤 / 1개 = 원래 속도(오른쪽 → 왼쪽) / 2개 이상 = 2배 / 3개 이상 = 3배
+    //   오른쪽으로 움직이면 좌 → 우, 왼쪽으로 움직이면 우 → 좌. 마우스가 멈추면(0.35초) 그 자리에서 멈추고, 마우스를 빼면 마지막 배속·방향으로 계속 흘러요. 새로고침하면 1배·우 → 좌로 돌아가요.
+    function tapeMotion(box, track, opt) {
+      const st = { period: 0, speed: 0, itemW: 1, x: 0, hover: false, ax: 0, lx: 0, mult: 0, dir: 1, idle: 0, cm: 1, cd: 1 };   // cm·cd: 마우스를 빼도 유지되는 배속·방향 (새로고침하면 1배·우→좌)
+      const apply = () => { track.style.transform = "translateX(" + (-st.x) + "px)"; };
+      function level(cx) {
+        const d = cx - st.ax, n = Math.abs(d) / Math.max(1, Math.min(st.itemW || 1, box.clientWidth / 4));   // 티커 한 칸: 평균 너비(보이는 폭의 1/4 이하 → 좁은 창에서도 3개 거리가 닿음)
+        st.mult = n >= 3 ? 3 : n >= 2 ? 2 : n >= 1 ? 1 : 0;
+        st.dir = st.mult === 1 ? 1 : (d > 0 ? -1 : 1);   // dir 1 = 오른쪽 → 왼쪽(기본), -1 = 왼쪽 → 오른쪽
+      if (st.mult) { st.cm = st.mult; st.cd = st.dir; }   // 멈춘 게 아니라면 이 상태를 기억
+      }
+      box.style.touchAction = "pan-y pinch-zoom";   // 터치: 세로 스크롤·두 손가락 확대는 브라우저가, 좌우로 미는 동작은 여기서 마우스와 똑같이 처리
+      let downX = 0, moved = false;
+      box.addEventListener("pointerenter", e => { st.hover = true; st.ax = st.lx = downX = e.clientX; st.mult = 0; moved = false; });   // 터치는 손가락을 댄 순간이 "마우스를 올린 것"
+      box.addEventListener("pointermove", e => {
+        if (!st.hover) { st.hover = true; st.ax = downX = e.clientX; moved = false; }
+        if (e.pointerType !== "mouse" && Math.abs(e.clientX - downX) > 8) moved = true;
+        st.lx = e.clientX; level(e.clientX);
+        clearTimeout(st.idle); st.idle = setTimeout(() => { st.ax = st.lx; st.mult = 0; }, 350);
+      });
+      ["pointerleave", "pointercancel"].forEach(ev => box.addEventListener(ev, () => { st.hover = false; st.mult = 0; clearTimeout(st.idle); }));   // 터치는 손가락을 떼면 이 상태   // 마우스를 빼도 바뀐 속도·방향은 그대로 이어짐
+      box.addEventListener("click", e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);   // 터치로 밀었을 때 항목이 눌리지 않게
+      let last = 0;
+      function frame(now) {
+        const dt = last ? Math.min(0.1, (now - last) / 1000) : 0; last = now;
+        if (st.period > 0) {
+          const v = st.hover ? (st.mult ? st.dir * st.mult * st.speed : 0) : ((opt && opt.pauseWhen && opt.pauseWhen()) ? 0 : st.cd * st.cm * st.speed);
+          if (v && dt) { st.x = ((st.x + v * dt) % st.period + st.period) % st.period; apply(); }
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+      return { set(period, speed, itemW) { st.period = period; st.speed = speed; st.itemW = itemW || 1; st.x = period ? st.x % period : 0; apply(); } };
+    }
+
     const MQ_RE = /(\d[\d,]*\.\d{2,6})\s*(?:[A-Z]{3})?\s*([+\-−]?\d[\d,]*\.\d+)\s*([+\-−]?\d+\.\d+)\s*%/;
     const $mqTrack = document.getElementById('mqTrack');
     const $mqView = document.getElementById('mqViewport');
     const $mqStatus = document.getElementById('mqStatus');
+    const mqMo = tapeMotion($mqView, $mqTrack);
     const $mqSrc = document.getElementById('mqSrc');
     const mqStart = Date.now();
     let mqData = {};   // code -> {price, chg, pct, dir}
@@ -668,7 +701,7 @@
       const g1 = makeGroup(n), g2 = makeGroup(n);
       $mqTrack.replaceChildren(g1, g2);
       const w = g1.offsetWidth || gw;
-      $mqTrack.style.setProperty('--mq-dur', Math.max(15, w / MQ_SPEED_PX_S) + 's');
+      mqMo.set(w, w / Math.max(15, w / MQ_SPEED_PX_S), w / (n * MQ_ITEMS.length));   // 주기, 속도(px/초), 티커 하나의 평균 너비
     }
 
     function mqPoll() {
