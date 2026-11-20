@@ -438,7 +438,8 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-</head>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000474482068e2aaff25e9b04d0%26fn%3Dmemo_parksoodong_github_io__dev_%25EC%2588%2598%25EC%25A0%25952.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3D4e1a04807df7369ac8691d6f499bd49497bcd0861bb77f44647f9e8fd2c8ea01%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -1769,8 +1770,35 @@ function szApply(raw) {
 }
 szRng.addEventListener("input", () => { szNum.value = szRng.value; });
 const szStep = d => { const c = szClamp(szNum.value); szApply((c === null ? szLast : c) + d); };   // ◀ 1 작게, ▶ 1 크게
-document.getElementById("szDn").addEventListener("click", () => szStep(-1));
-document.getElementById("szUp").addEventListener("click", () => szStep(1));
+/* 글자 크기 ◀/▶: 한 번 누르면 1단계, 누르고 있으면 연속 증감 */
+function bindSizeRepeat(id, dir) {
+  const b = document.getElementById(id);
+  let delay = 0, repeat = 0, pointerActive = false, skipClick = false;
+  const stop = () => {
+    clearTimeout(delay); clearInterval(repeat);
+    delay = repeat = 0; pointerActive = false;
+  };
+  b.addEventListener("pointerdown", e => {
+    if (e.button !== undefined && e.button !== 0) return;
+    e.preventDefault();
+    pointerActive = true; skipClick = true;
+    try { b.setPointerCapture(e.pointerId); } catch (_) {}
+    szStep(dir);                         // 누르는 즉시 1단계
+    delay = setTimeout(() => {
+      repeat = setInterval(() => szStep(dir), 90); // 계속 누르면 0.09초마다 1단계
+    }, 350);                             // 처음 반복 전 대기
+  });
+  ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev =>
+    b.addEventListener(ev, stop)
+  );
+  b.addEventListener("click", e => {
+    if (skipClick) { skipClick = false; return; }
+    if (e.detail === 0) szStep(dir);     // 키보드로 실행한 클릭은 1단계
+  });
+  window.addEventListener("blur", stop);
+}
+bindSizeRepeat("szDn", -1);
+bindSizeRepeat("szUp", 1);
 szRng.addEventListener("change", () => szApply(szRng.value));
 szNum.addEventListener("input", () => { const v = szClamp(szNum.value); if (v !== null && /^\d+$/.test(szNum.value.trim())) szRng.value = v; });
 szNum.addEventListener("keydown", e => { if (e.key !== "Enter" || e.isComposing) return; e.preventDefault(); e.stopPropagation(); szApply(szNum.value); });
@@ -1974,7 +2002,7 @@ const CMDS = {
   ul: () => exec("insertUnorderedList"), ol: () => exec("insertOrderedList"),
   bold: () => exec("bold"), italic: () => exec("italic"), strike: () => exec("strikeThrough"),
   link, table,
-  undo: () => { if (!(window.imgHist && window.imgHist("undo"))) exec("undo"); }, redo: () => { if (!(window.imgHist && window.imgHist("redo"))) exec("redo"); }, underline: () => exec("underline"),
+  undo: () => { if (!(window.imgHist && window.imgHist("undo")) && !(window.cfTableSizeHist && window.cfTableSizeHist("undo"))) exec("undo"); }, redo: () => { if (!(window.imgHist && window.imgHist("redo")) && !(window.cfTableSizeHist && window.cfTableSizeHist("redo"))) exec("redo"); }, underline: () => exec("underline"),
   check, indent: () => indent(1), outdent: () => indent(-1),
   alL: () => align("justifyLeft"), alC: () => align("justifyCenter"), alR: () => align("justifyRight"),
   hr: () => exec("insertHorizontalRule"), quote: () => block("blockquote"), code: () => block("pre"),
@@ -4615,15 +4643,20 @@ function refreshTb() {
   if (!s.rangeCount || !ta.contains(s.anchorNode)) return;
   let blk = ""; try { blk = (document.queryCommandValue("formatBlock") || "").toLowerCase().replace(/[<>]/g, ""); } catch (e) {}
   const q = c => { try { return document.queryCommandState(c); } catch (e) { return false; } };
+  const chkCells = multiCells();
+  const chkBlocks = chkCells
+    ? chkCells.filter(c => !cellBlank(c))
+    : selBlocks();
+  const checkOn = chkBlocks.length > 0 && chkBlocks.every(b => CHK.test(b.textContent));
   const on = {
     h1: blk === "h1", h2: blk === "h2", h3: blk === "h3",
-    ul: q("insertUnorderedList"), ol: q("insertOrderedList"),
+    ul: q("insertUnorderedList"), ol: q("insertOrderedList"), check: checkOn,
     bold: q("bold"), italic: q("italic"), underline: q("underline"), strike: q("strikeThrough"),
     quote: blk === "blockquote", code: blk === "pre",
     link: !!closestIn(s.anchorNode, "a")
   };
   tblEditGo.classList.toggle("dim", !closestIn(s.anchorNode, "td,th"));   // 표 밖에서는 [표 편집]을 흐리게
-  listBtn.setAttribute("aria-pressed", String(on.ul || on.ol));   // [글 목록]: 글머리/번호 목록 안에서는 눌린 모양
+  listBtn.setAttribute("aria-pressed", String(on.ul || on.ol || on.check));   // 글머리·번호·체크리스트 안에서는 눌린 모양
   tb.querySelectorAll("button[data-cmd]").forEach(b => { if (b.dataset.cmd in on) b.setAttribute("aria-pressed", String(on[b.dataset.cmd])); });
 }
 document.addEventListener("selectionchange", refreshTb);
@@ -5177,6 +5210,74 @@ onEd("click", e => {
     ed.dispatchEvent(new Event("input", { bubbles: true }));
     toast("병합을 풀었어요");
   }
+  /* 표 열 너비·행 높이 변경 전후를 별도 기록해 Ctrl+Z / Ctrl+Y 로 되돌려요.
+     크기 변경 뒤 다른 편집을 하면 일반 편집 기록과 섞이지 않도록 이 기록은 초기화해요. */
+  const cfSizeHistory = new WeakMap();
+  let cfSizeHistoryApplying = false;
+  function cfSizeSnapshot(tab) {
+    return {
+      tableWidth: tab.style.width,
+      tableHeight: tab.style.height,
+      cells: Array.from(tab.querySelectorAll("td,th"), c => [c.style.width, c.style.height])
+    };
+  }
+  function cfSizeRestore(tab, snap) {
+    const cells = tab.querySelectorAll("td,th");
+    Array.from(cells).forEach((c, i) => {
+      const v = snap.cells[i];
+      if (v) { c.style.width = v[0]; c.style.height = v[1]; }
+    });
+    tab.style.width = snap.tableWidth;
+    tab.style.height = snap.tableHeight;
+  }
+  function cfSizeHistoryFor(ed) {
+    let h = cfSizeHistory.get(ed);
+    if (!h) { h = { undo: [], redo: [] }; cfSizeHistory.set(ed, h); }
+    return h;
+  }
+  function cfSizeRecord(ed, tab, before, after) {
+    const h = cfSizeHistoryFor(ed);
+    h.undo.push({ tab, snap: before });
+    if (h.undo.length > 50) h.undo.shift();
+    h.redo.length = 0;
+  }
+  function cfSizeApplyHistory(ed, dir) {
+    const h = cfSizeHistory.get(ed);
+    const from = h && h[dir], to = h && h[dir === "undo" ? "redo" : "undo"];
+    if (!from || !from.length) return false;
+    const entry = from.pop();
+    if (!entry.tab.isConnected) return false;
+    to.push({ tab: entry.tab, snap: cfSizeSnapshot(entry.tab) });
+    cfSizeHistoryApplying = true;
+    try {
+      cfSizeRestore(entry.tab, entry.snap);
+      ed.dispatchEvent(new Event("input", { bubbles: true }));
+    } finally { cfSizeHistoryApplying = false; }
+    rzPlace(); schedulePaint();
+    toast(dir === "undo" ? "표의 열 너비·행 높이 변경을 실행 취소했어요" : "표의 열 너비·행 높이 변경을 다시 적용했어요");
+    return true;
+  }
+  window.cfTableSizeHist = dir => cfSizeApplyHistory(ta, dir);
+  document.addEventListener("input", e => {
+    if (cfSizeHistoryApplying) return;
+    const ed = e.target && e.target.closest && e.target.closest(".rich");
+    if (ed) {
+      const h = cfSizeHistory.get(ed);
+      if (h) { h.undo.length = 0; h.redo.length = 0; }
+    }
+  }, true);
+  document.addEventListener("keydown", e => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+    const k = (e.key || "").toLowerCase();
+    if (k !== "z" && k !== "y") return;
+    const ed = e.target && e.target.closest && e.target.closest(".rich");
+    if (!ed) return;
+    const dir = k === "y" || (k === "z" && e.shiftKey) ? "redo" : "undo";
+    if (cfSizeApplyHistory(ed, dir)) {
+      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+    }
+  }, true);
+
   /* 고른 칸이 걸친 모든 열(행)을 같은 크기로. 표 전체 크기는 바뀐 만큼 따라가요 */
   function doSize(kind) {
     const s = curRect(); if (!s) { toast("표 안의 칸을 먼저 클릭해 주세요"); return; }
@@ -5193,12 +5294,18 @@ onEd("click", e => {
     if (ans === null) return;
     const val = Math.round(parseFloat(String(ans).replace(/px/i, "")));
     if (!(val >= min) || val > 3000) { toast("숫자를 " + min + "~3000 사이로 넣어 주세요"); return; }
+    const beforeSize = cfSizeSnapshot(s.tab);
     for (let j = lo; j <= hi; j++) v[j] = val;
     for (let j = 0; j < n; j++) set(G, j, v[j]);
     const key = col ? "width" : "height";
     s.tab.style[key] = Math.round(v.reduce((a, b) => a + b, 0)) + "px";
     s.tab.style[key] = Math.round(s.tab.getBoundingClientRect()[key]) + "px";   // 내용 때문에 못 줄어든 만큼 표 크기에 반영
-    ed.dispatchEvent(new Event("input", { bubbles: true })); rzPlace(); schedulePaint();
+    const afterSize = cfSizeSnapshot(s.tab);
+    cfSizeRecord(ed, s.tab, beforeSize, afterSize);
+    cfSizeHistoryApplying = true;
+    try { ed.dispatchEvent(new Event("input", { bubbles: true })); }
+    finally { cfSizeHistoryApplying = false; }
+    rzPlace(); schedulePaint();
     toast((hi - lo + 1) + (col ? "개 열의 너비를 " : "개 행의 높이를 ") + val + "px로 맞췄어요");
   }
   document.addEventListener("click", e => {
