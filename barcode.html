@@ -7,7 +7,7 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000020988206a8ff3e948e0d7f44%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25EB%2584%2588%25EB%25B9%2584%25ED%2599%2595%25EB%258C%2580%25EB%25AC%25B8%25EC%25A0%259C%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498668%26p%3Dfs%26cid%3D1%26sig%3D8d6c446bc066296292ace621cc3ff83e0b45737cd68a6d50f7dafb33444fe8af%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000008dec8206931a7ef83f919067%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25EC%259E%2598%25EB%25A6%25BC%25EC%25B5%259C%25EC%25A2%2585%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498668%26p%3Dfs%26cid%3D1%26sig%3D5bc14f078d8924b7712b3e9a2b68413b65b67dd5a9e2311c2f586d4b3f43c46c%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
@@ -538,38 +538,6 @@ p{margin:6px 0 0}
 .cfft{display:flex;justify-content:flex-end;gap:6px;padding:10px 12px;border-top:1px solid var(--line)}
 .cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
-
-/* QR 크기 보정:
-   화면 너비가 1280px 이상이 되면 메인 영역 높이는 고정되는데,
-   기존 데스크톱 규칙의 flex:1 1 0 때문에 QR SVG가 세로 방향으로 압축되는 문제를 방지한다.
-   카드/행 높이는 변경하지 않고 QR과 문자열만 가로로 나란히 배치한다. */
-@media (min-width:1280px){
-  .view[data-k="qr"]{
-    flex-direction:row!important;
-    justify-content:center!important;
-    align-items:center!important;
-    gap:12px!important;
-  }
-  .view[data-k="qr"] svg{
-    flex:0 0 116px!important;
-    width:116px!important;
-    min-width:116px!important;
-    max-width:116px!important;
-    height:116px!important;
-    min-height:116px!important;
-    max-height:116px!important;
-    aspect-ratio:1/1!important;
-  }
-  .view[data-k="qr"] .txt{
-    flex:1 1 auto!important;
-    min-width:0!important;
-    margin:0!important;
-    text-align:left!important;
-    overflow-wrap:anywhere;
-    word-break:break-all;
-  }
-}
-
 </style>
 <style id="imgx-cs-css">
 /* 색 고르기 묶음 (단일 색상의 이미지를 메모에 넣기 · 기본 크기 조정 공통) */
@@ -5920,7 +5888,42 @@ function exportMemo(kind) {
       'body{font:16px/1.6 ' + "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif" + ';max-width:800px;margin:24px auto;padding:0 16px;color:#2b8a3e;word-break:break-word}\n' +
       'img{max-width:100%}img:not([height]){height:auto}table{border-collapse:collapse}td,th{border:1px solid #d9d5cb;padding:2px 6px;vertical-align:top}\n' +
       '[data-att]{display:inline-block;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid #d9d5cb;border-radius:999px;cursor:pointer}\n' +
-      '</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
+      '
+/* QR 레이아웃 보정(넓은 브라우저):
+   페이지/메모 높이는 바꾸지 않고, QR과 문자열을 세로가 아닌 가로로 배치한다.
+   기존 1280px 이상 규칙의 flex:1 1 0이 QR SVG를 세로로 압축하던 것을 해제하고,
+   남아 있는 미리보기 높이 안에서 정사각형 QR 전체가 보이게 한다. */
+@media (min-width:1280px){
+  .view[data-k=qr]{
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:12px!important;
+    padding:4px 10px!important;
+    min-width:0!important;
+  }
+  .view[data-k=qr] svg{
+    display:block!important;
+    flex:0 0 auto!important;
+    width:auto!important;
+    height:100%!important;
+    max-width:none!important;
+    max-height:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    aspect-ratio:1 / 1!important;
+  }
+  .view[data-k=qr] .txt{
+    flex:1 1 0!important;
+    min-width:0!important;
+    margin:0 0 0 2px!important;
+    text-align:left!important;
+    overflow-wrap:anywhere;
+    word-break:break-all;
+  }
+}
+
+</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
     type = "text/html"; name = "메모_" + stamp + ".html";
   } else {
     body = "\ufeff" + ta.innerText.replace(/\u00a0/g, " ").replace(/\u200b/g, "");   // BOM: 윈도우 앱에서도 한글이 깨지지 않게
