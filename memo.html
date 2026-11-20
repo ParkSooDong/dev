@@ -2322,7 +2322,7 @@ let imgBack = null;
     const c = cs; if (!c) return;
     if (csFlat(c) && (c.t.getAttribute("data-layers") || c.t.getAttribute("data-base")) && !confirm("도형·각도·좌우반전을 쓰면 글자·도형 레이어가 하나의 그림으로 합쳐져 더는 따로 고칠 수 없어요. 계속할까요?")) return;
     csClose();
-    if (c.fw === c.iw && c.fh === c.ih && c.fx === 0 && c.fy === 0 && !csFlat(c) && !c.bg) return;   // 바뀐 게 없음
+    if (c.fw === c.iw && c.fh === c.ih && c.fx === 0 && c.fy === 0 && !csFlat(c)) return;   // 바뀐 게 없음
     csApply(c).catch(() => toast("기본 크기를 바꾸지 못했어요"));
   }
   async function openCs() {
@@ -2344,7 +2344,7 @@ let imgBack = null;
     const { iw, ih, fx, fy, fw, fh, pad } = c, srcU = t.getAttribute("src");
     say("기본 크기를 바꾸는 중…");
     const paint = (w, h, im, ox, oy) => { const cv = mkCv(Math.max(1, w), Math.max(1, h)), x = cv.getContext("2d"); if (pad) { x.fillStyle = pad; x.fillRect(0, 0, cv.width, cv.height); } x.drawImage(im, ox, oy); return cv; };
-    if (csFlat(c) || c.bg) {   // 도형·각도·반전: 레이어를 합친 한 장의 그림으로 (자르기 → 도형 → 반전 → 회전 → 바깥 색)
+    if (csFlat(c)) {   // 도형·각도·반전: 레이어를 합친 한 장의 그림으로 (자르기 → 도형 → 반전 → 회전 → 바깥 색)
       let cv = paint(fw, fh, c.im, -fx, -fy);
       if (c.shp !== "rect") { const x = cv.getContext("2d"); x.save(); x.globalCompositeOperation = "destination-in"; x.fill(imShapePath(c.shp, cv.width, cv.height)); x.restore(); }
       if (csXf(c)) {
