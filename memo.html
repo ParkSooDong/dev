@@ -438,7 +438,8 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000474482068e2aaff25e9b04d0%26fn%3Dmemo_parksoodong_github_io__dev_%25EC%2588%2598%25EC%25A0%25952.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3D4e1a04807df7369ac8691d6f499bd49497bcd0861bb77f44647f9e8fd2c8ea01%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000e0508209915acd0341ac7b1e%26fn%3Dmemo_parksoodong_github_io__dev%25281%2529_%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3D5b7c46fa3bc7651edd7fbcce43e71303635d1e5438d31e046b8d9a4e486a4f17%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000474482068e2aaff25e9b04d0%26fn%3Dmemo_parksoodong_github_io__dev_%25EC%2588%2598%25EC%25A0%25952.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3D4e1a04807df7369ac8691d6f499bd49497bcd0861bb77f44647f9e8fd2c8ea01%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
@@ -2271,7 +2272,7 @@ let imgBack = null;
   const shp = el("div", "imgx-row",
     '<button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="hand" aria-label="손글씨" title="손글씨: 마우스나 펜으로 이미지 위에 자유롭게 글씨를 써요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="heart" aria-label="heart" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 19.5C5.5 15 4 11.8 4 9a3.7 3.7 0 0 1 8-1.3A3.7 3.7 0 0 1 20 9c0 2.8-1.5 6-8 10.5z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="star" aria-label="star" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4.5l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.7z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="burst" aria-label="burst" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3.5l1.9 4.3 3.9-2.6-.4 4.7 4.6.5-3.2 3.4 3 3.7-4.6.2.3 4.6-4-2.4-3.5 3-.8-4.6-4.5.9 1.8-4.4-3.8-2.9 4.7-.9-1.4-4.5 4 2.3z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="clover" aria-label="clover" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5.7A4.5 4.5 0 1 1 18.3 12A4.5 4.5 0 1 1 12 18.3A4.5 4.5 0 1 1 5.7 12A4.5 4.5 0 1 1 12 5.7z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
     '' +
-    '<button type="button" data-m="fill" data-sa="pmenu" title="페인트 색: 바탕을 칠할 색을 고르고 투명 비율을 슬라이드바로 정해요. 색을 바꾸면 글자·도형·선 넣기의 기본 색은 보색으로 바뀌어요">페인트 색 <i data-pchip style="display:inline-block;width:12px;height:12px;vertical-align:-1px;border:1px solid #888;border-radius:2px;background:#fff3a3"></i></button><input type="color" data-q="color" data-m="text shape line" value="#2b8a3e" title="색 (글자·도형·선 공통)" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><span hidden data-m="none"><input type="number" data-q="fs" value="15" tabindex="-1" aria-hidden="true"><input type="range" data-q="fsr" min="5" max="300" value="15" tabindex="-1" aria-hidden="true"></span><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><input type="color" data-m="none" data-q="bg" value="#fff3a3" hidden aria-hidden="true" tabindex="-1"><button type="button" data-m="text shape" data-sa="bgmenu" title="배경색: 색을 고르고 투명 비율을 슬라이드바로 정해요">배경색</button><select data-q="op" data-m="none" hidden aria-hidden="true" tabindex="-1" title="투명도" aria-label="투명도"></select><label class="imgx-sl" data-m="line pic" title="투명도: 0%는 불투명, 올릴수록 투명해져요 (선택한 요소·이미지에 바로 적용돼요)">투명도 <input type="range" data-q="pop" min="0" max="95" step="1" value="0" aria-label="투명도"><input type="number" data-q="pn" min="0" max="95" step="1" value="0" aria-label="투명도 숫자 입력" title="숫자로 입력하고 Enter (0~95)">%</label><button type="button" data-m="text" data-q="bold" aria-pressed="false" title="굵게"><b>B</b></button><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><input type="color" data-m="text" data-q="oc" value="#000000" title="외곽선 색 (고르면 외곽선이 켜져요)" aria-label="외곽선 색"><input type="number" data-m="text shape pic" data-q="rot" step="1" placeholder="각도°" title="각도 (0~359도, 계속 순환): 359 다음은 0, 0 아래는 359예요. 요소 전체가 이 각도만큼 시계 방향으로 기울어요" aria-label="각도"><button type="button" data-m="text shape pic" data-q="fh" aria-pressed="false" title="요소 전체를 좌우로 뒤집어요">좌우 반전</button>' +
+    '<button type="button" data-m="fill" data-sa="pmenu" title="페인트 색: 바탕을 칠할 색을 고르고 투명 비율을 슬라이드바로 정해요. 색을 바꾸면 글자·도형·선 넣기의 기본 색은 보색으로 바뀌어요">페인트 색 <i data-pchip style="display:inline-block;width:12px;height:12px;vertical-align:-1px;border:1px solid #888;border-radius:2px;background:#fff3a3"></i></button><input type="color" data-q="color" data-m="text shape line" value="#2b8a3e" title="색 (글자·도형·선 공통)" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><span hidden data-m="none"><input type="number" data-q="fs" value="15" tabindex="-1" aria-hidden="true"><input type="range" data-q="fsr" min="5" max="300" value="15" tabindex="-1" aria-hidden="true"></span><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><input type="color" data-m="none" data-q="bg" value="#fff3a3" hidden aria-hidden="true" tabindex="-1"><button type="button" data-m="text shape" data-sa="bgmenu" title="배경색: 색을 고르고 투명 비율을 슬라이드바로 정해요">배경색</button><select data-q="op" data-m="none" hidden aria-hidden="true" tabindex="-1" title="투명도" aria-label="투명도"></select><label class="imgx-sl" data-m="line pic" title="투명도: 0%는 불투명, 올릴수록 투명해져요 (선택한 요소·이미지에 바로 적용돼요)">투명도 <input type="range" data-q="pop" min="0" max="95" step="1" value="0" aria-label="투명도"><input type="number" data-q="pn" min="0" max="95" step="1" value="0" aria-label="투명도 숫자 입력" title="숫자로 입력하고 Enter (0~95)">%</label><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><input type="color" data-m="text" data-q="oc" value="#000000" title="외곽선 색 (고르면 외곽선이 켜져요)" aria-label="외곽선 색"><input type="number" data-m="text shape pic" data-q="rot" step="1" placeholder="각도°" title="각도 (0~359도, 계속 순환): 359 다음은 0, 0 아래는 359예요. 요소 전체가 이 각도만큼 시계 방향으로 기울어요" aria-label="각도"><button type="button" data-m="text shape pic" data-q="fh" aria-pressed="false" title="요소 전체를 좌우로 뒤집어요">좌우 반전</button>' +
     '<textarea data-q="text" rows="2" placeholder="글자 입력" aria-label="글자" hidden></textarea>');
   shp.hidden = true;
   box.append(grip, gripR, gripB); bar.append(main, shp); document.body.append(box); document.getElementById("tb").after(bar);
@@ -2280,6 +2281,29 @@ let imgBack = null;
   tbg.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서/포커스 유지   // 이미지 툴바: 기본 툴바 바로 아래 2번째 행
   const eundoBtn = bar.querySelector('[data-sa="eundo"]');
   const isOn = b => b.getAttribute("aria-pressed") === "true";
+  const fmtTb = document.getElementById("tb");
+  const fmtCmds = { bold: "bold", italic: "italic", underline: "underline", strike: "strike" };
+  function syncTextFormatButtons(it) {
+    const src = it && isCall(it.t) ? it : sd;
+    Object.keys(fmtCmds).forEach(k => {
+      const b = fmtTb.querySelector('[data-cmd="' + k + '"]');
+      if (b) setP(b, !!src[k]);
+    });
+  }
+  /* 이미지 '글자 넣기' 중에는 상단 툴바의 굵게·기울임·밑줄·취소선을 이미지 글자 서식으로 처리해요.
+     일반 메모용 execCommand가 실행되어 이미지 편집이 끊기거나 메모 본문이 바뀌는 것을 막습니다. */
+  fmtTb.addEventListener("click", e => {
+    const b = e.target.closest('button[data-cmd]');
+    if (!sh || sh.mode !== "text" || !b || !(b.dataset.cmd in fmtCmds)) return;
+    e.preventDefault(); e.stopPropagation();
+    const k = fmtCmds[b.dataset.cmd], it0 = sh.items[sh.sel], it = it0 && isCall(it0.t) ? it0 : null;
+    const next = !(it ? !!it[k] : !!sd[k]);
+    if (it) {
+      pushUndo(false, "fmt" + k + sh.sel);
+      keepAnchor(it, () => { it[k] = next; });
+    } else sd[k] = next;
+    syncTextFormatButtons(it); render();
+  }, true);
   try { document.execCommand("enableObjectResizing", false, false); } catch (e) {}   // 파이어폭스 기본 손잡이는 끔
 
   /* 크기 비율 슬라이드: 지금 크기(또는 [원본 크기]를 누른 크기)가 100%, 가로·세로가 같은 비율로 10%~500% */
@@ -2878,7 +2902,7 @@ let imgBack = null;
   }
   const DEF_BG = "#fff3a3";   // 배경·채움 기본색(연한 노랑)
   const LINEM = new Set("arrow darrow trend vline hline cross".split(" "));   // 선 넣기 도구(도형 넣기와 투명도 기본값을 따로 둠)
-  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, ol: false, top: null, color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, ew: 16 };
+  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, italic: false, underline: false, strike: false, ol: false, top: null, color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, ew: 16 };
   const HM = [["x1", "y1"], ["y1"], ["x2", "y1"], ["x2"], ["x2", "y2"], ["y2"], ["x1", "y2"], ["x1"]];   // 상자형 도형의 8개 손잡이가 움직이는 좌표
   const HLN = [["x1", "y1"], ["x2", "y2"]];                                                              // 선형 도형의 양 끝 손잡이
   const HCUR = ["nwse-resize", "ns-resize", "nesw-resize", "ew-resize", "nwse-resize", "ns-resize", "nesw-resize", "ew-resize"];
@@ -2894,7 +2918,7 @@ let imgBack = null;
   /* 말풍선 크기: 글자 크기와 내용에 맞춰 자동 (종류마다 여백이 달라요) */
   function callBox(it) {
     const lines = (it.text || "글자 입력").split("\n"), fs = it.fs, pad = it.t === "ctext" ? 6 : 9;
-    mctx.font = (it.bold ? "700 " : "") + fs + "px " + fontOf(it);
+    mctx.font = (it.italic ? "italic " : "") + (it.bold ? "700 " : "") + fs + "px " + fontOf(it);
     const tw = Math.max(...lines.map(l => mctx.measureText(l).width)), th = lines.length * fs * 1.3;
     let w, h;
     if (it.t === "coval") { w = tw * 1.45 + pad * 2; h = th * 1.55 + pad * 2; }
@@ -2955,7 +2979,7 @@ let imgBack = null;
   const callText = (b, c, has, it) => {
     if (SKIPTXT) return "";
     const edge = it && /^#[0-9a-f]{6}$/i.test(it.oc) ? it.oc : lum(c) > 0.55 ? "#000" : "#fff";
-    const ex = (it && it.bold ? ' font-weight="700"' : "") + (it && it.ol ? ' stroke="' + edge + '" stroke-width="' + Math.max(2, b.fs * 0.18) + '" stroke-linejoin="round" paint-order="stroke"' : "");
+    const ex = (it && it.bold ? ' font-weight="700"' : "") + (it && it.italic ? ' font-style="italic"' : "") + (it && (it.underline || it.strike) ? ' text-decoration="' + (it.underline && it.strike ? 'underline line-through' : it.underline ? 'underline' : 'line-through') + '"' : "") + (it && it.ol ? ' stroke="' + edge + '" stroke-width="' + Math.max(2, b.fs * 0.18) + '" stroke-linejoin="round" paint-order="stroke"' : "");
     return b.lines.map((l, i) =>
       '<text x="' + alX(b, it) + '" y="' + (b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35) + '" text-anchor="' + alA(it) + '" font-family="' + escH(fontOf(it)) + '" font-size="' + b.fs + '" fill="' + c + '" style="fill:' + c + '"' + (has ? "" : ' fill-opacity=".4"') + ex + ">" + escH(l) + "</text>").join("");
   };
@@ -2970,7 +2994,7 @@ let imgBack = null;
         x.translate(cx, cy); if (rot) x.rotate(rot * Math.PI / 180);
         if (flipOf(it)) x.scale(-1, 1);   /* 좌우 반전: 글 덩어리 전체를 상자 중심 기준으로 뒤집음 */
         x.translate(-cx, -cy); }
-      x.font = (it.bold ? "700 " : "") + b.fs + "px " + fontOf(it); x.textAlign = al; x.textBaseline = "alphabetic";
+      x.font = (it.italic ? "italic " : "") + (it.bold ? "700 " : "") + b.fs + "px " + fontOf(it); x.textAlign = al; x.textBaseline = "alphabetic";
       x.globalAlpha = it.text ? 1 : 0.4; x.lineJoin = "round";
       const put = (t, tx, ty) => {
         if (it.ol) { x.lineWidth = Math.max(2, b.fs * 0.18); x.strokeStyle = edge; x.strokeText(t, tx, ty); }
@@ -2979,6 +3003,13 @@ let imgBack = null;
       b.lines.forEach((l, i) => {
         const tx = alX(b, it), ty = b.y + b.h / 2 - b.th / 2 + (i + 0.5) * b.fs * 1.3 + b.fs * 0.35;
         put(l, tx, ty);
+        if (it.underline || it.strike) {
+          const tw = x.measureText(l).width, sx = al === "left" ? tx : al === "right" ? tx - tw : tx - tw / 2;
+          x.save(); x.strokeStyle = col; x.lineWidth = Math.max(1, b.fs / 18); x.beginPath();
+          if (it.underline) { x.moveTo(sx, ty + b.fs * 0.12); x.lineTo(sx + tw, ty + b.fs * 0.12); }
+          if (it.strike) { x.moveTo(sx, ty - b.fs * 0.35); x.lineTo(sx + tw, ty - b.fs * 0.35); }
+          x.stroke(); x.restore();
+        }
       });
       x.restore();
     });
@@ -3242,7 +3273,7 @@ let imgBack = null;
   function handUi() {
     if (!sh) return;
     const cur = sh.items[sh.sel], hand = sd.tool === "hand" || !!(cur && cur.t === "hand");
-    shp.querySelectorAll('.imgx-fs,[data-q="op"],[data-q="bold"],[data-q="ol"],[data-q="bg"],[data-q="oc"],[data-sa="bgmenu"]').forEach(x => { x.hidden = hand || !x.dataset.m.split(" ").includes(sh.mode); });
+    shp.querySelectorAll('.imgx-fs,[data-q="op"],[data-q="ol"],[data-q="bg"],[data-q="oc"],[data-sa="bgmenu"]').forEach(x => { x.hidden = hand || !x.dataset.m.split(" ").includes(sh.mode); });
     const xo = cur ? xfOk(cur) || (cur.drawing && XFT.has(cur.t)) : (!sd.tool || XFT.has(sd.tool));   // 각도·좌우반전: 대상 요소(또는 대상 도구)일 때만 보임 (자유곡선·선·페인트 제외)
     shp.querySelectorAll('[data-q="rot"],[data-q="fh"]').forEach(x => { x.hidden = !xo || !x.dataset.m.split(" ").includes(sh.mode); });
   }
@@ -3254,11 +3285,11 @@ let imgBack = null;
     t.hidden = !(it && isCall(it.t));
     if (it) {
       qc("color").value = it.color; qc("lw").value = String(it.lw); qc("fs").value = String(it.fs); qc("fsr").value = String(Math.min(300, it.fs)); if ((sh.mode === "text" || isCall(it.t)) && typeof szSync === "function") szSync(Math.round(it.fs)); qc("op").value = String(it.op); qc("bg").value = it.bgc || (isCall(it.t) ? "#ffffff" : it.color);
-      setP(qc("dash"), it.dash); setP(qc("bold"), it.bold); setP(qc("ol"), it.ol);
+      setP(qc("dash"), it.dash); setP(qc("ol"), it.ol);
       qc("oc").value = /^#[0-9a-f]{6}$/i.test(it.oc) ? it.oc : (lum(it.color) > 0.55 ? "#000000" : "#ffffff"); qc("rot").value = it.rot ? String(it.rot) : ""; setP(qc("fh"), it.fh);
       if (isCall(it.t)) { t.value = it.text; t.style.textAlign = alOf(it); }
     }
-    handUi(); { const lb = qc("pop") && qc("pop").parentNode; if (lb) lb.hidden = !(sh.mode === "line" || sh.mode === "pic" || (it && it.t === "pic")); }   // 투명도 막대: 선·이미지 넣기 모드이거나, 어떤 모드에서든 올린 이미지를 선택했을 때
+    syncTextFormatButtons(it); handUi(); { const lb = qc("pop") && qc("pop").parentNode; if (lb) lb.hidden = !(sh.mode === "line" || sh.mode === "pic" || (it && it.t === "pic")); }   // 투명도 막대: 선·이미지 넣기 모드이거나, 어떤 모드에서든 올린 이미지를 선택했을 때
     if (!bpop.hidden) bgSync(); sched();
   }
   /* 말풍선 꼬리: 직접 옮기기 전에는 글자(상자 크기)가 바뀔 때마다 상자 아래쪽에 자동으로 맞춤 */
@@ -3274,7 +3305,7 @@ let imgBack = null;
   }
   function autoTail(it) { const b = callBox(it); it.tx = it.x1 + b.w * 0.25; it.ty = it.y1 + b.h + (it.t === "cthink" ? 44 : 28); }
   function newItem(tool, p) {
-    return { t: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y, tx: p.x, ty: p.y, color: sd.color, lw: sd.lw, fs: sd.fs, op: tool === "hand" ? 1 : isCall(tool) ? (sd.bgOn === false ? 0 : (sd.bgOn === true || tool !== "ctext") ? sd.bgo : 0) : (LINEM.has(tool) ? sd.op : 1), bold: sd.bold, ol: sd.ol, bgc: sd.bgc, fill: sd.fill, fo: 1, bo: (tool === "hand" || isCall(tool) || LINEM.has(tool)) ? null : (sd.bgOn === false ? 0 : sd.bgo), dash: tool === "cross" ? true : sd.dash, text: "", auto: true, al: bodyAlign(), oc: sd.oc || null, rot: 0, fh: false, ff: window.memoFont ? window.memoFont.name : "" };
+    return { t: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y, tx: p.x, ty: p.y, color: sd.color, lw: sd.lw, fs: sd.fs, op: tool === "hand" ? 1 : isCall(tool) ? (sd.bgOn === false ? 0 : (sd.bgOn === true || tool !== "ctext") ? sd.bgo : 0) : (LINEM.has(tool) ? sd.op : 1), bold: sd.bold, italic: sd.italic, underline: sd.underline, strike: sd.strike, ol: sd.ol, bgc: sd.bgc, fill: sd.fill, fo: 1, bo: (tool === "hand" || isCall(tool) || LINEM.has(tool)) ? null : (sd.bgOn === false ? 0 : sd.bgo), dash: tool === "cross" ? true : sd.dash, text: "", auto: true, al: bodyAlign(), oc: sd.oc || null, rot: 0, fh: false, ff: window.memoFont ? window.memoFont.name : "" };
   }
   /* 자유형 도형 마치기 (점이 3개 미만이면 버림) */
   function finishPoly() {
@@ -3603,10 +3634,10 @@ let imgBack = null;
   /* 도구 설정을 기본값으로: 색 빨강, 선 굵기 보통, 글자 크기 21, 배경·채움 연한 노랑(도형 투명도 50%), 점선·굵게·외곽선 해제, 지우개 보통 (이미 넣은 요소는 건드리지 않음) */
   function resetSd() {
     if (!sh) return;
-    Object.assign(sd, { color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, bold: false, ol: false, top: null, ew: 16 });
+    Object.assign(sd, { color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, bold: false, italic: false, underline: false, strike: false, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, bold: false, ol: false, top: null, ew: 16 });
     qc("color").value = "#2b8a3e"; ppSync(); qc("lw").value = "3"; qc("fs").value = "15"; qc("fsr").value = "15"; if (typeof szSync === "function") szSync(15); qc("ew").value = "16"; qc("bg").value = DEF_BG;
     qc("op").value = sh.mode === "text" ? String(sd.tool === "ctext" ? 0 : 0.5) : sh.mode === "shape" ? "0.5" : "1"; popSync(1);
-    ["dash", "bold", "ol"].forEach(k => setP(qc(k), false));
+    ["dash", "ol"].forEach(k => { const b = qc(k); if (b) setP(b, false); }); syncTextFormatButtons(sh.items[sh.sel]);
     drawCur(); toast("도구 설정을 기본값으로 되돌렸어요");
   }
   function shpClick(b) {
@@ -3624,7 +3655,7 @@ let imgBack = null;
       handUi(); drawCur(); return;
     }
     const it = sh.items[sh.sel];
-    if (/^(dash|fill|bold|ol|fh)$/.test(b.dataset.q)) {
+    if (/^(dash|fill|ol|fh)$/.test(b.dataset.q)) {
       pushUndo(false, "b" + b.dataset.q + sh.sel);
       const on = !isOn(b), k = b.dataset.q; setP(b, on); sd[k] = on; if (it) it[k] = on; render(); return;
     }
