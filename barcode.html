@@ -561,6 +561,11 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .cfbox.fo .cs-btn{margin-top:6px}
 .cfbox.fo .fo-info{margin:6px 0 0}
 .fo-pad{margin:2px 0 0}
+/* 이미지 형태 변경 (같은 창을 다른 모드로 씀) */
+.cfft[hidden],.fo-empty[hidden]{display:none}
+.cfbox.fo .cfft{flex-wrap:wrap}
+.fo-drop{display:flex;flex-direction:column;align-items:center;gap:8px;padding:34px 16px;margin:6px 0;border:2px dashed var(--line);border-radius:10px;text-align:center;font-size:13.5px;line-height:1.55}
+.fo-drop.over{border-color:#339af0;background:rgba(51,154,240,.08)}
 .fo-pad>summary{cursor:pointer;font-weight:600;color:var(--mute);font-size:12px;padding:3px 0;display:flex;align-items:center;gap:8px;list-style:none}
 .fo-pad>summary::-webkit-details-marker{display:none}
 .fo-pad>summary::before{content:"▸";font-size:10px}
@@ -609,7 +614,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   <i class="sep"></i>
   <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
   <div class="menu" id="tblWrap"><button type="button" data-pal id="tblBtn" title="표: 표 삽입 / 표 편집" aria-label="표" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg><span>표</span></button><div class="pop" id="tblPop" hidden><div id="tblMv"><button type="button" data-cmd="table" title="행·열 수를 정해 표를 넣어요">표 삽입</button><button type="button" id="tblEditGo" data-needtbl title="행·열 추가/삭제 (표 안의 칸을 클릭하면 사용할 수 있어요)">표 편집</button><button type="button" data-cfopen title="선택한 칸의 테두리·배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸을 고를 수 있어요)">셀 서식 (테두리·채우기)</button></div><div id="tblLv" hidden><button type="button" data-tbl-back="1">← 뒤로</button><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="toImg" title="표를 그림(PNG)으로 바꿔요">표를 이미지로 바꾸기</button><button type="button" data-t="toImgKeep" title="원본 표는 그대로 두고 이미지를 추가해요">표를 이미지로 추가 (표 유지)</button><button type="button" data-t="alL">표 왼쪽 정렬</button><button type="button" data-t="alC">표 가운데 정렬</button><button type="button" data-t="alR">표 오른쪽 정렬</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div></div>
-  <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="image">파일 열기</button><div class="bgsec"><div class="bgttl" title="고른 색을 바탕으로 한 이미지를 메모에 넣어요 (손글씨·도형으로 그리기용)">바탕 이미지 넣기</div><div class="bgnote">색을 눌러도 바로 들어가지 않아요. 미리 보기를 확인하고 [확인]을 누르세요</div><div class="bgsz"><span>크기</span><input type="number" id="bgW" min="24" max="4000" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" id="bgH" min="24" max="4000" step="1" aria-label="세로 픽셀"><span>px</span></div><div class="bgsz"><span>도형</span><select id="bgShp" aria-label="도형" style="height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px"><option value="rect">사각형</option><option value="circle">원</option><option value="tri">삼각형</option><option value="cloud">구름</option><option value="pent">오각형</option><option value="heart">하트</option><option value="star">별</option><option value="burst">폭발</option><option value="clover">클로버</option></select></div><div class="bgsz" title="시계 방향으로 돌려요 (0~359도, 계속 순환)"><span>각도</span><input type="number" id="bgRot" step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="bgpk" data-bgflip aria-pressed="false" title="좌우로 뒤집어요">좌우 반전</button></div><details class="fo-pad"><summary>도형 색 <i data-bgv1></i></summary><div class="cpk" id="bgCpk"></div></details><details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 색 없음) <i data-bgv2></i></summary><div class="cpk" id="bgCpk2"></div></details><div class="bgprev" id="bgPrev" style="border:0"></div><div class="bgnote" id="bgCap" style="text-align:center"></div><button type="button" class="bgpk" data-bgreset title="현재 메모창 비율에 맞춘 크기로 되돌려요">기본 크기로</button><div class="bgft"><button type="button" class="ok" data-bgok>확인</button><button type="button" data-bgx>취소</button></div></div></div></div>
+  <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="image">파일 열기</button><button type="button" data-cmd="shapeimg" title="이미지를 붙여넣거나 열어서 도형·각도·색·크기를 바꾼 뒤 복사하거나 PC에 저장해요 (메모에는 넣지 않아요)">이미지 형태 변경</button><div class="bgsec"><div class="bgttl" title="고른 색을 바탕으로 한 이미지를 메모에 넣어요 (손글씨·도형으로 그리기용)">바탕 이미지 넣기</div><div class="bgnote">색을 눌러도 바로 들어가지 않아요. 미리 보기를 확인하고 [확인]을 누르세요</div><div class="bgsz"><span>크기</span><input type="number" id="bgW" min="24" max="4000" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" id="bgH" min="24" max="4000" step="1" aria-label="세로 픽셀"><span>px</span></div><div class="bgsz"><span>도형</span><select id="bgShp" aria-label="도형" style="height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px"><option value="rect">사각형</option><option value="circle">원</option><option value="tri">삼각형</option><option value="cloud">구름</option><option value="pent">오각형</option><option value="heart">하트</option><option value="star">별</option><option value="burst">폭발</option><option value="clover">클로버</option></select></div><div class="bgsz" title="시계 방향으로 돌려요 (0~359도, 계속 순환)"><span>각도</span><input type="number" id="bgRot" step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="bgpk" data-bgflip aria-pressed="false" title="좌우로 뒤집어요">좌우 반전</button></div><details class="fo-pad"><summary>도형 색 <i data-bgv1></i></summary><div class="cpk" id="bgCpk"></div></details><details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 색 없음) <i data-bgv2></i></summary><div class="cpk" id="bgCpk2"></div></details><div class="bgprev" id="bgPrev" style="border:0"></div><div class="bgnote" id="bgCap" style="text-align:center"></div><button type="button" class="bgpk" data-bgreset title="현재 메모창 비율에 맞춘 크기로 되돌려요">기본 크기로</button><div class="bgft"><button type="button" class="ok" data-bgok>확인</button><button type="button" data-bgx>취소</button></div></div></div></div>
   <input type="color" id="fcPick" value="#2b8a3e" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="color" id="bgPick" value="#ffffff" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="color" id="bgcPick" value="#f6cbed" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"><input type="file" id="imgFile" accept="image/*" multiple hidden>
@@ -2066,7 +2071,7 @@ const CMDS = {
   check, indent: () => indent(1), outdent: () => indent(-1),
   alL: () => align("justifyLeft"), alC: () => align("justifyCenter"), alR: () => align("justifyRight"),
   hr: () => exec("insertHorizontalRule"), quote: () => block("blockquote"), code: () => block("pre"),
-  clear: clearFmt, clearall: clearAll, image: pickImage, attach: pickAttach, attsave: attSaveAll, find: openFind
+  clear: clearFmt, clearall: clearAll, image: pickImage, shapeimg: openShapeImage, attach: pickAttach, attsave: attSaveAll, find: openFind
 };
 
 /* ===== 추가 서식: 블록 찾기 / 들여쓰기 / 체크리스트 / 정렬 / 서식 지우기 / 표 편집 / 이미지 / 찾기 ===== */
@@ -3779,7 +3784,7 @@ let imgBack = null;
     addPicsAsk(fs);
   });
   document.addEventListener("paste", e => {   // 편집 중 Ctrl+V: 클립보드에 이미지가 있으면 메모에 넣지 않고 이 이미지 위에 올림
-    if (!sh) return;
+    if (!sh || foShape) return;
     const t = e.target; if (t && /^(TEXTAREA|INPUT|SELECT)$/.test(t.nodeName)) return;
     const cd = e.clipboardData, fs = Array.from((cd && cd.files) || []).filter(f => /^image\//.test(f.type));
     if (!fs.length) return;
@@ -4008,11 +4013,12 @@ function foHasAlpha(c) {   // 투명한 픽셀이 있는지 (큰 그림도 부�
 function foBuild() {
   foDlg = document.createElement("div"); foDlg.className = "cfov"; foDlg.hidden = true;
   foDlg.innerHTML = '<div class="cfbox cs fo" role="dialog" aria-modal="true" aria-label="이미지 크기 조정">' +
-    '<div class="cfhd"><b>이미지 크기 조정</b><span class="cfcnt" data-foi></span></div><div class="cfpg">' +
-    '<div class="cfnote" style="margin:0">원본은 줄이지 않고 그대로 열었어요. 붙여넣을 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌거나 위치를 입력해서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 박스 안은 원본 픽셀 그대로 들어가고, 원본 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.</div>' +
-    '<div class="fo-info"><span>원본 크기 <b data-foo></b></span><span>붙여넣을 크기 <b data-fop></b></span></div>' +
+    '<div class="cfhd"><b data-fottl>이미지 크기 조정</b><span class="cfcnt" data-foi></span></div><div class="cfpg">' +
+    '<div class="fo-empty" data-foempty hidden><div class="fo-drop" data-fodrop><b>이미지를 Ctrl+V로 붙여넣거나, 아래 [파일 열기]로 가져오세요</b><span>이 창에 이미지 파일을 끌어다 놓아도 돼요.<br>가져온 뒤에는 [이미지 크기 조정]의 모든 기능(범위·도형·각도·색·크기)을 쓸 수 있어요.</span><button type="button" class="cs-btn" data-fo="open">파일 열기</button></div><input type="file" accept="image/*" data-fofile hidden></div><div data-fobody>' +
+    '<div class="cfnote" data-fonote style="margin:0">원본은 줄이지 않고 그대로 열었어요. 붙여넣을 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌거나 위치를 입력해서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 박스 안은 원본 픽셀 그대로 들어가고, 원본 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.</div>' +
+    '<div class="fo-info"><span>원본 크기 <b data-foo></b></span><span><i data-folab style="font-style:normal">붙여넣을 크기</i> <b data-fop></b></span></div>' +
     '<div class="cs-stage"><canvas></canvas></div>' +
-    '<div class="cs-sz"><span>붙여넣을 크기</span><input type="number" data-fow min="' + FOMIN + '" step="1" aria-label="붙여넣을 가로 픽셀"><span>×</span><input type="number" data-foh min="' + FOMIN + '" step="1" aria-label="붙여넣을 세로 픽셀"><span>px</span></div>' +
+    '<div class="cs-sz"><span data-folab>붙여넣을 크기</span><input type="number" data-fow min="' + FOMIN + '" step="1" aria-label="붙여넣을 가로 픽셀"><span>×</span><input type="number" data-foh min="' + FOMIN + '" step="1" aria-label="붙여넣을 세로 픽셀"><span>px</span></div>' +
     '<div class="cs-sz" title="원본의 왼쪽 위 모서리를 (0, 0) 으로 본 박스의 왼쪽 위 위치예요. 음수면 원본 밖이에요"><span>범위 위치(원본 기준)</span><span>X</span><input type="number" data-fopx step="1" aria-label="범위 X 위치"><span>Y</span><input type="number" data-fopy step="1" aria-label="범위 Y 위치"><span>px</span></div>' +
     '<div class="cs-sz" title="붙여넣을 이미지를 담을 도형이에요. [도형 넣기]의 도형과 같은 모양이고, 도형 밖은 투명해요"><span>도형</span><select data-foshp aria-label="도형" style="height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px"><option value="rect">사각형</option><option value="circle">원</option><option value="tri">삼각형</option><option value="cloud">구름</option><option value="pent">오각형</option><option value="heart">하트</option><option value="star">별</option><option value="burst">폭발</option><option value="clover">클로버</option></select></div>' +
     '<div class="cs-sz" title="붙여넣을 이미지를 시계 방향으로 돌려요 (0~359도, 계속 순환). [확인]을 누르기 전에만 조절할 수 있어요"><span>각도</span><input type="number" data-forot step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="cs-btn" data-fo="flip" aria-pressed="false" style="margin-left:8px" title="붙여넣을 이미지를 좌우로 뒤집어요">좌우 반전</button></div>' +
@@ -4021,19 +4027,34 @@ function foBuild() {
     '<details class="fo-pad"><summary>빈 곳을 채울 색 <i data-fopv></i></summary><div class="cpk" data-focpk></div></details>' +
     '<details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 색 없음) <i data-fobv></i></summary><div class="cpk" data-fobcpk></div></details>' +
     '<div class="fo-btns"><button type="button" class="cs-btn" data-fo="orig" title="원본 이미지의 실제 가로·세로 크기를 칸에 넣어요 (제한 없음)">원본 크기로</button>' +
-    '<button type="button" class="cs-btn" data-fo="all" title="범위를 정하지 않고, 이미지 전체를 가로 ' + FODEF + 'px 이하로 줄여서 바로 넣어요 (예전 방식)">전체를 줄여서 넣기</button></div></div>' +
-    '<div class="cfft"><button type="button" class="ok" data-fo="ok">확인</button><button type="button" data-fo="x">취소</button></div></div>';
+    '<button type="button" class="cs-btn" data-fo="all" title="범위를 정하지 않고, 이미지 전체를 가로 ' + FODEF + 'px 이하로 줄여서 바로 넣어요 (예전 방식)">전체를 줄여서 넣기</button></div></div></div>' +
+    '<div class="cfft" data-fonft><button type="button" class="ok" data-fo="ok">확인</button><button type="button" data-fo="x">취소</button></div>' +
+    '<div class="cfft" data-fosft hidden><button type="button" class="ok" data-fo="copy" title="결과 이미지를 클립보드에 복사해요 (Ctrl+C와 같아요). 메모나 다른 프로그램에 Ctrl+V로 붙여넣을 수 있어요">이미지 복사하기</button><button type="button" data-fo="save" title="결과 이미지를 PNG 파일로 PC에 저장해요">이미지 저장하기</button><button type="button" data-fo="restart" title="지금까지의 작업을 지우고 처음 열었을 때 상태로 돌아가요">형태 변경 재시작</button><button type="button" data-fo="end" title="지금까지의 작업을 모두 취소하고 창을 닫아요">작업종료</button></div></div>';
   document.body.appendChild(foDlg);
   const q = s => foDlg.querySelector(s);
   foW = q("[data-fow]"); foH = q("[data-foh]"); foPX = q("[data-fopx]"); foPY = q("[data-fopy]"); foSC = q("[data-fosc]"); foMsg = q("[data-fomsg]"); foRot = q("[data-forot]"); foFlip = foDlg.querySelector('[data-fo="flip"]'); foShp = q("[data-foshp]");
   foCpk = cpkInit(q("[data-focpk]"), foPad, v => { foPad = v; if (foSt) { foSt.pad = v || null; foDraw(); foSync(); } });
   foBCpk = cpkInit(q("[data-fobcpk]"), foBgC, v => { foBgC = v || ""; if (foSt) { foSt.bg = v || null; foDraw(); foSync(); } });
   const cv = q("canvas");
+  foFileIn = q("[data-fofile]");
+  foFileIn.addEventListener("change", () => { const f = (foFileIn.files || [])[0]; foFileIn.value = ""; if (!f) return; if (/^image\//.test(f.type)) foShapeLoad(f); else toast("이미지 파일이 아니에요"); });
+  const dz = q("[data-fodrop]"), dfile = e => Array.from((e.dataTransfer && e.dataTransfer.files) || []).find(f => /^image\//.test(f.type));
+  foDlg.addEventListener("dragover", e => { if (foShape && !foSt) { e.preventDefault(); dz.classList.add("over"); } });
+  foDlg.addEventListener("dragleave", () => dz.classList.remove("over"));
+  foDlg.addEventListener("drop", e => { if (!(foShape && !foSt)) return; e.preventDefault(); e.stopPropagation(); dz.classList.remove("over"); const f = dfile(e); if (f) foShapeLoad(f); else toast("이미지 파일을 놓아 주세요"); });
   foDlg.addEventListener("pointerdown", e => { if (foSt) foSt.dn = e.target; }, true);
   foDlg.addEventListener("click", e => {
-    if (e.target === foDlg) { if (foSt && foSt.dn === foDlg) foOk(); return; }   // 창 바깥: 확정
-    const b = e.target.closest("[data-fo]"); if (!b || !foSt) return;
+    if (e.target === foDlg) { if (foShape) return; if (foSt && foSt.dn === foDlg) foOk(); return; }   // 창 바깥: 확정 (이미지 형태 변경 모드에서는 아무 일도 없어요)
+    const b = e.target.closest("[data-fo]"); if (!b) return;
     const a = b.dataset.fo;
+    if (foShape) {   // 이미지 형태 변경 모드의 버튼
+      if (a === "open") { foFileIn.value = ""; foFileIn.click(); return; }
+      if (a === "end") { foShapeEnd(); return; }
+      if (a === "restart") { foShapeReset(); return; }
+      if (a === "copy") { foShapeCopy(); return; }
+      if (a === "save") { foShapeSave(); return; }
+    }
+    if (!foSt) return;
     if (a === "ok") foOk(); else if (a === "x") foClose(false); else if (a === "orig") foOrig(); else if (a === "all") {
       if (foXf(foSt) || foSt.shp !== "rect" || foSt.bg) { const c = foSt; c.fw = c.iw; c.fh = c.ih; c.fx = 0; c.fy = 0; c.sc = Math.min(1, FODEF / c.iw); foLayout(); foDraw(); foOk(); }   // 각도·반전을 쓰는 중이면 이미지 전체를 줄인 크기로 만들어 같은 변환을 적용
       else foClose({ file: foSt.file });
@@ -4165,6 +4186,12 @@ function foOrig() {   // 원본 크기로: 원본의 가로·세로를 칸에 �
   foSetSize(c.iw, c.ih, true, false);
 }
 function foKey(e) {
+  if (foShape && e.key === "Escape") {   // 이미지 형태 변경: Esc = 작업종료 (작업 중이면 한 번 물어봐요)
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (foSt && !confirm("지금까지 한 작업을 모두 취소하고 창을 닫을까요?")) return;
+    foShapeEnd(); return;
+  }
+  if (foShape && foSt && (e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && (e.key || "").toLowerCase() === "c" && !/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName) && !String(getSelection() || "")) { e.preventDefault(); foShapeCopy(); return; }   // Ctrl+C = 이미지 복사하기
   if (!foSt) return;
   if (e.key === "Escape") { e.preventDefault(); e.stopImmediatePropagation(); foClose(false); return; }
   const m = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
@@ -4200,7 +4227,7 @@ function foFail(c, len, lim) {   // 용량/크기 때문에 못 넣을 때: 창�
   say("저장 공간이 부족해요. 크기를 줄여 주세요", "err");
 }
 /* 박스 범위를 원본 픽셀 그대로(1:1) 복사해서 그림을 만듦 → 데이터 주소 (저장 크기 비율이 100% 미만이면 그 비율로 줄여서). 투명한 부분이 없으면 PNG(용량이 크면 JPEG), 있으면 WebP(안 되면 PNG) */
-function foRender(c) {
+function foCanvas(c) {
   const { im, iw, ih, fx, fy, fw, fh, pad } = c, sc = c.sc || 1, ow = Math.max(1, Math.round(fw * sc)), oh = Math.max(1, Math.round(fh * sc));
   let cv = foMk(ow, oh); const x = cv.getContext("2d");
   if (!x) return "";
@@ -4216,6 +4243,10 @@ function foRender(c) {
     rx.drawImage(cv, -ow / 2, -oh / 2); cv = rc;
   }
   if (c.bg) { const c3 = foMk(cv.width, cv.height), x3 = c3.getContext("2d"); x3.fillStyle = c.bg; x3.fillRect(0, 0, c3.width, c3.height); x3.drawImage(cv, 0, 0); cv = c3; }   // 도형 밖·돌린 모서리에 고른 색
+  return cv;
+}
+function foRender(c) {
+  const cv = foCanvas(c); if (!cv) return "";
   let u;
   if (!foHasAlpha(cv)) {
     u = cv.toDataURL("image/png");
@@ -4238,23 +4269,110 @@ async function foOk() {
   const o = foOut(c); foClose({ url: u, W: o[0], H: o[1] });
 }
 /* 파일 하나를 원본 그대로 열어 창을 띄움 → false(취소) / null(읽지 못함) / {url,W,H}(범위를 정해 만든 그림) / {file}(예전 방식으로 줄여서 넣기) */
+/* 창 하나(foDlg)를 두 가지로 써요: ① 이미지 크기 조정(메모에 넣기 전: 확인/취소) ② 이미지 형태 변경(foShape: 복사/저장/재시작/작업종료) */
+let foShape = false, foFileIn = null;
+function foModeUI() {   // 모드와 그림 유무에 맞게 화면 구성을 바꿈
+  const q = s => foDlg.querySelector(s), sh = foShape, has = !!foSt;
+  q("[data-fottl]").textContent = sh ? "이미지 형태 변경" : "이미지 크기 조정"; foDlg.firstChild.setAttribute("aria-label", sh ? "이미지 형태 변경" : "이미지 크기 조정");
+  q("[data-foempty]").hidden = !(sh && !has); q("[data-fobody]").style.display = sh && !has ? "none" : "";
+  q("[data-fonft]").hidden = sh; q("[data-fosft]").hidden = !sh;
+  q('[data-fo="all"]').style.display = sh ? "none" : "";
+  foDlg.querySelectorAll("[data-folab]").forEach(e => { e.textContent = sh ? "결과 크기" : "붙여넣을 크기"; });
+  foDlg.querySelectorAll('[data-fo="copy"],[data-fo="save"]').forEach(b => { b.disabled = !has; b.style.opacity = has ? "" : ".45"; });
+  q("[data-fonote]").textContent = sh
+    ? "원본은 줄이지 않고 그대로 열었어요. 만들 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌거나 위치를 입력해서 남길 범위를 정하고, 도형·각도·색을 바꾸세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 다 됐으면 [이미지 복사하기](Ctrl+C) 또는 [이미지 저장하기]를 누르세요. 메모에는 들어가지 않아요."
+    : "원본은 줄이지 않고 그대로 열었어요. 붙여넣을 가로·세로 크기를 넣으면 파란 박스가 나와요. 박스를 끌거나 위치를 입력해서 남길 범위를 정하세요 (화살표 키는 1px, Shift+화살표는 10px, Ctrl+화살표는 100px). 박스 안은 원본 픽셀 그대로 들어가고, 원본 밖으로 나간 부분은 고른 색으로 채워져요. 창 바깥을 누르면 그대로 확정돼요.";
+  if (!has) q("[data-foi]").textContent = "";
+}
+function foInit(file, im, res, i, n) {   // 읽어 둔 그림으로 작업 상태를 만들고 입력 칸을 처음 값으로 (창 표시·그리기는 부른 쪽에서)
+  const iw = im.naturalWidth, ih = im.naturalHeight;
+  const kp = Math.min(1, 2000 / Math.max(iw, ih)), pv = foMk(Math.max(1, Math.round(iw * kp)), Math.max(1, Math.round(ih * kp)));   // 창에 보여줄 작은 미리 보기 (한 번만 만들어요)
+  { const px = pv.getContext("2d"); px.imageSmoothingQuality = "high"; px.drawImage(im, 0, 0, pv.width, pv.height); }
+  const k = Math.min(1, FODEF / iw), fw = foClamp(Math.round(iw * k), FOMIN, FOMAX), fh = foClamp(Math.round(ih * k), FOMIN, 3000);   // 처음 박스: 가로 1600px 이하(예전 크기), 원본이 더 작으면 원본 그대로
+  foSt = { file, im, pv, iw, ih, fw, fh, sc: 1, rot: 0, flip: false, shp: "rect", bg: foBgC || null, fx: (iw - fw) / 2, fy: (ih - fh) / 2, pad: foPad || null, cv: foDlg.querySelector("canvas"), dg: null, dn: null, s: 1, dpr: 1, res, busy: false };
+  foClampPos();
+  foCpk.set(foPad); foSC.value = 100; foRot.value = ""; foFlipSet(false); foShp.value = "rect"; foBCpk.set(foBgC); foMsgClear();
+  foDlg.querySelector("[data-foi]").textContent = (n > 1 ? (i + 1) + " / " + n + " · " : "") + (file.name || "");
+}
+/* 파일 하나를 원본 그대로 열어 창을 띄움 → false(취소) / null(읽지 못함) / {url,W,H}(범위를 정해 만든 그림) / {file}(예전 방식으로 줄여서 넣기) */
 async function foAsk(file, i, n) {
   const im = await foLoad(file);
   if (!im) { toast((file.name || "이미지") + " 을(를) 읽지 못했어요"); return null; }
   const iw = im.naturalWidth, ih = im.naturalHeight;
   if (!(iw > 0 && ih > 0)) return { file };   // 크기를 알 수 없는 그림(SVG 등)은 예전 방식 그대로
   if (!foDlg) foBuild();
-  const kp = Math.min(1, 2000 / Math.max(iw, ih)), pv = foMk(Math.max(1, Math.round(iw * kp)), Math.max(1, Math.round(ih * kp)));   // 창에 보여줄 작은 미리 보기 (한 번만 만들어요)
-  { const px = pv.getContext("2d"); px.imageSmoothingQuality = "high"; px.drawImage(im, 0, 0, pv.width, pv.height); }
-  const k = Math.min(1, FODEF / iw), fw = foClamp(Math.round(iw * k), FOMIN, FOMAX), fh = foClamp(Math.round(ih * k), FOMIN, 3000);   // 처음 박스: 가로 1600px 이하(예전 크기), 원본이 더 작으면 원본 그대로
   return new Promise(res => {
-    foSt = { file, im, pv, iw, ih, fw, fh, sc: 1, rot: 0, flip: false, shp: "rect", bg: foBgC || null, fx: (iw - fw) / 2, fy: (ih - fh) / 2, pad: foPad || null, cv: foDlg.querySelector("canvas"), dg: null, dn: null, s: 1, dpr: 1, res, busy: false };
-    foClampPos();
-    foCpk.set(foPad); foSC.value = 100; foRot.value = ""; foFlipSet(false); foShp.value = "rect"; foBCpk.set(foBgC); foMsgClear();
-    foDlg.querySelector("[data-foi]").textContent = (n > 1 ? (i + 1) + " / " + n + " · " : "") + (file.name || "");
+    foShape = false; foInit(file, im, res, i, n); foModeUI();
     foDlg.hidden = false; document.addEventListener("keydown", foKey, true);
     foLayout(); foDraw();
   });
+}
+/* ===== 이미지 ▸ 이미지 형태 변경: 같은 창에서 그림을 붙여넣거나 열어 범위·도형·각도·색·크기를 바꾼 뒤, 복사하거나 PC에 저장 (메모에는 넣지 않아요) ===== */
+function openShapeImage() {
+  if (!foDlg) foBuild();
+  if (foSt || !foDlg.hidden) return;
+  foShape = true; foSt = null; foModeUI();
+  foDlg.hidden = false; document.addEventListener("keydown", foKey, true); document.addEventListener("paste", foShapePaste, true);
+  say("이미지를 Ctrl+V로 붙여넣거나 [파일 열기]로 가져오세요");
+}
+function foShapePaste(e) {   // 창이 열려 있는 동안의 Ctrl+V
+  if (!foShape) return;
+  const t = e.target; if (t && /^(TEXTAREA|INPUT|SELECT)$/.test(t.nodeName)) return;
+  const cd = e.clipboardData, f = Array.from((cd && cd.files) || []).find(f => /^image\//.test(f.type));
+  if (!f) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  if (foSt) { toast("이미 이미지가 열려 있어요. 다른 이미지를 쓰려면 [형태 변경 재시작]을 누르세요"); return; }
+  foShapeLoad(f);
+}
+async function foShapeLoad(file) {
+  if (!foShape || foSt) return;
+  const im = await foLoad(file);
+  if (!foShape || foSt) return;   // 읽는 사이에 닫혔거나 다른 그림이 먼저 들어왔어요
+  if (!im) { toast((file.name || "이미지") + " 을(를) 읽지 못했어요"); return; }
+  if (!(im.naturalWidth > 0 && im.naturalHeight > 0)) { toast("크기를 알 수 없는 이미지는 형태를 바꿀 수 없어요"); return; }
+  foInit(file, im, () => {}, 0, 1); foModeUI(); foLayout(); foDraw();
+  say("이미지를 가져왔어요. 형태를 바꾼 뒤 [이미지 복사하기] 또는 [이미지 저장하기]를 누르세요", "ok");
+}
+function foShapeEnd() {   // 작업종료: 지금까지의 작업을 모두 버리고 창을 닫음
+  if (!foShape) return;
+  foDlg.hidden = true; foSt = null; foShape = false; foMsgClear();
+  document.removeEventListener("keydown", foKey, true); document.removeEventListener("paste", foShapePaste, true);
+  say("이미지 형태 변경을 마쳤어요");
+}
+function foShapeReset() {   // 형태 변경 재시작: 처음 열었을 때(그림이 없는 상태)로
+  if (!foShape) return;
+  foSt = null; foMsgClear(); foModeUI();
+  say("처음 상태로 돌아갔어요. 이미지를 붙여넣거나 [파일 열기]로 가져오세요");
+}
+function foShapeBlob(c) {   // 결과 그림을 PNG(투명 유지)로
+  return (async () => {
+    await foWait();
+    const cv = foCanvas(c); if (!cv) throw new Error("canvas");
+    return await new Promise((ok, no) => cv.toBlob(b => b ? ok(b) : no(new Error("png")), "image/png"));
+  })();
+}
+async function foShapeCopy() {
+  const c = foSt; if (!foShape || !c || c.busy) return;
+  if (!(navigator.clipboard && window.ClipboardItem)) { toast("이 브라우저는 이미지 복사를 지원하지 않아요. [이미지 저장하기]를 써 주세요"); return; }
+  c.busy = true; say("이미지를 만드는 중…");
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": foShapeBlob(c) })]);
+    say("이미지를 복사했어요. 원하는 곳에 Ctrl+V로 붙여넣을 수 있어요", "ok");
+  } catch (e) { if (foSt === c) { toast("이미지를 복사하지 못했어요. 크기를 줄이거나 [이미지 저장하기]를 써 보세요"); say("이미지를 복사하지 못했어요", "err"); } }
+  c.busy = false;
+}
+async function foShapeSave() {
+  const c = foSt; if (!foShape || !c || c.busy) return;
+  c.busy = true; say("이미지를 만드는 중…");
+  try {
+    const blob = await foShapeBlob(c);
+    const base = ((c.file && c.file.name) || "").replace(/\.[^.]*$/, "").replace(/[\\/:*?"<>|\u0000-\u001f]/g, "").slice(0, 80), name = (base && !/^image$/i.test(base) ? base : "이미지") + "_형태변경.png";
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    say("이미지를 PC에 저장했어요: " + name, "ok");
+  } catch (e) { if (foSt === c) { toast("이미지를 저장하지 못했어요. 크기를 줄여 보세요"); say("이미지를 저장하지 못했어요", "err"); } }
+  c.busy = false;
 }
 imgFile.addEventListener("change", async () => {
   const fs = Array.from(imgFile.files || []).filter(f => /^image\//.test(f.type)); if (!fs.length) return;
