@@ -514,7 +514,7 @@ p{margin:6px 0 0}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
 </style>
 <style id="imgx-cs-css">
-/* 색 고르기 묶음 (바탕 이미지 넣기 · 기본 크기 조정 공통) */
+/* 색 고르기 묶음 (단일 색상의 이미지를 메모에 넣기 · 기본 크기 조정 공통) */
 .cpk{display:flex;flex-direction:column;gap:6px}
 .cpk .cpr{display:flex;gap:8px;align-items:center}
 body .cpk button.no{height:28px;flex:1;min-width:0;width:auto;padding:0 8px;border:1.5px solid var(--line);border-radius:6px;background:transparent;color:var(--ink);font:inherit;font-size:12.5px;cursor:pointer;justify-content:center;text-align:center}
@@ -533,7 +533,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .cpk .cpv{gap:8px}
 .cpk .cpv input.hexin{border-color:currentColor}
 .hexnote{font-size:12px}
-/* 바탕 이미지 넣기 */
+/* 단일 색상의 이미지를 메모에 넣기 */
 .tb .pop .bgsec{min-width:276px}
 .tb .pop .bgprev{display:flex;align-items:center;justify-content:center;align-self:center;max-width:100%;border:1px solid var(--line);border-radius:6px;font-size:11.5px;overflow:hidden;box-sizing:border-box}
 .tb .pop .bgft{display:flex;justify-content:flex-end;gap:6px;padding-top:6px;border-top:1px solid var(--line)}
@@ -614,7 +614,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   <i class="sep"></i>
   <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
   <div class="menu" id="tblWrap"><button type="button" data-pal id="tblBtn" title="표: 표 삽입 / 표 편집" aria-label="표" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg><span>표</span></button><div class="pop" id="tblPop" hidden><div id="tblMv"><button type="button" data-cmd="table" title="행·열 수를 정해 표를 넣어요">표 삽입</button><button type="button" id="tblEditGo" data-needtbl title="행·열 추가/삭제 (표 안의 칸을 클릭하면 사용할 수 있어요)">표 편집</button><button type="button" data-cfopen title="선택한 칸의 테두리·배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸을 고를 수 있어요)">셀 서식 (테두리·채우기)</button></div><div id="tblLv" hidden><button type="button" data-tbl-back="1">← 뒤로</button><button type="button" data-t="rowAbove">위에 행 추가</button><button type="button" data-t="rowBelow">아래에 행 추가</button><button type="button" data-t="colLeft">왼쪽에 열 추가</button><button type="button" data-t="colRight">오른쪽에 열 추가</button><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="toImg" title="표를 그림(PNG)으로 바꿔요">표를 이미지로 바꾸기</button><button type="button" data-t="toImgKeep" title="원본 표는 그대로 두고 이미지를 추가해요">표를 이미지로 추가 (표 유지)</button><button type="button" data-t="alL">표 왼쪽 정렬</button><button type="button" data-t="alC">표 가운데 정렬</button><button type="button" data-t="alR">표 오른쪽 정렬</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div></div>
-  <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="shapeimg" title="이미지를 붙여넣거나 열어서 도형·각도·색·크기를 바꾼 뒤 복사하거나 PC에 저장하거나 메모에 넣어요">이미지 형태 변경 및 메모 삽입</button><div class="bgsec"><div class="bgttl" title="고른 색을 바탕으로 한 이미지를 메모에 넣어요 (손글씨·도형으로 그리기용)">바탕 이미지 넣기</div><div class="bgnote">색을 눌러도 바로 들어가지 않아요. 미리 보기를 확인하고 [확인]을 누르세요</div><div class="bgsz"><span>크기</span><input type="number" id="bgW" min="24" max="4000" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" id="bgH" min="24" max="4000" step="1" aria-label="세로 픽셀"><span>px</span></div><div class="bgsz"><span>도형</span><select id="bgShp" aria-label="도형" style="height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px"><option value="rect">사각형</option><option value="circle">원</option><option value="tri">삼각형</option><option value="cloud">구름</option><option value="pent">오각형</option><option value="heart">하트</option><option value="star">별</option><option value="burst">폭발</option><option value="clover">클로버</option></select></div><div class="bgsz" title="시계 방향으로 돌려요 (0~359도, 계속 순환)"><span>각도</span><input type="number" id="bgRot" step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="bgpk" data-bgflip aria-pressed="false" title="좌우로 뒤집어요">좌우 반전</button></div><details class="fo-pad"><summary>도형 색 <i data-bgv1></i></summary><div class="cpk" id="bgCpk"></div></details><details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 색 없음) <i data-bgv2></i></summary><div class="cpk" id="bgCpk2"></div></details><div class="bgprev" id="bgPrev" style="border:0"></div><div class="bgnote" id="bgCap" style="text-align:center"></div><button type="button" class="bgpk" data-bgreset title="현재 메모창 비율에 맞춘 크기로 되돌려요">기본 크기로</button><div class="bgft"><button type="button" class="ok" data-bgok>확인</button><button type="button" data-bgx>취소</button></div></div></div></div>
+  <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="shapeimg" title="이미지를 붙여넣거나 열어서 도형·각도·색·크기를 바꾼 뒤 복사하거나 PC에 저장하거나 메모에 넣어요">이미지 형태 변경 및 메모 삽입</button><div class="bgsec"><div class="bgttl" title="고른 색을 바탕으로 한 이미지를 메모에 넣어요 (손글씨·도형으로 그리기용)">단일 색상의 이미지를 메모에 넣기</div><div class="bgnote">색을 눌러도 바로 들어가지 않아요. 미리 보기를 확인하고 [확인]을 누르세요</div><div class="bgsz"><span>크기</span><input type="number" id="bgW" min="24" max="4000" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" id="bgH" min="24" max="4000" step="1" aria-label="세로 픽셀"><span>px</span></div><div class="bgsz"><span>도형</span><select id="bgShp" aria-label="도형" style="height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px"><option value="rect">사각형</option><option value="circle">원</option><option value="tri">삼각형</option><option value="cloud">구름</option><option value="pent">오각형</option><option value="heart">하트</option><option value="star">별</option><option value="burst">폭발</option><option value="clover">클로버</option></select></div><div class="bgsz" title="시계 방향으로 돌려요 (0~359도, 계속 순환)"><span>각도</span><input type="number" id="bgRot" step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="bgpk" data-bgflip aria-pressed="false" title="좌우로 뒤집어요">좌우 반전</button></div><details class="fo-pad"><summary>도형 색 <i data-bgv1></i></summary><div class="cpk" id="bgCpk"></div></details><details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 색 없음) <i data-bgv2></i></summary><div class="cpk" id="bgCpk2"></div></details><div class="bgprev" id="bgPrev" style="border:0"></div><div class="bgnote" id="bgCap" style="text-align:center"></div><button type="button" class="bgpk" data-bgreset title="현재 메모창 비율에 맞춘 크기로 되돌려요">기본 크기로</button><div class="bgft"><button type="button" class="ok" data-bgok>확인</button><button type="button" data-bgx>취소</button></div></div></div></div>
   <input type="color" id="fcPick" value="#2b8a3e" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="color" id="bgPick" value="#ffffff" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="color" id="bgcPick" value="#f6cbed" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"><input type="file" id="imgFile" accept="image/*" multiple hidden>
@@ -1221,7 +1221,7 @@ function makeRich(el) {
     else if (n) say("파일 " + n + "개를 첨부했어요", "ok");
     return n;
   };
-  /* 바탕 이미지: 기본 크기는 이 메모 영역의 안쪽 가로 50%·세로 90% (가로는 붙여넣는 이미지·표와 같은 기준 → 2개를 나란히 붙일 수 있어요) */
+  /* 단일 색상의 이미지: 기본 크기는 이 메모 영역의 안쪽 가로 50%·세로 90% (가로는 붙여넣는 이미지·표와 같은 기준 → 2개를 나란히 붙일 수 있어요) */
   el.blankSize = () => {
     const cs = getComputedStyle(el);
     const sb = el.scrollHeight > el.clientHeight + 1 ? 0 : (() => { const q = document.createElement("div"); q.style.cssText = "position:absolute;visibility:hidden;width:60px;height:60px;overflow:scroll"; document.body.appendChild(q); const w = q.offsetWidth - q.clientWidth; q.remove(); return w; })();
@@ -2322,7 +2322,7 @@ let imgBack = null;
   const fire = () => ta.dispatchEvent(new Event("input", { bubbles: true }));
   const box = el("div", "imgx-box"), grip = el("div", "imgx-grip"), gripR = el("div", "imgx-grip gr"), gripB = el("div", "imgx-grip gb"), bar = el("div", "imgx-bar");
   const main = el("div", "imgx-row",
-    '<button type="button" data-cs="1" title="이미지 그림 자체의 가로·세로 크기를 바꿔요 (박스를 끌어 남길 범위를 정해요)">기본 크기 조정</button><label class="imgx-sl" title="크기 비율: 지금 크기가 100%예요 (가로·세로를 직접 조절하면 그 크기가 새 100%). [원본 크기]를 누르면 원본이 100%예요">크기 <input type="range" data-sl min="10" max="500" step="1" value="100" aria-label="크기 비율"><input type="number" data-sn min="10" max="500" step="1" value="100" aria-label="크기 비율 숫자 입력" title="숫자로 입력하고 Enter (10~500)">%</label><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="lin">선 넣기</button><button type="button" class="ic" data-a="fil" aria-label="페인트" title="페인트: 색·투명도를 고르고 칠할 곳을 클릭하면, 그 자리에서 글자·도형·선으로 막힌 범위가 칠해져요"><svg viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg></button><button type="button" data-a="pic" title="캡처·파일 이미지를 이 이미지 위에 올려요 (바탕 이미지 위에 붙여넣기)">이미지 넣기</button><button type="button" data-a="cpy" aria-haspopup="true" title="글자·도형·올린 이미지가 합쳐진 전체 이미지를 복사하거나 PC에 파일로 저장해요">이미지 저장</button><button type="button" class="ic" data-a="era" aria-label="지우개" title="지우개: 원본 이미지를 지워요"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button type="button" class="ic" data-a="las" aria-label="올가미" title="올가미: 둘러싼 영역에 걸친 글자·도형·선을 삭제해요"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><i class="sep"></i><button type="button" data-sa="vbase" aria-pressed="false" disabled title="원본 이미지 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">원본</button><button type="button" data-sa="vitems" aria-pressed="false" disabled title="추가 요소(글자·도형·선) 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">추가 요소</button><button type="button" data-sa="eundo" disabled title="편집 중인 글자·도형·선·지우개 실행 취소 (Ctrl+Z / 다시 실행 Ctrl+Y)">실행 취소</button><button type="button" data-sa="reset" disabled title="색·선 굵기·글자 크기·지우개 굵기 등 도구 설정을 기본값으로 되돌려요 (이미 넣은 요소는 그대로). 도구를 연 동안에만 쓸 수 있어요">설정 초기화</button>');
+    '<button type="button" data-cs="1" title="이미지 그림 자체의 가로·세로 크기를 바꿔요 (박스를 끌어 남길 범위를 정해요)">기본 크기 조정</button><label class="imgx-sl" title="크기 비율: 지금 크기가 100%예요 (가로·세로를 직접 조절하면 그 크기가 새 100%). [원본 크기]를 누르면 원본이 100%예요">크기 <input type="range" data-sl min="10" max="500" step="1" value="100" aria-label="크기 비율"><input type="number" data-sn min="10" max="500" step="1" value="100" aria-label="크기 비율 숫자 입력" title="숫자로 입력하고 Enter (10~500)">%</label><i class="sep"></i><button type="button" data-a="txt">글자 넣기</button><button type="button" data-a="shp">도형 넣기</button><button type="button" data-a="lin">선 넣기</button><button type="button" class="ic" data-a="fil" aria-label="페인트" title="페인트: 색·투명도를 고르고 칠할 곳을 클릭하면, 그 자리에서 글자·도형·선으로 막힌 범위가 칠해져요"><svg viewBox="0 0 24 24"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5"/><path d="M2 13h15"/><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/></svg></button><button type="button" data-a="pic" title="캡처·파일 이미지를 이 이미지 위에 올려요 (단일 색상의 이미지 위에 붙여넣기)">이미지 넣기</button><button type="button" data-a="cpy" aria-haspopup="true" title="글자·도형·올린 이미지가 합쳐진 전체 이미지를 복사하거나 PC에 파일로 저장해요">이미지 저장</button><button type="button" class="ic" data-a="era" aria-label="지우개" title="지우개: 원본 이미지를 지워요"><svg viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button type="button" class="ic" data-a="las" aria-label="올가미" title="올가미: 둘러싼 영역에 걸친 글자·도형·선을 삭제해요"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="8" ry="5" stroke-dasharray="3 2.4"/><path d="M8.6 13.4c-1 1.3-1.2 2.6-.4 3.6.9 1 2.4.8 2.7-.4.3-1.2-.7-1.8-1.6-1.3M9.5 17.6c.2 1.4 1.4 2.4 2.5 2.4"/></svg></button><i class="sep"></i><button type="button" data-sa="vbase" aria-pressed="false" disabled title="원본 이미지 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">원본</button><button type="button" data-sa="vitems" aria-pressed="false" disabled title="추가 요소(글자·도형·선) 레이어 보기/숨기기 (도구를 연 동안에만 쓸 수 있어요)">추가 요소</button><button type="button" data-sa="eundo" disabled title="편집 중인 글자·도형·선·지우개 실행 취소 (Ctrl+Z / 다시 실행 Ctrl+Y)">실행 취소</button><button type="button" data-sa="reset" disabled title="색·선 굵기·글자 크기·지우개 굵기 등 도구 설정을 기본값으로 되돌려요 (이미 넣은 요소는 그대로). 도구를 연 동안에만 쓸 수 있어요">설정 초기화</button>');
 
   box.hidden = bar.hidden = true;
   const shp = el("div", "imgx-row",
@@ -3027,7 +3027,7 @@ let imgBack = null;
         const d = S.map(strokeD).join(" ");
         return (exp ? "" : '<path d="' + d + '" fill="none" stroke="rgba(0,0,0,0)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" pointer-events="stroke"/>') + '<path d="' + d + '" fill="none" ' + sb + "/>";
       }
-      case "pic": {   // 올린 이미지 (바탕 이미지 위에 놓은 캡처·사진)
+      case "pic": {   // 올린 이미지 (단일 색상의 이미지 위에 놓은 캡처·사진)
         const P = PICS.get(it.pid); if (!P) return "";
         return '<image href="' + (exp ? P.url : P.obj) + '" x="' + x + '" y="' + y + '" width="' + Math.max(w, 1) + '" height="' + Math.max(h, 1) + '" preserveAspectRatio="none"' + (exp ? "" : it.paint ? ' pointer-events="none"' : ' pointer-events="all"') + "/>";
       }
@@ -3688,7 +3688,7 @@ let imgBack = null;
     const s = sh;
     if (sd.tool || s.erased || JSON.stringify(outItems(s)) !== s.orig) { commit(); endTool(); } else closeShp();
   }
-  /* ---- 이미지 넣기: 붙여넣기(Ctrl+V·버튼) / 파일 선택 / 끌어다 놓기 → 바탕 이미지 위의 요소로 ---- */
+  /* ---- 이미지 넣기: 붙여넣기(Ctrl+V·버튼) / 파일 선택 / 끌어다 놓기 → 단일 색상의 이미지 위의 요소로 ---- */
   const readImgFile = f => new Promise((ok, no) => {   // f: File | {url}(파일 열기 창에서 도형·각도·색을 적용해 만든 그림)
     const isU = !(f instanceof Blob), u = isU ? f.url : URL.createObjectURL(f), im = new Image(), rv = () => { if (!isU) URL.revokeObjectURL(u); };
     im.onload = () => { rv(); ok(im); }; im.onerror = () => { rv(); no(); }; im.src = u;
@@ -3870,7 +3870,7 @@ function imPalGrid() {   // 14색(은색·흰색 제외) × 6줄. 맨 왼쪽 검
   return o;
 }
 /* ===== 이미지 도형 (이미지 ▸ 도형 넣기의 자유곡선을 뺀 도형과 같은 모양: 사각형·원·삼각형·구름 + 오각형·하트·별·폭발) =====
-   파일 열기와 바탕 이미지 넣기가 함께 써요. 도형 밖은 투명해요 */
+   파일 열기와 단일 색상의 이미지를 메모에 넣기가 함께 써요. 도형 밖은 투명해요 */
 function imCloudD(x, y, w, h) {
   const a = w / 2, bb = h / 2, per = Math.PI * (3 * (a + bb) - Math.sqrt((3 * a + bb) * (a + 3 * bb)));
   const tc = Math.max(14, Math.min(42, Math.min(w, h) / 3)), n = Math.max(7, Math.min(30, Math.round(per / tc))), bump = per / n / 2 * 0.6;
@@ -3922,7 +3922,7 @@ function imExt(w, h, rot) {   // 돌린 상자를 감싸는 크기
   const a = r * Math.PI / 180, co = Math.abs(Math.cos(a)), si = Math.abs(Math.sin(a));
   return [Math.max(1, Math.ceil(w * co + h * si - 1e-6)), Math.max(1, Math.ceil(w * si + h * co - 1e-6))];
 }
-/* 바탕 이미지: w×h 도형을 color 로 칠하고(없으면 투명) '좌우반전 → 시계 방향 회전' 한 그림. k 는 배율, chk 면 색이 없을 때 바둑판+테두리(미리 보기용) */
+/* 단일 색상의 이미지: w×h 도형을 color 로 칠하고(없으면 투명) '좌우반전 → 시계 방향 회전' 한 그림. k 는 배율, chk 면 색이 없을 때 바둑판+테두리(미리 보기용) */
 function imBlank(w, h, color, shape, rot, flip, k, chk, rest) {
   k = k || 1;
   const ow = Math.max(1, Math.round(w * k)), oh = Math.max(1, Math.round(h * k)), e = imExt(ow, oh, rot);
@@ -3939,7 +3939,7 @@ function imBlank(w, h, color, shape, rot, flip, k, chk, rest) {
 }
 let bgBack = null;
 const bgW = document.getElementById("bgW"), bgH = document.getElementById("bgH");
-let bgColor = "#ffffff";   // 바탕 이미지 색 ("" = 색 없음). 고르기만 하면 미리 보기만 바뀌고, [확인]을 눌러야 들어가요
+let bgColor = "#ffffff";   // 단일 색상의 이미지 색 ("" = 색 없음). 고르기만 하면 미리 보기만 바뀌고, [확인]을 눌러야 들어가요
 const bgShp = document.getElementById("bgShp"), bgRot = document.getElementById("bgRot"), bgFlipB = document.querySelector("[data-bgflip]");
 let bgFlipOn = false, bgRest = "";   // bgRest: 도형 밖·돌린 모서리 색 ("" = 색 없음·투명)
 function bgFlipSet(on) { bgFlipOn = !!on; if (!bgFlipB) return; bgFlipB.setAttribute("aria-pressed", String(bgFlipOn)); bgFlipB.style.background = on ? "#339af0" : ""; bgFlipB.style.color = on ? "#fff" : ""; bgFlipB.style.borderColor = on ? "#339af0" : ""; }
@@ -3968,14 +3968,14 @@ if (bgRot) {
 function bgDefaults() {   // 현재 메모창 비율에 맞춘 기본 픽셀 크기를 칸에 표시
   const d = ta.blankSize(); bgW.value = d.W; bgH.value = d.H; bgPrevDraw();
 }
-function blankImage(color) {   // 이미지 ▸ 바탕 이미지 넣기: 고른 색을 바탕으로 한 이미지를 마지막으로 선택한 메모 영역(ta)에 넣음
+function blankImage(color) {   // 이미지 ▸ 단일 색상의 이미지를 메모에 넣기: 고른 색을 바탕으로 한 이미지를 마지막으로 선택한 메모 영역(ta)에 넣음
   if (ta.disabled) return;
   (bgBack || saveRange())();
   const d = ta.blankSize();
   const clamp = (inp, v) => { const n = Math.max(24, Math.min(4000, Math.round(+inp.value) || v)); inp.value = n; return n; };
   const w = clamp(bgW, d.W), h = clamp(bgH, d.H);
   const o = ta.insertBlank(color || null, w, h, bgShp ? bgShp.value : "rect", bgRot ? imRot(bgRot.value) : 0, bgFlipOn, bgRest);
-  say("바탕 이미지(" + o.W + "×" + o.H + "px)를 넣었어요. 이미지를 클릭해 [글자 넣기]·[도형 넣기]로 그려 보세요", "ok");
+  say("단일 색상의 이미지(" + o.W + "×" + o.H + "px)를 넣었어요. 이미지를 클릭해 [글자 넣기]·[도형 넣기]로 그려 보세요", "ok");
 }
 function pickImage() {
   if (ta.disabled) return;
