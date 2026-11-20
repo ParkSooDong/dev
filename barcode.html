@@ -7,7 +7,7 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000032248206889dfcce0b06e484%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25EA%25B0%2580%25EB%258F%2585%25EC%2584%25B1%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498667%26p%3Dfs%26cid%3D1%26sig%3D356421a32431c67ccb9dd23f6a72ff657f5f078001e5f59e4e5bbbfdc4971dcd%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000095cc8206bc73e1f9ecfa3f4a%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25EB%258B%25A4%25EC%25A4%2591%25ED%2588%25B4%25EB%25B0%2594%25ED%2581%25AC%25EA%25B8%25B0%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498667%26p%3Dfs%26cid%3D1%26sig%3Dc22374b1c071aef11c9d0564f1cd7fe18367d9d08757ab3e2d4925e75db1a950%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
@@ -546,48 +546,44 @@ p{margin:6px 0 0}
 .cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
 
-/* 좁은 화면의 QR: 코드 아래에 문자열을 두지 않고 오른쪽에 배치해 QR 인식 크기 확보 */
+/* QR 표시: 툴바/메모 패널 수와 무관하게 QR의 실제 표시 크기를 고정하고 문자열은 오른쪽에 둔다.
+   flex-basis를 고정하지 않으면 아래쪽의 공통 svg 규칙(flex:1 1 0)에 의해 다시 축소될 수 있다. */
 @media (max-width:560px){
   .view[data-k="qr"]{
-    flex-direction:row;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-    padding:6px 8px;
+    flex-direction:row!important;
+    justify-content:flex-start!important;
+    align-items:center!important;
+    gap:10px!important;
+    padding:6px 8px!important;
+    min-height:128px!important;
   }
   .view[data-k="qr"] svg{
-    display:block;
-    flex:0 0 clamp(104px,22vw,128px);
-    width:clamp(104px,22vw,128px)!important;
-    height:auto!important;
-    max-width:none;
-    min-height:0;
-    aspect-ratio:1;
+    display:block!important;
+    flex:0 0 116px!important;
+    width:116px!important;
+    min-width:116px!important;
+    max-width:116px!important;
+    height:116px!important;
+    min-height:116px!important;
+    max-height:116px!important;
+    aspect-ratio:1/1!important;
   }
   .view[data-k="qr"] .txt{
-    flex:1 1 0;
-    min-width:0;
-    margin:0;
-    text-align:left;
+    flex:1 1 auto!important;
+    min-width:0!important;
+    margin:0!important;
+    text-align:left!important;
     overflow-wrap:anywhere;
     word-break:break-all;
     line-height:1.35;
   }
 }
 
-/* 매우 좁은 휴대전화에서는 QR 카드만 한 행 전체를 사용해 코드 크기를 유지 */
-@media (max-width:400px){
+/* QR을 담은 카드 폭이 좁아지는 다중 패널 상황에서는 카드가 한 행 전체를 사용한다.
+   따라서 패널 수가 늘어도 QR 자체를 줄이지 않는다. */
+@media (max-width:560px){
   .cell:has(.view[data-k="qr"]){
-    grid-column:1/-1;
-  }
-  .view[data-k="qr"]{
-    justify-content:flex-start;
-    gap:12px;
-    min-height:128px;
-  }
-  .view[data-k="qr"] svg{
-    flex-basis:116px;
-    width:116px!important;
+    grid-column:1/-1!important;
   }
 }
 
