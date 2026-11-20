@@ -7,7 +7,7 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000095cc8206bc73e1f9ecfa3f4a%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25EB%258B%25A4%25EC%25A4%2591%25ED%2588%25B4%25EB%25B0%2594%25ED%2581%25AC%25EA%25B8%25B0%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498667%26p%3Dfs%26cid%3D1%26sig%3Dc22374b1c071aef11c9d0564f1cd7fe18367d9d08757ab3e2d4925e75db1a950%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000020988206a8ff3e948e0d7f44%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25EB%2584%2588%25EB%25B9%2584%25ED%2599%2595%25EB%258C%2580%25EB%25AC%25B8%25EC%25A0%259C%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498668%26p%3Dfs%26cid%3D1%26sig%3D8d6c446bc066296292ace621cc3ff83e0b45737cd68a6d50f7dafb33444fe8af%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
@@ -392,14 +392,7 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tb button,.tbar button,.fbar button{flex:none;font-weight:400}
 .tb button.expand{margin-left:auto}
 /* 확대 버튼은 툴바 맨 오른쪽으로 */
-/* 이미지 크기 조정 컨트롤은 툴바 2행에서 한 덩어리로 유지해요.
-   부모 툴바 폭이 좁아져도 버튼·슬라이더·숫자 입력이 서로 다른 줄로 갈라지지 않게 합니다. */
-.tb>.imgx-tbg{display:inline-flex;flex:0 0 auto;flex-wrap:nowrap;align-items:center;gap:2px;white-space:nowrap;min-width:max-content}
-.tb>.imgx-tbg[hidden]{display:none}
-.tb>.imgx-tbg button{font-size:13px;white-space:nowrap;flex:none}
-.tb>.imgx-tbg .imgx-sl{flex:none;white-space:nowrap}
-.tb>.imgx-tbg .imgx-sl input{flex:none}
-
+.tb .imgx-tbg{display:inline-flex;align-items:center;gap:2px}.tb .imgx-tbg[hidden]{display:none}.tb .imgx-tbg button{font-size:13px;white-space:nowrap}
 .tb .imgx-tbg button{height:auto;min-width:0;padding:4px 9px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--ink);font-size:13px;font-weight:400;cursor:pointer}.tb .imgx-tbg button:hover{background:var(--line)}
 .tb .imgx-tbg .imgx-sl{display:inline-flex;flex-direction:row;align-items:center;gap:5px;flex:none;color:var(--ink);font-size:13px;white-space:nowrap}.tb .imgx-tbg .imgx-sl input[type=range]{width:130px;margin:0;padding:0;border:0;background:transparent;height:auto;min-width:0}.tb .imgx-tbg .imgx-sl input[type=number]{width:62px;height:28px;margin:0;padding:0 4px;box-sizing:border-box;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
 .mpane .tb .expand{position:static;width:32px;height:32px;font-size:15px;opacity:.7;background:transparent;border:0;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}
@@ -546,19 +539,18 @@ p{margin:6px 0 0}
 .cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
 
-/* QR 표시: 툴바/메모 패널 수와 무관하게 QR의 실제 표시 크기를 고정하고 문자열은 오른쪽에 둔다.
-   flex-basis를 고정하지 않으면 아래쪽의 공통 svg 규칙(flex:1 1 0)에 의해 다시 축소될 수 있다. */
-@media (max-width:560px){
+/* QR 크기 보정:
+   화면 너비가 1280px 이상이 되면 메인 영역 높이는 고정되는데,
+   기존 데스크톱 규칙의 flex:1 1 0 때문에 QR SVG가 세로 방향으로 압축되는 문제를 방지한다.
+   카드/행 높이는 변경하지 않고 QR과 문자열만 가로로 나란히 배치한다. */
+@media (min-width:1280px){
   .view[data-k="qr"]{
     flex-direction:row!important;
-    justify-content:flex-start!important;
+    justify-content:center!important;
     align-items:center!important;
-    gap:10px!important;
-    padding:6px 8px!important;
-    min-height:128px!important;
+    gap:12px!important;
   }
   .view[data-k="qr"] svg{
-    display:block!important;
     flex:0 0 116px!important;
     width:116px!important;
     min-width:116px!important;
@@ -575,15 +567,6 @@ p{margin:6px 0 0}
     text-align:left!important;
     overflow-wrap:anywhere;
     word-break:break-all;
-    line-height:1.35;
-  }
-}
-
-/* QR을 담은 카드 폭이 좁아지는 다중 패널 상황에서는 카드가 한 행 전체를 사용한다.
-   따라서 패널 수가 늘어도 QR 자체를 줄이지 않는다. */
-@media (max-width:560px){
-  .cell:has(.view[data-k="qr"]){
-    grid-column:1/-1!important;
   }
 }
 
