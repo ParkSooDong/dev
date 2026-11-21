@@ -4904,13 +4904,44 @@ onEd("click", e => {
     }
     setMulti(c || document.body, c || document.body); anchor = c; drag = !!c && e.target.closest(".rich").isContentEditable;
   });
+  /* 드래그로 칸을 고르는 중에 마우스가 보이는 영역 가장자리(또는 바깥)로 가면 그 방향으로 화면을 자동으로 넘기며 범위를 넓혀요 */
+  let lastPt = null, dragRaf = 0;
+  const scrollerOf = (el, vert) => {
+    for (let n = el.parentElement; n && n !== document.documentElement && n !== document.body; n = n.parentElement) {
+      const cs = getComputedStyle(n), o = vert ? cs.overflowY : cs.overflowX;
+      if (/(auto|scroll)/.test(o) && (vert ? n.scrollHeight > n.clientHeight : n.scrollWidth > n.clientWidth)) return n;
+    }
+    return document.scrollingElement || document.documentElement;
+  };
+  const boxOf = el => (el === document.scrollingElement || el === document.documentElement)
+    ? { top: 0, left: 0, bottom: document.documentElement.clientHeight, right: document.documentElement.clientWidth } : el.getBoundingClientRect();
+  function dragStep() {
+    dragRaf = 0;
+    if (!drag || !lastPt || !anchor || !anchor.isConnected) return;
+    const tab = anchor.closest("table"); if (!tab) return;
+    const sv = scrollerOf(tab, true), sh = scrollerOf(tab, false), bv = boxOf(sv), bh = boxOf(sh);
+    const EDGE = 24, spd = d => Math.min(40, 4 + d / 2);
+    let dy = 0, dx = 0;
+    if (lastPt.y < bv.top + EDGE) dy = -spd(bv.top + EDGE - lastPt.y); else if (lastPt.y > bv.bottom - EDGE) dy = spd(lastPt.y - (bv.bottom - EDGE));
+    if (lastPt.x < bh.left + EDGE) dx = -spd(bh.left + EDGE - lastPt.x); else if (lastPt.x > bh.right - EDGE) dx = spd(lastPt.x - (bh.right - EDGE));
+    const t0 = sv.scrollTop, l0 = sh.scrollLeft;
+    if (dy) sv.scrollTop += dy;
+    if (dx) sh.scrollLeft += dx;
+    const moved = sv.scrollTop !== t0 || sh.scrollLeft !== l0;
+    // 마우스가 표나 보이는 영역 밖이어도 가장 가까운 보이는 칸을 고르도록 좌표를 안쪽으로 맞춰요
+    const tr = tab.getBoundingClientRect();
+    const cl = (v, lo, hi) => Math.min(Math.max(v, lo), Math.max(lo, hi));
+    const px = cl(lastPt.x, Math.max(tr.left, bh.left) + 1, Math.min(tr.right, bh.right) - 1);
+    const py = cl(lastPt.y, Math.max(tr.top, bv.top) + 1, Math.min(tr.bottom, bv.bottom) - 1);
+    const c = cellAt(document.elementFromPoint(px, py));
+    if (c && c.closest("table") === tab && !(c === anchor && !multi)) { setMulti(anchor, c); getSelection().removeAllRanges(); }
+    if (moved) dragRaf = requestAnimationFrame(dragStep);
+  }
   document.addEventListener("mousemove", e => {
     if (!drag) return;
     if (!(e.buttons & 1)) { drag = false; return; }
-    const c = cellAt(document.elementFromPoint(e.clientX, e.clientY));
-    if (!c || !anchor || !anchor.isConnected || c.closest("table") !== anchor.closest("table")) return;
-    if (c === anchor && !multi) return;
-    setMulti(anchor, c); getSelection().removeAllRanges();
+    lastPt = { x: e.clientX, y: e.clientY };
+    if (!dragRaf) dragStep();
   });
   document.addEventListener("mouseup", () => {
     if (drag && multi && anchor && anchor.isConnected) { const r = document.createRange(); r.selectNodeContents(anchor); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
@@ -4922,18 +4953,31 @@ onEd("click", e => {
     e.preventDefault(); e.stopPropagation(); CMDS[m]();
   });
   onEd("keydown", e => { if (multi && (e.key === "Escape" || (e.key.length === 1 && !e.ctrlKey && !e.metaKey))) setMulti(document.body, document.body); });
-  /* 칸을 여러 개 고른 상태에서 엑셀처럼 키보드로 범위를 조절해요
-     - Shift+방향키: 시작한 칸은 그대로 두고 끝 칸을 한 칸씩 늘이거나 줄여요 (병합된 칸은 한 덩어리로 건너가요)
-     - Shift+Ctrl(Mac은 ⌘)+방향키: 그 방향의 표 끝까지 한 번에 고르고, 화면도 따라가요 */
+  /* 칸을 여러 개 고른 상태에서 Shift 없이 방향키(·Home/End/PageUp/PageDown)를 누르면 엑셀처럼 선택이 풀리고, 커서는 그 키의 기본 동작대로 움직여요 */
+  onEd("keydown", e => { if (multi && !e.shiftKey && /^(Arrow(Up|Down|Left|Right)|Home|End|PageUp|PageDown)$/.test(e.key)) setMulti(document.body, document.body); });
+  /* 표 칸 안 어디에서든(칸을 미리 고르지 않아도) 엑셀처럼 키보드로 칸 범위를 만들고 조절해요
+     - Shift+방향키: 눌린 방향으로 칸 2개를 고르고, 계속 누르면 한 칸씩 늘이거나 줄여요 (시작 칸은 고정, 병합된 칸은 한 덩어리로 건너가요)
+     - Shift+Ctrl(Mac은 ⌘)+방향키: 그 방향의 표 끝까지 한 번에 고르고 화면도 따라가요
+     - 칸 안에서 글자를 드래그해 골라 둔 상태(글자 선택)에서는 기본 글자 선택 동작을 그대로 둬요 */
   onEd("keydown", e => {
-    if (!multi || !e.shiftKey || e.altKey || e.isComposing) return;
+    if (!e.shiftKey || e.altKey || e.isComposing) return;
     const dir = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[e.key]; if (!dir) return;
-    if (!multi.a.isConnected || !multi.b.isConnected) return;
-    const tab = multi.a.closest("table"); if (!tab || multi.b.closest("table") !== tab) return;
-    const G = gridOf(tab), A = G.info.get(multi.a), B = G.info.get(multi.b); if (!A || !B) return;
+    let ma, mb;
+    if (multi && multi.a.isConnected && multi.b.isConnected) { ma = multi.a; mb = multi.b; }
+    else {
+      const ed = e.currentTarget, sl = getSelection();
+      if (!ed.isContentEditable || !sl.rangeCount || !sl.isCollapsed) return;
+      const td = closestIn(sl.anchorNode, "td,th");
+      if (!td || !ed.contains(td) || td.closest(".cmpgap")) return;
+      ma = mb = td;
+    }
+    const tab = ma.closest("table"); if (!tab || mb.closest("table") !== tab) return;
+    const G = gridOf(tab), A = G.info.get(ma), B = G.info.get(mb); if (!A || !B) return;
     const nR = G.g.length, nC = Math.max.apply(null, G.g.map(r => (r ? r.length : 0)));
     const at = (r, c) => { const row = G.g[r]; if (!row) return null; for (let k = Math.min(c, row.length - 1); k >= 0; k--) if (row[k]) return row[k]; return null; };
-    let r = B.r >= A.r ? B.r + B.rs - 1 : B.r, c = B.c >= A.c ? B.c + B.cs - 1 : B.c;   // 끝 칸의 위치 (시작 칸에서 먼 쪽 모서리)
+    let r, c;   // 끝 칸의 위치 (시작 칸에서 먼 쪽 모서리)
+    if (B.r > A.r) r = B.r + B.rs - 1; else if (B.r < A.r) r = B.r; else r = dir[0] > 0 ? B.r + B.rs - 1 : B.r;
+    if (B.c > A.c) c = B.c + B.cs - 1; else if (B.c < A.c) c = B.c; else c = dir[1] > 0 ? B.c + B.cs - 1 : B.c;
     let nb = null;
     if (e.ctrlKey || e.metaKey) {
       nb = at(dir[0] ? (dir[0] < 0 ? 0 : nR - 1) : r, dir[1] ? (dir[1] < 0 ? 0 : nC - 1) : c);
@@ -4941,12 +4985,12 @@ onEd("click", e => {
       for (let n = 0, rr = r, cc = c; n < Math.max(nR, nC); n++) {
         rr += dir[0]; cc += dir[1];
         if (rr < 0 || cc < 0 || rr >= nR || cc >= nC) break;
-        const t = at(rr, cc); if (t && t !== multi.b) { nb = t; break; }
+        const t = at(rr, cc); if (t && t !== mb) { nb = t; break; }
       }
     }
     e.preventDefault(); e.stopPropagation();   // 글자 선택이 늘어나는 기본 동작은 막아요
     if (!nb) return;
-    anchor = multi.a; setMulti(multi.a, nb, true);
+    anchor = ma; setMulti(ma, nb, true);
     try { nb.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (x) {}
     schedulePaint();
   });
