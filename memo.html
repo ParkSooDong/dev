@@ -318,8 +318,10 @@ body.has-max header .tr{display:none}
 .szrow span{font-size:12.5px;color:var(--mute)}
 .szrow button{flex:1}
 #cfInfo b{color:#ffd43b}
-#cfInfo{max-width:min(640px,94vw)!important;max-height:72vh;overflow:hidden}
-#cfInfo .cfih{margin-bottom:2px}
+#cfInfo{max-width:min(640px,94vw)!important;max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;pointer-events:auto!important}
+#cfInfo .cfcopy{flex:none;border:0;border-radius:5px;padding:1px 10px;background:#ffd43b;color:#1f2937;font:inherit;font-weight:700;cursor:pointer}
+#cfInfo .cfcopy:hover{background:#ffe066}
+#cfInfo .cfih{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:2px;position:sticky;top:-6px;margin-top:-6px;padding:6px 0 3px;background:#1f2937;z-index:1}
 #cfInfo .cfic{display:flex;gap:8px;align-items:flex-start;margin-top:4px;padding:3px 8px;border-left:4px solid hsl(var(--h),80%,62%);background:hsla(var(--h),70%,60%,.14);border-radius:4px}
 #cfInfo .cfik{flex:none;min-width:3em;font-weight:700;color:hsl(var(--h),90%,76%);white-space:nowrap}
 #cfInfo .cfiv{display:flex;flex-wrap:wrap;gap:3px 5px;min-width:0}
@@ -4805,6 +4807,10 @@ onEd("click", e => {
 (() => {
   const OV = document.createElement("div"); OV.id = "cfOv"; document.body.appendChild(OV);
   const INFO = document.createElement("div"); INFO.id = "cfInfo"; INFO.hidden = true; document.body.appendChild(INFO);   // 선택한 칸 수·값별 개수
+  let infoData = null;   // 요약 창의 열별 값·개수 전체 (복사 버튼용)
+  let infoTop = 0;   // 요약 창을 스크롤해 둔 위치 (선택 표시를 다시 그려도 유지)
+  INFO.addEventListener("scroll", () => { if (!INFO.hidden) infoTop = INFO.scrollTop; });
+  INFO.addEventListener("mousedown", e => e.preventDefault());   // 창을 눌러도 메모의 커서·선택이 풀리지 않게 해요
   let anchor = null, drag = false, multi = null;   // multi = {a, b} (칸 2개 이상 선택했을 때)
   const edOf = n => EDS.find(e => e.contains(n));
   const cellAt = t => { const c = t && t.closest && t.closest("td,th"); return c && c.closest(".rich") ? c : null; };
@@ -4865,7 +4871,7 @@ onEd("click", e => {
   /* ---- 칸 여러 개 선택 (드래그 / Shift+클릭) ---- */
   function paint() {
     OV.textContent = ""; INFO.hidden = true;
-    if (!multi) return;
+    if (!multi) { infoTop = 0; return; }
     if (!multi.a.isConnected || !multi.b.isConnected) { multi = null; return; }
     const s = rectOf(multi.a, multi.b); if (!s) return;
     updateInfo(s);
@@ -5003,7 +5009,7 @@ onEd("click", e => {
   });
   // 영역별 크기 변경(분할선 드래그), 확대/축소, 방향 전환 및 모바일 뷰포트
   // 변경을 모두 감지해 선택 표시를 새 좌표로 다시 그립니다.
-  addEventListener("scroll", schedulePaint, true);
+  addEventListener("scroll", e => { if (e.target !== INFO) schedulePaint(); }, true);
   addEventListener("resize", schedulePaint);
   if (window.visualViewport) {
     visualViewport.addEventListener("resize", schedulePaint);
@@ -5237,19 +5243,22 @@ onEd("click", e => {
   const escH = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   function updateInfo(s) {
     const cells = cellsIn(s), nr = s.r2 - s.r1 + 1, nc = s.c2 - s.c1 + 1;
-    let h = '<div class="cfih"><b>' + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)</div>";
+    const info = [];
+    let h = '<div class="cfih"><span><b>' + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)</span>" + (nr >= 2 ? '<button type="button" class="cfcopy" title="열별 값·개수를 복사해요 (엑셀이나 메모에 Ctrl+V)">복사</button>' : "") + "</div>";
     if (nr >= 2) {   // 선택한 행이 2개 이상이면 열별로 값별 개수 (열마다 색 띠·열 이름·값 칩으로 구분)
       for (let c = s.c1, k = 0; c <= s.c2; c++, k++) {
-        if (k >= 20) { h += '<div class="cfim">… 외 ' + (s.c2 - c + 1) + "개 열</div>"; break; }
+        if (k >= 100) { h += '<div class="cfim">… 외 ' + (s.c2 - c + 1) + "개 열</div>"; break; }
         const seen = new Set(), cnt = new Map();
         for (let r = s.r1; r <= s.r2; r++) { const cl = s.G.g[r] && s.G.g[r][c]; if (!cl || seen.has(cl)) continue; seen.add(cl); const t = cellText(cl) || "(빈칸)"; cnt.set(t, (cnt.get(t) || 0) + 1); }
         const arr = Array.from(cnt).sort((a, b) => b[1] - a[1]);
+        arr.forEach(([x, v]) => info.push([c + 1, x, v]));   // 복사용에는 줄이지 않은 전체 값을 담아요
         h += '<div class="cfic" style="--h:' + ((c * 57) % 360) + '"><span class="cfik">' + (c + 1) + '열</span><span class="cfiv">' +
           arr.slice(0, 12).map(([x, v]) => '<span class="cfit">' + escH(x.length > 20 ? x.slice(0, 20) + "…" : x) + " <b>" + v + "</b></span>").join("") +
           (arr.length > 12 ? '<span class="cfim">… 외 ' + (arr.length - 12) + "종류</span>" : "") + "</span></div>";
       }
     }
-    INFO.innerHTML = h; INFO.hidden = false;
+    infoData = info.length ? { rows: info } : null;
+    INFO.innerHTML = h; INFO.hidden = false; INFO.scrollTop = infoTop;
   }
   const rowsOf = tab => Array.from(tab.rows).filter(tr => !tr.classList.contains("cmpgap"));
   /* 격자 범위(r1~r2, c1~c2)를 칸 하나로 합쳐요. 안쪽 칸의 글자는 왼쪽 위 칸에 모아요 */
@@ -5452,6 +5461,31 @@ onEd("click", e => {
     cfClip = { id: p.id, rows: p.rows, text: p.text, nr: p.nr, nc: p.nc };
     toast("표 전체 " + p.nr + "행 × " + p.nc + "열을 복사했어요. 엑셀이나 이 메모의 칸에 Ctrl+V 하세요");
   };
+
+  /* ---- 선택 요약 [복사] 버튼: 열 / 값 / 개수 표로 복사 (엑셀에는 칸으로, 메모에는 표로 붙여넣어져요) ---- */
+  async function copySummary() {
+    if (!infoData || !infoData.rows.length) return;
+    const rows = infoData.rows, B = "border:1px solid #999999";
+    const text = "열\t값\t개수\n" + rows.map(r => r[0] + "\t" + String(r[1]).replace(/[\t\r\n]+/g, " ") + "\t" + r[2]).join("\n");
+    const html = '<table border="1" cellspacing="0" style="border-collapse:collapse"><tbody>' +
+      '<tr><td style="' + B + ';background-color:#eeeeee;font-weight:700;text-align:center">열</td><td style="' + B + ';background-color:#eeeeee;font-weight:700;text-align:center">값</td><td style="' + B + ';background-color:#eeeeee;font-weight:700;text-align:center">개수</td></tr>' +
+      rows.map(r => '<tr><td style="' + B + ';text-align:center">' + r[0] + '</td><td style="' + B + '">' + escH(String(r[1]).replace(/[\t\r\n]+/g, " ")) + '</td><td style="' + B + ';text-align:right">' + r[2] + "</td></tr>").join("") + "</tbody></table>";
+    let ok = false;
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([new ClipboardItem({ "text/html": new Blob([html], { type: "text/html" }), "text/plain": new Blob([text], { type: "text/plain" }) })]);
+        ok = true;
+      }
+    } catch (x) { ok = false; }
+    if (!ok) {
+      const h = ev => { ev.preventDefault(); ev.clipboardData.setData("text/plain", text); ev.clipboardData.setData("text/html", html); };
+      cfSkip = true; document.addEventListener("copy", h, true);
+      try { ok = document.execCommand("copy"); } catch (x) { ok = false; }
+      document.removeEventListener("copy", h, true); cfSkip = false;
+    }
+    toast(ok ? "요약 " + rows.length + "줄(열·값·개수)을 복사했어요. 메모나 엑셀에 Ctrl+V 하세요" : "요약을 복사하지 못했어요");
+  }
+  INFO.addEventListener("click", e => { if (e.target.closest && e.target.closest(".cfcopy")) copySummary(); });
 
   /* ---- 셀 서식 창 ---- */
   const STY = [["none", "없음", ""], ["thin", "", "1px solid"], ["dot", "", "1px dotted"], ["dash", "", "1px dashed"], ["med", "", "2px solid"], ["mdash", "", "2px dashed"], ["thick", "", "3px solid"], ["dbl", "", "3px double"]];
