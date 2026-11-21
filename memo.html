@@ -324,7 +324,9 @@ body.has-max header .tr{display:none}
 #cfInfo .cfcopy[data-k=img]{background:#8ce99a}
 #cfInfo .cfcopy[data-k=img]:hover{background:#b2f2bb}
 #cfInfo .cfbtns{display:flex;gap:5px;flex:none}
-#cfInfo .cfih{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:2px;position:sticky;top:-6px;margin-top:-6px;padding:6px 0 3px;background:#1f2937;z-index:1}
+#cfInfo .cfhd{margin-bottom:2px;position:sticky;top:-6px;margin-top:-6px;padding:6px 0 3px;background:#1f2937;z-index:1}
+#cfInfo .cfih{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#cfInfo .cfnt{margin-top:2px;font-size:11.5px;line-height:1.4;color:#ced4da}
 #cfInfo .cfic{display:flex;gap:8px;align-items:flex-start;margin-top:4px;padding:3px 8px;border-left:4px solid hsl(var(--h),80%,62%);background:hsla(var(--h),70%,60%,.14);border-radius:4px}
 #cfInfo .cfik{flex:none;min-width:3em;font-weight:700;color:hsl(var(--h),90%,76%);white-space:nowrap}
 #cfInfo .cfiv{display:flex;flex-wrap:wrap;gap:3px 5px;min-width:0}
@@ -5246,8 +5248,9 @@ onEd("click", e => {
   const escH = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   function updateInfo(s) {
     const cells = cellsIn(s), nr = s.r2 - s.r1 + 1, nc = s.c2 - s.c1 + 1;
-    const info = [], view = { n: cells.length, dims: nr + "행 × " + nc + "열", cols: [] };
-    let h = '<div class="cfih"><span><b>' + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)</span>" + (nr >= 2 ? '<span class="cfbtns"><button type="button" class="cfcopy" data-k="tbl" title="열 / 값 / 개수 표로 복사 — 엑셀 필터·피벗이나 메모 표로 붙여넣기">표 복사</button><button type="button" class="cfcopy" data-k="img" title="지금 보이는 모양 그대로 글자(표)로 복사 — 메모에 붙여넣으면 글자를 고칠 수 있어요">화면 복사</button></span>' : "") + "</div>";
+    const note = nr >= 2 ? "열마다 값은 개수 많은 순서로 12종류까지, 값은 20글자까지 표시해요 (전체는 [표 복사])" : "행을 2개 이상 고르면 열별 값·개수가 나와요";   // 요약 맨 위에 늘 보이는 안내
+    const info = [], view = { n: cells.length, dims: nr + "행 × " + nc + "열", note, cols: [] };
+    let h = '<div class="cfhd"><div class="cfih"><span><b>' + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)</span>" + (nr >= 2 ? '<span class="cfbtns"><button type="button" class="cfcopy" data-k="tbl" title="열 / 값 / 개수 표로 복사 — 엑셀 필터·피벗이나 메모 표로 붙여넣기">표 복사</button><button type="button" class="cfcopy" data-k="img" title="지금 보이는 모양 그대로 글자(표)로 복사 — 메모에 붙여넣으면 글자를 고칠 수 있어요">화면 복사</button></span>' : "") + '</div><div class="cfnt">' + escH(note) + "</div></div>";
     if (nr >= 2) {   // 선택한 행이 2개 이상이면 열별로 값별 개수 (열마다 색 띠·열 이름·값 칩으로 구분)
       for (let c = s.c1, k = 0; c <= s.c2; c++, k++) {
         if (k >= 100) { h += '<div class="cfim">… 외 ' + (s.c2 - c + 1) + "개 열</div>"; break; }
@@ -5498,6 +5501,7 @@ onEd("click", e => {
     const mix = (fg, bg, al) => fg.map((v, i) => Math.round(bg[i] * (1 - al) + v * al));
     const nb = t => escH(t).replace(/ /g, "&nbsp;");
     let rows = '<tr><td colspan="2" style="border:1px solid ' + BGH + ';background-color:' + BGH + ';color:#ffffff;vertical-align:middle"><span style="color:' + Y + ';font-weight:700">' + V.n + "칸 선택</span> (" + escH(V.dims) + ")</td></tr>";
+    rows += '<tr><td colspan="2" style="border:1px solid ' + BGH + ';background-color:' + BGH + ';color:#ced4da;vertical-align:middle">' + escH(V.note) + "</td></tr>";
     for (const col of V.cols) {
       const blk = mix(hsl(col.h, 70, 60), BG, .14), bgc = hex(blk), chipBg = hex(mix([255, 255, 255], blk, .12)), accent = hex(hsl(col.h, 80, 62)), lab = hex(hsl(col.h, 90, 76));
       const chips = col.items.map(([t, v]) => '<span style="background-color:' + chipBg + ';color:#ffffff">&nbsp;' + nb(t) + '&nbsp;<span style="color:' + Y + ';font-weight:700">' + v + "</span>&nbsp;</span>").join(" ") +
@@ -5506,7 +5510,7 @@ onEd("click", e => {
         '<td style="border:1px solid ' + BGH + ";border-bottom:4px solid " + BGH + ";background-color:" + bgc + ';color:#ffffff;vertical-align:top">' + chips + "</td></tr>";
     }
     const html = '<table border="0" cellspacing="0" style="width:600px"><tbody>' + rows + "</tbody></table>";
-    const text = V.n + "칸 선택 (" + V.dims + ")\n" + V.cols.map(c => c.c + "열\t" + c.items.map(x => x[0] + " " + x[1]).join(" · ") + (c.more ? " · … 외 " + c.more + "종류" : "")).join("\n");
+    const text = V.n + "칸 선택 (" + V.dims + ")\n" + V.note + "\n" + V.cols.map(c => c.c + "열\t" + c.items.map(x => x[0] + " " + x[1]).join(" · ") + (c.more ? " · … 외 " + c.more + "종류" : "")).join("\n");
     let ok = false;
     try {
       if (navigator.clipboard && window.ClipboardItem) {
