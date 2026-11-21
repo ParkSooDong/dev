@@ -318,6 +318,13 @@ body.has-max header .tr{display:none}
 .szrow span{font-size:12.5px;color:var(--mute)}
 .szrow button{flex:1}
 #cfInfo b{color:#ffd43b}
+#cfInfo{max-width:min(640px,94vw)!important;max-height:72vh;overflow:hidden}
+#cfInfo .cfih{margin-bottom:2px}
+#cfInfo .cfic{display:flex;gap:8px;align-items:flex-start;margin-top:4px;padding:3px 8px;border-left:4px solid hsl(var(--h),80%,62%);background:hsla(var(--h),70%,60%,.14);border-radius:4px}
+#cfInfo .cfik{flex:none;min-width:3em;font-weight:700;color:hsl(var(--h),90%,76%);white-space:nowrap}
+#cfInfo .cfiv{display:flex;flex-wrap:wrap;gap:3px 5px;min-width:0}
+#cfInfo .cfit{background:rgba(255,255,255,.12);border-radius:4px;padding:0 6px;word-break:break-all}
+#cfInfo .cfim{opacity:.75;padding:0 2px}
 .rich.cfsel ::selection{background:transparent}
 .cfov{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.35)}
 .cfov[hidden]{display:none}
@@ -5230,14 +5237,16 @@ onEd("click", e => {
   const escH = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   function updateInfo(s) {
     const cells = cellsIn(s), nr = s.r2 - s.r1 + 1, nc = s.c2 - s.c1 + 1;
-    let h = "<b>" + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)";
-    if (nr >= 2) {   // 선택한 행이 2개 이상이면 열별로 값별 개수
+    let h = '<div class="cfih"><b>' + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)</div>";
+    if (nr >= 2) {   // 선택한 행이 2개 이상이면 열별로 값별 개수 (열마다 색 띠·열 이름·값 칩으로 구분)
       for (let c = s.c1, k = 0; c <= s.c2; c++, k++) {
-        if (k >= 20) { h += "<br>… 외 " + (s.c2 - c + 1) + "개 열"; break; }
+        if (k >= 20) { h += '<div class="cfim">… 외 ' + (s.c2 - c + 1) + "개 열</div>"; break; }
         const seen = new Set(), cnt = new Map();
         for (let r = s.r1; r <= s.r2; r++) { const cl = s.G.g[r] && s.G.g[r][c]; if (!cl || seen.has(cl)) continue; seen.add(cl); const t = cellText(cl) || "(빈칸)"; cnt.set(t, (cnt.get(t) || 0) + 1); }
         const arr = Array.from(cnt).sort((a, b) => b[1] - a[1]);
-        h += "<br>" + (c + 1) + "열: " + arr.slice(0, 12).map(([x, v]) => escH(x.length > 20 ? x.slice(0, 20) + "…" : x) + " <b>" + v + "</b>").join(" · ") + (arr.length > 12 ? " … 외 " + (arr.length - 12) + "종류" : "");
+        h += '<div class="cfic" style="--h:' + ((c * 57) % 360) + '"><span class="cfik">' + (c + 1) + '열</span><span class="cfiv">' +
+          arr.slice(0, 12).map(([x, v]) => '<span class="cfit">' + escH(x.length > 20 ? x.slice(0, 20) + "…" : x) + " <b>" + v + "</b></span>").join("") +
+          (arr.length > 12 ? '<span class="cfim">… 외 ' + (arr.length - 12) + "종류</span>" : "") + "</span></div>";
       }
     }
     INFO.innerHTML = h; INFO.hidden = false;
