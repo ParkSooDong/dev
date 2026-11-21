@@ -4815,6 +4815,40 @@ onEd("click", e => {
   let infoData = null, infoView = null;   // 요약 창의 열별 값·개수 전체(표 복사용) / 화면에 보이는 모양(화면 복사용)
   let infoTop = 0;   // 요약 창을 스크롤해 둔 위치 (선택 표시를 다시 그려도 유지)
   INFO.addEventListener("scroll", () => { if (!INFO.hidden) infoTop = INFO.scrollTop; });
+  /* 요약 창 위치: 표 편집 막대([행 추가]·[칸 병합] 등)를 가리지 않게 표(와 편집 막대) 바로 위에 놓아요.
+     위에 자리가 없으면 표·편집 막대 아래, 그래도 없으면 화면 아래쪽 편집 막대 바로 위에 쌓아요 */
+  function placeInfo() {
+    if (INFO.hidden) return;
+    const tb = document.getElementById("tbar"), M = 8, GAP = 6, MINH = 110;
+    const tab = multi && multi.a.isConnected ? multi.a.closest("table") : null;
+    const tr = tab ? tab.getBoundingClientRect() : null;
+    const bar = tb && !tb.hidden ? tb.getBoundingClientRect() : null;
+    const setPos = (top, bottom, maxH, left) => {
+      INFO.style.top = top == null ? "auto" : top + "px";
+      INFO.style.bottom = bottom == null ? "auto" : bottom + "px";
+      INFO.style.left = left + "px";
+      INFO.style.setProperty("max-height", Math.max(60, maxH) + "px", "important");
+    };
+    INFO.style.setProperty("max-height", (innerHeight - 2 * M) + "px", "important");   // 원래 높이를 먼저 재요
+    const h = INFO.offsetHeight, w = INFO.offsetWidth;
+    const left = Math.max(M, Math.min(tr ? tr.left : 12, innerWidth - w - M));
+    if (tr) {
+      /* 1) 표(편집 막대가 표 위에 있으면 그 막대) 위쪽 */
+      const edge = bar && bar.top < tr.top ? bar.top : tr.top;
+      if (edge - M - GAP >= Math.min(h, MINH)) { setPos(null, innerHeight - (edge - GAP), edge - GAP - M, left); return; }
+      /* 2) 표(또는 그 아래 편집 막대) 아래쪽 */
+      const below = (bar && bar.top >= tr.bottom - 1 ? bar.bottom : tr.bottom) + GAP;
+      if (innerHeight - below - M >= Math.min(h, MINH)) { setPos(below, null, innerHeight - below - M, left); return; }
+    }
+    /* 3) 표가 화면을 가득 채울 때: 화면 아래쪽 편집 막대 바로 위 */
+    const edge3 = bar ? bar.top - GAP : innerHeight - 12;
+    setPos(null, innerHeight - edge3, Math.min(edge3 - M, innerHeight * 0.5), left);
+  }
+  const reInfo = () => requestAnimationFrame(placeInfo);
+  addEventListener("scroll", e => { if (e.target !== INFO) reInfo(); }, true);
+  addEventListener("resize", reInfo);
+  document.addEventListener("selectionchange", reInfo);
+  { const tb0 = document.getElementById("tbar"); if (tb0 && window.MutationObserver) new MutationObserver(reInfo).observe(tb0, { attributes: true, attributeFilter: ["style", "hidden"] }); }   // 편집 막대가 움직이면 같이 맞춰요
   INFO.addEventListener("mousedown", e => e.preventDefault());   // 창을 눌러도 메모의 커서·선택이 풀리지 않게 해요
   let anchor = null, drag = false, multi = null;   // multi = {a, b} (칸 2개 이상 선택했을 때)
   const edOf = n => EDS.find(e => e.contains(n));
@@ -5265,7 +5299,7 @@ onEd("click", e => {
       }
     }
     infoData = info.length ? { rows: info } : null; infoView = info.length ? view : null;
-    INFO.innerHTML = h; INFO.hidden = false; INFO.scrollTop = infoTop;
+    INFO.innerHTML = h; INFO.hidden = false; INFO.scrollTop = infoTop; placeInfo();
   }
   const rowsOf = tab => Array.from(tab.rows).filter(tr => !tr.classList.contains("cmpgap"));
   /* 격자 범위(r1~r2, c1~c2)를 칸 하나로 합쳐요. 안쪽 칸의 글자는 왼쪽 위 칸에 모아요 */
