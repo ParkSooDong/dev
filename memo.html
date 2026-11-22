@@ -1,110 +1,39 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="light">
+<html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="only light">
-<meta name="supported-color-schemes" content="light">
-
-
-<script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004ce882098f5df19f8e1b613f%26fn%3Dbarcode_parksoodong_github_io__dev%25283%2529.html%26cd%3Dattachment%26ts%3D498711%26p%3Dfs%26cid%3D1%26sig%3D24e3e093f688a8c31d31ea7a81587a777d861b1ea2dcfc3609b35cc91dc260fe%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000bb7082098c20d35a1e0c60a9%26fn%3Dbarcode_parksoodong_github_io__dev_%25ED%2591%259C%25EC%259D%25B4%25EC%2596%25B4%25EB%25B6%2599%25EC%259D%25B4%25EA%25B8%25B0_%25EB%25B6%2584%25EB%25A6%25AC%25EA%25B8%25B0%25EB%258A%25A5.html%26cd%3Dattachment%26ts%3D498710%26p%3Dfs%26cid%3D1%26sig%3D8f0b62f69aa27db2e2a88b20cb731fd927d8e52c62def2bd0db818f76c65b0b8%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000cb90820ba4c220de054caabd%26fn%3Dbarcode_parksoodong_github_io__dev_undo_all_issues_fixed.html%26cd%3Dattachment%26ts%3D498708%26p%3Dfs%26cid%3D1%26sig%3Dd56116de27152d386a86041a25c39a21b00a1f6f4d07be4c1a3de5cf12232cd9%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000b8948206a1e8bac60fbfb469%26fn%3Dbarcode_parksoodong_github_io__dev%25281%2529_QR%25ED%2581%25AC%25EA%25B8%25B0%25ED%2599%2595%25EB%258C%2580%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498668%26p%3Dfs%26cid%3D1%26sig%3D922fd9d5478f15724ae0dbeaaa5026fa0746f5b980c9a659151777c929b8f043%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795201270584&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
-/* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
-   고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
-window.armPicker = function (pk, apply) {
-  pk._apply = apply; pk._pend = null;
-  if (pk._bound) return; pk._bound = true;
-  const flush = () => { if (pk._pend == null) return; const v = pk._pend; pk._pend = null; if (pk._apply) pk._apply(v); };
-  pk.addEventListener("input", () => { pk._pend = pk.value; });
-  pk.addEventListener("change", () => { pk._pend = pk.value; flush(); });
-  document.addEventListener("pointerdown", flush, true);
-  document.addEventListener("keydown", flush, true);
-  window.addEventListener("focus", flush);
-};
-/* #색상값 입력칸 공통: '#rrggbb'(rrggbb, #rgb 도 가능)를 직접 입력하고 Enter 를 치면 그 색이 선택된 것으로 해요.
-   - 값이 올바르지 않으면 빨간 테두리만 보이고 아무것도 바뀌지 않아요
-   - 입력 중 다른 곳을 누르면(칸을 벗어나면) 입력하던 글은 버리고 원래 색 표시로 돌아가요 */
-window.hexParse = function (s) {
-  s = String(s == null ? "" : s).trim().replace(/^#/, "");
-  if (/^[0-9a-f]{3}$/i.test(s)) s = s.replace(/./g, "$&$&");
-  return /^[0-9a-f]{6}$/i.test(s) ? "#" + s.toLowerCase() : null;
-};
-window.hexInput = function (inp, commit, resync) {
-  const ok = () => { inp.classList.remove("bad"); inp.removeAttribute("aria-invalid"); };
-  inp.addEventListener("keydown", e => {
-    if (e.key !== "Enter" || e.isComposing) return;
-    e.preventDefault(); e.stopPropagation();
-    const v = window.hexParse(inp.value);
-    if (!v) { inp.classList.add("bad"); inp.setAttribute("aria-invalid", "true"); return; }
-    ok(); commit(v);
-  });
-  inp.addEventListener("input", ok);
-  inp.addEventListener("blur", () => { ok(); if (resync) resync(); });
-};
-</script>
-
-<script>
-/* 모바일 브라우저의 강제 다크모드 방지: 저장된 모드가 dark일 때만 dark, 그 외에는 항상 light */
-(function(){var m="light";try{var s=JSON.parse(localStorage.getItem("bc9-state"));if(s&&s.m==="dark")m="dark"}catch(e){}
-document.documentElement.setAttribute("data-theme",m);
-document.querySelector('meta[name="color-scheme"]').setAttribute("content",m==="dark"?"dark":"only light")})();
-</script>
-<title>미니 바코드/QR 3×3</title>
+<title>메모장</title>
 <style>
-:root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fff;--acc:#1c1b19;--accfg:#fff;
---mfg:#2b8a3e;--link:#1a5fd0;--wk:#ffe08a;--wkb:#d9a400;--warn:#c62828;--note:#b85500;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:only light}
-:root[data-theme="dark"]{--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--card:#1f1e22;--acc:#ecebe6;--accfg:#17161a;
---mfg:#4cc764;--link:#8ab8ff;--wk:#6b5200;--wkb:#d4a91c;--warn:#ff8a80;--note:#ffb74d;color-scheme:dark}
+:root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fffefb;--mfg:#2b8a3e;--ok:#2e7d32;--err:#b3261e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17161a;--ink:#ecebe6;--mute:#8d8a82;--line:#34322f;--card:#1e1d21;--mfg:#4cc764;--ok:#81c784;--err:#ff8a80}}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%}
-body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;padding:20px 12px}
-main{width:100%;max-width:1280px;margin:0 auto;display:flex;flex-direction:column}
-main>*{flex:none}
-h1{font-size:24px;margin:0;letter-spacing:-.01em}
-.hd{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 16px;margin:0 0 14px}
-.tr{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-/* 슬라이드: 오른쪽 끝(버튼 쪽)을 기준으로 왼쪽으로 펼쳐지고, 접힐 때는 반대로 접힘 */
-.tmwrap{display:flex;justify-content:flex-end;overflow:hidden;flex:none;width:0;transition:width .5s cubic-bezier(.34,1.56,.64,1),visibility 0s}   /* 펼칠 때: 목표 너비를 살짝 넘었다가 돌아오는 스프링 */
-.tmwrap.off{visibility:hidden;transition:width .3s ease-in,visibility 0s .3s}
-@media (prefers-reduced-motion:reduce){.tmwrap,.tmwrap.off{transition:none}}
-.tmbtn{font-size:16px;padding:6px 16px}
-.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:nowrap;white-space:nowrap;flex:none;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:16px;color:var(--ink)}
-.tm.pink{background:#ffe3ec;border-color:#f4a9c0;color:#3a1020}
-:root[data-theme="dark"] .tm.pink{background:#4a2332;border-color:#a8506d;color:#ffe3ec}
-.tm label{flex-direction:row;align-items:center;gap:6px;font-size:inherit;color:inherit;white-space:nowrap}
-.tm input{width:4.6em;text-align:center;font-weight:700;font-size:18px;padding:2px 6px;font-variant-numeric:tabular-nums;color:inherit;border-color:currentColor}
-.tm .rm{white-space:nowrap}
-#rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
-#rem.neg{color:var(--warn)}
-#kind{cursor:pointer;color:var(--link);font-weight:800;border-bottom:2px dashed var(--link);user-select:none;-webkit-user-select:none}
-#kind:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) repeat(2,minmax(0,.8fr));gap:8px;align-items:end;margin-bottom:14px}
-label,.lbl{display:flex;flex-direction:column;gap:4px;font-size:15px;color:var(--mute);min-width:0}
-input,select{width:100%;font:inherit;font-size:18px;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);min-width:0}
-select option{color:#111}
-#w{background:var(--wk);border-color:var(--wkb)}
-input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.cell{border:1.5px solid var(--line);border-radius:8px;padding:6px;display:flex;flex-direction:column;gap:6px;min-width:0}
-.cell.wk{background:var(--wk);border-color:var(--wkb)}
-.cell.wk input{background:transparent;border-color:var(--wkb)}
-.view{background:var(--card);border-radius:6px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 4px 3px;overflow:hidden;width:100%}
-.view svg{display:block;width:100%;height:clamp(40px,12vw,110px)}
-.view[data-k=qr] svg{width:auto;max-width:100%;aspect-ratio:1;height:clamp(70px,24vw,200px)}
-.txt{color:#111;font:clamp(10px,1.6vw,18px) ui-monospace,Menlo,monospace;margin-top:3px;word-break:break-all;text-align:center}
-.empty,.err{font-size:14px;color:var(--mute);text-align:center}
-.err{color:#b3261e}
-.cell input{font-size:16px;padding:5px 7px}
-.btns{display:flex;gap:4px}
-.inrow{display:flex;gap:4px;min-width:0}
-.inrow input{flex:1 1 0;min-width:0;width:auto}
-.inrow button{flex:none;width:auto;padding:5px 12px;font-size:14px;white-space:nowrap}
-button{flex:1;font:inherit;font-size:15px;font-weight:600;padding:5px 2px;border-radius:6px;border:1.5px solid var(--acc);background:var(--acc);color:var(--accfg);cursor:pointer}
-button:disabled{opacity:.35;cursor:default}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Pretendard","Noto Sans KR",system-ui,sans-serif;display:flex;flex-direction:column;padding:12px;gap:8px}
+header{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:6px 10px}
+.fbbtn{flex:none;font:inherit;font-size:13px;font-weight:600;padding:2px 12px;border-radius:999px;background:transparent;color:var(--ink);border:1.5px solid var(--line);cursor:pointer}
+.fbbtn[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.fbbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+#dbGrp{display:inline-flex;gap:4px;align-items:center}
+#dbGrp[hidden]{display:none}
+.dbbtn{font-size:11px;padding:1px 9px}
+.dbbtn:disabled{opacity:.4;cursor:not-allowed}
+h1{font-size:17px;margin:0;letter-spacing:-.01em}
+#st{font-size:12px;color:var(--mute)}
+#st:empty{display:none}
+/* 제목 줄: 메모장 | Firebase 버튼 | 상태 | DB 글자 수 — 왼쪽부터 차례로, 구분선만 둠 */
+header h1::after{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px;margin-left:10px}
+#st::before,#cnt::before{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px}
+#st.ok{color:var(--ok)}
+#st.err{color:var(--err)}
+#cnt{font-size:12px;color:var(--mute);white-space:nowrap}
+#cnt.cw{color:#e8590c}
+#cnt.ce{color:var(--err);font-weight:600}
+/* .slot 이 자리를 지키고 .pane(확대 대상)이 그 안을 채움 → 확대해도 원래 레이아웃은 그대로 */
+.slot{flex:1;min-height:0;position:relative}
+.pane{position:absolute;inset:0;display:flex;flex-direction:column;gap:6px}
 .rich{display:block;overflow:auto;word-break:break-word;outline:none}
 .rich:empty::before{content:attr(data-ph);color:var(--mute);font-size:14px;pointer-events:none}
 .rich img{display:inline-block;vertical-align:middle;max-width:100%;margin:2px 0}.rich img:not([height]){height:auto}
@@ -144,9 +73,9 @@ button:disabled{opacity:.35;cursor:default}
 .imgx-ov>canvas,.imgx-ov>svg{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
 .imgx-bar textarea{width:150px;height:44px;margin:0;padding:4px 6px;font:inherit;font-size:13px;line-height:1.3;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);resize:none}
 .imgx-bar textarea[hidden]{display:none}
-.rich table{border-collapse:collapse;margin:4px 0;display:inline-table;vertical-align:top}
+.rich table{border-collapse:collapse;margin:4px 0;display:inline-table;vertical-align:top}   /* 표도 글자처럼: 앞뒤에 글자를 넣을 수 있고 줄 정렬을 따라가요 */
 .rich td,.rich th{border:1px solid var(--line);padding:2px 6px;vertical-align:top;min-width:2em;box-sizing:border-box}
-/* 확대된 메모(.mpane.max, z-index:100) 위에 보이도록 조절 막대는 그보다 높게 */
+/* 확대된 메모(.pane.max, z-index:100) 위에 보이도록 조절 막대는 그보다 높게 */
 #tblRz{position:fixed;z-index:106;width:12px;margin:0;padding:0;cursor:col-resize;touch-action:none;background:transparent;border-right:3px solid rgba(43,138,62,.5);border-radius:0 3px 3px 0}
 #tblRz:hover,#tblRz.on{background:rgba(43,138,62,.25);border-right-color:rgba(43,138,62,.95)}
 #tblRz[hidden]{display:none}
@@ -165,37 +94,26 @@ button:disabled{opacity:.35;cursor:default}
 #attPop .row{display:flex;gap:2px;align-items:center}
 #attPop .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;display:block;text-align:left;line-height:32px}
 #attPop .row .rm{min-width:32px;flex:none;padding:0}
-.rich{width:100%;font:inherit;font-size:15px;line-height:1.5;padding:10px;border:1.5px solid var(--line);border-radius:8px;background:transparent;color:var(--mfg);resize:vertical;min-height:calc(4.5em + 23px)}
-.rich:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.rich[contenteditable=false]{opacity:.6}
-/* 메모 확대(expand): .mslot 이 원래 자리의 높이를 지키고 .mpane 이 확대 대상 */
-.mhead{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:6px 10px}
-.fbbtn{flex:none;width:auto;font-size:13px;font-weight:600;padding:2px 12px;border-radius:999px;background:transparent;color:var(--ink);border:1.5px solid var(--line)}
-.fbbtn[aria-pressed=true]{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
-#dbGrp{display:inline-flex;gap:4px;align-items:center}
-#dbGrp[hidden]{display:none}
-.dbbtn{font-size:11px;padding:1px 9px}
-.dbbtn:disabled{opacity:.4;cursor:not-allowed}
-#mst{font-size:12px;font-weight:400;text-align:left;color:var(--mute)}
-#mst:empty{display:none}
-/* 제목 줄: 메모 | Firebase 버튼 | 상태 | DB 글자 수 — 왼쪽부터 차례로, 구분선만 둠 */
-.mhead>span:first-child::after{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px;margin-left:10px}
-#mst::before,#cnt::before{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px}
-#dbCtl{display:contents}   /* 버튼 묶음: 배치에는 영향 없음 */
-#mst.ok{color:#2e7d32}
-:root[data-theme="dark"] #mst.ok{color:#81c784}
-#mst.err{color:var(--warn)}
-#cnt{font-size:12px;font-weight:400;color:var(--mute);white-space:nowrap}
-#cnt.cw{color:#e8590c}
-#cnt.ce{color:var(--warn);font-weight:600}
-/* 메모 확대 중에는 제목줄 전체(Firebase 버튼 | DB1~3 | 저장 상태 | DB 크기)를 memo 파일처럼 한 줄 알약으로 오른쪽 아래에 띄워 둠 */
-body.has-max .mhead{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;max-width:calc(100vw - 40px);flex-wrap:nowrap;gap:6px 10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
-body.has-max .mhead:hover,body.has-max .mhead:focus-within{opacity:1}
-body.has-max .mhead>span:first-child{display:none}   /* "메모" 글자는 숨김 */
-@media (max-width:760px){body.has-max .mhead{flex-wrap:wrap;justify-content:flex-end;border-radius:16px}}   /* 좁은 화면은 넘치지 않게 줄바꿈 */
-.mslot{position:relative}
-.mpane{position:relative}
-.edsplit{display:grid;grid-template-rows:minmax(0,80fr) 10px minmax(0,10fr) 10px minmax(0,10fr);min-height:0}
+.rich h1{font-size:1.6em;line-height:1.3;margin:.5em 0 .25em;letter-spacing:-.01em}
+.rich h2{font-size:1.3em;line-height:1.3;margin:.5em 0 .25em}
+.rich h3{font-size:1.1em;line-height:1.3;margin:.5em 0 .25em}
+.rich ul,.rich ol{margin:.3em 0;padding-left:1.6em}
+.rich hr{border:0;border-top:1.5px solid var(--line);margin:.8em 0}
+.rich blockquote{margin:.5em 0;padding:.1em 0 .1em 12px;border-left:3px solid var(--line);color:var(--mute)}
+.rich pre{margin:.4em 0;padding:8px 10px;border-radius:7px;background:var(--line);font-family:ui-monospace,Consolas,"D2Coding",monospace;font-size:.92em;white-space:pre-wrap}
+/* 찾기 */
+.fbar{flex:none;display:flex;align-items:center;gap:6px;padding:4px 8px;border:1.5px solid var(--line);border-radius:10px;background:var(--card)}
+.fbar[hidden]{display:none}
+.fbar input{flex:1;min-width:0;font:inherit;font-size:14px;padding:4px 8px;border:1.5px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink)}
+.fbar button{font:inherit;font-size:14px;min-width:32px;height:30px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer}
+.fbar button:hover{background:var(--line)}
+.fbar span{font-size:12px;color:var(--mute);min-width:3.5em;text-align:center}
+::highlight(find){background:#ffe066;color:#1c1b19}
+::highlight(findcur){background:#ff922b;color:#1c1b19}
+.edwrap{flex:1}
+.rich{flex:1;min-height:0;width:100%;font:inherit;font-size:15px;line-height:1.6;padding:14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--mfg)}
+/* 서식 툴바 */
+.edsplit{display:grid;grid-template-rows:minmax(0,1fr) 10px minmax(0,8fr) 10px minmax(0,1fr);min-height:0}
 /* 비교 모드: 위/아래 → 왼쪽(원본)/오른쪽(변경본), 스크롤바는 하나(두 영역이 함께 스크롤) */
 .cmphd{display:none}
 .edwrap.cmpm .edgut{display:none}
@@ -252,13 +170,14 @@ tr.cmpgap>td{padding:0;border:0;line-height:0;font-size:0;background:repeating-l
 .cmp .cmm{padding:6px 10px;color:var(--mute);font-size:12px}
 .edwrap{display:flex;gap:6px;min-height:0}
 .edsplit{flex:1;min-width:0}
-.edgut{flex:none;width:34px;display:grid;grid-template-rows:minmax(28px,80fr) 10px minmax(28px,10fr) 10px minmax(28px,10fr);min-height:0}
+.edgut{flex:none;width:34px;display:grid;grid-template-rows:minmax(28px,1fr) 10px minmax(28px,8fr) 10px minmax(28px,1fr);min-height:0}
 .edwrap.c1 #memo,.edwrap.c2 #memo2,.edwrap.c3 #memo3{padding:0;border-width:0;overflow:hidden;visibility:hidden}
 .lb{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;min-height:0;padding:0;white-space:nowrap;font:inherit;font-size:12px;font-weight:600;line-height:1;border:1.5px solid var(--line);border-radius:7px;background:transparent;color:var(--mute);cursor:pointer;width:auto}
 .lb:hover{background:var(--line)}
 .lb.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .lb.has::after{content:"";position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:currentColor;flex:none;opacity:.8}
 .lb:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.edsplit>.rich{min-height:0;height:auto}
 .splitter{position:relative;cursor:row-resize;touch-action:none;outline:none}
 .splitter::after{content:"";position:absolute;left:35%;right:35%;top:3px;height:4px;border-radius:2px;background:var(--mute);opacity:.45;transition:opacity .15s}
 .splitter:hover::after,.splitter:focus-visible::after,.splitter.drag::after{opacity:1}
@@ -268,59 +187,10 @@ tr.cmpgap>td{padding:0;border:0;line-height:0;font-size:0;background:repeating-l
 .edwrap.lh:not(.cmpm) .edsplit{grid-auto-flow:column}
 .edwrap.lh .splitter{cursor:col-resize}
 .edwrap.lh .splitter::after{left:3px;right:3px;top:0;bottom:0;height:auto}
-/* 바코드 첫 화면의 가로 3분할 메모: 내용이 늘어나도 메모/페이지 높이를 밀어내지 않고 각 메모 안에서 스크롤 */
-.edwrap.lh:not(.cmpm) .edsplit{min-width:0;min-height:0;overflow:hidden}
-.edwrap.lh:not(.cmpm) .edsplit>.rich{min-width:0;max-width:100%;min-height:0;overflow:auto;overflow-wrap:anywhere;word-break:break-word;resize:none}
-@media (min-width:561px) and (max-width:1279px){
-  /* 1080px급 데스크톱 화면: 페이지 전체 높이를 뷰포트 안에 고정하고 메모가 남은 높이를 사용 */
-  html,body{height:100%;min-height:0}
-  body{height:100vh;height:100dvh;overflow:hidden;padding:12px}
-  main{height:calc(100vh - 24px);height:calc(100dvh - 24px);min-height:0}
-  main>.lbl{flex:1 1 0;min-height:0;display:flex;flex-direction:column}
-  #mslot{flex:1 1 0;min-height:0}
-  .mpane:not(.max){height:100%;min-height:0;display:flex;flex-direction:column}
-  .mpane:not(.max) .edwrap.lh:not(.cmpm){flex:1 1 0;min-height:0}
-  .mpane:not(.max) .edwrap.lh:not(.cmpm) .edsplit{height:auto;min-height:0;flex:1 1 0}
-  .mpane:not(.max) .edwrap.lh:not(.cmpm) .edsplit>.rich{height:100%;max-height:100%;min-height:0}
-}
-/* 세로 3분할에서 확대하지 않았을 때는 가장 큰 영역(기본: 가) 하나만 세 줄 높이로 보이고, 확대하면 세 영역이 모두 보여요. 가로 3분할은 확대하지 않아도 세 영역이 나란히 보여요 */
-.mpane.max .edwrap{flex:1;min-height:0}
-.mpane:not(.max) .edwrap.lv .edsplit{display:block}
-.mpane:not(.max) .edwrap.lv .rich,.mpane:not(.max) .edwrap.lv .splitter{display:none}
-.mpane:not(.max) .edwrap.lv.big0 #memo,.mpane:not(.max) .edwrap.lv.big1 #memo2,.mpane:not(.max) .edwrap.lv.big2 #memo3{display:block}
-.mpane:not(.max) .edwrap.lv .edgut{display:flex;flex-direction:column}
-.mpane:not(.max) .edwrap.lv .edgut .sp{display:none}
-.mpane:not(.max) .edwrap.lv .lb{flex:1;display:none}
-.mpane:not(.max) .edwrap.lv.big0 .lb.a,.mpane:not(.max) .edwrap.lv.big1 .lb.b,.mpane:not(.max) .edwrap.lv.big2 .lb.c{display:flex}
-.mpane:not(.max) .edwrap.lh .edgut{height:20px}
-.mpane:not(.max) .edwrap.lh .lb{font-size:11px}
-.mpane .rich{padding-right:44px}
-.expand{flex:none;position:absolute;top:6px;right:8px;z-index:5;width:28px;height:28px;padding:0;display:grid;place-items:center;font-size:15px;font-weight:400;line-height:1;color:var(--ink);opacity:.55;background:var(--card);border:1.5px solid var(--line);border-radius:7px;cursor:pointer}
-.expand:hover,.expand:focus-visible{opacity:1}
-.mpane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))}
-.mpane.max .rich{height:100%;min-height:0;resize:none;padding:14px 48px 14px 14px;border-radius:10px}
-.mpane.max .expand{top:max(20px,calc(env(safe-area-inset-top,0px) + 8px));right:26px}
-.rich h1{font-size:1.6em;line-height:1.3;margin:.5em 0 .25em;letter-spacing:-.01em}
-.rich h2{font-size:1.3em;line-height:1.3;margin:.5em 0 .25em}
-.rich h3{font-size:1.1em;line-height:1.3;margin:.5em 0 .25em}
-.rich ul,.rich ol{margin:.3em 0;padding-left:1.6em}
-.rich hr{border:0;border-top:1.5px solid var(--line);margin:.8em 0}
-.rich blockquote{margin:.5em 0;padding:.1em 0 .1em 12px;border-left:3px solid var(--line);color:var(--mute)}
-.rich pre{margin:.4em 0;padding:8px 10px;border-radius:7px;background:var(--line);font-family:ui-monospace,Consolas,"D2Coding",monospace;font-size:.92em;white-space:pre-wrap}
-/* 찾기 */
-.fbar{flex:none;display:flex;align-items:center;gap:6px;padding:4px 8px;border:1.5px solid var(--line);border-radius:10px;background:var(--card)}
-.fbar[hidden]{display:none}
-.fbar input{flex:1;min-width:0;font:inherit;font-size:14px;padding:4px 8px;border:1.5px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink)}
-.fbar button{font:inherit;font-size:14px;min-width:32px;height:30px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer}
-.fbar button:hover{background:var(--line)}
-.fbar span{font-size:12px;color:var(--mute);min-width:3.5em;text-align:center}
-::highlight(find){background:#ffe066;color:#1c1b19}
-::highlight(findcur){background:#ff922b;color:#1c1b19}
-/* 서식 툴바 */
 .tb{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:4px;border:1.5px solid var(--line);border-radius:10px;background:var(--card)}
 .tb button{font:inherit;font-size:14px;min-width:32px;height:32px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer}
 .tb button:hover{background:var(--line)}
-.tb button[aria-pressed=true]{background:var(--acc);color:var(--accfg)}
+.tb button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .tb button:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
 .tb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tb .sep{width:1px;height:18px;background:var(--line);margin:0 4px}
@@ -344,11 +214,14 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tb .menu{position:relative}
 .tb .menu.dim>button{opacity:.45}
 .tbar{position:fixed;z-index:30;display:flex;flex-direction:column;gap:2px;max-width:calc(100vw - 16px);padding:3px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
-.tbar[hidden]{display:none} .tbar .tbr{display:flex;flex-wrap:wrap;gap:2px} .tbar .tbr+.tbr{border-top:1px solid var(--line);padding-top:2px}
+.tbar[hidden]{display:none}
+.tbar .tbr{display:flex;flex-wrap:wrap;gap:2px}
+.tbar .tbr+.tbr{border-top:1px solid var(--line);padding-top:2px}
+.tbar .tbsep{width:1px;align-self:stretch;margin:4px 3px;background:var(--line)}
 .tbar .tbgrp{display:inline-flex;align-items:center;padding:0 3px;font-size:11px;font-weight:700;color:var(--mute);white-space:nowrap}
 .tbar button{font:inherit;font-size:12.5px;height:28px;padding:0 8px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap}
 .tbar button:hover{background:var(--line)}
-.tbar button.del{color:var(--warn)}
+.tbar button.del{color:var(--err)}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);max-width:88vw;padding:9px 16px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:14px;line-height:1.4;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:60;pointer-events:none}
 .toast[hidden]{display:none}
 .pwb{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45)}
@@ -357,7 +230,7 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .pwb p{margin:0;font-size:13px;line-height:1.45;color:var(--mute)}
 .pwb input{font:inherit;font-size:15px;padding:7px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
 .pwb input[hidden]{display:none}
-.pwb .pwe{min-height:1.3em;font-size:13px;color:var(--err,#b3261e)}
+.pwb .pwe{min-height:1.3em;font-size:13px;color:var(--err)}
 .pwb .pwr{display:flex;justify-content:flex-end;gap:8px}
 .pwb .pwr button{font:inherit;font-size:14px;padding:5px 14px;border-radius:999px;border:1.5px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
 .pwb .pwr button[type=submit]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -396,80 +269,35 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tb .pop.pal.wide:not([hidden]){grid-template-columns:repeat(12,20px);gap:3px}
 .tb .pop.pal.wide button.sw{width:20px;height:20px;border-radius:4px}
 .tb .pop.pal.wide button.rs{height:30px}
-/* 이 페이지의 기본 button 스타일(flex:1, 굵게, 배경색)을 툴바 버튼에서는 되돌림 */
-.tb button,.tbar button,.fbar button{flex:none;font-weight:400}
-.tb button.expand{margin-left:auto}
-/* 확대 버튼은 툴바 맨 오른쪽으로 */
+/* 확대/축소 버튼 (툴바 맨 오른쪽) */
 .tb .imgx-tbg{display:inline-flex;align-items:center;gap:2px}.tb .imgx-tbg[hidden]{display:none}.tb .imgx-tbg button{font-size:13px;white-space:nowrap}
 .tb .imgx-tbg button{height:auto;min-width:0;padding:4px 9px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--ink);font-size:13px;font-weight:400;cursor:pointer}.tb .imgx-tbg button:hover{background:var(--line)}
-.tb .imgx-tbg .imgx-sl{display:inline-flex;flex-direction:row;align-items:center;gap:5px;flex:none;color:var(--ink);font-size:13px;white-space:nowrap}.tb .imgx-tbg .imgx-sl input[type=range]{width:130px;margin:0;padding:0;border:0;background:transparent;height:auto;min-width:0}.tb .imgx-tbg .imgx-sl input[type=number]{width:62px;height:28px;margin:0;padding:0 4px;box-sizing:border-box;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
-.mpane .tb .expand{position:static;width:32px;height:32px;font-size:15px;opacity:.7;background:transparent;border:0;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}
-.mpane .tb .expand:hover,.mpane .tb .expand:focus-visible{opacity:1;background:var(--line)}
-.mpane .rich{padding-right:10px}
-.mpane:not(.max)>.tb,.mpane:not(.max)>.fbar{margin-bottom:6px}
-.mpane.max{display:flex;flex-direction:column;gap:6px}
-.mpane.max .rich{flex:1;height:auto;padding:14px}
-body.has-max{overflow:hidden}
-p{color:var(--mute);font-size:14px;margin:12px 0 0}
-.warn{color:var(--warn);font-size:16px;font-weight:600}
-/* 가로 1280 이상: 1280x1024 고정(모든 내용이 한 화면). 미만: 가로폭 반응형 */
-@media (min-width:1280px){
-body{padding:12px 0}
-main{width:1280px;height:1000px;padding:0 12px}
-h1{margin:0 0 8px}
-.top{margin-bottom:8px}
-.grid{flex:1 1 0;min-height:0;grid-template-rows:repeat(3,minmax(0,1fr))}
-.cell{min-height:0}
-.view{flex:1 1 0;min-height:0}
-.view svg,.view[data-k=qr] svg{flex:1 1 0;min-height:0;height:auto}
-.view[data-k=qr] svg{width:auto;max-width:100%;aspect-ratio:1}
-label[for-memo],main>label,main>.lbl{margin-top:8px!important}
-.rich{height:calc(4.5em + 15px);min-height:0;resize:none;padding:6px 10px}
-p{margin:6px 0 0}
-}
-@media (max-width:560px){.mhead{grid-template-columns:auto 1fr}#mst{grid-column:1/-1;text-align:left}.top{grid-template-columns:repeat(3,minmax(0,1fr))}.btns{flex-direction:column}}
-
-/* 데스크톱 브라우저 공통: 가로 3분할 메모 행은 화면 높이에 따라 늘어나지 않도록 고정하고, 내용은 각 메모 내부에서 스크롤 */
-@media (min-width:561px){
-  /* 세로 분할(미리보기 포함)도 가로 분할과 같은 높이로 고정: 마우스를 올릴 때 화면 높이가 바뀌어 흔들리는 것을 막음 */
-  .mpane:not(.max) .edwrap.lv:not(.cmpm){flex:0 0 190px!important;height:190px!important;min-height:190px!important;max-height:190px!important;overflow:hidden}
-  .mpane:not(.max) .edwrap.lv:not(.cmpm) .edsplit{flex:1 1 0!important;height:100%!important;min-height:0!important;max-height:100%;overflow:hidden}
-  .mpane:not(.max) .edwrap.lv:not(.cmpm) .edsplit>.rich{height:100%!important;min-height:0!important;max-height:100%!important;overflow:auto!important;resize:none!important}
-  .mpane:not(.max) .edwrap.lh:not(.cmpm){
-    flex:0 0 190px!important;
-    height:190px!important;
-    min-height:190px!important;
-    max-height:190px!important;
-    overflow:hidden;
-  }
-  .mpane:not(.max) .edwrap.lh:not(.cmpm) .edsplit{
-    flex:1 1 0!important;
-    height:100%!important;
-    min-height:0!important;
-    max-height:100%;
-    overflow:hidden;
-  }
-  .mpane:not(.max) .edwrap.lh:not(.cmpm) .edsplit>.rich{
-    height:100%!important;
-    min-height:0!important;
-    max-height:100%!important;
-    overflow:auto!important;
-    resize:none!important;
-  }
-}
-
-/* ===== 모바일(≤560px) 보정 ===== */
-@media (max-width:560px){
-  /* 1) 메모: 엔터를 쳐도 영역이 늘어나지 않게 높이를 고정하고, 넘치면 메모 안에서 스크롤 */
-  .mpane:not(.max) .edwrap:not(.cmpm){height:230px;min-height:230px;max-height:230px;overflow:hidden}
-  .mpane:not(.max) .edwrap:not(.cmpm) .edsplit{height:100%;min-height:0;max-height:100%;overflow:hidden}
-  .mpane:not(.max) .edwrap:not(.cmpm) .edsplit>.rich{height:100%;min-height:0;max-height:100%;overflow:auto;resize:none;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch}
-  .mpane.max .rich{overflow:auto}
-  /* 2) 바코드 입력칸: 입력 중 글자가 칸에 다 안 들어가면 3열을 모두 차지해 전체 코드가 보이고, 저장 버튼은 숨김 */
-  .cell.wide{grid-column:1/-1}
-  .cell.wide .inrow button{display:none}
-  .cell.wide .inrow input{font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:.02em;border-color:var(--ink)}
-}
+.tb .imgx-tbg .imgx-sl{display:inline-flex;align-items:center;gap:5px;font-size:13px;white-space:nowrap}.tb .imgx-tbg .imgx-sl input[type=range]{width:130px;margin:0;padding:0;border:0;background:transparent;height:auto;min-width:0}.tb .imgx-tbg .imgx-sl input[type=number]{width:62px;height:28px;margin:0;padding:0 4px;box-sizing:border-box;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
+.tb .expand{margin-left:auto;font-size:15px;line-height:1;opacity:.7}
+.tb .expand:hover,.tb .expand:focus-visible{opacity:1}
+/* 확대: 화면 전체를 메모가 차지 (CSS 만 바꾸므로 입력 중인 내용/커서/저장 상태는 그대로) */
+.pane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))}
+/* 확대 중에는 제목을 숨기고 저장 상태만 우하단에 작게 표시 */
+body.has-max header{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
+body.has-max header h1{display:none}
+.rich:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.rich[contenteditable=false]{opacity:.6}
+/* 타이머 (오른쪽 끝) */
+header .tr{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto}
+body.has-max header .tr{display:none}
+.tmwrap{display:flex;justify-content:flex-end;overflow:hidden;flex:none;width:0;transition:width .5s cubic-bezier(.34,1.56,.64,1),visibility 0s}
+.tmwrap.off{visibility:hidden;transition:width .3s ease-in,visibility 0s .3s}
+@media (prefers-reduced-motion:reduce){.tmwrap,.tmwrap.off{transition:none}}
+.tmbtn{font-size:16px;padding:6px 16px}
+.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:nowrap;white-space:nowrap;flex:none;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:16px;color:var(--ink)}
+.tm.pink{background:#ffe3ec;border-color:#f4a9c0;color:#3a1020}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tm.pink{background:#4a2332;border-color:#a8506d;color:#ffe3ec}}
+.tm label{display:flex;flex-direction:row;align-items:center;gap:6px;font-size:inherit;color:inherit;white-space:nowrap}
+.tm input{width:4.6em;text-align:center;font:inherit;font-weight:700;font-size:18px;padding:2px 6px;font-variant-numeric:tabular-nums;color:inherit;background:transparent;border:1.5px solid currentColor;border-radius:8px}
+.tm input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tm .rm{white-space:nowrap}
+#rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
+#rem.neg{color:var(--err)}
 /* 표 셀 서식 (테두리 · 채우기) */
 #cfOv{position:fixed;inset:0;pointer-events:none;z-index:105;overflow:hidden}
 #cfOv div{position:absolute;background:rgba(51,154,240,.26);outline:1.5px solid #339af0;outline-offset:-1px}
@@ -560,53 +388,8 @@ p{margin:6px 0 0}
 .cfft{display:flex;justify-content:flex-end;gap:6px;padding:10px 12px;border-top:1px solid var(--line)}
 .cfft button.ok{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
-
-
-/* QR 가독성 보정: 1280px 이상에서 QR 미리보기의 세로 공간을 확보한다.
-   기존 54px 강제 축소 규칙을 사용하지 않는다. 메인/브라우저 높이는 그대로 유지한다. */
-@media (min-width:1280px) {
-  .cell:has(.view[data-k="qr"]) {
-    padding: 4px !important;
-    gap: 4px !important;
-  }
-  .view[data-k="qr"] {
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex: 0 0 76px !important;
-    min-height: 76px !important;
-    height: 76px !important;
-    max-height: 76px !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 10px !important;
-    padding: 3px 8px !important;
-    overflow: hidden !important;
-  }
-  .view[data-k="qr"] > svg {
-    display: block !important;
-    box-sizing: border-box !important;
-    flex: 0 0 70px !important;
-    width: 70px !important;
-    min-width: 70px !important;
-    max-width: 70px !important;
-    height: 70px !important;
-    min-height: 70px !important;
-    max-height: 70px !important;
-    aspect-ratio: 1 / 1 !important;
-    object-fit: contain !important;
-  }
-  .view[data-k="qr"] > .txt {
-    flex: 1 1 0 !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    text-align: left !important;
-    overflow-wrap: anywhere;
-    word-break: break-all;
-  }
-}
-
 </style>
+
 <style id="imgx-cs-css">
 /* 색 고르기 묶음 (단일 색상의 이미지를 메모에 넣기 · 기본 크기 조정 공통) */
 .cpk{display:flex;flex-direction:column;gap:6px}
@@ -675,30 +458,15 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-</head>
+<script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000ac908209bc6fc027bf468267%26fn%3Dmemo_parksoodong_github_io__dev%25283%2529.html%26cd%3Dattachment%26ts%3D498711%26p%3Dfs%26cid%3D1%26sig%3D7ba665cdc3b89627359f9d21d0ddc08010ae872f6bd367cbbec499e3d118ff60%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000062688211a672b6fffd38e73e%26fn%3Dmemo_parksoodong_github_io__dev_%25ED%2591%259C%25EC%259D%25B4%25EC%2596%25B4%25EB%25B6%2599%25EC%259D%25B4%25EA%25B8%25B0_%25EB%25B6%2584%25EB%25A6%25AC%25EA%25B8%25B0%25EB%258A%25A5.html%26cd%3Dattachment%26ts%3D498710%26p%3Dfs%26cid%3D1%26sig%3D49c08c4ed30ebccac34fd850d22dfa53934cd1d6c06acbdc9930cab7f6fe3e4c%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001eac820bb500ad138b1fce18%26fn%3Dmemo_parksoodong_github_io__dev_undo_all_issues_fixed.html%26cd%3Dattachment%26ts%3D498708%26p%3Dfs%26cid%3D1%26sig%3D269f98b4b5f7659a05e809fb82ce6c236bd696eaa29f25cf716b706da81e7d6e%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000e2648209a3a4f0affbbbc94d%26fn%3Dmemo_parksoodong_github_io__dev%25281%2529_%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3Dafed75bf6520ca0a5d57116d69aac32b54e1bd46bc3e9a86be937c831a9b8cbc%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000474482068e2aaff25e9b04d0%26fn%3Dmemo_parksoodong_github_io__dev_%25EC%2588%2598%25EC%25A0%25952.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3D4e1a04807df7369ac8691d6f499bd49497bcd0861bb77f44647f9e8fd2c8ea01%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
-<main>
-<div class="hd">
-<h1>미니 <span id="kind" role="button" tabindex="0" title="클릭하면 바코드/QR 전환">바코드</span> 3×3</h1>
-<div class="tr">
-<div class="tmwrap" id="tmw">
-<div class="tm pink" id="tm" role="timer" aria-live="off">
-<label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label>
-<span class="rm">남은 시간 <span id="rem">--:--:--</span></span>
-</div>
-</div>
-<button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button>
-</div>
-</div>
-<div class="top">
-<label>작업자 코드<input id="w" value="T8836853" autocomplete="off"></label>
-<label>사업장 코드<input id="s" value="136" inputmode="numeric" maxlength="3" autocomplete="off"></label>
-<label>년도<input id="y" value="" inputmode="numeric" autocomplete="off"></label>
-<label>모드<select id="m"><option value="light">라이트</option><option value="dark">다크</option></select></label>
-<label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
-</div>
-<div class="grid" id="g"></div>
-<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><span id="dbCtl"><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span></span><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
+<header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
+<div class="slot"><div class="pane" id="pane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
   <button type="button" data-cmd="redo" title="다시 실행 (Ctrl+Y)" aria-label="다시 실행"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
@@ -726,7 +494,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   <input type="file" id="attFile" multiple hidden>
   <div class="menu" id="attMenu"><button type="button" data-pal id="attListBtn" title="파일: 메모에 파일 첨부 / PC로 저장 / 첨부 목록" aria-label="파일" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M20 11.5l-7.6 7.6a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.3-7.3"/></svg><span>파일</span></button><div class="pop" id="attPop" hidden><div id="attMv"><button type="button" data-cmd="attach" title="엑셀·문서·이미지 등 파일을 골라 메모 안에 넣어요">PC에서 메모로 첨부</button><button type="button" data-cmd="attsave" title="메모에 첨부된 파일을 모두 PC에 파일로 저장해요">메모에서 PC로 저장</button><button type="button" id="attListGo" title="첨부된 파일을 하나씩 저장하거나 삭제해요">첨부된 파일 목록</button></div><div id="attLv" hidden></div></div></div>
   <button type="button" data-cmd="find" title="찾기" aria-label="찾기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></button>
-  <div class="menu" id="layMenu"><button type="button" data-pal id="layBtn" title="분할: 가로 또는 세로로 가·나·다 영역을 나눠 보여요 (마우스를 올리면 미리 보이고, 클릭하면 적용됩니다)" aria-label="분할" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M12 5v14M3.5 12h17"/></svg><span>분할</span></button><div class="pop" hidden><button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 균등하게 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button><button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 6 : 2 : 2 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button></div></div>
+  <div class="menu" id="layMenu"><button type="button" data-pal id="layBtn" title="분할: 가로 또는 세로로 가·나·다 영역을 나눠 보여요 (마우스를 올리면 미리 보이고, 클릭하면 적용됩니다)" aria-label="분할" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M12 5v14M3.5 12h17"/></svg><span>분할</span></button><div class="pop" hidden><button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 35 : 35 : 30 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button><button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 1 : 8 : 1 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button></div></div>
   <button type="button" id="cmpBtn" title="비교: 가(원본)를 기준으로 나(변경본)가 일치하는지 확인하고, 비교 내역은 다 영역에 표시" aria-label="비교"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 8h5M15 16h5M4 16l3-3M20 8l-3 3"/></svg><span>비교</span></button>
   <i class="sep"></i>
   <button type="button" id="impBtn" title="열기 (.html / .txt)" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
@@ -738,20 +506,52 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
       <button type="button" data-exp="txt">텍스트 (.txt)</button>
     </div>
   </div>
-  <button class="expand" id="mex" type="button" title="메모 확대 / 축소 (Esc)" aria-label="메모 확대">⤢</button>
+  <button class="expand" id="ex" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
 </div>
 <div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbr"><button type="button" data-t="rowAbove">↑ 행 추가</button><button type="button" data-t="rowBelow">↓ 행 추가</button><button type="button" data-t="colLeft">← 열 추가</button><button type="button" data-t="colRight">→ 열 추가</button><i class="tbsep"></i><span class="tbgrp">표 붙이기</span><button type="button" data-t="joinUp" title="위쪽에 표 붙이기">↑</button><button type="button" data-t="joinDown" title="아래쪽에 표 붙이기">↓</button><button type="button" data-t="joinLeft" title="왼쪽에 표 붙이기">←</button><button type="button" data-t="joinRight" title="오른쪽에 표 붙이기">→</button><i class="tbsep"></i><span class="tbgrp">표 나누기</span><button type="button" data-t="splitUp" title="현재 셀의 행/열을 위쪽 표에 포함">↑</button><button type="button" data-t="splitDown" title="현재 셀의 행/열을 아래쪽 표에 포함">↓</button><button type="button" data-t="splitLeft" title="현재 셀의 행/열을 왼쪽 표에 포함">←</button><button type="button" data-t="splitRight" title="현재 셀의 행/열을 오른쪽 표에 포함">→</button><i class="tbsep"></i><button type="button" class="del" data-t="delRow">행 삭제</button><button type="button" class="del" data-t="delCol">열 삭제</button><button type="button" class="del" data-t="delTable">표 삭제</button></div><div class="tbr"><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div><div class="tbr"><button type="button" data-cfm="merge" title="선택한 여러 칸을 하나로 합쳐요 (칸을 드래그하거나 Shift+클릭으로 먼저 고르세요)">칸 병합</button><button type="button" data-cfm="unmerge" title="합쳐진 칸을 다시 낱칸으로 나눠요">병합 해제</button><i class="tbsep"></i><button type="button" data-cfm="w" title="선택한 칸이 걸친 열을 모두 같은 너비(px)로 맞춰요">열 너비 지정</button><button type="button" data-cfm="h" title="선택한 칸이 걸친 행을 모두 같은 높이(px)로 맞춰요">행 높이 지정</button></div></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
-<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb a" id="lbA" title="가 영역 (클릭: 이 메모로 이동 / 더블클릭: 가를 80%로, 한 번 더 더블클릭: 기본 비율)" aria-label="가 영역">가</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="나 영역 (클릭: 이 메모로 이동 / 더블클릭: 나를 80%로, 한 번 더 더블클릭: 기본 비율)" aria-label="나 영역">나</button><div class="sp"></div><button type="button" class="lb c" id="lbC" title="다 영역 (클릭: 이 메모로 이동 / 더블클릭: 다를 80%로, 한 번 더 더블클릭: 기본 비율)" aria-label="다 영역">다</button></div><div class="edsplit" id="edsplit"><div class="cmphd l">가 · 원본</div><div class="cmphd r">나 · 변경본</div><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="가 영역(첫 번째 메모)입니다. 이 곳에 메모해 보세요. 엑셀 셀 범위나 캡처 이미지도 붙여넣을 수 있어요. 이 컴퓨터의 이 브라우저를 사용한다면, 컴퓨터를 다시 껐다가 켜도 메모가 유지됩니다." aria-label="메모"></div>
+<div class="edwrap" id="edwrap"><div class="edgut" id="edgut"><button type="button" class="lb a" id="lbA" title="가 영역 (클릭: 이 메모로 이동 / 더블클릭: 가를 80%로, 한 번 더 더블클릭: 기본 비율)" aria-label="가 영역">가</button><div class="sp"></div><button type="button" class="lb b" id="lbB" title="나 영역 (클릭: 이 메모로 이동 / 더블클릭: 나를 80%로, 한 번 더 더블클릭: 기본 비율)" aria-label="나 영역">나</button><div class="sp"></div><button type="button" class="lb c" id="lbC" title="다 영역 (클릭: 이 메모로 이동 / 더블클릭: 다를 80%로, 한 번 더 더블클릭: 기본 비율)" aria-label="다 영역">다</button></div><div class="edsplit" id="edsplit"><div class="cmphd l">가 · 원본</div><div class="cmphd r">나 · 변경본</div><div id="memo" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="가 영역(첫 번째 메모)입니다. 메모해 보세요. 자동으로 저장돼요. (엑셀 셀 범위·캡처 이미지도 붙여넣을 수 있어요)" aria-label="메모"></div>
 <div class="splitter" id="spl" role="separator" aria-orientation="horizontal" aria-label="가·나 영역 크기 조절 (드래그, 방향키, 더블클릭: 기본 비율)" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 기본 비율)"></div>
 <div id="memo2" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="나 영역(두 번째 메모)입니다. 구분선을 끌어서 크기를 조절할 수 있어요. (이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (나)"></div>
 <div class="splitter" id="spl2" role="separator" aria-orientation="horizontal" aria-label="나·다 영역 크기 조절 (드래그, 방향키, 더블클릭: 기본 비율)" aria-valuemin="0" aria-valuemax="100" aria-valuenow="90" tabindex="0" title="드래그해서 크기 조절 (더블클릭: 기본 비율)"></div>
-<div id="memo3" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="다 영역(세 번째 메모)입니다. 비교를 누르면 이 자리에 비교 내역이 표시돼요. (이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (다)"></div></div></div></div></div></div>
-<p>Code 128 / QR(오류정정 M) · 선택한 모드가 화면과 저장 파일에 모두 적용돼요. 4번은 작업자 코드, 나머지는 직접 입력도 가능해요. 사업장 코드(앞 3자리-)와 년도(○○○-XX 뒤 2자리)를 바꾸면 1~9번 전체에 일괄 적용돼요.</p>
-<p class="warn" role="alert">입력하거나 수정한 내용은 이 기기의 브라우저에 자동 저장되므로, 웹페이지를 닫았다가 다시 열어도 직전 상태가 다시 보입니다.<span id="memoMsg"></span> <button type="button" id="resetAll" style="flex:none;width:auto;display:inline-block;margin-left:8px;padding:3px 12px;font-size:14px;vertical-align:middle" title="작업자·사업장 코드, 년도, 모드, 저장 형식, 바코드/QR, 1~9번 내용, 타이머 시각을 기본값으로 되돌려요">기본값으로 초기화</button></p>
-</main>
+<div id="memo3" class="rich" contenteditable="true" role="textbox" aria-multiline="true" data-ph="다 영역(세 번째 메모)입니다. 비교를 누르면 이 자리에 비교 내역이 표시돼요. (이름표 더블클릭: 그 메모를 80%로)" aria-label="메모 (다)"></div></div></div>
+</div></div>
+<script>
+/* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
+   고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
+window.armPicker = function (pk, apply) {
+  pk._apply = apply; pk._pend = null;
+  if (pk._bound) return; pk._bound = true;
+  const flush = () => { if (pk._pend == null) return; const v = pk._pend; pk._pend = null; if (pk._apply) pk._apply(v); };
+  pk.addEventListener("input", () => { pk._pend = pk.value; });
+  pk.addEventListener("change", () => { pk._pend = pk.value; flush(); });
+  document.addEventListener("pointerdown", flush, true);
+  document.addEventListener("keydown", flush, true);
+  window.addEventListener("focus", flush);
+};
+/* #색상값 입력칸 공통: '#rrggbb'(rrggbb, #rgb 도 가능)를 직접 입력하고 Enter 를 치면 그 색이 선택된 것으로 해요.
+   - 값이 올바르지 않으면 빨간 테두리만 보이고 아무것도 바뀌지 않아요
+   - 입력 중 다른 곳을 누르면(칸을 벗어나면) 입력하던 글은 버리고 원래 색 표시로 돌아가요 */
+window.hexParse = function (s) {
+  s = String(s == null ? "" : s).trim().replace(/^#/, "");
+  if (/^[0-9a-f]{3}$/i.test(s)) s = s.replace(/./g, "$&$&");
+  return /^[0-9a-f]{6}$/i.test(s) ? "#" + s.toLowerCase() : null;
+};
+window.hexInput = function (inp, commit, resync) {
+  const ok = () => { inp.classList.remove("bad"); inp.removeAttribute("aria-invalid"); };
+  inp.addEventListener("keydown", e => {
+    if (e.key !== "Enter" || e.isComposing) return;
+    e.preventDefault(); e.stopPropagation();
+    const v = window.hexParse(inp.value);
+    if (!v) { inp.classList.add("bad"); inp.setAttribute("aria-invalid", "true"); return; }
+    ok(); commit(v);
+  });
+  inp.addEventListener("input", ok);
+  inp.addEventListener("blur", () => { ok(); if (resync) resync(); });
+};
+</script>
 <script>
 /* ===== 글꼴: 시스템 글꼴 목록 + 메모 글자 / 이미지 '글자 넣기' 공통 글꼴 =====
    기본값은 맑은 고딕. 고른 글꼴은 이 기기(브라우저)에 기억해요. 목록은 시스템에 설치된 글꼴에서 가져와요
@@ -1392,13 +1192,26 @@ function makeRich(el) {
   });
 }
 
-</script>
-<script>/* qrcode-generator 2.0.4 (c) Kazuhiko Arase, MIT */
-var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(o*r,n*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});</script>
-<script>
-const P="212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 114131 311141 411131 211412 211214 211232 2331112".split(" ");
-const $=id=>document.getElementById(id);
-const ed1 = $("memo");
+/* ▼▼ DB 를 쓰려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요 ▼▼ */
+const DB_URLS = [
+  "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
+  "https://pesdee00-2026-01-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB2
+  "https://pesdee00-2027-01-default-rtdb.asia-southeast1.firebasedatabase.app"      // DB3
+];
+/* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
+const DBSEL = "memo-db";   // 마지막으로 고른 DB 번호(0~2)를 이 PC(브라우저)에 기억 → 다음에 켜도 그 DB 로 시작
+const isSet = u => !u.includes("YOUR-PROJECT");
+let dbIdx = 0;             // 0=DB1, 1=DB2, 2=DB3 (기본 DB1)
+try { const v = parseInt(localStorage.getItem(DBSEL), 10); if (v >= 0 && v < DB_URLS.length && isSet(DB_URLS[v])) dbIdx = v; } catch (e) {}
+
+const MAX_BYTES = 10000000;   // 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요
+const utf8Len = s => new Blob([s]).size;   // 실제 UTF-8 바이트 수 (한글 3바이트, 영문·숫자·base64 1바이트)
+const POLL_MS = 3000;        // 다른 기기의 변경을 확인하는 간격
+const IDLE_MS = 3000;        // 입력을 멈춘 뒤 DB 저장까지 기다리는 시간
+const MAX_WAIT_MS = 30000;   // 계속 입력해도 이 시간이 지나면 한 번 저장
+const KEY = "memo-state";    // 이 PC(브라우저)에 저장되는 이름
+
+const ed1 = document.getElementById("memo"), st = document.getElementById("st"), fbBtn = document.getElementById("fbBtn"), dbGrp = document.getElementById("dbGrp"), dbBtns = Array.from(dbGrp.querySelectorAll("button"));
 makeRich(ed1);
 /* ===== 메모 영역 2분할: 위(memo) / 아래(memo2). 툴바는 하나이고, 마지막으로 클릭한 영역(ta)에 적용돼요 ===== */
 const ed2 = document.getElementById("memo2"), ed3 = document.getElementById("memo3"), EDS = [ed1, ed2, ed3];
@@ -1542,194 +1355,61 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
   });
   apply();
 })();
-
-const THEME={light:{fg:"#000",bg:"#fff"},dark:{fg:"#fff",bg:"#111111"}};
-function encode(s){
-  const c=[104];
-  for(const ch of s){const k=ch.charCodeAt(0);if(k<32||k>126)throw new Error("지원하지 않는 문자: "+ch);c.push(k-32)}
-  let sum=104;for(let i=1;i<c.length;i++)sum+=c[i]*i;
-  c.push(sum%103,106);return c.map(v=>P[v]).join("");
-}
-function build(s,t){
-  const w=encode(s),q=10,m=2;let x=q,r="";
-  for(let i=0;i<w.length;i++){const n=+w[i]*m;if(i%2===0)r+=`<rect x="${x}" y="0" width="${n}" height="60" fill="${t.fg}"/>`;x+=n}
-  const W=x+q;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} 60" width="${W}" height="60"><rect width="${W}" height="60" fill="${t.bg}"/>${r}</svg>`;
-}
-let kind="barcode";
-function buildQR(s,t){
-  for(const ch of s){const k=ch.charCodeAt(0);if(k<32||k>126)throw new Error("지원하지 않는 문자: "+ch)}
-  const q=qrcode(0,"M");q.addData(s,"Byte");q.make();
-  const n=q.getModuleCount(),z=4,W=n+z*2;let r="";
-  for(let y=0;y<n;y++){let x=0;while(x<n){if(q.isDark(y,x)){let e=x;while(e<n&&q.isDark(y,e))e++;r+=`<rect x="${x+z}" y="${y+z}" width="${e-x}" height="1"/>`;x=e}else x++}}
-  const px=W*8;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${W}" width="${px}" height="${px}" shape-rendering="crispEdges"><rect width="${W}" height="${W}" fill="${t.bg}"/><g fill="${t.fg}">${r}</g></svg>`;
-}
-const buildAny=(s,t)=>kind==="qr"?buildQR(s,t):build(s,t);
-const defs=()=>{const S=$("s").value,Y=$("y").value.replace(/\D/g,"").slice(-2);return ["","","",$("w").value,`${S}-XY0-1-5`,`${S}-XY0-1-6`,`${S}-XX${Y}-1-501`,`${S}-XY0-1-10`,`${S}-13G10-13-401`]};
-const cells=[];let yEdited=false;
-const KEY="bc9-state";
-function loadState(){try{return JSON.parse(localStorage.getItem(KEY))||null}catch(e){return null}}
-const saved=loadState();
-if(saved&&saved.k==="qr")kind="qr";
-$("y").value=new Date().getFullYear();
-if(saved){
-  if(typeof saved.w==="string")$("w").value=saved.w;
-  if(typeof saved.s==="string")$("s").value=saved.s;
-  if(saved.y){$("y").value=saved.y;yEdited=true}
-  if(["light","dark"].includes(saved.m))$("m").value=saved.m;
-  if(["png","svg"].includes(saved.f))$("f").value=saved.f;
-  if(typeof saved.memo==="string")memoAll.value=saved.memo;
-}
-function applyTheme(){const m=$("m").value;document.documentElement.setAttribute("data-theme",m);
-  document.querySelector('meta[name="color-scheme"]').setAttribute("content",m==="dark"?"dark":"only light");
-  document.querySelector('meta[name="supported-color-schemes"]').setAttribute("content",m==="dark"?"dark":"light")}
-function saveState(){try{localStorage.setItem(KEY,JSON.stringify({w:$("w").value,s:$("s").value,y:yEdited?$("y").value:null,m:$("m").value,k:kind,f:$("f").value,memo:memoAll.value,fb:useFb,at:knownAt,d:dirty,cells:cells.map(c=>c.inp.value)}));$("memoMsg").textContent=""}catch(e){$("memoMsg").textContent=" ⚠ 브라우저 저장 공간이 가득 차서 저장하지 못했어요. 메모의 이미지를 줄여 주세요."}}
-function save(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-function fname(i,mode,ext){
-  const safe=v=>v.replace(/[^\w-]+/g,"_");
-  return `${safe($("y").value)||"year"}_${safe(cells[i].inp.value)}_${kind==="qr"?"qr_":""}${mode}.${ext}`;
-}
-function download(i,mode){
-  const v=cells[i].inp.value;if(!v)return;
-  let svg;try{svg=buildAny(v,THEME[mode])}catch(e){return}
-  if($("f").value==="svg"){save(new Blob([svg],{type:"image/svg+xml"}),fname(i,mode,"svg"));return}
-  const img=new Image();
-  img.onload=()=>{const k=kind==="qr"?1:3,c=document.createElement("canvas");c.width=img.width*k;c.height=img.height*k;
-    c.getContext("2d").drawImage(img,0,0,c.width,c.height);c.toBlob(b=>save(b,fname(i,mode,"png")))};
-  img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
-}
-function draw(i){
-  const {inp,view,bl}=cells[i],v=inp.value;
-  bl.disabled=true;view.textContent="";view.style.background=THEME[$("m").value].bg;
-  const d=document.createElement("div");
-  if(!v){d.className="empty";d.textContent="코드를 입력하세요";view.append(d);return}
-  try{view.insertAdjacentHTML("beforeend",buildAny(v,THEME[$("m").value]));
-    const sv=view.querySelector("svg");sv.removeAttribute("width");sv.removeAttribute("height");
-    view.dataset.k=kind;
-    if(kind!=="qr")sv.setAttribute("preserveAspectRatio","none");
-    const t=document.createElement("div");t.className="txt";t.textContent=v;t.style.color=THEME[$("m").value].fg;view.append(t);bl.disabled=false}
-  catch(e){d.className="err";d.textContent=e.message;view.append(d)}
-}
-const drawAll=()=>cells.forEach((_,i)=>draw(i));
-function init(){
-  const g=$("g"),d=defs();
-  for(let i=0;i<9;i++){
-    const el=document.createElement("div");el.className="cell"+(i===3?" wk":"");
-    el.innerHTML=`<div class="view"></div><div class="inrow"><input aria-label="바코드 ${i+1}번 내용${i===3?" (작업자)":""}" placeholder="${i+1}번" autocomplete="off"><button type="button" title="이미지 저장" aria-label="바코드 ${i+1}번 이미지 저장">저장</button></div>`;
-    const c={inp:el.querySelector("input"),view:el.querySelector(".view"),bl:el.querySelector("button")};
-    c.inp.value=d[i];
-    c.inp.addEventListener("input",()=>{draw(i);saveState()});
-    /* 모바일: 글자가 입력칸에 다 안 들어갈 때만 칸을 넓힘 (한 번 넓어지면 입력이 끝날 때까지 유지) */
-    const mob=()=>matchMedia("(max-width:560px)").matches;
-    const fit=()=>{if(!mob()||el.classList.contains("wide"))return;
-      if(c.inp.scrollWidth>c.inp.clientWidth){el.classList.add("wide");
-        setTimeout(()=>{try{c.inp.focus();c.inp.scrollLeft=0;el.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}},50)}};
-    c.inp.addEventListener("focus",()=>setTimeout(fit,0));
-    c.inp.addEventListener("input",fit);
-    c.inp.addEventListener("blur",()=>el.classList.remove("wide"));
-    c.bl.onclick=()=>download(i,$("m").value);
-    cells.push(c);g.append(el);
-  }
-}
-/* 사업장 코드: 값이 'ddd-'로 시작하면 1~9번 모두 앞 3자리를 교체 */
-function applyShop(){
-  const S=$("s").value.trim();if(!/^\d{3}$/.test(S))return;
-  cells.forEach(c=>{if(/^\d{3}-/.test(c.inp.value))c.inp.value=S+c.inp.value.slice(3)});
-}
-/* 년도: 'ddd-XXdd' 구성이면 1~9번 모두 뒤 두 자리를 교체 */
-function applyYear(){
-  const D=$("y").value.replace(/\D/g,"");if(D.length<2)return;
-  const Y=D.slice(-2);
-  cells.forEach(c=>{c.inp.value=c.inp.value.replace(/^(\d{3}-XX)\d{2}(?!\d)/,(m,a)=>a+Y)});
-}
-function setKind(){$("kind").textContent=kind==="qr"?"QR":"바코드";document.title=kind==="qr"?"미니 QR 3×3":"미니 바코드 3×3"}
-$("kind").addEventListener("click",()=>{kind=kind==="qr"?"barcode":"qr";setKind();drawAll();saveState()});
-$("kind").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("kind").click()}});
-init();setKind();
-if(saved&&Array.isArray(saved.cells)){cells.forEach((c,i)=>{const v=saved.cells[i];if(typeof v==="string")c.inp.value=v})}
-cells[3].inp.value=$("w").value;
-if(!yEdited)applyYear();
-applyTheme();drawAll();
-$("m").addEventListener("change",()=>{applyTheme();drawAll();saveState()});
-$("w").addEventListener("input",()=>{cells[3].inp.value=$("w").value;draw(3);saveState()});
-$("s").addEventListener("input",()=>{applyShop();drawAll();saveState()});
-$("y").addEventListener("input",()=>{yEdited=true;applyYear();drawAll();saveState()});
-$("f").addEventListener("change",saveState);
-/* 메모 확대/축소: 버튼 또는 Esc. CSS 만 바꾸므로 입력 내용·커서·저장 상태는 그대로이고, 나머지 화면 레이아웃도 변하지 않음 */
-const mpane=$("mpane"),mslot=$("mslot"),mex=$("mex");
-function setMemoMax(on){
-  if(!on&&window.closeCmp)window.closeCmp();   /* 축소하면 비교 모드도 끝냄 */
-  if(on)mslot.style.height=mpane.getBoundingClientRect().height+"px";   /* 확대 중에도 원래 자리의 높이 유지 */
-  else mslot.style.height="";
-  mpane.classList.toggle("max",on);
-  window.refreshSplit();   /* 확대/축소하면 기본 분할 방식(세 줄: 가로 / 확대: 세로)이 바뀌므로 다시 배치 */
-  if(!on){const w=$("edwrap");ta=w.classList.contains("big1")?ed2:w.classList.contains("big2")?ed3:ed1;window.refreshLabels()}   /* 축소하면 보이는 쪽 메모가 툴바 대상 */
-  document.body.classList.toggle("has-max",on);
-  mex.textContent=on?"✕":"⤢";
-  mex.setAttribute("aria-label",on?"메모 축소":"메모 확대");
-}
-mex.addEventListener("mousedown",e=>e.preventDefault());   /* 버튼을 눌러도 메모의 커서/포커스 유지 */
-mex.addEventListener("click",()=>setMemoMax(!mpane.classList.contains("max")));
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.contains("max")&&!document.querySelector("#tb .pop:not([hidden])")&&$("fbar").hidden)setMemoMax(false)});
-
-/* ===== Firebase Realtime Database 사용/미사용 (memo 파일과 같은 DB 경로 /memo 를 사용해요) ===== */
-/* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요. memo 파일과 같은 주소를 넣으세요 ▼▼ */
-const DB_URLS = [
-  "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
-];
-/* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
-const DBSEL="bc9-db";   /* 마지막으로 고른 DB 번호(0~2)를 이 PC(브라우저)에 기억 → 다음에 켜도 그 DB 로 시작 */
-const isSet=u=>!u.includes("YOUR-PROJECT");
-let dbIdx=0;            /* 0=DB1, 1=DB2, 2=DB3 (기본 DB1) */
-try{const v=parseInt(localStorage.getItem(DBSEL),10);if(v>=0&&v<DB_URLS.length&&isSet(DB_URLS[v]))dbIdx=v}catch(e){}
-const MAX_BYTES=10000000,POLL_MS=3000,IDLE_MS=3000,MAX_WAIT_MS=30000;   /* 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요 */
-const utf8Len = s => new Blob([s]).size;   // 실제 UTF-8 바이트 수 (한글 3바이트, 영문·숫자·base64 1바이트)
-let BASE,URL_MEMO,URL_AT,dbSet;
-function applyDb(){   /* 선택된 DB(dbIdx)의 주소로 맞춤 */
-  const u=DB_URLS[dbIdx];
-  BASE=u.replace(/\/+$/,"");URL_MEMO=BASE+"/memo.json";URL_AT=BASE+"/memo/updatedAt.json";dbSet=isSet(u);
+let ta = ed1;   // 툴바가 적용되는 메모 영역
+document.addEventListener("focusin", e => { if (EDS.includes(e.target)) { ta = e.target; window.refreshLabels(); } });   // 툴바는 마지막으로 선택한 메모 영역에 적용
+   // 메모 칸을 표/이미지 붙여넣기가 되는 편집 영역으로
+const say = (t, c) => { st.textContent = t; st.className = c || ""; };
+const hhmm = () => new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+let BASE, URL_MEMO, URL_AT, dbSet;
+function applyDb() {   // 선택된 DB(dbIdx)의 주소로 맞춤
+  const u = DB_URLS[dbIdx];
+  BASE = u.replace(/\/+$/, "");
+  URL_MEMO = BASE + "/memo.json";
+  URL_AT = BASE + "/memo/updatedAt.json";   // 수정 시각 숫자만 (아주 작음)
+  dbSet = isSet(u);
 }
 applyDb();
-const dbName=()=>"DB"+(dbIdx+1);
-const needUrlMsg=()=>dbName()+" 주소(DB_URLS)를 먼저 설정해 주세요";
-const stashKey=i=>"bc9-dbmemo-"+(i+1);   /* 지금 선택되지 않은 DB 의 이 PC 메모 사본 보관 칸 (지금 DB 의 사본은 기존 bc9-state 에 그대로 저장) */
-let gen=0,switching=false;   /* gen: DB 를 바꾸면 올라가는 번호 (바꾸기 전 DB 의 진행 중 작업을 버리기 위함) */
-const memoEl=$("memo"),mst=$("mst"),fbBtn=$("fbBtn"),dbGrp=$("dbGrp"),dbBtns=Array.from(dbGrp.querySelectorAll("button"));
+const dbName = () => "DB" + (dbIdx + 1);
+const needUrlMsg = () => dbName() + " 주소(DB_URLS)를 먼저 설정해 주세요";
+const stateKey = () => dbIdx === 0 ? KEY : KEY + "-" + (dbIdx + 1);   // DB 마다 이 PC 의 메모 사본을 따로 둬요 (DB1 은 예전 이름 그대로)
+let gen = 0, switching = false;   // gen: DB 를 바꾸면 올라가는 번호 (바꾸기 전 DB 의 진행 중 작업을 버리기 위함)
+let toastT = null;
+function toast(msg) {   // 저장 상태줄과 별개로 잠깐 떠 있다 사라지는 안내
+  const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 4000);
+}
+const localNote = () => say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
 
-/* ===== DB 저장 크기(바이트) 표시 =====
-   Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 크기(UTF-8 바이트)를 한도(MAX_BYTES)와 함께 보여줘요.
-   - 입력·붙여넣기·불러오기·서식 변경 등 메모 내용이 바뀔 때마다 갱신 (MutationObserver)
-   - 글자를 칠 때마다 계산하지 않고, 계산에 걸린 시간의 10배 이상 간격을 둬서 입력 속도에 영향을 주지 않아요 */
-const cnt = document.getElementById("cnt");
-let cntT = null;
-function updateCnt() {
-  cntT = null;
-  const t0 = performance.now();
-  const v = memoAll.value, n = Math.ceil((utf8Len(v) + 16) / 3) * 4, vis = memoAll.textContent.replace(/\u200b/g, "").length, pct = n / MAX_BYTES * 100;
-  cnt.textContent = "DB " + n.toLocaleString("ko-KR") + " / " + MAX_BYTES.toLocaleString("ko-KR") + "바이트";
-  cnt.className = n > MAX_BYTES ? "ce" : pct >= 80 ? "cw" : "";
-  cnt.title = "Firebase 에 저장되는 크기 (암호화 후 약 1.33배, 바이트, 서식·이미지·첨부 파일 데이터 포함, 한도의 " + (pct < 0.1 && n ? "0.1% 미만" : pct.toFixed(1) + "%") + ")\n= " + (n / 1048576).toFixed(2) + " MB / 글자 수: " + v.length.toLocaleString("ko-KR") + "자 / 눈에 보이는 글자: " + vis.toLocaleString("ko-KR") + "자";
-  cntDelay = Math.max(250, (performance.now() - t0) * 10);
+/* 저장된 상태 복원: 사용/미사용 선택(처음엔 항상 미사용), 이 PC의 메모 사본 */
+let saved = null; try { saved = JSON.parse(localStorage.getItem(stateKey())); } catch (e) {}
+let useFb = !!(saved && saved.fb === true);
+let dirty = !!(saved && useFb && saved.d), knownAt = (saved && useFb && +saved.at) || 0;
+let ready = false, saving = false, connecting = false, firstTry = false, idleT = null, maxT = null, localT = null;
+if (saved && typeof saved.memo === "string") memoAll.value = saved.memo;
+
+function saveLocal() {
+  clearTimeout(localT); localT = null;
+  try { localStorage.setItem(stateKey(), JSON.stringify({ fb: useFb, memo: memoAll.value, at: knownAt, d: dirty })); return true; }
+  catch (e) { if (!useFb) say("브라우저 저장 공간이 가득 차서 저장하지 못했어요. 이미지를 줄여 주세요", "err"); return false; }
 }
-let cntDelay = 250;
-observeEds(() => { if (!cntT) cntT = setTimeout(updateCnt, cntDelay); }, { childList: true, subtree: true, characterData: true, attributes: true });
-updateCnt();
-let useFb=false,dirty=false,knownAt=0,ready=false,saving=false,connecting=false,firstTry=false,idleT=null,maxT=null;
-const hhmm=()=>new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});
-const say=(t,c)=>{mst.textContent=t;mst.className=c||""};
-const localNote=()=>say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
-function renderFb(){ try { if (window.refreshSplit) window.refreshSplit(); } catch (e) { console.error("refreshSplit", e); }
-  fbBtn.textContent="Firebase Realtime Database "+(useFb?"사용":"미사용");fbBtn.setAttribute("aria-pressed",String(useFb));
-  dbGrp.hidden=!useFb;   /* DB1~3 버튼은 "사용"일 때만 */
-  dbBtns.forEach((b,i)=>{b.setAttribute("aria-pressed",String(i===dbIdx));b.disabled=!isSet(DB_URLS[i]);b.title="DB"+(i+1)+(b.disabled?" — 주소가 설정되지 않았어요 (DB_URLS)":" 로 전환")});
+function renderFb(){ if (window.refreshSplit) window.refreshSplit();
+  fbBtn.textContent = "Firebase Realtime Database " + (useFb ? "사용" : "미사용");
+  fbBtn.setAttribute("aria-pressed", String(useFb));
+  dbGrp.hidden = !useFb;   // DB1~3 버튼은 "사용"일 때만
+  dbBtns.forEach((b, i) => {
+    b.setAttribute("aria-pressed", String(i === dbIdx));
+    b.disabled = !isSet(DB_URLS[i]);
+    b.title = "DB" + (i + 1) + (b.disabled ? " — 주소가 설정되지 않았어요 (DB_URLS)" : " 로 전환");
+  });
 }
-function clearTimers(){clearTimeout(idleT);clearTimeout(maxT);idleT=maxT=null}
-function schedule(){clearTimeout(idleT);idleT=setTimeout(saveRemote,IDLE_MS);if(!maxT)maxT=setTimeout(saveRemote,MAX_WAIT_MS)}
+function clearTimers() { clearTimeout(idleT); clearTimeout(maxT); idleT = maxT = null; }
+function schedule() {
+  clearTimeout(idleT); idleT = setTimeout(save, IDLE_MS);
+  if (!maxT) maxT = setTimeout(save, MAX_WAIT_MS);
+}
+
 /* ===== 암호화: 비밀번호 → PBKDF2(SHA-256, 250000회) → AES-GCM 256. DB 에는 암호문만 올라가고 비밀번호는 저장하지 않아요 ===== */
-const pwKey = () => dbIdx === 0 ? "memo-pw" : "memo-pw-" + (dbIdx + 1);   // 비밀번호는 DB 마다 따로 이 PC(브라우저)에 기억해요 (memo 파일과 같은 이름이라 서로 공유): 처음 한 번만 묻고, 틀리면 다시 물어요
+const pwKey = () => dbIdx === 0 ? "memo-pw" : "memo-pw-" + (dbIdx + 1);   // 비밀번호는 DB 마다 따로 이 PC(브라우저)에 기억해요: 처음 한 번만 묻고, 틀리면 다시 물어요 (DB1 은 예전 이름 그대로)
 let pw = null, dbSalt = null;
 try { pw = localStorage.getItem(pwKey()) || null; } catch (e) {}
 const setPw = p => { pw = p; try { localStorage.setItem(pwKey(), p); } catch (e) {} };
@@ -1793,146 +1473,169 @@ async function unlock(d) {
   }
 }
 
-async function fetchRemote(){const r=await fetch(URL_MEMO,{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}  /* null 또는 {enc,salt,iv,ct,updatedAt} (구버전: {text,updatedAt}) */
-
-async function saveRemote(unloading){
-  clearTimers();
-  if(!useFb||!ready||!dirty)return;
-  if(saving){schedule();return}
-  const v=memoAll.value;
-  if(utf8Len(v)*4/3>MAX_BYTES){say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지·첨부 파일을 줄여 주세요","err");return}   /* 암호문(base64)은 약 1.33배 */
-  saving=true;say("저장 중…");
-  try{
-    const at=Math.max(Date.now(),knownAt+1);                 /* 기기 시계가 달라도 항상 더 큰 값 */
-    const enc=await encryptMemo(v,at);
-    if(enc.ct.length>MAX_BYTES){say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지·첨부 파일을 줄여 주세요","err");return}
-    const body=JSON.stringify(enc),small=body.length<20000;   /* 창 닫는 중 전송은 작은 메모만 가능 */
-    const r=await fetch(URL_MEMO,{method:"PUT",keepalive:unloading===true&&small,headers:{"Content-Type":"application/json"},body});
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    knownAt=at;
-    if(memoAll.value===v){dirty=false;say("저장됨 "+hhmm(),"ok")}else schedule();   /* 저장 중에 더 입력한 경우 */
-    saveState();
-  }catch(e){say("저장 실패. 5초 뒤 다시 시도해요","err");clearTimeout(idleT);idleT=setTimeout(saveRemote,5000)}
-  finally{saving=false}
+async function fetchRemote() {
+  const r = await fetch(URL_MEMO, { cache: "no-store" });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json(); // null 또는 {enc,salt,iv,ct,updatedAt} (구버전: {text,updatedAt})
 }
 
-async function poll(){
-  if(!useFb||!ready||dirty||saving||switching||document.hidden)return;
-  const g=gen;
-  try{
-    const r=await fetch(URL_AT,{cache:"no-store"});if(!r.ok||g!==gen)return;
-    const at=await r.json();
-    if(g!==gen)return;
-    if(typeof at==="number"&&at>knownAt){
+async function save(unloading) {
+  clearTimers();
+  if (!useFb || !ready || !dirty) return;
+  if (saving) { schedule(); return; }
+  const v = memoAll.value;
+  if (utf8Len(v) * 4 / 3 > MAX_BYTES) { say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지·첨부 파일을 줄여 주세요", "err"); return; }   // 암호문(base64)은 약 1.33배
+  saving = true; say("저장 중…");
+  try {
+    const at = Math.max(Date.now(), knownAt + 1);   // 기기 시계가 달라도 항상 더 큰 값
+    const enc = await encryptMemo(v, at);
+    if (enc.ct.length > MAX_BYTES) { say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지·첨부 파일을 줄여 주세요", "err"); return; }
+    const body = JSON.stringify(enc);
+    const small = body.length < 20000;               // 창 닫는 중 전송은 작은 메모만 가능
+    const r = await fetch(URL_MEMO, {
+      method: "PUT", keepalive: unloading === true && small,
+      headers: { "Content-Type": "application/json" }, body
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    knownAt = at;
+    if (memoAll.value === v) { dirty = false; say("저장됨 " + hhmm(), "ok"); }
+    else schedule();                               // 저장 중에 더 입력한 경우
+    saveLocal();
+  } catch (e) {
+    say("저장 실패. 5초 뒤 다시 시도해요", "err");
+    clearTimeout(idleT); idleT = setTimeout(save, 5000);
+  } finally { saving = false; }
+}
+
+async function poll() {
+  if (!useFb || !ready || dirty || saving || switching || document.hidden) return;
+  const g = gen;
+  try {
+    const r = await fetch(URL_AT, { cache: "no-store" });
+    if (!r.ok || g !== gen) return;
+    const at = await r.json();
+    if (g !== gen) return;
+    if (typeof at === "number" && at > knownAt) {
       say("다른 기기의 변경을 불러오는 중…");
-      const d=await fetchRemote();
-      if(g===gen&&useFb&&isEnc(d)&&d.updatedAt>knownAt&&!dirty){
+      const d = await fetchRemote();
+      if (g === gen && useFb && isEnc(d) && d.updatedAt > knownAt && !dirty) {
         let t;
-        try{t=await decryptMemo(d)}catch(e){if(g===gen)say("다른 기기의 변경을 복호화하지 못했어요","err");return}
-        if(!useFb||dirty||g!==gen)return;
-        dbSalt=d.salt;knownAt=d.updatedAt;
-        if(memoAll.value!==t){memoAll.value=t;saveState();say("다른 기기의 변경을 반영했어요 (실행 취소 기록은 새로 시작돼요)","ok")}else say("저장됨 "+hhmm(),"ok");
+        try { t = await decryptMemo(d); } catch (e) { if (g === gen) say("다른 기기의 변경을 복호화하지 못했어요", "err"); return; }
+        if (!useFb || dirty || g !== gen) return;
+        dbSalt = d.salt; knownAt = d.updatedAt;
+        if (memoAll.value !== t) { memoAll.value = t; saveLocal(); say("다른 기기의 변경을 반영했어요 (실행 취소 기록은 새로 시작돼요)", "ok"); }
+        else say("저장됨 " + hhmm(), "ok");
       }
     }
-  }catch(e){}
+  } catch (e) {}
 }
 
 /* DB 와 처음 연결: 어느 쪽 메모를 쓸지 정하고 자동저장을 시작 */
-async function connect(){
-  if(connecting||ready||switching||!useFb||!dbSet)return;
-  if(!(window.crypto&&crypto.subtle)){say("암호화를 쓸 수 없는 환경이에요 (https 주소에서 열어 주세요)","err");return}
-  const g=gen;   /* 도중에 DB 를 바꾸면(gen 이 달라지면) 이 연결 작업은 버려요 */
-  connecting=true;
-  if(firstTry)memoAll.disabled=true;
-  try{
-    const d=await fetchRemote();
-    if(!useFb||g!==gen)return;
-    const enc=isEnc(d),plain=!enc&&!!d&&typeof d.text==="string"&&d.updatedAt>0;
-    let rt=null;                                                  /* DB 메모(복호화된 내용) */
-    if(enc){
+async function connect() {
+  if (connecting || ready || switching || !useFb || !dbSet) return;
+  if (!(window.crypto && crypto.subtle)) { say("암호화를 쓸 수 없는 환경이에요 (https 주소에서 열어 주세요)", "err"); return; }
+  const g = gen;   // 도중에 DB 를 바꾸면(gen 이 달라지면) 이 연결 작업은 버려요
+  connecting = true;
+  if (firstTry) memoAll.disabled = true;
+  try {
+    const d = await fetchRemote();
+    if (!useFb || g !== gen) return;
+    const enc = isEnc(d), plain = !enc && !!d && typeof d.text === "string" && d.updatedAt > 0;
+    let rt = null;                                                   // DB 메모(복호화된 내용)
+    if (enc) {
       say("비밀번호를 입력해 주세요");
-      rt=await unlock(d);
-      if(g!==gen)return;
-      if(rt===null){setFb(false);return}                          /* 취소 → 미사용으로 복귀 (DB 내용은 표시하지 않음) */
-    }else{
+      rt = await unlock(d);
+      if (g !== gen) return;
+      if (rt === null) { setFb(false); return; }                      // 취소 → 미사용으로 복귀 (DB 내용은 표시하지 않음)
+    } else {
       say("비밀번호를 정해 주세요");
-      const p=await askPw(plain?"legacy":"new");
-      if(g!==gen)return;
-      if(p===null){setFb(false);return}
-      setPw(p);dbSalt=null;keyCache.clear();
-      if(plain)rt=d.text;
+      const p = await askPw(plain ? "legacy" : "new");
+      if (g !== gen) return;
+      if (p === null) { setFb(false); return; }
+      setPw(p); dbSalt = null; keyCache.clear();
+      if (plain) rt = d.text;
     }
-    if(!useFb||g!==gen)return;
-    const local=memoAll.value,has=rt!==null;
-    if(!has){ if(local)dirty=true; }                              /* DB 가 비어 있음 → 이 PC 메모를 올림 */
-    else if(rt===local){knownAt=Math.max(knownAt,d.updatedAt);dirty=false}
-    else if(!local){memoAll.value=rt;knownAt=d.updatedAt;dirty=false;saveState()}
-    else if(!dirty&&knownAt>0&&d.updatedAt>knownAt){memoAll.value=rt;knownAt=d.updatedAt;saveState()}   /* 다른 기기에서 수정됨 */
-    else if(confirm("DB에 저장된 메모와 이 PC의 메모가 달라요.\n\n[확인] DB의 메모로 바꾸기\n[취소] 이 PC의 메모를 DB에 덮어쓰기")){
-      memoAll.value=rt;knownAt=d.updatedAt;dirty=false;saveState();
-    }else{knownAt=Math.max(knownAt,d.updatedAt);dirty=true}
-    if(plain)dirty=true;                                          /* 구버전(평문) DB → 암호화해서 다시 저장 */
-    ready=true;say("불러옴","ok");
-    if(dirty)saveRemote();
-  }catch(e){
-    if(useFb&&g===gen)say("불러오기 실패. "+dbName()+" 주소와 규칙을 확인해 주세요","err");
-  }finally{if(g===gen){connecting=false;firstTry=false;memoAll.disabled=false}}
+    if (!useFb || g !== gen) return;
+    const local = memoAll.value, has = rt !== null;
+    if (!has) { if (local) dirty = true; }                           // DB 가 비어 있음 → 이 PC 메모를 올림
+    else if (rt === local) { knownAt = Math.max(knownAt, d.updatedAt); dirty = false; }
+    else if (!local) { memoAll.value = rt; knownAt = d.updatedAt; dirty = false; }
+    else if (!dirty && knownAt > 0 && d.updatedAt > knownAt) { memoAll.value = rt; knownAt = d.updatedAt; }   // 다른 기기에서 수정됨
+    else if (confirm("DB에 저장된 메모와 이 PC의 메모가 달라요.\n\n[확인] DB의 메모로 바꾸기\n[취소] 이 PC의 메모를 DB에 덮어쓰기")) {
+      memoAll.value = rt; knownAt = d.updatedAt; dirty = false;
+    } else { knownAt = Math.max(knownAt, d.updatedAt); dirty = true; }
+    if (plain) dirty = true;                                          // 구버전(평문) DB → 암호화해서 다시 저장
+    ready = true; say("불러옴", "ok"); saveLocal();
+    if (dirty) save();
+  } catch (e) {
+    if (useFb && g === gen) say("불러오기 실패. " + dbName() + " 주소와 규칙을 확인해 주세요", "err");
+  } finally { if (g === gen) { connecting = false; firstTry = false; memoAll.disabled = false; } }
 }
 
-function setFb(on){
-  useFb=on;renderFb();clearTimers();ready=false;
-  if(!on){dirty=false;knownAt=0;localNote();saveState();return}
-  knownAt=0;dirty=false;saveState();
-  if(!dbSet){say(needUrlMsg(),"err");return}
-  say("불러오는 중…");firstTry=true;connect();
+function setFb(on) {
+  useFb = on; renderFb(); clearTimers(); ready = false;
+  if (!on) { dirty = false; knownAt = 0; localNote(); saveLocal(); return; }
+  knownAt = 0; dirty = false; saveLocal();
+  if (!dbSet) { say(needUrlMsg(), "err"); return; }
+  say("불러오는 중…"); firstTry = true; connect();
 }
-fbBtn.addEventListener("click",()=>setFb(!useFb));
+fbBtn.addEventListener("click", () => setFb(!useFb));
 
-/* DB1/2/3 전환: 지금 DB 의 변경을 저장해 두고, 선택한 DB 의 주소·비밀번호·이 PC 메모 사본으로 바꾼 뒤 다시 연결.
-   선택한 번호는 이 PC 에 기억돼서 다음에 켜도 그 DB 로 시작해요 (바코드 입력값 등 메모 이외의 설정은 DB 와 상관없이 그대로) */
-async function switchDb(i){
-  if(switching||i===dbIdx||!useFb||!DB_URLS[i]||!isSet(DB_URLS[i]))return;
-  switching=true;
-  try{
+/* DB1/2/3 전환: 지금 DB 의 변경을 저장해 두고, 선택한 DB 의 주소·비밀번호·이 PC 사본으로 바꾼 뒤 다시 연결.
+   선택한 번호는 이 PC 에 기억돼서 다음에 켜도 그 DB 로 시작해요 */
+async function switchDb(i) {
+  if (switching || i === dbIdx || !useFb || !DB_URLS[i] || !isSet(DB_URLS[i])) return;
+  switching = true;
+  try {
     clearTimers();
-    while(saving)await new Promise(r=>setTimeout(r,100));
-    if(!useFb)return;
-    if(ready&&dirty)await saveRemote();            /* 지금 DB 에 마지막 저장 (실패해도 이 PC 사본에 남아 있어요) */
-    if(!useFb)return;
-    clearTimers();
-    try{localStorage.setItem(stashKey(dbIdx),JSON.stringify({memo:memoAll.value,at:knownAt,d:dirty}))}catch(e){}   /* 지금 DB 의 이 PC 사본 보관 */
-    gen++;connecting=false;ready=false;            /* 이전 DB 의 진행 중 작업은 버림 */
-    dbIdx=i;applyDb();
-    try{localStorage.setItem(DBSEL,String(i))}catch(e){}
-    pw=null;dbSalt=null;keyCache.clear();           /* 비밀번호는 DB 마다 따로 */
-    try{pw=localStorage.getItem(pwKey())||null}catch(e){}
-    let m=null;try{m=JSON.parse(localStorage.getItem(stashKey(i)))}catch(e){}
-    memoAll.value=m&&typeof m.memo==="string"?m.memo:"";   /* 선택한 DB 의 이 PC 사본 (처음 쓰는 DB 면 빈 메모) */
-    knownAt=(m&&+m.at)||0;dirty=!!(m&&m.d);
-    renderFb();saveState();
-    say(dbName()+" 불러오는 중…");firstTry=true;memoAll.disabled=false;
-  }finally{switching=false}
-  if(useFb&&dbIdx===i)connect();
+    while (saving) await new Promise(r => setTimeout(r, 100));
+    if (!useFb) return;
+    if (ready && dirty) await save();             // 지금 DB 에 마지막 저장 (실패해도 이 PC 사본에 남아 있어요)
+    if (!useFb) return;
+    clearTimers(); saveLocal();                   // 지금 DB 의 이 PC 사본 보관
+    gen++; connecting = false; ready = false;     // 이전 DB 의 진행 중 작업은 버림
+    dbIdx = i; applyDb();
+    try { localStorage.setItem(DBSEL, String(i)); } catch (e) {}
+    pw = null; dbSalt = null; keyCache.clear();   // 비밀번호는 DB 마다 따로
+    try { pw = localStorage.getItem(pwKey()) || null; } catch (e) {}
+    let s = null; try { s = JSON.parse(localStorage.getItem(stateKey())); } catch (e) {}
+    memoAll.value = s && typeof s.memo === "string" ? s.memo : "";   // 선택한 DB 의 이 PC 사본 (처음 쓰는 DB 면 빈 메모)
+    knownAt = (s && +s.at) || 0; dirty = !!(s && s.d);
+    renderFb(); saveLocal();
+    say(dbName() + " 불러오는 중…"); firstTry = true; memoAll.disabled = false;
+  } finally { switching = false; }
+  if (useFb && dbIdx === i) connect();
 }
-dbBtns.forEach((b,i)=>b.addEventListener("click",()=>switchDb(i)));
-onEd("input",()=>{
-  if(useFb){dirty=true;if(ready){say("저장 대기 중…");schedule()}}
-  saveState();
+dbBtns.forEach((b, i) => b.addEventListener("click", () => switchDb(i)));
+
+onEd("input", () => {
+  if (useFb) { dirty = true; if (ready) { say("저장 대기 중…"); schedule(); } }
+  clearTimeout(localT); localT = setTimeout(saveLocal, 300);   // 이 PC 사본은 입력을 멈추면 바로 저장
 });
-setInterval(()=>{if(useFb&&dbSet)ready?poll():connect()},POLL_MS);
-document.addEventListener("visibilitychange",()=>{if(!useFb)return;if(document.hidden){if(dirty)saveRemote(true)}else poll()});
-window.addEventListener("focus",poll);
-window.addEventListener("beforeunload",e=>{if(useFb&&dirty){e.preventDefault();e.returnValue=""}});
+setInterval(() => { if (useFb && dbSet) ready ? poll() : connect(); }, POLL_MS);
+if (useFb && dbSet) { firstTry = true; connect(); }   // 페이지를 열면 바로 비밀번호를 물어요
 
-/* ===== 서식 툴바 (색/크기/정렬/체크리스트/표 편집/이미지/찾기 등) ===== */
-let toastT = null;
-function toast(msg) {   // 저장 상태줄과 별개로 잠깐 떠 있다 사라지는 안내
-  const t = document.getElementById("toast"); t.textContent = msg; t.hidden = false;
-  clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 4000);
+/* ===== DB 저장 크기(바이트) 표시 =====
+   Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 크기(UTF-8 바이트)를 한도(MAX_BYTES)와 함께 보여줘요.
+   - 입력·붙여넣기·불러오기·서식 변경 등 메모 내용이 바뀔 때마다 갱신 (MutationObserver)
+   - 글자를 칠 때마다 계산하지 않고, 계산에 걸린 시간의 10배 이상 간격을 둬서 입력 속도에 영향을 주지 않아요 */
+const cnt = document.getElementById("cnt");
+let cntT = null;
+function updateCnt() {
+  cntT = null;
+  const t0 = performance.now();
+  const v = memoAll.value, n = Math.ceil((utf8Len(v) + 16) / 3) * 4, vis = memoAll.textContent.replace(/\u200b/g, "").length, pct = n / MAX_BYTES * 100;
+  cnt.textContent = "DB " + n.toLocaleString("ko-KR") + " / " + MAX_BYTES.toLocaleString("ko-KR") + "바이트";
+  cnt.className = n > MAX_BYTES ? "ce" : pct >= 80 ? "cw" : "";
+  cnt.title = "Firebase 에 저장되는 크기 (암호화 후 약 1.33배, 바이트, 서식·이미지·첨부 파일 데이터 포함, 한도의 " + (pct < 0.1 && n ? "0.1% 미만" : pct.toFixed(1) + "%") + ")\n= " + (n / 1048576).toFixed(2) + " MB / 글자 수: " + v.length.toLocaleString("ko-KR") + "자 / 눈에 보이는 글자: " + vis.toLocaleString("ko-KR") + "자";
+  cntDelay = Math.max(250, (performance.now() - t0) * 10);
 }
-let ta = ed1;   // 툴바가 적용되는 메모 영역
-document.addEventListener("focusin", e => { if (EDS.includes(e.target)) { ta = e.target; window.refreshLabels(); } });   // 툴바는 마지막으로 선택한 메모 영역에 적용
-const tb = document.getElementById("tb");
+let cntDelay = 250;
+observeEds(() => { if (!cntT) cntT = setTimeout(updateCnt, cntDelay); }, { childList: true, subtree: true, characterData: true, attributes: true });
+updateCnt();
+
+/* ===== 서식 툴바 ===== */
+const tb = document.getElementById("tb"), pop = document.getElementById("pop"), expBtn = document.getElementById("expBtn");
 const escH = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const elOf = n => n && (n.nodeType === 1 ? n : n.parentElement);
 const closestIn = (n, sel) => { const e = elOf(n), r = e && e.closest(sel); return r && ta.contains(r) ? r : null; };
@@ -2456,22 +2159,17 @@ function clearAll() {
   if (window.memoFont && window.memoFont.reset) window.memoFont.reset();
   fire(); refreshTb(); say("글자 서식을 기본값으로 되돌렸어요", "ok");
 }
+/* 표 정렬: 표가 놓인 줄(블록) 전체의 정렬을 바꿔요. 표 앞뒤의 글자도 같은 줄이면 함께 정렬돼요 */
 function tabAlign(tab, v) {
-  // memo와 동일하게 표는 글자처럼 흐르는 inline-table입니다.
-  // 따라서 표 자체의 auto margin이 아니라 표가 놓인 한 줄의 정렬을 바꿉니다.
-  tab.style.marginLeft = "";
-  tab.style.marginRight = "";
   let blk = tab.parentElement;
   while (blk && blk !== ta && !BLK.test(blk.nodeName) && !/^(TD|TH)$/.test(blk.nodeName)) blk = blk.parentElement;
-  if (!blk || blk === ta) {
-    const par = tab.parentNode;
-    const isBrk = n => n.nodeType === 1 && /^(BR|DIV|P|H[1-6]|UL|OL|LI|BLOCKQUOTE|PRE|HR)$/.test(n.nodeName);
+  if (!blk || blk === ta) {   // 줄을 감싸는 블록이 없으면 같은 줄(앞 줄바꿈~뒤 줄바꿈)을 div 로 감싸요
+    const par = tab.parentNode, isBrk = n => n.nodeType === 1 && /^(BR|DIV|P|H[1-6]|UL|OL|LI|BLOCKQUOTE|PRE|HR)$/.test(n.nodeName);
     let a = tab, z = tab;
     while (a.previousSibling && !isBrk(a.previousSibling)) a = a.previousSibling;
     while (z.nextSibling && !isBrk(z.nextSibling)) z = z.nextSibling;
     if (z.nextSibling && z.nextSibling.nodeName === "BR") z = z.nextSibling;
-    blk = document.createElement("div");
-    par.insertBefore(blk, a);
+    blk = document.createElement("div"); par.insertBefore(blk, a);
     for (let n = a, nx; n; n = nx) { nx = n === z ? null : n.nextSibling; blk.appendChild(n); }
   }
   blk.style.textAlign = v;
@@ -2710,7 +2408,7 @@ let imgBack = null;
   shp.hidden = true;
   box.append(grip, gripR, gripB); bar.append(main, shp); document.body.append(box); document.getElementById("tb").after(bar);
   const tbg = el("span", "imgx-tbg", '<i class="sep"></i>' + '<button type="button" data-a="pic" title="캡처·파일 이미지를 붙여넣거나 열어서, 형태를 바꾼 뒤 이 이미지 위에 올려요">이미지 넣기</button><button type="button" data-a="cpy" aria-haspopup="true" title="글자·도형·올린 이미지가 합쳐진 전체 이미지를 복사하거나 PC에 파일로 저장해요">이미지 저장</button><button type="button" data-cs="1" title="이미지 그림 자체의 가로·세로 크기를 바꿔요 (박스를 끌어 남길 범위를 정해요)">기본 크기 조정</button>' + '<label class="imgx-sl" title="크기 비율: 지금 크기가 100%예요 (가로·세로를 직접 조절하면 그 크기가 새 100%). [원본 크기]를 누르면 원본이 100%예요">크기 <input type="range" data-sl min="10" max="500" step="1" value="100" aria-label="크기 비율"><input type="number" data-sn min="10" max="500" step="1" value="100" aria-label="크기 비율 숫자 입력" title="숫자로 입력하고 Enter (10~500)">%</label>');   // 기본 툴바 2행 끝: [이미지 넣기] [이미지 저장] [기본 크기 조정] (이미지를 선택했을 때만 보여요)
-  tbg.hidden = true; (document.getElementById("mex") || document.getElementById("ex")).before(tbg);
+  tbg.hidden = true; document.getElementById("ex").before(tbg);
   tbg.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서/포커스 유지   // 이미지 툴바: 기본 툴바 바로 아래 2번째 행
   const eundoBtn = bar.querySelector('[data-sa="eundo"]');
   const isOn = b => b.getAttribute("aria-pressed") === "true";
@@ -5221,6 +4919,7 @@ onEd("click", e => {
   if (h && /^(https?:|mailto:)/i.test(h)) { e.preventDefault(); window.open(h, "_blank", "noopener,noreferrer"); }
 });
 
+/* ===== 내보내기 (.html / .txt) ===== */
 /* ===== 표 셀 서식 (엑셀 '셀 서식'의 테두리 · 채우기) =====
    - 칸을 드래그하거나 Shift+클릭하면 여러 칸을 고를 수 있어요 (선택 표시는 화면에만 있고 저장되지 않아요)
    - 선택한 칸(커서가 있는 칸 1개도 가능)에 테두리·배경색을 칸의 style 로 저장해요 */
@@ -5329,9 +5028,31 @@ onEd("click", e => {
     if (!multi.a.isConnected || !multi.b.isConnected) { multi = null; return; }
     const s = rectOf(multi.a, multi.b); if (!s) return;
     updateInfo(s);
-    const er = s.tab.closest(".rich").getBoundingClientRect();
-    OV.style.clipPath = "inset(" + er.top + "px " + (innerWidth - er.right) + "px " + (innerHeight - er.bottom) + "px " + er.left + "px)";
-    for (const c of cellsIn(s)) { const r = c.getBoundingClientRect(), d = document.createElement("div"); d.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px"; OV.appendChild(d); }
+    const ed = s.tab.closest(".rich");
+    if (!ed || !ed.isConnected) return;
+    const er = ed.getBoundingClientRect();
+    // 뷰포트와 실제 편집 영역의 교집합만 표시합니다. clip-path의 inset 계산에
+    // 의존하지 않아 확대/분할/화면 회전 후에도 잘못된 좌표가 남지 않습니다.
+    const L = Math.max(0, er.left), T = Math.max(0, er.top);
+    const R = Math.min(document.documentElement.clientWidth, er.right);
+    const B = Math.min(document.documentElement.clientHeight, er.bottom);
+    OV.style.clipPath = "none";
+    if (R <= L || B <= T) return;
+    for (const c of cellsIn(s)) {
+      const r = c.getBoundingClientRect();
+      const l = Math.max(L, r.left), t = Math.max(T, r.top);
+      const rr = Math.min(R, r.right), bb = Math.min(B, r.bottom);
+      if (rr <= l || bb <= t) continue;
+      const d = document.createElement("div");
+      d.style.cssText = "left:" + l + "px;top:" + t + "px;width:" + (rr-l) + "px;height:" + (bb-t) + "px";
+      OV.appendChild(d);
+    }
+  }
+  let paintPending = false;
+  function schedulePaint() {
+    if (paintPending) return;
+    paintPending = true;
+    requestAnimationFrame(() => { paintPending = false; paint(); });
   }
   function setMulti(a, b, keep) {   // keep: 같은 칸이어도 선택 표시 유지 (Shift+클릭)
     multi = a === b && !keep ? null : { a, b };
@@ -5343,10 +5064,7 @@ onEd("click", e => {
     const c = cellAt(e.target);
     if (e.shiftKey && c) {
       const cur = getSelection().rangeCount && closestIn(getSelection().anchorNode, "td,th");
-      const sameTable = n => !!(n && n.isConnected && n.closest("table") === c.closest("table") && edOf(n) === edOf(c));
-      /* 확대/축소로 분할 배치가 바뀌면 이전 편집기의 anchor가 남을 수 있어요.
-         현재 클릭한 셀과 같은 편집기·같은 표에 속하는 기준 셀만 사용하고,
-         아니면 현재 커서 셀을 기준으로 삼아요. */
+      const sameTable = n => n && n.isConnected && n.closest("table") === c.closest("table");
       const base = sameTable(anchor) ? anchor : (sameTable(cur) ? cur : null);
       if (base) { e.preventDefault(); anchor = base; setMulti(base, c, true); return; }
     }
@@ -5442,13 +5160,8 @@ onEd("click", e => {
     try { nb.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (x) {}
     schedulePaint();
   });
-  // 화면 방향·뷰포트·확대/축소·분할 영역 크기 변경 뒤 선택 표시를 새 좌표로 다시 그립니다.
-  let paintPending = false;
-  function schedulePaint() {
-    if (paintPending) return;
-    paintPending = true;
-    requestAnimationFrame(() => { paintPending = false; paint(); });
-  }
+  // 영역별 크기 변경(분할선 드래그), 확대/축소, 방향 전환 및 모바일 뷰포트
+  // 변경을 모두 감지해 선택 표시를 새 좌표로 다시 그립니다.
   addEventListener("scroll", e => { if (e.target !== INFO) schedulePaint(); }, true);
   addEventListener("resize", schedulePaint);
   if (window.visualViewport) {
@@ -5458,7 +5171,7 @@ onEd("click", e => {
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(schedulePaint);
     EDS.forEach(e => ro.observe(e));
-    const paneForObserve = document.getElementById("mpane");
+    const paneForObserve = document.getElementById("pane");
     if (paneForObserve) ro.observe(paneForObserve);
   }
   onEd("input", schedulePaint);
@@ -6275,12 +5988,11 @@ function openPop(btn, p) {
   if (p.querySelector("#bgW")) { bgBack = saveRange(); bgDefaults(); }   // 이미지 메뉴: 커서 위치 기억 + 현재 메모창 기준 기본 크기 표시
   if (p.getBoundingClientRect().right > innerWidth - 8) p.classList.add("r");   // 화면 밖으로 나가면 오른쪽 정렬
 }
-document.addEventListener("click", e => { if (!e.target.closest(".menu") && !e.target.closest(".cfov")) closePop(); });
-const pop = document.getElementById("pop"), expBtn = document.getElementById("expBtn");
 expBtn.addEventListener("click", () => {
   if (!pop.hidden) { closePop(); return; }
   openPop(expBtn, pop);
 });
+document.addEventListener("click", e => { if (!e.target.closest(".menu") && !e.target.closest(".cfov")) closePop(); });
 
 function exportMemo(kind) {
   if (ta.value === "") { say("저장할 메모가 없어요", "err"); return; }
@@ -6290,7 +6002,7 @@ function exportMemo(kind) {
   if (kind === "html") {
     body = '<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>메모</title>\n<style>\n' +
       'body{font:16px/1.6 ' + "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif" + ';max-width:800px;margin:24px auto;padding:0 16px;color:#2b8a3e;word-break:break-word}\n' +
-      'img{max-width:100%}img:not([height]){height:auto}table{border-collapse:collapse}td,th{border:1px solid #d9d5cb;padding:2px 6px;vertical-align:top}\n' +
+      'img{max-width:100%}img:not([height]){height:auto}table{border-collapse:collapse;display:inline-table;vertical-align:top}td,th{border:1px solid #d9d5cb;padding:2px 6px;vertical-align:top}\n' +
       '[data-att]{display:inline-block;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid #d9d5cb;border-radius:999px;cursor:pointer}\n' +
       '</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
     type = "text/html"; name = "메모_" + stamp + ".html";
@@ -6336,40 +6048,60 @@ impFile.addEventListener("change", async () => {
   say("열었어요: " + f.name, "ok");
 });
 
-/* Esc: 열린 팝업 → 찾기 창 순서로 닫음 (메모 확대 해제는 팝업/찾기 창이 없을 때만) */
+/* 확대/축소: 버튼 또는 Esc */
+const pane = document.getElementById("pane"), ex = document.getElementById("ex");
+function setMax(on) {
+  pane.classList.toggle("max", on);
+  document.body.classList.toggle("has-max", on);
+  ex.textContent = on ? "✕" : "⤢";
+  ex.setAttribute("aria-label", on ? "축소" : "확대");
+}
+ex.addEventListener("click", () => setMax(!pane.classList.contains("max")));   // (포커스 유지는 툴바의 mousedown 처리가 담당)
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (tb.querySelector(".pop:not([hidden])")) { closePop(); return; }
-  if (!fbar.hidden) closeFind();
+  if (!fbar.hidden) { closeFind(); return; }
+  if (pane.classList.contains("max")) setMax(false);
 });
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { saveLocal(); if (useFb && dirty) save(true); } else poll();
+});
+window.addEventListener("pagehide", saveLocal);
+window.addEventListener("focus", poll);
+window.addEventListener("beforeunload", e => { if (useFb && dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+/* 시작 */
+renderFb();
+if (!useFb) localNote();
+else if (!dbSet) say(needUrlMsg(), "err");
+else { say("불러오는 중…"); firstTry = true; connect(); }
 
 /* ===== 목표 시각까지 남은 시간 타이머 ===== */
 const TIMER_ON=true;                   /* [타이머] 버튼의 처음 상태 (true: 켜짐 / false: 꺼짐) */
 const TIMER_DEFAULT="17:00";           /* 목표 시각 기본값 (시:분) */
-const TKEY="bc9-target";
+const TKEY="memo-target";
+let resetting=false;
 (function(){
+  const $=id=>document.getElementById(id);
   const tt=$("tt"),rem=$("rem");
-  /* [타이머] 버튼: 켜면 연핑크 영역에 목표 시각·남은 시간 표시, 끄면 색 없는 빈 공간 */
-  const box=$("tm"),wrap=$("tmw"),tb=$("tmBtn");let on=TIMER_ON;
+  const box=$("tm"),wrap=$("tmw"),tbn=$("tmBtn");let on=TIMER_ON;
   function setOn(v,anim){
-    on=v;tb.setAttribute("aria-pressed",String(v));box.setAttribute("aria-hidden",String(!v));
+    on=v;tbn.setAttribute("aria-pressed",String(v));box.setAttribute("aria-hidden",String(!v));
     wrap.classList.toggle("off",!v);
     if(!anim){wrap.style.width=v?"auto":"0px";return}
     const w=box.offsetWidth+"px";
-    if(v){wrap.style.width=w;                                   /* 0 → 실제 너비로 펼침, 끝나면 auto */
+    if(v){wrap.style.width=w;
       const end=e=>{if(e.propertyName==="width"&&on){wrap.style.width="auto";wrap.removeEventListener("transitionend",end)}};
       wrap.addEventListener("transitionend",end)}
-    else{wrap.style.width=w;void wrap.offsetWidth;wrap.style.width="0px"}   /* auto → 고정 너비 → 0 으로 접음 */
+    else{wrap.style.width=w;void wrap.offsetWidth;wrap.style.width="0px"}
   }
-  tb.addEventListener("click",()=>setOn(!on,true));
-  /* 처음 열 때: 접힌 상태에서 시작해 슬라이드로 펼쳐짐 (TIMER_ON=false 면 접힌 채로 시작) */
+  tbn.addEventListener("click",()=>setOn(!on,true));
   if(on){
     wrap.style.width="0px";on=false;
     requestAnimationFrame(()=>requestAnimationFrame(()=>setOn(true,true)));
   }else setOn(false,false);
   let target=TIMER_DEFAULT;
   try{const v=localStorage.getItem(TKEY);if(v)target=v}catch(e){}
-  /* "17", "1730", "17:30" 형태를 [시,분,0] 으로 해석 (분 단위까지만, 예전에 저장된 "17:30:15" 는 초를 버림) */
   function parse(s){
     s=String(s).trim();let a;
     if(s.includes(":"))a=s.split(":");
@@ -6382,30 +6114,22 @@ const TKEY="bc9-target";
   }
   const p2=n=>String(n).padStart(2,"0");
   const fmt=t=>p2(t[0])+":"+p2(t[1]);
+  const store=t=>{if(resetting)return;try{localStorage.setItem(TKEY,fmt(t))}catch(e){}};
   let tg=parse(target)||parse(TIMER_DEFAULT);
   tt.value=fmt(tg);
-  tt.addEventListener("input",()=>{const t=parse(tt.value);tt.style.outline=t||!tt.value?"":"2px solid var(--warn)";if(t){tg=t;try{localStorage.setItem(TKEY,fmt(t))}catch(e){}}});
-  tt.addEventListener("blur",()=>{tt.style.outline="";tt.value=fmt(tg);try{localStorage.setItem(TKEY,fmt(tg))}catch(e){}});
+  tt.addEventListener("input",()=>{const t=parse(tt.value);tt.style.outline=t||!tt.value?"":"2px solid var(--err)";if(t){tg=t;store(t)}});
+  tt.addEventListener("blur",()=>{tt.style.outline="";tt.value=fmt(tg);store(tg)});
   function tick(){
     const now=new Date(),t=new Date(now);t.setHours(tg[0],tg[1],tg[2],0);
-    if(t<=now)t.setDate(t.getDate()+1);   /* 목표 시각이 이미 지났으면 다음날 그 시각으로 */
-    const ms=t-now,neg=false;
-    const tot=Math.ceil(ms/1000),h=Math.floor(tot/3600),m=Math.floor(tot/60)%60,s=tot%60;   /* 초 단위(올림): 0초가 되는 순간 목표 시각 */
-    const txt=(neg?"-":"")+p2(h)+":"+p2(m)+":"+p2(s);
+    if(t<=now)t.setDate(t.getDate()+1);
+    const ms=t-now;
+    const tot=Math.ceil(ms/1000),h=Math.floor(tot/3600),m=Math.floor(tot/60)%60,s=tot%60;
+    const txt=p2(h)+":"+p2(m)+":"+p2(s);
     if(rem.textContent!==txt)rem.textContent=txt;
-    rem.classList.toggle("neg",neg);
     requestAnimationFrame(tick);
   }
   tick();
 })();
-
-/* 시작: 저장된 사용/미사용 상태 복원 */
-if(saved&&saved.fb){useFb=true;knownAt=+saved.at||0;dirty=!!saved.d}
-renderFb();
-if(!useFb)localNote();
-else if(!dbSet)say(needUrlMsg(),"err");
-else{say("불러오는 중…");firstTry=true;connect()}
-saveState();
 
 /* ===== 비교: 위 메모(원본)를 기준으로 아래 메모(변경본)와 다른 곳을 찾아요 =====
    - 줄 단위로 비교하고(빈 줄은 건너뜀, 앞뒤 공백·연속 공백은 무시, 표는 한 행이 한 줄·칸 사이는 탭), 바뀐 줄은 단어 단위로 다시 비교해요
@@ -6653,16 +6377,14 @@ saveState();
   });
 })();
 
-/* ===== 기본값으로 초기화: 이 브라우저에 저장된 설정을 지우고 처음 상태로 ===== */
-$("resetAll").addEventListener("click",()=>{
-  if(!confirm("작업자 코드·사업장 코드·년도·모드·저장 형식·바코드/QR 전환·1~9번 내용·타이머 시각을 모두 기본값으로 되돌릴까요?\n\n(되돌릴 수 없어요)"))return;
-  const keep=memoAll.value!==""&&!confirm("메모도 함께 비울까요?\n\n[확인] 메모도 비우기\n[취소] 메모는 그대로 두기");
-  const memo=keep?memoAll.value:"";
-  useFb=false;dirty=false;clearTimers();   /* DB 사용은 끔 (DB 안의 메모는 건드리지 않아요) */
-  try{
-    localStorage.removeItem(KEY);localStorage.removeItem(TKEY);localStorage.removeItem("memo-font");localStorage.removeItem("memo-split");window.clearLayoutPrefs&&window.clearLayoutPrefs();
-    if(memo)localStorage.setItem(KEY,JSON.stringify({memo:memo}));
-  }catch(e){}
+/* ===== 기본값으로 초기화: Firebase 사용 여부·타이머 시각·메모를 처음 상태로 ===== */
+document.getElementById("resetAll").addEventListener("click",()=>{
+  if(!confirm("Firebase 사용 여부와 타이머 목표 시각을 기본값으로 되돌릴까요?\n\n(되돌릴 수 없어요)"))return;
+  if(memoAll.value!==""&&confirm("메모도 함께 비울까요?\n\n[확인] 메모도 비우기\n[취소] 메모는 그대로 두기"))ed1.innerHTML=ed2.innerHTML=ed3.innerHTML="";
+  resetting=true;
+  useFb=false;dirty=false;knownAt=0;clearTimers();   /* DB 사용은 끔 (DB 안의 메모는 건드리지 않아요) */
+  try{localStorage.removeItem(TKEY);localStorage.removeItem("memo-font");localStorage.removeItem("memo-split");window.clearLayoutPrefs&&window.clearLayoutPrefs()}catch(e){}
+  saveLocal();
   location.reload();
 });
 
