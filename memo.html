@@ -453,7 +453,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-<script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000fae08206839c094ecb4a94f6%26fn%3Dmemo_parksoodong_github_io__dev_undo_fixed.html%26cd%3Dattachment%26ts%3D498707%26p%3Dfs%26cid%3D1%26sig%3De5078ec89eded257b782cbbe99460b410c852f8aeacfdf876724e5c64d491320%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000065d0820ba053bcca7fcbbaea%26fn%3Dmemo_parksoodong_github_io__dev_undo_audited.html%26cd%3Dattachment%26ts%3D498707%26p%3Dfs%26cid%3D1%26sig%3Db9fe3b0bafae0eaf21ed2bef45ba3945775a79238e39dbac812f4e400370d903%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000e2648209a3a4f0affbbbc94d%26fn%3Dmemo_parksoodong_github_io__dev%25281%2529_%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3Dafed75bf6520ca0a5d57116d69aac32b54e1bd46bc3e9a86be937c831a9b8cbc%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000474482068e2aaff25e9b04d0%26fn%3Dmemo_parksoodong_github_io__dev_%25EC%2588%2598%25EC%25A0%25952.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3D4e1a04807df7369ac8691d6f499bd49497bcd0861bb77f44647f9e8fd2c8ea01%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
@@ -5396,55 +5396,7 @@ onEd("click", e => {
     ed.dispatchEvent(new Event("input", { bubbles: true }));
     toast("병합을 풀었어요");
   }
-  /* 표 열 너비·행 높이 변경 전후를 별도 기록해 Ctrl+Z / Ctrl+Y 로 되돌려요.
-     크기 변경 뒤 다른 편집을 하면 일반 편집 기록과 섞이지 않도록 이 기록은 초기화해요. */
-  const cfSizeHistory = new WeakMap();
-  let cfSizeHistoryApplying = false;
-  function cfSizeSnapshot(tab) {
-    return {
-      tableWidth: tab.style.width,
-      tableHeight: tab.style.height,
-      cells: Array.from(tab.querySelectorAll("td,th"), c => [c.style.width, c.style.height])
-    };
-  }
-  function cfSizeRestore(tab, snap) {
-    const cells = tab.querySelectorAll("td,th");
-    Array.from(cells).forEach((c, i) => {
-      const v = snap.cells[i];
-      if (v) { c.style.width = v[0]; c.style.height = v[1]; }
-    });
-    tab.style.width = snap.tableWidth;
-    tab.style.height = snap.tableHeight;
-  }
-  function cfSizeHistoryFor(ed) {
-    let h = cfSizeHistory.get(ed);
-    if (!h) { h = { undo: [], redo: [] }; cfSizeHistory.set(ed, h); }
-    return h;
-  }
-  function cfSizeRecord(ed, tab, before, after) {
-    return;   // 열 너비·행 높이도 위의 통합 실행 취소 기록이 맡아요
-    const h = cfSizeHistoryFor(ed);
-    h.undo.push({ tab, snap: before });
-    if (h.undo.length > 50) h.undo.shift();
-    h.redo.length = 0;
-  }
-  function cfSizeApplyHistory(ed, dir) {
-    const h = cfSizeHistory.get(ed);
-    const from = h && h[dir], to = h && h[dir === "undo" ? "redo" : "undo"];
-    if (!from || !from.length) return false;
-    const entry = from.pop();
-    if (!entry.tab.isConnected) return false;
-    to.push({ tab: entry.tab, snap: cfSizeSnapshot(entry.tab) });
-    cfSizeHistoryApplying = true;
-    try {
-      cfSizeRestore(entry.tab, entry.snap);
-      ed.dispatchEvent(new Event("input", { bubbles: true }));
-    } finally { cfSizeHistoryApplying = false; }
-    rzPlace(); schedulePaint();
-    toast(dir === "undo" ? "표의 열 너비·행 높이 변경을 실행 취소했어요" : "표의 열 너비·행 높이 변경을 다시 적용했어요");
-    return true;
-  }
-  window.cfTableSizeHist = dir => cfSizeApplyHistory(ta, dir);
+  /* 표 열 너비·행 높이 변경도 메모의 통합 실행 취소 기록으로 처리해요. */
   /* ===== 메모 전체 실행 취소 / 다시 실행 =====
      글자 입력·서식·붙여넣기·표 만들기·행/열 추가/삭제·표 삭제·칸 병합/해제·크기·테두리·채우기 등 메모(가·나·다 각 영역)에서 한 모든 작업을
      하나의 순서(Ctrl+Z / Ctrl+Y, 툴바 버튼)로 되돌리고 다시 실행해요.
@@ -5482,7 +5434,15 @@ onEd("click", e => {
     while (h.s.length > 2 && (h.s.length > H_MAX || h.size > H_CHARS)) { const x = h.s.shift(); h.size -= x.nb; h.i--; }
     return true;
   }
-  function hFlush(ed) { const h = cfH.get(ed); if (!h) return; if (h.timer) { clearTimeout(h.timer); h.timer = 0; } if (h.dirty) hCap(ed); }
+  function hFlush(ed) {
+    const h = cfH.get(ed); if (!h) return;
+    if (h.timer) { clearTimeout(h.timer); h.timer = 0; }
+    if (h.dirty) hCap(ed);
+    // 툴바를 누르기 직전의 선택/커서 위치도 보관해 삭제·병합 후 Ctrl+Z 때 복원해요.
+    const top = h.s[h.i], sel = hSelGet(ed);
+    if (top && sel) top.sel = sel;
+    hLastEd = ed;
+  }
   const hFlushAll = () => EDS.forEach(hFlush);
   function hApply(ed, snap) {   // 기록된 모습으로 맞춰요: 달라진 줄만 바꿔서, 그대로인 부분(이미지 등)은 건드리지 않아요
     const cur = hSer(ed), tgt = snap.c, mn = Math.min(cur.length, tgt.length);
@@ -5552,26 +5512,6 @@ onEd("click", e => {
     if (hStep(ed, k === "y" || (k === "z" && e.shiftKey) ? "redo" : "undo")) { e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }
   }, true);
   EDS.forEach(ed => { if (ed.isConnected && hOf(ed).i < 0) hCap(ed); });
-  document.addEventListener("input", e => {
-    if (cfSizeHistoryApplying) return;
-    const ed = e.target && e.target.closest && e.target.closest(".rich");
-    if (ed) {
-      const h = cfSizeHistory.get(ed);
-      if (h) { h.undo.length = 0; h.redo.length = 0; }
-    }
-  }, true);
-  document.addEventListener("keydown", e => {
-    if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
-    const k = (e.key || "").toLowerCase();
-    if (k !== "z" && k !== "y") return;
-    const ed = e.target && e.target.closest && e.target.closest(".rich");
-    if (!ed) return;
-    const dir = k === "y" || (k === "z" && e.shiftKey) ? "redo" : "undo";
-    if (cfSizeApplyHistory(ed, dir)) {
-      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-    }
-  }, true);
-
   /* 고른 칸이 걸친 모든 열(행)을 같은 크기로. 표 전체 크기는 바뀐 만큼 따라가요 */
   function doSize(kind) {
     const s = curRect(); if (!s) { toast("표 안의 칸을 먼저 클릭해 주세요"); return; }
@@ -5588,17 +5528,12 @@ onEd("click", e => {
     if (ans === null) return;
     const val = Math.round(parseFloat(String(ans).replace(/px/i, "")));
     if (!(val >= min) || val > 3000) { toast("숫자를 " + min + "~3000 사이로 넣어 주세요"); return; }
-    const beforeSize = cfSizeSnapshot(s.tab);
     for (let j = lo; j <= hi; j++) v[j] = val;
     for (let j = 0; j < n; j++) set(G, j, v[j]);
     const key = col ? "width" : "height";
     s.tab.style[key] = Math.round(v.reduce((a, b) => a + b, 0)) + "px";
     s.tab.style[key] = Math.round(s.tab.getBoundingClientRect()[key]) + "px";   // 내용 때문에 못 줄어든 만큼 표 크기에 반영
-    const afterSize = cfSizeSnapshot(s.tab);
-    cfSizeRecord(ed, s.tab, beforeSize, afterSize);
-    cfSizeHistoryApplying = true;
-    try { ed.dispatchEvent(new Event("input", { bubbles: true })); }
-    finally { cfSizeHistoryApplying = false; }
+    ed.dispatchEvent(new Event("input", { bubbles: true }));   // 통합 실행 취소 기록에 크기 변경을 저장
     rzPlace(); schedulePaint();
     toast((hi - lo + 1) + (col ? "개 열의 너비를 " : "개 행의 높이를 ") + val + "px로 맞췄어요");
   }
