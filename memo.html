@@ -453,7 +453,8 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000e2648209a3a4f0affbbbc94d%26fn%3Dmemo_parksoodong_github_io__dev%25281%2529_%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3Dafed75bf6520ca0a5d57116d69aac32b54e1bd46bc3e9a86be937c831a9b8cbc%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000fae08206839c094ecb4a94f6%26fn%3Dmemo_parksoodong_github_io__dev_undo_fixed.html%26cd%3Dattachment%26ts%3D498707%26p%3Dfs%26cid%3D1%26sig%3De5078ec89eded257b782cbbe99460b410c852f8aeacfdf876724e5c64d491320%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000e2648209a3a4f0affbbbc94d%26fn%3Dmemo_parksoodong_github_io__dev%25281%2529_%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3Dafed75bf6520ca0a5d57116d69aac32b54e1bd46bc3e9a86be937c831a9b8cbc%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000474482068e2aaff25e9b04d0%26fn%3Dmemo_parksoodong_github_io__dev_%25EC%2588%2598%25EC%25A0%25952.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3D4e1a04807df7369ac8691d6f499bd49497bcd0861bb77f44647f9e8fd2c8ea01%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
@@ -5450,7 +5451,7 @@ onEd("click", e => {
      - 작업이 끝날 때마다 메모 내용을 조각(맨 위 줄 단위)으로 기록하고, 바뀌지 않은 조각은 이전 기록과 같은 것을 같이 써서 메모리를 아껴요
      - 글자 입력은 잠깐(0.6초) 멈추거나, 마우스·방향키·Ctrl 단축키를 누르면 한 단계로 묶어요 */
   const cfH = new WeakMap(), H_MAX = 300, H_CHARS = 80e6;
-  let hApplying = false;
+  let hApplying = false, hLastEd = null;   // 툴바를 눌러 편집기 포커스가 빠져도 마지막 작업 영역을 기억해요
   const H_TYPING = /^(insertText|insertCompositionText|insertParagraph|insertLineBreak|delete(Content|Word|SoftLine|HardLine)(Backward|Forward))$/;
   const hOf = ed => { let h = cfH.get(ed); if (!h) { h = { s: [], i: -1, dirty: false, timer: 0, mtp: false, size: 0 }; cfH.set(ed, h); } return h; };
   const hEsc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\u00a0/g, "&nbsp;");
@@ -5463,6 +5464,7 @@ onEd("click", e => {
     const a = hPath(ed, s.anchorNode), f = hPath(ed, s.focusNode); return a && f ? { a, ao: s.anchorOffset, f, fo: s.focusOffset } : null;
   };
   function hCap(ed) {   // 지금 메모 내용을 한 단계로 기록 (내용이 같으면 기록하지 않아요)
+    hLastEd = ed;
     const h = hOf(ed);
     if (ed.querySelector(".cmpgap")) return false;   // 비교 중에는 기록하지 않아요
     h.dirty = false;
@@ -5520,6 +5522,7 @@ onEd("click", e => {
   document.addEventListener("input", e => {
     if (hApplying) return;
     const ed = e.target && e.target.closest && e.target.closest(".rich"); if (!ed || !EDS.includes(ed)) return;
+    hLastEd = ed;
     const h = hOf(ed);
     if (e.inputType && H_TYPING.test(e.inputType)) {   // 글자 입력: 잠깐 멈추면 한 단계
       h.dirty = true; if (h.timer) clearTimeout(h.timer);
@@ -5538,13 +5541,13 @@ onEd("click", e => {
     if (!H_TYPING.test(e.inputType)) hFlush(ed);   // 서식·붙여넣기 직전까지의 글자 입력을 먼저 한 단계로
   }, true);
   ["mousedown", "pointerdown", "touchstart"].forEach(t => document.addEventListener(t, hFlushAll, true));
-  document.addEventListener("focusin", e => { const ed = e.target && EDS.includes(e.target) ? e.target : null; if (ed && hOf(ed).i < 0) hCap(ed); }, true);
+  document.addEventListener("focusin", e => { const ed = e.target && EDS.includes(e.target) ? e.target : null; if (ed) { hLastEd = ed; if (hOf(ed).i < 0) hCap(ed); } }, true);
   document.addEventListener("keydown", e => {
     if (e.ctrlKey || e.metaKey || e.altKey || /^(Tab|Arrow(Up|Down|Left|Right)|Home|End|PageUp|PageDown|Escape)$/.test(e.key)) hFlushAll();
     if (e.defaultPrevented || !(e.ctrlKey || e.metaKey) || e.altKey || e.isComposing) return;   // 이미지 편집 등이 먼저 처리했으면 양보
     const k = (e.key || "").toLowerCase(); if (k !== "z" && k !== "y") return;
     if (e.target && ((/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.nodeName)) || (e.target.closest && e.target.closest(".cfov,.pwb")))) return;
-    const ed = (e.target && e.target.closest && e.target.closest(".rich")) || ta;
+    const ed = (e.target && e.target.closest && e.target.closest(".rich")) || hLastEd || ta;
     if (!ed || !EDS.includes(ed)) return;
     if (hStep(ed, k === "y" || (k === "z" && e.shiftKey) ? "redo" : "undo")) { e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }
   }, true);
