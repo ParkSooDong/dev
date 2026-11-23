@@ -349,6 +349,7 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tbar .tbsep{width:1px;align-self:stretch;margin:4px 3px;background:var(--line)}
 .tbar button{font:inherit;font-size:12.5px;height:28px;padding:0 8px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap}
 .tbar button:hover{background:var(--line)}
+.tbar button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;margin-right:2px}
 .tbar button.del{color:var(--warn)}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);max-width:88vw;padding:9px 16px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:14px;line-height:1.4;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:60;pointer-events:none}
 .toast[hidden]{display:none}
@@ -741,7 +742,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   </div>
   <button class="expand" id="mex" type="button" title="메모 확대 / 축소 (Esc)" aria-label="메모 확대">⤢</button>
 </div>
-<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbr"><span class="tbgrp">행/열 추가</span><button type="button" data-t="rowAbove" title="커서가 있는 행의 위에 행 추가">▲</button><button type="button" data-t="rowBelow" title="커서가 있는 행의 아래에 행 추가">▼</button><button type="button" data-t="colLeft" title="커서가 있는 열의 왼쪽에 열 추가">◀</button><button type="button" data-t="colRight" title="커서가 있는 열의 오른쪽에 열 추가">▶</button><i class="tbsep"></i><span class="tbgrp">표 결합</span><button type="button" data-t="joinUp" title="커서가 속한 표를 바로 위쪽 표의 아래에 결합 (위쪽 표가 없으면 동작 없음)">▲</button><button type="button" data-t="joinDown" title="커서가 속한 표를 바로 아래쪽 표의 위에 결합 (아래쪽 표가 없으면 동작 없음)">▼</button><button type="button" data-t="joinLeft" title="커서가 속한 표를 바로 왼쪽 표의 오른쪽에 결합 (왼쪽 표가 없으면 동작 없음)">◀</button><button type="button" data-t="joinRight" title="커서가 속한 표를 바로 오른쪽 표의 왼쪽에 결합 (오른쪽 표가 없으면 동작 없음)">▶</button><i class="tbsep"></i><span class="tbgrp">표 분리</span><button type="button" data-t="splitUp" title="커서 셀의 위쪽 행들은 위 표, 커서 셀 행부터 끝까지는 아래 표">▲</button><button type="button" data-t="splitDown" title="첫 행부터 커서 셀 행까지는 위 표, 커서 셀의 아래쪽 행부터 끝까지는 아래 표">▼</button><button type="button" data-t="splitLeft" title="커서 셀의 왼쪽 열들은 왼쪽 표, 커서 셀 열부터 끝까지는 오른쪽 표">◀</button><button type="button" data-t="splitRight" title="첫 열부터 커서 셀 열까지는 왼쪽 표, 커서 셀의 오른쪽 열들은 오른쪽 표">▶</button><i class="tbsep"></i><button type="button" class="del" data-t="delRow">행 삭제</button><button type="button" class="del" data-t="delCol">열 삭제</button><button type="button" class="del" data-t="delTable">표 삭제</button></div><div class="tbr"><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div><div class="tbr"><button type="button" data-cfm="merge" title="선택한 여러 칸을 하나로 합쳐요 (칸을 드래그하거나 Shift+클릭으로 먼저 고르세요)">칸 병합</button><button type="button" data-cfm="unmerge" title="합쳐진 칸을 다시 낱칸으로 나눠요">병합 해제</button><i class="tbsep"></i><button type="button" data-cfm="w" title="선택한 칸이 걸친 열을 모두 같은 너비(px)로 맞춰요">열 너비 지정</button><button type="button" data-cfm="h" title="선택한 칸이 걸친 행을 모두 같은 높이(px)로 맞춰요">행 높이 지정</button></div></div>
+<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbr"><span class="tbgrp">행/열 추가</span><button type="button" data-t="rowAbove" title="커서가 있는 행의 위에 행 추가">▲</button><button type="button" data-t="rowBelow" title="커서가 있는 행의 아래에 행 추가">▼</button><button type="button" data-t="colLeft" title="커서가 있는 열의 왼쪽에 열 추가">◀</button><button type="button" data-t="colRight" title="커서가 있는 열의 오른쪽에 열 추가">▶</button><i class="tbsep"></i><span class="tbgrp">삭제</span><button type="button" class="del" data-t="delRow" title="커서가 있는 행 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>행</button><button type="button" class="del" data-t="delCol" title="커서가 있는 열 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M6.5 2.5v10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>열</button><button type="button" class="del" data-t="delTable" title="표 전체 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10M6.5 2.5v10"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>표</button><i class="tbsep"></i><span class="tbgrp">표 결합</span><button type="button" data-t="joinUp" title="커서가 속한 표를 바로 위쪽 표의 아래에 결합 (위쪽 표가 없으면 동작 없음)">▲</button><button type="button" data-t="joinDown" title="커서가 속한 표를 바로 아래쪽 표의 위에 결합 (아래쪽 표가 없으면 동작 없음)">▼</button><button type="button" data-t="joinLeft" title="커서가 속한 표를 바로 왼쪽 표의 오른쪽에 결합 (왼쪽 표가 없으면 동작 없음)">◀</button><button type="button" data-t="joinRight" title="커서가 속한 표를 바로 오른쪽 표의 왼쪽에 결합 (오른쪽 표가 없으면 동작 없음)">▶</button><i class="tbsep"></i><span class="tbgrp">표 분리</span><button type="button" data-t="splitUp" title="커서 셀의 위쪽 행들은 위 표, 커서 셀 행부터 끝까지는 아래 표">▲</button><button type="button" data-t="splitDown" title="첫 행부터 커서 셀 행까지는 위 표, 커서 셀의 아래쪽 행부터 끝까지는 아래 표">▼</button><button type="button" data-t="splitLeft" title="커서 셀의 왼쪽 열들은 왼쪽 표, 커서 셀 열부터 끝까지는 오른쪽 표">◀</button><button type="button" data-t="splitRight" title="첫 열부터 커서 셀 열까지는 왼쪽 표, 커서 셀의 오른쪽 열들은 오른쪽 표">▶</button></div><div class="tbr"><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div><div class="tbr"><button type="button" data-cfm="merge" title="선택한 여러 칸을 하나로 합쳐요 (칸을 드래그하거나 Shift+클릭으로 먼저 고르세요)">칸 병합</button><button type="button" data-cfm="unmerge" title="합쳐진 칸을 다시 낱칸으로 나눠요">병합 해제</button><i class="tbsep"></i><button type="button" data-cfm="w" title="선택한 칸이 걸친 열을 모두 같은 너비(px)로 맞춰요">열 너비 지정</button><button type="button" data-cfm="h" title="선택한 칸이 걸친 행을 모두 같은 높이(px)로 맞춰요">행 높이 지정</button></div></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
@@ -1686,7 +1687,7 @@ const DBSEL="bc9-db";   /* 마지막으로 고른 DB 번호(0~2)를 이 PC(브�
 const isSet=u=>!u.includes("YOUR-PROJECT");
 let dbIdx=0;            /* 0=DB1, 1=DB2, 2=DB3 (기본 DB1) */
 try{const v=parseInt(localStorage.getItem(DBSEL),10);if(v>=0&&v<DB_URLS.length&&isSet(DB_URLS[v]))dbIdx=v}catch(e){}
-const MAX_BYTES=10000000,POLL_MS=3000,IDLE_MS=3000,MAX_WAIT_MS=30000;   /* 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요 */
+const MAX_BYTES=10000000,POLL_MS=3000,IDLE_MS=1500,MAX_WAIT_MS=30000;   /* 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요 */
 const utf8Len = s => new Blob([s]).size;   // 실제 UTF-8 바이트 수 (한글 3바이트, 영문·숫자·base64 1바이트)
 let BASE,URL_MEMO,URL_AT,dbSet;
 function applyDb(){   /* 선택된 DB(dbIdx)의 주소로 맞춤 */
@@ -1718,7 +1719,7 @@ function updateCnt() {
 let cntDelay = 250;
 observeEds(() => { if (!cntT) cntT = setTimeout(updateCnt, cntDelay); }, { childList: true, subtree: true, characterData: true, attributes: true });
 updateCnt();
-let useFb=false,dirty=false,knownAt=0,ready=false,saving=false,connecting=false,firstTry=false,idleT=null,maxT=null;
+let useFb=false,dirty=false,knownAt=0,ready=false,saving=false,again=false,connecting=false,firstTry=false,idleT=null,maxT=null;
 const hhmm=()=>new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});
 const say=(t,c)=>{mst.textContent=t;mst.className=c||""};
 const localNote=()=>say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
@@ -1794,12 +1795,13 @@ async function unlock(d) {
   }
 }
 
-async function fetchRemote(){const r=await fetch(URL_MEMO,{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}  /* null 또는 {enc,salt,iv,ct,updatedAt} (구버전: {text,updatedAt}) */
+function fetchT(u,o,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||20000);return fetch(u,Object.assign({},o,{signal:c.signal})).finally(()=>clearTimeout(t))}   /* 응답이 없으면 20초 뒤 포기하고 다시 시도 */
+async function fetchRemote(){const r=await fetchT(URL_MEMO,{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}  /* null 또는 {enc,salt,iv,ct,updatedAt} (구버전: {text,updatedAt}) */
 
 async function saveRemote(unloading){
   clearTimers();
   if(!useFb||!ready||!dirty)return;
-  if(saving){schedule();return}
+  if(saving){again=true;return}
   const v=memoAll.value;
   if(utf8Len(v)*4/3>MAX_BYTES){say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지·첨부 파일을 줄여 주세요","err");return}   /* 암호문(base64)은 약 1.33배 */
   saving=true;say("저장 중…");
@@ -1808,20 +1810,20 @@ async function saveRemote(unloading){
     const enc=await encryptMemo(v,at);
     if(enc.ct.length>MAX_BYTES){say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지·첨부 파일을 줄여 주세요","err");return}
     const body=JSON.stringify(enc),small=body.length<20000;   /* 창 닫는 중 전송은 작은 메모만 가능 */
-    const r=await fetch(URL_MEMO,{method:"PUT",keepalive:unloading===true&&small,headers:{"Content-Type":"application/json"},body});
+    const r=unloading===true?await fetch(URL_MEMO,{method:"PUT",keepalive:small,headers:{"Content-Type":"application/json"},body}):await fetchT(URL_MEMO,{method:"PUT",headers:{"Content-Type":"application/json"},body},20000);
     if(!r.ok)throw new Error("HTTP "+r.status);
     knownAt=at;
     if(memoAll.value===v){dirty=false;say("저장됨 "+hhmm(),"ok")}else schedule();   /* 저장 중에 더 입력한 경우 */
     saveState();
   }catch(e){say("저장 실패. 5초 뒤 다시 시도해요","err");clearTimeout(idleT);idleT=setTimeout(saveRemote,5000)}
-  finally{saving=false}
+  finally{saving=false;if(again&&dirty){again=false;schedule()}else again=false}
 }
 
 async function poll(){
   if(!useFb||!ready||dirty||saving||switching||document.hidden)return;
   const g=gen;
   try{
-    const r=await fetch(URL_AT,{cache:"no-store"});if(!r.ok||g!==gen)return;
+    const r=await fetchT(URL_AT,{cache:"no-store"},10000);if(!r.ok||g!==gen)return;
     const at=await r.json();
     if(g!==gen)return;
     if(typeof at==="number"&&at>knownAt){
@@ -1917,9 +1919,12 @@ async function switchDb(i){
 }
 dbBtns.forEach((b,i)=>b.addEventListener("click",()=>switchDb(i)));
 onEd("input",()=>{
-  if(useFb){dirty=true;if(ready){say("저장 대기 중…");schedule()}}
-  saveState();
+  if(useFb){dirty=true;if(ready){say(saving?"저장 중… (이후 변경은 이어서 저장해요)":"저장 대기 중…");schedule()}}
+  clearTimeout(stT);stT=setTimeout(saveState,300);   /* 이 PC 사본은 입력을 멈추면 바로 저장 */
 });
+let stT=null;
+window.addEventListener("blur",()=>{if(useFb&&ready&&dirty&&!saving)saveRemote()});   /* 다른 창·탭으로 옮기면 바로 저장 */
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey&&(e.key==="s"||e.key==="S")&&useFb){e.preventDefault();if(dirty)saveRemote()}});
 setInterval(()=>{if(useFb&&dbSet)ready?poll():connect()},POLL_MS);
 document.addEventListener("visibilitychange",()=>{if(!useFb)return;if(document.hidden){if(dirty)saveRemote(true)}else poll()});
 window.addEventListener("focus",poll);
