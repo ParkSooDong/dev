@@ -477,6 +477,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
+</head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
