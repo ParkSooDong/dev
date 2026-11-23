@@ -7,7 +7,8 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004448820b844b7f24561bf8f6%26fn%3Dbarcode_fixed.html%26cd%3Dattachment%26ts%3D498733%26p%3Dfs%26cid%3D1%26sig%3D870477fccadb2de30d6211996db68d7eafa9f465238997578a7fc311d6e2433b%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
 window.armPicker = function (pk, apply) {
@@ -344,7 +345,7 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tbar .tbtg{display:none;gap:2px}
 .tbar.tbup .tbtg-b{display:flex;border-top:1px solid var(--line);padding-top:2px}
 .tbar:not(.tbup) .tbtg-t{display:flex;border-bottom:1px solid var(--line);padding-bottom:2px}
-.tbar.tbmin .tbr{display:none}
+.tbar.tbmin .tbr{display:none}\n.tbar .tbr[hidden]{display:none!important}
 .tbar.tbmin .tbtg{border:0;padding:0}
 .tbar button.tbmn{flex:none;width:156px;text-align:center;font-weight:700;color:#fff;background:#339af0}
 .tbar button.tbmn:hover{background:#1c7ed6}
@@ -5127,10 +5128,16 @@ function placeTbar() {
   const tr = td.closest("table").getBoundingClientRect(), ar = ta.getBoundingClientRect();
   if (tr.bottom < ar.top + 10 || tr.top > ar.bottom - 10) { tbar.hidden = true; return; }   // 표가 화면 밖
   tbar.hidden = false;
-  if (tbMin) tbar.classList.remove("tbmin");   // 위치는 늘 '펼친 크기' 기준으로 잡아요 → [최소화]와 [펼치기]가 항상 같은 자리에 있어요
+  // 매번 현재 상태를 DOM에 다시 동기화해요. 버튼 글자만 바뀌고 행이 남는 상황을 막습니다.
+  tbar.classList.remove("tbmin");
+  tbar.querySelectorAll(".tbr").forEach(row => { row.hidden = false; });
   const bhE = tbar.offsetHeight || 34, bw = tbar.offsetWidth || 300;   // 펼친 크기
   let bh = bhE;
-  if (tbMin) { tbar.classList.add("tbmin"); bh = tbar.offsetHeight || 34; }   // 지금(줄인) 크기
+  if (tbMin) {
+    tbar.classList.add("tbmin");
+    tbar.querySelectorAll(".tbr").forEach(row => { row.hidden = true; });
+    bh = tbar.offsetHeight || 34;
+  }   // 지금(줄인) 크기
   let top = tr.top - bhE - 4, up = true;                         // 표 위: [최소화] 줄이 막대 맨 아래 = 표 바로 위
   if (top < ar.top + 2) { top = tr.bottom + 4; up = false; }     // 위에 자리가 없으면 표 아래: [최소화] 줄이 막대 맨 위 = 표 바로 아래
   if (top > innerHeight - bhE - 4) { top = Math.max(ar.top + 2, innerHeight - bhE - 4); up = true; }   // 표가 화면을 가득 채우면 영역 안쪽 아래에
