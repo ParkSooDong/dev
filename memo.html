@@ -32,7 +32,12 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 #cnt.cw{color:#e8590c}
 #cnt.ce{color:var(--err);font-weight:600}
 /* .slot 이 자리를 지키고 .pane(확대 대상)이 그 안을 채움 → 확대해도 원래 레이아웃은 그대로 */
-.slot{flex:1;min-height:0;position:relative}
+/* 메모와 이후 추가될 비메모 영역을 구분: 메모 작업면을 별도 패널로 묶어요 */
+.slot{flex:1;min-height:0;position:relative;margin-top:2px;padding:8px;border:1.5px solid var(--line);border-radius:12px;background:#ebe8df;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+:root[data-theme="dark"] .slot{background:#1d1c21}
+.pane{inset:8px}
+header{padding-bottom:8px;border-bottom:1.5px solid var(--line)}
+header h1::before{content:"";display:inline-block;width:4px;height:16px;border-radius:2px;background:#339af0;margin-right:8px;vertical-align:-2px}
 .pane{position:absolute;inset:0;display:flex;flex-direction:column;gap:6px}
 .rich{display:block;overflow:auto;word-break:break-word;outline:none}
 .rich:empty::before{content:attr(data-ph);color:var(--mute);font-size:14px;pointer-events:none}
@@ -220,7 +225,7 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tbar .tbtg{display:none;gap:2px}
 .tbar.tbup .tbtg-b{display:flex;border-top:1px solid var(--line);padding-top:2px}
 .tbar:not(.tbup) .tbtg-t{display:flex;border-bottom:1px solid var(--line);padding-bottom:2px}
-.tbar.tbmin .tbr{display:none}
+.tbar.tbmin .tbr{display:none}\n.tbar .tbr[hidden]{display:none!important}
 .tbar.tbmin .tbtg{border:0;padding:0}
 .tbar button.tbmn{flex:none;width:156px;text-align:center;font-weight:700;color:#fff;background:#339af0}
 .tbar button.tbmn:hover{background:#1c7ed6}
@@ -477,7 +482,8 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-</head>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004b3c820bb60a7433b7801834%26fn%3Dmemo_fixed.html%26cd%3Dattachment%26ts%3D498733%26p%3Dfs%26cid%3D1%26sig%3D43c3631b039c3e079a3e483ecca487da6e5f174c3aea8a05391a24e7a1b479ea%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -4814,10 +4820,16 @@ function placeTbar() {
   const tr = td.closest("table").getBoundingClientRect(), ar = ta.getBoundingClientRect();
   if (tr.bottom < ar.top + 10 || tr.top > ar.bottom - 10) { tbar.hidden = true; return; }   // 표가 화면 밖
   tbar.hidden = false;
-  if (tbMin) tbar.classList.remove("tbmin");   // 위치는 늘 '펼친 크기' 기준으로 잡아요 → [최소화]와 [펼치기]가 항상 같은 자리에 있어요
+  // 매번 현재 상태를 DOM에 다시 동기화해요. 버튼 글자만 바뀌고 행이 남는 상황을 막습니다.
+  tbar.classList.remove("tbmin");
+  tbar.querySelectorAll(".tbr").forEach(row => { row.hidden = false; });
   const bhE = tbar.offsetHeight || 34, bw = tbar.offsetWidth || 300;   // 펼친 크기
   let bh = bhE;
-  if (tbMin) { tbar.classList.add("tbmin"); bh = tbar.offsetHeight || 34; }   // 지금(줄인) 크기
+  if (tbMin) {
+    tbar.classList.add("tbmin");
+    tbar.querySelectorAll(".tbr").forEach(row => { row.hidden = true; });
+    bh = tbar.offsetHeight || 34;
+  }   // 지금(줄인) 크기
   let top = tr.top - bhE - 4, up = true;                         // 표 위: [최소화] 줄이 막대 맨 아래 = 표 바로 위
   if (top < ar.top + 2) { top = tr.bottom + 4; up = false; }     // 위에 자리가 없으면 표 아래: [최소화] 줄이 막대 맨 위 = 표 바로 아래
   if (top > innerHeight - bhE - 4) { top = Math.max(ar.top + 2, innerHeight - bhE - 4); up = true; }   // 표가 화면을 가득 채우면 영역 안쪽 아래에
