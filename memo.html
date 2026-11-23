@@ -414,6 +414,26 @@ body.has-max header .tr{display:none}
 .cfft button.ok:hover{opacity:.85;background:var(--ink)}
 </style>
 
+<style id="tbl-tight-css">
+/* 표 도구(표 편집 막대)·표 요약의 줄 간격을 글자가 겹치지 않는 선까지 촘촘하게 */
+.tbar{gap:1px;padding:2px}
+.tbar .tbr{gap:1px}
+.tbar .tbr+.tbr{padding-top:1px}
+.tbar.tbup .tbtg-b{padding-top:1px}
+.tbar:not(.tbup) .tbtg-t{padding-bottom:1px}
+.tbar button{height:22px;font-size:12px;line-height:1.1}
+.tbar .tbsep{margin:2px 3px}
+.tbar .tbgrp{line-height:1.1}
+.tbar button svg{width:14px;height:14px;vertical-align:-2px}
+#cfInfo{line-height:1.2;padding:3px 10px}
+#cfInfo .cfhd{top:-3px;margin-top:-3px;margin-bottom:0;padding:3px 0 1px}
+#cfInfo.cfup .cfhd{top:auto;bottom:-3px;margin:0 0 -3px;padding:1px 0 3px}
+#cfInfo.cfmin .cfhd,#cfInfo.cfup.cfmin .cfhd{margin:0;padding:0}
+#cfInfo .cfnt{line-height:1.2}
+#cfInfo .cfic{margin-top:2px;padding:1px 8px}
+#cfInfo .cfiv{gap:1px 4px}
+#cfInfo .cfit{padding:0 5px}
+</style>
 <style id="imgx-cs-css">
 /* 색 고르기 묶음 (단일 색상의 이미지를 메모에 넣기 · 기본 크기 조정 공통) */
 .cpk{display:flex;flex-direction:column;gap:6px}
