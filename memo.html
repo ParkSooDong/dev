@@ -217,10 +217,13 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tbar[hidden]{display:none}
 .tbar .tbr{display:flex;flex-wrap:wrap;gap:2px}
 .tbar .tbr+.tbr{border-top:1px solid var(--line);padding-top:2px}
-.tbar .tbmini{display:none;gap:2px}
+.tbar .tbtg{display:none;gap:2px}
+.tbar.tbup .tbtg-b{display:flex;border-top:1px solid var(--line);padding-top:2px}
+.tbar:not(.tbup) .tbtg-t{display:flex;border-bottom:1px solid var(--line);padding-bottom:2px}
 .tbar.tbmin .tbr{display:none}
-.tbar.tbmin .tbmini{display:flex}
-.tbar .tbmn{font-weight:700;color:var(--mute)}
+.tbar.tbmin .tbtg{border:0;padding:0}
+.tbar button.tbmn{flex:none;width:156px;text-align:center;font-weight:700;color:#fff;background:#339af0}
+.tbar button.tbmn:hover{background:#1c7ed6}
 .tbar .tbsep{width:1px;align-self:stretch;margin:4px 3px;background:var(--line)}
 .tbar .tbgrp{display:inline-flex;align-items:center;padding:0 3px;font-size:11px;font-weight:700;color:var(--mute);white-space:nowrap}
 .tbar button{font:inherit;font-size:12.5px;height:28px;padding:0 8px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap}
@@ -337,11 +340,17 @@ body.has-max header .tr{display:none}
 #cfInfo .cfhd{margin-bottom:2px;position:sticky;top:-6px;margin-top:-6px;padding:6px 0 3px;background:#1f2937;z-index:1}
 #cfInfo .cfih{display:flex;justify-content:space-between;align-items:center;gap:8px}
 #cfInfo .cfnt{margin-top:2px;font-size:11.5px;line-height:1.4;color:#ced4da}
-#cfInfo .cfmn{flex:none;border:0;border-radius:5px;padding:1px 10px;background:#495057;color:#fff;font:inherit;font-weight:700;cursor:pointer}
-#cfInfo .cfmn:hover{background:#6c757d}
+#cfInfo .cfmn{flex:none;min-width:78px;text-align:center;border:0;border-radius:5px;padding:1px 10px;background:#339af0;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+#cfInfo .cfmn:hover{background:#4dabf7}
 #cfInfo.cfmin{overflow:hidden}
 #cfInfo.cfmin .cfic,#cfInfo.cfmin .cfnt,#cfInfo.cfmin>.cfim{display:none}
 #cfInfo.cfmin .cfhd{margin:0;padding:0;position:static}
+#cfInfo .cfih{flex:1 1 auto;min-width:0;justify-content:flex-start;flex-wrap:wrap;gap:4px 8px}
+#cfInfo:not([hidden]){display:flex;flex-direction:column}
+#cfInfo.cfup .cfhd{order:2;top:auto;bottom:-6px;margin:2px 0 -6px;padding:3px 0 6px;border-bottom:0;border-top:1px solid var(--line)}
+#cfInfo.cfmin .cfhd,#cfInfo.cfup.cfmin .cfhd{margin:0;padding:0;position:static;border:0}
+#cfInfo .cfcn{flex:none}
+#cfInfo .cfnt{margin:0;flex:1 1 170px;min-width:0}
 #cfInfo .cfic{display:flex;gap:8px;align-items:flex-start;margin-top:4px;padding:3px 8px;border-left:4px solid hsl(var(--h),80%,62%);background:hsla(var(--h),70%,60%,.14);border-radius:4px}
 #cfInfo .cfik{flex:none;min-width:3em;font-weight:700;color:hsl(var(--h),90%,76%);white-space:nowrap}
 #cfInfo .cfiv{display:flex;flex-wrap:wrap;gap:3px 5px;min-width:0}
@@ -468,12 +477,6 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-<script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000db648209833eed046f0ce447%26ts%3D498712%26p%3Dfs%26cid%3D1%26sig%3D1def6539c660041e61310152d282b42348dd8b4b15f2c731b347edb84106b61c%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000062688211a672b6fffd38e73e%26fn%3Dmemo_parksoodong_github_io__dev_%25ED%2591%259C%25EC%259D%25B4%25EC%2596%25B4%25EB%25B6%2599%25EC%259D%25B4%25EA%25B8%25B0_%25EB%25B6%2584%25EB%25A6%25AC%25EA%25B8%25B0%25EB%258A%25A5.html%26cd%3Dattachment%26ts%3D498710%26p%3Dfs%26cid%3D1%26sig%3D49c08c4ed30ebccac34fd850d22dfa53934cd1d6c06acbdc9930cab7f6fe3e4c%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="a81a75f5eaf343329d40532368f" src="//local.adguard.org?ts=1795352289595&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001eac820bb500ad138b1fce18%26fn%3Dmemo_parksoodong_github_io__dev_undo_all_issues_fixed.html%26cd%3Dattachment%26ts%3D498708%26p%3Dfs%26cid%3D1%26sig%3D269f98b4b5f7659a05e809fb82ce6c236bd696eaa29f25cf716b706da81e7d6e%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="88d0b3a5a6a24a5b8a0e9b730b1" src="//local.adguard.org?ts=1795343123276&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000e2648209a3a4f0affbbbc94d%26fn%3Dmemo_parksoodong_github_io__dev%25281%2529_%25EC%2588%2598%25EC%25A0%2595.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3Dafed75bf6520ca0a5d57116d69aac32b54e1bd46bc3e9a86be937c831a9b8cbc%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000474482068e2aaff25e9b04d0%26fn%3Dmemo_parksoodong_github_io__dev_%25EC%2588%2598%25EC%25A0%25952.html%26cd%3Dattachment%26ts%3D498666%26p%3Dfs%26cid%3D1%26sig%3D4e1a04807df7369ac8691d6f499bd49497bcd0861bb77f44647f9e8fd2c8ea01%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="6ffebca4b4754bb1a29b72e7faa" src="//local.adguard.org?ts=1795188671264&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -518,7 +521,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   </div>
   <button class="expand" id="ex" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
 </div>
-<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbmini"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 다시 펼쳐요">＋ 표 편집 도구 펼치기</button></div><div class="tbr"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄여요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button><i class="tbsep"></i><span class="tbgrp">행/열 추가</span><button type="button" data-t="rowAbove" title="커서가 있는 행의 위에 행 추가">▲</button><button type="button" data-t="rowBelow" title="커서가 있는 행의 아래에 행 추가">▼</button><button type="button" data-t="colLeft" title="커서가 있는 열의 왼쪽에 열 추가">◀</button><button type="button" data-t="colRight" title="커서가 있는 열의 오른쪽에 열 추가">▶</button><i class="tbsep"></i><span class="tbgrp">삭제</span><button type="button" class="del" data-t="delRow" title="커서가 있는 행 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>행</button><button type="button" class="del" data-t="delCol" title="커서가 있는 열 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M6.5 2.5v10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>열</button><button type="button" class="del" data-t="delTable" title="표 전체 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10M6.5 2.5v10"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>표</button><i class="tbsep"></i><span class="tbgrp">표 결합</span><button type="button" data-t="joinUp" title="커서가 속한 표를 바로 위쪽 표의 아래에 결합 (위쪽 표가 없으면 동작 없음)">▲</button><button type="button" data-t="joinDown" title="커서가 속한 표를 바로 아래쪽 표의 위에 결합 (아래쪽 표가 없으면 동작 없음)">▼</button><button type="button" data-t="joinLeft" title="커서가 속한 표를 바로 왼쪽 표의 오른쪽에 결합 (왼쪽 표가 없으면 동작 없음)">◀</button><button type="button" data-t="joinRight" title="커서가 속한 표를 바로 오른쪽 표의 왼쪽에 결합 (오른쪽 표가 없으면 동작 없음)">▶</button><i class="tbsep"></i><span class="tbgrp">표 분리</span><button type="button" data-t="splitUp" title="커서 셀의 위쪽 행들은 위 표, 커서 셀 행부터 끝까지는 아래 표">▲</button><button type="button" data-t="splitDown" title="첫 행부터 커서 셀 행까지는 위 표, 커서 셀의 아래쪽 행부터 끝까지는 아래 표">▼</button><button type="button" data-t="splitLeft" title="커서 셀의 왼쪽 열들은 왼쪽 표, 커서 셀 열부터 끝까지는 오른쪽 표">◀</button><button type="button" data-t="splitRight" title="첫 열부터 커서 셀 열까지는 왼쪽 표, 커서 셀의 오른쪽 열들은 오른쪽 표">▶</button></div><div class="tbr"><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div><div class="tbr"><button type="button" data-cfm="merge" title="선택한 여러 칸을 하나로 합쳐요 (칸을 드래그하거나 Shift+클릭으로 먼저 고르세요)">칸 병합</button><button type="button" data-cfm="unmerge" title="합쳐진 칸을 다시 낱칸으로 나눠요">병합 해제</button><i class="tbsep"></i><button type="button" data-cfm="w" title="선택한 칸이 걸친 열을 모두 같은 너비(px)로 맞춰요">열 너비 지정</button><button type="button" data-cfm="h" title="선택한 칸이 걸친 행을 모두 같은 높이(px)로 맞춰요">행 높이 지정</button></div></div>
+<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbtg tbtg-t"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div><div class="tbr"><span class="tbgrp">행/열 추가</span><button type="button" data-t="rowAbove" title="커서가 있는 행의 위에 행 추가">▲</button><button type="button" data-t="rowBelow" title="커서가 있는 행의 아래에 행 추가">▼</button><button type="button" data-t="colLeft" title="커서가 있는 열의 왼쪽에 열 추가">◀</button><button type="button" data-t="colRight" title="커서가 있는 열의 오른쪽에 열 추가">▶</button><i class="tbsep"></i><span class="tbgrp">삭제</span><button type="button" class="del" data-t="delRow" title="커서가 있는 행 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>행</button><button type="button" class="del" data-t="delCol" title="커서가 있는 열 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M6.5 2.5v10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>열</button><button type="button" class="del" data-t="delTable" title="표 전체 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10M6.5 2.5v10"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>표</button><i class="tbsep"></i><span class="tbgrp">표 결합</span><button type="button" data-t="joinUp" title="커서가 속한 표를 바로 위쪽 표의 아래에 결합 (위쪽 표가 없으면 동작 없음)">▲</button><button type="button" data-t="joinDown" title="커서가 속한 표를 바로 아래쪽 표의 위에 결합 (아래쪽 표가 없으면 동작 없음)">▼</button><button type="button" data-t="joinLeft" title="커서가 속한 표를 바로 왼쪽 표의 오른쪽에 결합 (왼쪽 표가 없으면 동작 없음)">◀</button><button type="button" data-t="joinRight" title="커서가 속한 표를 바로 오른쪽 표의 왼쪽에 결합 (오른쪽 표가 없으면 동작 없음)">▶</button><i class="tbsep"></i><span class="tbgrp">표 분리</span><button type="button" data-t="splitUp" title="커서 셀의 위쪽 행들은 위 표, 커서 셀 행부터 끝까지는 아래 표">▲</button><button type="button" data-t="splitDown" title="첫 행부터 커서 셀 행까지는 위 표, 커서 셀의 아래쪽 행부터 끝까지는 아래 표">▼</button><button type="button" data-t="splitLeft" title="커서 셀의 왼쪽 열들은 왼쪽 표, 커서 셀 열부터 끝까지는 오른쪽 표">◀</button><button type="button" data-t="splitRight" title="첫 열부터 커서 셀 열까지는 왼쪽 표, 커서 셀의 오른쪽 열들은 오른쪽 표">▶</button></div><div class="tbr"><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div><div class="tbr"><button type="button" data-cfm="merge" title="선택한 여러 칸을 하나로 합쳐요 (칸을 드래그하거나 Shift+클릭으로 먼저 고르세요)">칸 병합</button><button type="button" data-cfm="unmerge" title="합쳐진 칸을 다시 낱칸으로 나눠요">병합 해제</button><i class="tbsep"></i><button type="button" data-cfm="w" title="선택한 칸이 걸친 열을 모두 같은 너비(px)로 맞춰요">열 너비 지정</button><button type="button" data-cfm="h" title="선택한 칸이 걸친 행을 모두 같은 높이(px)로 맞춰요">행 높이 지정</button></div><div class="tbtg tbtg-b"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
@@ -4802,7 +4805,7 @@ onEd("input", () => {   // 찾는 중에 메모를 고치면 결과를 다시 �
 
 /* 표 안을 클릭하면 표 바로 위(자리가 없으면 아래)에 편집 막대가 자동으로 나타나요 */
 const tbar = document.getElementById("tbar");
-let tbMin = false;   // 표 편집 막대를 작게 줄인 상태인지
+let tbMin = false, tbTogAt = 0;   // 표 편집 막대를 작게 줄인 상태인지
 function placeTbar() {
   const s = getSelection();
   const td = s.rangeCount && ta.contains(s.anchorNode) && closestIn(s.anchorNode, "td,th");
@@ -4810,16 +4813,20 @@ function placeTbar() {
   const tr = td.closest("table").getBoundingClientRect(), ar = ta.getBoundingClientRect();
   if (tr.bottom < ar.top + 10 || tr.top > ar.bottom - 10) { tbar.hidden = true; return; }   // 표가 화면 밖
   tbar.hidden = false;
-  tbar.classList.toggle("tbmin", tbMin);   // 줄인 상태면 한 줄 버튼만 보여요 (크기를 바꾼 뒤에 위치를 계산)
-  const bh = tbar.offsetHeight || 34, bw = tbar.offsetWidth || 300;
-  let top = tr.top - bh - 4;
-  if (top < ar.top + 2) top = tr.bottom + 4;                     // 위에 자리가 없으면 표 아래
-  if (top > innerHeight - bh - 4) top = Math.max(ar.top + 2, innerHeight - bh - 4);   // 표가 화면을 가득 채우면 영역 안쪽에
-  tbar.style.top = top + "px";
+  if (tbMin) tbar.classList.remove("tbmin");   // 위치는 늘 '펼친 크기' 기준으로 잡아요 → [최소화]와 [펼치기]가 항상 같은 자리에 있어요
+  const bhE = tbar.offsetHeight || 34, bw = tbar.offsetWidth || 300;   // 펼친 크기
+  let bh = bhE;
+  if (tbMin) { tbar.classList.add("tbmin"); bh = tbar.offsetHeight || 34; }   // 지금(줄인) 크기
+  let top = tr.top - bhE - 4, up = true;                         // 표 위: [최소화] 줄이 막대 맨 아래 = 표 바로 위
+  if (top < ar.top + 2) { top = tr.bottom + 4; up = false; }     // 위에 자리가 없으면 표 아래: [최소화] 줄이 막대 맨 위 = 표 바로 아래
+  if (top > innerHeight - bhE - 4) { top = Math.max(ar.top + 2, innerHeight - bhE - 4); up = true; }   // 표가 화면을 가득 채우면 영역 안쪽 아래에
+  tbar.style.top = (up ? top + bhE - bh : top) + "px";           // 줄여도 [최소화] 줄은 같은 자리, 줄어든 만큼 표 쪽으로 붙어요
   tbar.style.left = Math.max(8, Math.min(tr.left, innerWidth - bw - 8)) + "px";
+  tbar.classList.toggle("tbup", up);
+  tbar.querySelectorAll("[data-tmin]").forEach(b2 => { const t = tbMin ? "＋ 표 편집 도구 펼치기" : "－ 최소화"; if (b2.textContent !== t) b2.textContent = t; });
 }
 tbar.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 커서 유지
-tbar.addEventListener("click", e => { const b = e.target.closest("button"); if (b && b.hasAttribute("data-tmin")) { tbMin = !tbMin; placeTbar(); return; } if (b && b.dataset.t) { tbl(b.dataset.t); placeTbar(); } });
+tbar.addEventListener("click", e => { const b = e.target.closest("button"); if (b && b.hasAttribute("data-tmin")) { if (performance.now() - tbTogAt > 350) { tbTogAt = performance.now(); tbMin = !tbMin; placeTbar(); } return; } if (b && b.dataset.t) { tbl(b.dataset.t); placeTbar(); } });
 document.addEventListener("selectionchange", placeTbar);
 window.addEventListener("scroll", placeTbar, true);
 window.addEventListener("resize", placeTbar);
@@ -4954,6 +4961,8 @@ onEd("click", e => {
   const OV = document.createElement("div"); OV.id = "cfOv"; document.body.appendChild(OV);
   const INFO = document.createElement("div"); INFO.id = "cfInfo"; INFO.hidden = true; document.body.appendChild(INFO);   // 선택한 칸 수·값별 개수
   let infoData = null, infoView = null;   // 요약 창의 열별 값·개수 전체(표 복사용) / 화면에 보이는 모양(화면 복사용)
+  let infoTogAt = 0;   // [최소화]/[펼치기]를 누른 시각 — 요약 창이 줄어든 뒤 같은 자리를 또 눌러 아래 도구가 눌리는 일을 막아요
+  document.addEventListener("click", e => { if (infoTogAt && performance.now() - infoTogAt < 400 && !INFO.contains(e.target)) { e.stopPropagation(); e.preventDefault(); } }, true);
   let infoMin = false;   // 요약 창을 한 줄로 줄인 상태인지 ([최소화] ↔ [펼치기])
   let infoTop = 0;   // 요약 창을 스크롤해 둔 위치 (선택 표시를 다시 그려도 유지)
   INFO.addEventListener("scroll", () => { if (!INFO.hidden && !INFO.classList.contains("cfmin")) infoTop = INFO.scrollTop; });
@@ -4966,13 +4975,17 @@ onEd("click", e => {
     const tr = tab ? tab.getBoundingClientRect() : null;
     const bar = tb && !tb.hidden ? tb.getBoundingClientRect() : null;
     const setPos = (top, bottom, maxH, left) => {
+      INFO.classList.toggle("cfup", bottom != null);   // 표 위(아래쪽 기준)면 [최소화]가 든 머리줄을 맨 아래 = 표 바로 위에, 표 아래면 맨 위 = 표 바로 아래에
       INFO.style.top = top == null ? "auto" : top + "px";
       INFO.style.bottom = bottom == null ? "auto" : bottom + "px";
       INFO.style.left = left + "px";
       INFO.style.setProperty("max-height", Math.max(60, maxH) + "px", "important");
     };
+    const wasMin = INFO.classList.contains("cfmin");
+    if (wasMin) INFO.classList.remove("cfmin");   // 위치·너비는 늘 '펼친 크기' 기준으로 정해요 (줄여도 같은 쪽·같은 자리)
     INFO.style.setProperty("max-height", (innerHeight - 2 * M) + "px", "important");   // 원래 높이를 먼저 재요
     const h = INFO.offsetHeight, w = INFO.offsetWidth;
+    if (wasMin) INFO.classList.add("cfmin");
     const left = Math.max(M, Math.min(tr ? tr.left : 12, innerWidth - w - M));
     if (tr) {
       /* 1) 표(편집 막대가 표 위에 있으면 그 막대) 위쪽 */
@@ -5426,7 +5439,7 @@ onEd("click", e => {
     const cells = cellsIn(s), nr = s.r2 - s.r1 + 1, nc = s.c2 - s.c1 + 1;
     const note = nr >= 2 ? "열마다 값은 개수 많은 순서로 12종류까지, 값은 20글자까지 표시해요 (전체는 [표 복사])" : "행을 2개 이상 고르면 열별 값·개수가 나와요";   // 요약 맨 위에 늘 보이는 안내
     const info = [], view = { n: cells.length, dims: nr + "행 × " + nc + "열", note, cols: [] };
-    let h = '<div class="cfhd"><div class="cfih"><span><b>' + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)</span>" + (nr >= 2 ? '<span class="cfbtns"><button type="button" class="cfcopy" data-k="tbl" title="열 / 값 / 개수 표로 복사 — 엑셀 필터·피벗이나 메모 표로 붙여넣기">표 복사</button><button type="button" class="cfcopy" data-k="img" title="지금 보이는 모양 그대로 글자(표)로 복사 — 메모에 붙여넣으면 글자를 고칠 수 있어요">화면 복사</button><button type="button" class="cfmn" title="요약을 한 줄로 줄여요 — 글꼴·글자 크기 도구가 가려질 때 눌러요. 다시 누르면 원래대로 돌아와요">' + (infoMin ? "펼치기" : "최소화") + '</button></span>' : "") + '</div><div class="cfnt">' + escH(note) + "</div></div>";
+    let h = '<div class="cfhd"><div class="cfih">' + (nr >= 2 ? '<span class="cfbtns"><button type="button" class="cfmn" title="요약을 한 줄로 줄여요 — 글꼴·글자 크기 도구가 가려질 때 눌러요. 다시 누르면 원래대로 돌아와요">' + (infoMin ? "＋ 펼치기" : "－ 최소화") + '</button><button type="button" class="cfcopy" data-k="tbl" title="열 / 값 / 개수 표로 복사 — 엑셀 필터·피벗이나 메모 표로 붙여넣기">표 복사</button><button type="button" class="cfcopy" data-k="img" title="지금 보이는 모양 그대로 글자(표)로 복사 — 메모에 붙여넣으면 글자를 고칠 수 있어요">화면 복사</button></span>' : "") + '<span class="cfcn"><b>' + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)</span>" + '<span class="cfnt">' + escH(note) + "</span></div></div>";
     if (nr >= 2) {   // 선택한 행이 2개 이상이면 열별로 값별 개수 (열마다 색 띠·열 이름·값 칩으로 구분)
       for (let c = s.c1, k = 0; c <= s.c2; c++, k++) {
         if (k >= 100) { h += '<div class="cfim">… 외 ' + (s.c2 - c + 1) + "개 열</div>"; break; }
@@ -5759,7 +5772,7 @@ onEd("click", e => {
   INFO.addEventListener("click", e => {
     const m = e.target.closest && e.target.closest(".cfmn");
     if (m) {   // [최소화] ↔ [펼치기]
-      infoMin = !infoMin; INFO.classList.toggle("cfmin", infoMin); m.textContent = infoMin ? "펼치기" : "최소화";
+      infoTogAt = performance.now(); infoMin = !infoMin; INFO.classList.toggle("cfmin", infoMin); m.textContent = infoMin ? "＋ 펼치기" : "－ 최소화";
       INFO.scrollTop = infoMin ? 0 : infoTop; placeInfo(); return;
     }
     const b = e.target.closest && e.target.closest(".cfcopy"); if (b) (b.dataset.k === "img" ? copySummaryView() : copySummary());
