@@ -314,6 +314,15 @@ body.has-max header .tr{display:none}
 /* 표 셀 서식 (테두리 · 채우기) */
 #cfOv{position:fixed;inset:0;pointer-events:none;z-index:105;overflow:hidden}
 #cfOv div{position:absolute;background:rgba(51,154,240,.26);outline:1.5px solid #339af0;outline-offset:-1px}
+#cfCutOv{position:fixed;inset:0;pointer-events:none;z-index:106;overflow:hidden}
+#cfCutOv div{position:absolute;outline:2px dashed #e8590c;outline-offset:-1px;background:rgba(232,89,12,.10)}
+.cfcutask{z-index:210}
+.cfcutbox{background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;max-width:min(92vw,360px);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.cfcuttt{font-weight:700;margin-bottom:4px}
+.cfcutnt{font-size:13px;margin-bottom:12px;opacity:.85;line-height:1.5}
+.cfcutbt{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.cfcutbt button{font:inherit;font-size:13px;height:32px;padding:0 12px;border:1.5px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer}
+.cfcutbt button.ok{background:#339af0;border-color:#339af0;color:#fff}
 #cfInfo{position:fixed;left:12px;bottom:12px;z-index:118;max-width:min(560px,92vw);padding:6px 11px;border-radius:9px;background:#1f2937;color:#fff;font-size:12.5px;line-height:1.55;box-shadow:0 3px 12px rgba(0,0,0,.3);pointer-events:none;word-break:break-word}
 #cfInfo[hidden]{display:none}
 .szbar{display:inline-flex;align-items:center;gap:4px}
@@ -548,7 +557,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   </div>
   <button class="expand" id="ex" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
 </div>
-<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbtg tbtg-t"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div><div class="tbr"><span class="tbgrp">행/열 추가</span><button type="button" data-t="rowAbove" title="커서가 있는 행의 위에 행 추가">▲</button><button type="button" data-t="rowBelow" title="커서가 있는 행의 아래에 행 추가">▼</button><button type="button" data-t="colLeft" title="커서가 있는 열의 왼쪽에 열 추가">◀</button><button type="button" data-t="colRight" title="커서가 있는 열의 오른쪽에 열 추가">▶</button><i class="tbsep"></i><span class="tbgrp">삭제</span><button type="button" class="del" data-t="delRow" title="커서가 있는 행 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>행</button><button type="button" class="del" data-t="delCol" title="커서가 있는 열 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M6.5 2.5v10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>열</button><button type="button" class="del" data-t="delTable" title="표 전체 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10M6.5 2.5v10"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>표</button><i class="tbsep"></i><span class="tbgrp">표 결합</span><button type="button" data-t="joinUp" title="커서가 속한 표를 바로 위쪽 표의 아래에 결합 (위쪽 표가 없으면 동작 없음)">▲</button><button type="button" data-t="joinDown" title="커서가 속한 표를 바로 아래쪽 표의 위에 결합 (아래쪽 표가 없으면 동작 없음)">▼</button><button type="button" data-t="joinLeft" title="커서가 속한 표를 바로 왼쪽 표의 오른쪽에 결합 (왼쪽 표가 없으면 동작 없음)">◀</button><button type="button" data-t="joinRight" title="커서가 속한 표를 바로 오른쪽 표의 왼쪽에 결합 (오른쪽 표가 없으면 동작 없음)">▶</button><i class="tbsep"></i><span class="tbgrp">표 분리</span><button type="button" data-t="splitUp" title="커서 셀의 위쪽 행들은 위 표, 커서 셀 행부터 끝까지는 아래 표">▲</button><button type="button" data-t="splitDown" title="첫 행부터 커서 셀 행까지는 위 표, 커서 셀의 아래쪽 행부터 끝까지는 아래 표">▼</button><button type="button" data-t="splitLeft" title="커서 셀의 왼쪽 열들은 왼쪽 표, 커서 셀 열부터 끝까지는 오른쪽 표">◀</button><button type="button" data-t="splitRight" title="첫 열부터 커서 셀 열까지는 왼쪽 표, 커서 셀의 오른쪽 열들은 오른쪽 표">▶</button></div><div class="tbr"><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div><div class="tbr"><button type="button" data-cfm="merge" title="선택한 여러 칸을 하나로 합쳐요 (칸을 드래그하거나 Shift+클릭으로 먼저 고르세요)">칸 병합</button><button type="button" data-cfm="unmerge" title="합쳐진 칸을 다시 낱칸으로 나눠요">병합 해제</button><i class="tbsep"></i><button type="button" data-cfm="w" title="선택한 칸이 걸친 열을 모두 같은 너비(px)로 맞춰요">열 너비 지정</button><button type="button" data-cfm="h" title="선택한 칸이 걸친 행을 모두 같은 높이(px)로 맞춰요">행 높이 지정</button></div><div class="tbtg tbtg-b"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div></div>
+<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbtg tbtg-t"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div><div class="tbr"><span class="tbgrp">행/열 추가</span><button type="button" data-t="rowAbove" title="커서가 있는 행의 위에 행 추가">▲</button><button type="button" data-t="rowBelow" title="커서가 있는 행의 아래에 행 추가">▼</button><button type="button" data-t="colLeft" title="커서가 있는 열의 왼쪽에 열 추가">◀</button><button type="button" data-t="colRight" title="커서가 있는 열의 오른쪽에 열 추가">▶</button><i class="tbsep"></i><span class="tbgrp">삭제</span><button type="button" class="del" data-t="delRow" title="커서가 있는 행 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>행</button><button type="button" class="del" data-t="delCol" title="커서가 있는 열 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M6.5 2.5v10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>열</button><button type="button" class="del" data-t="delTable" title="표 전체 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10M6.5 2.5v10"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>표</button><i class="tbsep"></i><span class="tbgrp">표 결합</span><button type="button" data-t="joinUp" title="커서가 속한 표를 바로 위쪽 표의 아래에 결합 (위쪽 표가 없으면 동작 없음)">▲</button><button type="button" data-t="joinDown" title="커서가 속한 표를 바로 아래쪽 표의 위에 결합 (아래쪽 표가 없으면 동작 없음)">▼</button><button type="button" data-t="joinLeft" title="커서가 속한 표를 바로 왼쪽 표의 오른쪽에 결합 (왼쪽 표가 없으면 동작 없음)">◀</button><button type="button" data-t="joinRight" title="커서가 속한 표를 바로 오른쪽 표의 왼쪽에 결합 (오른쪽 표가 없으면 동작 없음)">▶</button><i class="tbsep"></i><span class="tbgrp">표 분리</span><button type="button" data-t="splitUp" title="커서 셀의 위쪽 행들은 위 표, 커서 셀 행부터 끝까지는 아래 표">▲</button><button type="button" data-t="splitDown" title="첫 행부터 커서 셀 행까지는 위 표, 커서 셀의 아래쪽 행부터 끝까지는 아래 표">▼</button><button type="button" data-t="splitLeft" title="커서 셀의 왼쪽 열들은 왼쪽 표, 커서 셀 열부터 끝까지는 오른쪽 표">◀</button><button type="button" data-t="splitRight" title="첫 열부터 커서 셀 열까지는 왼쪽 표, 커서 셀의 오른쪽 열들은 오른쪽 표">▶</button></div><div class="tbr"><button type="button" data-cfcut="cut" title="선택한 칸 범위를 잘라내요 (Ctrl+X). 칸을 드래그하거나 Shift+클릭으로 범위를 고른 뒤 눌러요. 넣을 자리를 클릭하고 [복사한 셀 삽입]을 누르면 옮겨져요">잘라내기</button><button type="button" data-cfcut="ins" title="잘라낸 칸을, 지금 클릭한 칸(범위를 골랐다면 그 왼쪽 위 칸)을 시작으로 끼워 넣어요. 원래 있던 칸은 아래 또는 오른쪽으로 밀려요">복사한 셀 삽입</button><i class="tbsep"></i><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div><div class="tbr"><button type="button" data-cfm="merge" title="선택한 여러 칸을 하나로 합쳐요 (칸을 드래그하거나 Shift+클릭으로 먼저 고르세요)">칸 병합</button><button type="button" data-cfm="unmerge" title="합쳐진 칸을 다시 낱칸으로 나눠요">병합 해제</button><i class="tbsep"></i><button type="button" data-cfm="w" title="선택한 칸이 걸친 열을 모두 같은 너비(px)로 맞춰요">열 너비 지정</button><button type="button" data-cfm="h" title="선택한 칸이 걸친 행을 모두 같은 높이(px)로 맞춰요">행 높이 지정</button></div><div class="tbtg tbtg-b"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
@@ -4992,6 +5001,8 @@ onEd("click", e => {
    - 선택한 칸(커서가 있는 칸 1개도 가능)에 테두리·배경색을 칸의 style 로 저장해요 */
 (() => {
   const OV = document.createElement("div"); OV.id = "cfOv"; document.body.appendChild(OV);
+  let cfCut = null;   // 잘라낸 칸 범위의 두 모서리 칸 {a, b}
+  const CUTOV = document.createElement("div"); CUTOV.id = "cfCutOv"; document.body.appendChild(CUTOV);
   const INFO = document.createElement("div"); INFO.id = "cfInfo"; INFO.hidden = true; document.body.appendChild(INFO);   // 선택한 칸 수·값별 개수
   let infoData = null, infoView = null;   // 요약 창의 열별 값·개수 전체(표 복사용) / 화면에 보이는 모양(화면 복사용)
   let infoTogAt = 0;   // [최소화]/[펼치기]를 누른 시각 — 요약 창이 줄어든 뒤 같은 자리를 또 눌러 아래 도구가 눌리는 일을 막아요
@@ -5097,6 +5108,7 @@ onEd("click", e => {
 
   /* ---- 칸 여러 개 선택 (드래그 / Shift+클릭) ---- */
   function paint() {
+    try { paintCut(); } catch (x) {}
     OV.textContent = ""; INFO.hidden = true;
     if (!multi) { infoTop = 0; return; }
     if (!multi.a.isConnected || !multi.b.isConnected) { multi = null; return; }
@@ -5744,6 +5756,168 @@ onEd("click", e => {
     cfClip = { id: p.id, rows: p.rows, text: p.text, nr: p.nr, nc: p.nc };
     toast("표 전체 " + p.nr + "행 × " + p.nc + "열을 복사했어요. 엑셀이나 이 메모의 칸에 Ctrl+V 하세요");
   };
+
+
+  /* ---- [잘라내기] (Ctrl+X) / [복사한 셀 삽입] ----
+     - 칸 범위를 고른 뒤 [표 도구]의 [잘라내기]나 Ctrl+X → 잘라낸 칸에 주황 점선이 표시돼요 (이때 내용은 아직 그대로예요)
+     - 넣을 자리의 칸을 클릭하고 [복사한 셀 삽입] → 잘라낸 칸이 그 자리에 끼워져요. 원래 있던 칸은 [아래로 밀기]/[오른쪽으로 밀기] 중 고른 쪽으로 밀리고,
+       잘라낸 원래 자리는 같은 방향으로 당겨 올려 메워요 (내용·서식·병합이 함께 옮겨지고, 같은 표나 다른 표(가·나·다 영역 어디든)에도 넣을 수 있어요)
+     - Esc 를 누르면 잘라내기가 취소돼요 (Ctrl+V 로 붙여넣으면 복사처럼 붙고 원래 칸은 그대로예요) */
+  function paintCut() {
+    CUTOV.textContent = "";
+    if (!cfCut) return;
+    if (!cfCut.a.isConnected || !cfCut.b.isConnected) { cfCut = null; return; }
+    const s = rectOf(cfCut.a, cfCut.b); if (!s) { cfCut = null; return; }
+    const ed = s.tab.closest(".rich"); if (!ed || !ed.isConnected) return;
+    const er = ed.getBoundingClientRect();
+    const L = Math.max(0, er.left), T = Math.max(0, er.top);
+    const R = Math.min(document.documentElement.clientWidth, er.right), B = Math.min(document.documentElement.clientHeight, er.bottom);
+    if (R <= L || B <= T) return;
+    let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9;
+    for (const c of cellsIn(s)) { const r = c.getBoundingClientRect(); x1 = Math.min(x1, r.left); y1 = Math.min(y1, r.top); x2 = Math.max(x2, r.right); y2 = Math.max(y2, r.bottom); }
+    const l = Math.max(L, x1), t = Math.max(T, y1), rr = Math.min(R, x2), bb = Math.min(B, y2);
+    if (rr <= l || bb <= t) return;
+    const d = document.createElement("div");
+    d.style.cssText = "left:" + l + "px;top:" + t + "px;width:" + (rr - l) + "px;height:" + (bb - t) + "px";
+    CUTOV.appendChild(d);
+  }
+  async function cfWriteClip(p) {   // 잘라낸 칸을 시스템 클립보드에도 넣어요 (엑셀 등에 붙여넣기용)
+    let ok = false;
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([new ClipboardItem({ "text/html": new Blob([p.html], { type: "text/html" }), "text/plain": new Blob([p.text], { type: "text/plain" }) })]);
+        ok = true;
+      }
+    } catch (x) { ok = false; }
+    if (!ok) {
+      const h = ev => { ev.preventDefault(); ev.clipboardData.setData("text/plain", p.text); ev.clipboardData.setData("text/html", p.html); };
+      cfSkip = true; document.addEventListener("copy", h, true);
+      try { ok = document.execCommand("copy"); } catch (x) { ok = false; }
+      document.removeEventListener("copy", h, true); cfSkip = false;
+    }
+    return ok;
+  }
+  function cutStart(ev) {   // ev: Ctrl+X 의 cut 이벤트 (버튼이면 null)
+    const s = curRect();
+    if (!s) { toast("표 안의 칸을 먼저 클릭하거나 칸 범위를 잡아 주세요"); return; }
+    const ed = editableTab(s); if (!ed) return;
+    const a = s.G.g[s.r1] && s.G.g[s.r1][s.c1], b = s.G.g[s.r2] && s.G.g[s.r2][s.c2]; if (!a || !b) return;
+    const p = cfPack(s);
+    cfCut = { a, b };
+    cfClip = { id: p.id, rows: p.rows, text: p.text, nr: p.nr, nc: p.nc };
+    if (ev && ev.clipboardData) { ev.clipboardData.setData("text/plain", p.text); ev.clipboardData.setData("text/html", p.html); }
+    else cfWriteClip(p);
+    paintCut();
+    toast("칸 " + p.nr + "행 × " + p.nc + "열을 잘라냈어요. 넣을 자리의 칸을 클릭하고 [복사한 셀 삽입]을 누르세요");
+  }
+  document.addEventListener("cut", e => {   // Ctrl+X
+    if (cfSkip || !multi || !multi.a.isConnected || !multi.b.isConnected || !e.clipboardData) return;
+    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.nodeName)) return;
+    const ed = edOf(multi.a); if (!ed || !ed.contains(document.activeElement)) return;
+    e.preventDefault(); e.stopPropagation();
+    cutStart(e);
+  }, true);
+  document.addEventListener("keydown", e => {   // Esc: 잘라내기 취소
+    if (e.key === "Escape" && cfCut && !document.querySelector(".cfcutask")) { cfCut = null; paintCut(); }
+  }, true);
+
+  const slotRest = cell => { const m = getMap(cell); m.delete("width"); m.delete("height"); return Array.from(m, ([k, v]) => k + ":" + v).join(";"); };
+  const restOfStyle = st => { const m = new Map(); for (const d of String(st || "").split(";")) { const i = d.indexOf(":"); if (i > 0) { const k = d.slice(0, i).trim().toLowerCase(); if (k !== "width" && k !== "height") m.set(k, d.slice(i + 1).trim()); } } return Array.from(m, ([k, v]) => k + ":" + v).join(";"); };
+  function slotPut(cell, html, rest) {   // 칸의 내용·서식을 바꿔요. 열 너비·행 높이(width/height)는 그 자리의 것을 그대로 둬요
+    const own = getMap(cell), m = new Map();
+    for (const k of ["width", "height"]) if (own.has(k)) m.set(k, own.get(k));
+    for (const d of String(rest || "").split(";")) { const i = d.indexOf(":"); if (i > 0) m.set(d.slice(0, i).trim().toLowerCase(), d.slice(i + 1).trim()); }
+    putMap(cell, m); cell.innerHTML = html || "<br>";
+  }
+  function askShift(done) {   // 원래 있던 칸을 어느 쪽으로 밀지 물어요
+    const old = document.querySelector(".cfcutask"); if (old) old.remove();
+    const ov = document.createElement("div"); ov.className = "cfov cfcutask";
+    ov.innerHTML = '<div class="cfcutbox" role="dialog" aria-modal="true"><div class="cfcuttt">복사한 셀 삽입</div><div class="cfcutnt">넣을 자리에 있던 칸을 어느 쪽으로 밀까요? 잘라낸 원래 자리는 같은 방향으로 당겨 메워요. (Enter = 아래로 밀기, Esc = 취소)</div><div class="cfcutbt"><button type="button" class="ok" data-k="down">아래로 밀기</button><button type="button" data-k="right">오른쪽으로 밀기</button><button type="button" data-k="x">취소</button></div></div>';
+    const kd = e => {
+      if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(null); }
+      else if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); close("down"); }
+    };
+    const close = v => { document.removeEventListener("keydown", kd, true); ov.remove(); if (v) done(v); };
+    document.addEventListener("keydown", kd, true);
+    ov.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });   // 메모의 커서·선택 유지
+    ov.addEventListener("click", e => { const b = e.target.closest("button"); if (b) close(b.dataset.k === "x" ? null : b.dataset.k); else if (e.target === ov) close(null); });
+    document.body.appendChild(ov);
+  }
+  function runInsert(tab, r0, c0, dir) {
+    if (!cfCut || !cfCut.a.isConnected || !cfCut.b.isConnected || !tab.isConnected) { cfCut = null; paintCut(); toast("잘라낸 칸이나 넣을 표가 사라졌어요. 다시 잘라내 주세요"); return; }
+    const src = rectOf(cfCut.a, cfCut.b); if (!src) { cfCut = null; paintCut(); toast("잘라낸 칸을 찾지 못했어요. 다시 잘라내 주세요"); return; }
+    const sed = editableTab(src), ted = editableTab({ tab }); if (!sed || !ted) return;
+    hFlush(sed); if (ted !== sed) hFlush(ted);
+    const p = cfPack(src), nr = p.nr, nc = p.nc;
+    /* 1) 잘라낸 자리를 당겨 메워요: [아래로 밀기]면 아래쪽 칸이 위로, [오른쪽으로 밀기]면 오른쪽 칸이 왼쪽으로 올라와요 (표 크기는 그대로, 끝쪽이 빈 칸이 돼요) */
+    const nColsOf = g => g.g.reduce((m, r) => Math.max(m, r ? r.length : 0), 0);
+    let G = src.G;
+    G = unmergeIn(src.tab, G, cellsIn(dir === "down" ? { G, r1: src.r1, c1: src.c1, r2: G.g.length - 1, c2: src.c2 } : { G, r1: src.r1, c1: src.c1, r2: src.r2, c2: nColsOf(G) - 1 }));   // 당겨질 범위의 병합은 풀어요
+    {
+      const sat = (r, c) => G.g[r] && G.g[r][c];
+      if (dir === "down") {
+        for (let c = src.c1; c <= src.c2; c++) for (let r = src.r1; r < G.g.length; r++) { const t = sat(r, c), f = sat(r + nr, c); if (t) { if (f) slotPut(t, f.innerHTML, slotRest(f)); else slotPut(t, "", ""); } }
+      } else {
+        const Cn = nColsOf(G);
+        for (let r = src.r1; r <= src.r2; r++) for (let c = src.c1; c < Cn; c++) { const t = sat(r, c), f = sat(r, c + nc); if (t) { if (f) slotPut(t, f.innerHTML, slotRest(f)); else slotPut(t, "", ""); } }
+      }
+    }
+    if (src.tab === tab) {   // 같은 표 안에서는 당겨진 만큼 넣을 자리도 따라 옮겨요 (넣을 칸은 제자리에 남고 그 바로 앞에 끼워져요)
+      if (dir === "down" && c0 >= src.c1 && c0 <= src.c2 && r0 > src.r1) r0 = r0 > src.r2 ? r0 - nr : src.r1;
+      if (dir === "right" && r0 >= src.r1 && r0 <= src.r2 && c0 > src.c1) c0 = c0 > src.c2 ? c0 - nc : src.c1;
+    }
+    /* 2) 밀려날 칸의 병합을 풀고, 모자란 행·열을 더해요 */
+    G = gridOf(tab);
+    let R0 = G.g.length, C0 = nColsOf(G);
+    G = unmergeIn(tab, G, cellsIn(dir === "down" ? { G, r1: r0, c1: c0, r2: Math.max(r0, R0 - 1), c2: c0 + nc - 1 } : { G, r1: r0, c1: c0, r2: r0 + nr - 1, c2: Math.max(c0, C0 - 1) }));
+    R0 = G.g.length; C0 = nColsOf(G);
+    const blank = (r, c) => { const x = G.g[r] && G.g[r][c]; return !x || (cellEmpty(x) && !slotRest(x)); };
+    let needR = Math.max(R0, r0 + nr), needC = Math.max(C0, c0 + nc);
+    if (dir === "down") {
+      let last = -1; for (let r = r0; r < R0; r++) for (let c = c0; c < c0 + nc; c++) if (!blank(r, c)) last = r;
+      needR = Math.max(R0, Math.max(last + 1, r0) + nr);
+    } else {
+      let last = -1; for (let c = c0; c < C0; c++) for (let r = r0; r < r0 + nr; r++) if (!blank(r, c)) last = c;
+      needC = Math.max(C0, Math.max(last + 1, c0) + nc);
+    }
+    const mkTd = () => { const td = document.createElement("td"); td.innerHTML = "<br>"; return td; };
+    if (needC > C0) { rowsOf(tab).forEach((tr, r) => { const have = (G.g[r] || []).length; for (let k = have; k < needC; k++) tr.appendChild(mkTd()); }); G = gridOf(tab); }
+    while (G.g.length < needR) { const rs = rowsOf(tab), last = rs[rs.length - 1], tr = document.createElement("tr"); for (let k = 0, n = Math.max(1, nColsOf(G)); k < n; k++) tr.appendChild(mkTd()); last.after(tr); G = gridOf(tab); }
+    /* 3) 원래 있던 칸을 밀어요 (내용·서식만 옮기고 열 너비·행 높이는 제자리) */
+    const at = (r, c) => G.g[r] && G.g[r][c];
+    if (dir === "down") {
+      for (let c = c0; c < c0 + nc; c++) for (let r = G.g.length - 1; r >= r0 + nr; r--) { const f = at(r - nr, c), t = at(r, c); if (f && t) slotPut(t, f.innerHTML, slotRest(f)); }
+    } else {
+      const Cn = nColsOf(G);
+      for (let r = r0; r < r0 + nr; r++) for (let c = Cn - 1; c >= c0 + nc; c--) { const f = at(r, c - nc), t = at(r, c); if (f && t) slotPut(t, f.innerHTML, slotRest(f)); }
+    }
+    /* 4) 잘라낸 칸을 넣고, 병합도 그대로 다시 합쳐요 */
+    for (let r = 0; r < nr; r++) for (let c = 0; c < nc; c++) {
+      const x = p.rows[r][c], cell = at(r0 + r, c0 + c); if (!cell) continue;
+      if (x) slotPut(cell, x.html, restOfStyle(x.style)); else slotPut(cell, "", "");
+    }
+    for (let r = 0; r < nr; r++) for (let c = 0; c < nc; c++) { const x = p.rows[r][c]; if (x && (x.rs > 1 || x.cs > 1)) mergeRect(tab, r0 + r, c0 + c, r0 + r + x.rs - 1, c0 + c + x.cs - 1); }
+    G = gridOf(tab);
+    const a = G.g[r0][c0], b = G.g[r0 + nr - 1][c0 + nc - 1];
+    cfCut = null; cfClip = null; paintCut();
+    putCaret(a); anchor = a; setMulti(a, b, true);
+    hCap(ted); if (sed !== ted) hCap(sed);
+    ted.dispatchEvent(new Event("input", { bubbles: true })); if (sed !== ted) sed.dispatchEvent(new Event("input", { bubbles: true }));
+    toast("잘라낸 칸 " + nr + "행 × " + nc + "열을 넣었어요 (" + (dir === "down" ? "아래로" : "오른쪽으로") + " 밀고, 원래 자리는 당겨 메웠어요)");
+  }
+  function cutInsert() {
+    if (!cfCut || !cfCut.a.isConnected || !cfCut.b.isConnected) { cfCut = null; paintCut(); toast("먼저 칸 범위를 잡고 [잘라내기]를 누르세요"); return; }
+    const t = curRect(); if (!t) { toast("넣을 자리의 칸을 먼저 클릭해 주세요"); return; }
+    if (!editableTab({ tab: t.tab })) return;
+    const tab = t.tab, r0 = t.r1, c0 = t.c1;
+    askShift(dir => runInsert(tab, r0, c0, dir));
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-cfcut]"); if (!b) return;
+    e.preventDefault(); try { closePop(); } catch (x) {}
+    if (b.dataset.cfcut === "cut") cutStart(null); else cutInsert();
+    try { placeTbar(); } catch (x) {}
+  });
 
   /* ---- 선택 요약 [복사] 버튼: 열 / 값 / 개수 표로 복사 (엑셀에는 칸으로, 메모에는 표로 붙여넣어져요) ---- */
   async function copySummary() {
