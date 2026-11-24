@@ -5304,12 +5304,21 @@ onEd("input", () => {   // 찾는 중에 메모를 고치면 결과를 다시 �
 /* 표 안을 클릭하면 표 바로 위(자리가 없으면 아래)에 편집 막대가 자동으로 나타나요 */
 const tbar = document.getElementById("tbar");
 let tbMin = false, tbTogAt = 0;   // 표 편집 막대를 작게 줄인 상태인지
+/* 방향키(▲▼◀▶) 버튼으로 범위를 잡는 동안에는 편집 막대 자리를 고정해요.
+   (표가 스크롤될 때마다 막대가 표 위/아래/화면 아래로 옮겨 다니면, 연타하던 손가락 밑에서 버튼이 바뀌어 엉뚱한 버튼이 눌려요) */
+let tbLock = null;
+window.tbLockNow = () => {
+  if (tbLock || tbar.hidden) return;
+  const r = tbar.getBoundingClientRect(), up = tbar.classList.contains("tbup");
+  tbLock = { up, edge: up ? r.bottom : r.top, left: r.left };   // 표 위(up)면 아래 가장자리, 표 아래면 위 가장자리를 기준으로 고정
+};
+window.tbUnlock = () => { if (tbLock) { tbLock = null; placeTbar(); } };
 function placeTbar() {
   const s = getSelection();
   const td = s.rangeCount && ta.contains(s.anchorNode) && closestIn(s.anchorNode, "td,th");
-  if (!td || ta.disabled) { tbar.hidden = true; return; }
+  if (!td || ta.disabled) { tbar.hidden = true; tbLock = null; return; }
   const tr = td.closest("table").getBoundingClientRect(), ar = ta.getBoundingClientRect();
-  if (tr.bottom < ar.top + 10 || tr.top > ar.bottom - 10) { tbar.hidden = true; return; }   // 표가 화면 밖
+  if (tr.bottom < ar.top + 10 || tr.top > ar.bottom - 10) { if (!tbLock) { tbar.hidden = true; return; } }   // 표가 화면 밖 (방향키로 범위를 잡는 중에는 막대를 그대로 둬요)
   tbar.hidden = false;
   // 매번 현재 상태를 DOM에 다시 동기화해요. 버튼 글자만 바뀌고 행이 남는 상황을 막습니다.
   tbar.classList.remove("tbmin");
@@ -5324,8 +5333,9 @@ function placeTbar() {
   let top = tr.top - bhE - 4, up = true;                         // 표 위: [최소화] 줄이 막대 맨 아래 = 표 바로 위
   if (top < ar.top + 2) { top = tr.bottom + 4; up = false; }     // 위에 자리가 없으면 표 아래: [최소화] 줄이 막대 맨 위 = 표 바로 아래
   if (top > innerHeight - bhE - 4) { top = Math.max(ar.top + 2, innerHeight - bhE - 4); up = true; }   // 표가 화면을 가득 채우면 영역 안쪽 아래에
+  if (tbLock) { up = tbLock.up; top = up ? tbLock.edge - bhE : tbLock.edge; }   // 방향키 사용 중: 막대 자리 고정
   tbar.style.top = (up ? top + bhE - bh : top) + "px";           // 줄여도 [최소화] 줄은 같은 자리, 줄어든 만큼 표 쪽으로 붙어요
-  tbar.style.left = Math.max(8, Math.min(tr.left, innerWidth - bw - 8)) + "px";
+  tbar.style.left = Math.max(8, Math.min(tbLock ? tbLock.left : tr.left, innerWidth - bw - 8)) + "px";
   tbar.classList.toggle("tbup", up);
   tbar.querySelectorAll("[data-tmin]").forEach(b2 => { const t = tbMin ? "＋ 표 편집 도구 펼치기" : "－ 최소화"; if (b2.textContent !== t) b2.textContent = t; });
 }
@@ -5636,7 +5646,7 @@ onEd("click", e => {
   function paint() {
     try { paintCut(); } catch (x) {}
     OV.textContent = ""; INFO.hidden = true;
-    if (!multi) { infoTop = 0; if (isMobile()) infoMin = true; return; }
+    if (!multi) { infoTop = 0; if (isMobile()) infoMin = true; if (window.tbUnlock) window.tbUnlock(); return; }
     if (!multi.a.isConnected || !multi.b.isConnected) { multi = null; if (isMobile()) infoMin = true; return; }
     const s = rectOf(multi.a, multi.b); if (!s) return;
     updateInfo(s);
@@ -6129,7 +6139,9 @@ onEd("click", e => {
     if (multi && multi.a.isConnected) n = multi.a;
     else { const sl = getSelection(); if (sl.rangeCount) n = sl.anchorNode; }
     const ed = n && edOf(n.nodeType === 1 ? n : n.parentElement); if (!ed) return;
+    if (window.tbLockNow) window.tbLockNow();   // 연타해도 버튼이 제자리에 있게 막대 자리를 고정해요
     ed.dispatchEvent(new KeyboardEvent("keydown", { key: b.dataset.selpad, shiftKey: true, bubbles: true, cancelable: true }));
+    if (!multi && window.tbUnlock) window.tbUnlock();
     placeTbar();
   });
   /* 모바일: 툴바·표 도구 등을 눌러도 화면 키보드가 올라오지 않게 해요 (커서·선택은 그대로 유지) */
