@@ -511,8 +511,10 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004b3c820bb60a7433b7801834%26fn%3Dmemo_fixed.html%26cd%3Dattachment%26ts%3D498733%26p%3Dfs%26cid%3D1%26sig%3D43c3631b039c3e079a3e483ecca487da6e5f174c3aea8a05391a24e7a1b479ea%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000006f8481fa82b59ecf10546b8d%26fn%3Dmemo_parksoodong_github_io__dev%25285%2529_modified.html%26cd%3Dattachment%26ts%3D498745%26p%3Dfs%26cid%3D1%26sig%3D725309a81b561c6a4ff14cb7b2e14b863b0ed3907635ba68cb1865b9958392e4%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004b3c820bb60a7433b7801834%26fn%3Dmemo_fixed.html%26cd%3Dattachment%26ts%3D498733%26p%3Dfs%26cid%3D1%26sig%3D43c3631b039c3e079a3e483ecca487da6e5f174c3aea8a05391a24e7a1b479ea%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><style id="tbl-sort-style">#tblSortDialog[hidden]{display:none!important}#tblSortDialog button{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--ink);color:var(--bg);cursor:pointer}#tblSortDialog button:hover{opacity:.85}#tblSortDialog select:focus-visible{outline:2px solid #339af0;outline-offset:1px}</style>
+</head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -557,7 +559,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   </div>
   <button class="expand" id="ex" type="button" title="확대 / 축소 (Esc)" aria-label="확대">⤢</button>
 </div>
-<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbtg tbtg-t"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div><div class="tbr"><span class="tbgrp">행/열 추가</span><button type="button" data-t="rowAbove" title="커서가 있는 행의 위에 행 추가">▲</button><button type="button" data-t="rowBelow" title="커서가 있는 행의 아래에 행 추가">▼</button><button type="button" data-t="colLeft" title="커서가 있는 열의 왼쪽에 열 추가">◀</button><button type="button" data-t="colRight" title="커서가 있는 열의 오른쪽에 열 추가">▶</button><i class="tbsep"></i><span class="tbgrp">삭제</span><button type="button" class="del" data-t="delRow" title="커서가 있는 행 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>행</button><button type="button" class="del" data-t="delCol" title="커서가 있는 열 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M6.5 2.5v10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>열</button><button type="button" class="del" data-t="delTable" title="표 전체 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10M6.5 2.5v10"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>표</button><i class="tbsep"></i><span class="tbgrp">표 결합</span><button type="button" data-t="joinUp" title="커서가 속한 표를 바로 위쪽 표의 아래에 결합 (위쪽 표가 없으면 동작 없음)">▲</button><button type="button" data-t="joinDown" title="커서가 속한 표를 바로 아래쪽 표의 위에 결합 (아래쪽 표가 없으면 동작 없음)">▼</button><button type="button" data-t="joinLeft" title="커서가 속한 표를 바로 왼쪽 표의 오른쪽에 결합 (왼쪽 표가 없으면 동작 없음)">◀</button><button type="button" data-t="joinRight" title="커서가 속한 표를 바로 오른쪽 표의 왼쪽에 결합 (오른쪽 표가 없으면 동작 없음)">▶</button><i class="tbsep"></i><span class="tbgrp">표 분리</span><button type="button" data-t="splitUp" title="커서 셀의 위쪽 행들은 위 표, 커서 셀 행부터 끝까지는 아래 표">▲</button><button type="button" data-t="splitDown" title="첫 행부터 커서 셀 행까지는 위 표, 커서 셀의 아래쪽 행부터 끝까지는 아래 표">▼</button><button type="button" data-t="splitLeft" title="커서 셀의 왼쪽 열들은 왼쪽 표, 커서 셀 열부터 끝까지는 오른쪽 표">◀</button><button type="button" data-t="splitRight" title="첫 열부터 커서 셀 열까지는 왼쪽 표, 커서 셀의 오른쪽 열들은 오른쪽 표">▶</button></div><div class="tbr"><button type="button" data-cfcut="cut" title="선택한 칸 범위를 잘라내요 (Ctrl+X). 칸을 드래그하거나 Shift+클릭으로 범위를 고른 뒤 눌러요. 넣을 자리의 칸을 클릭하고 [붙여넣기]를 누르면 옮겨지고, [복사한 셀 삽입]을 누르면 끼워 넣어져요">잘라내기</button><button type="button" data-cfcut="copy" title="선택한 칸 범위를 복사해요 (Ctrl+C와 같아요). 칸을 드래그하거나 Shift+클릭으로 범위를 고른 뒤 눌러요. 원래 칸은 그대로 남아요">복사하기</button><button type="button" data-cfcut="paste" title="잘라내거나 복사한 칸을, 지금 클릭한 칸(범위를 골랐다면 그 왼쪽 위 칸)을 왼쪽 위로 해서 덮어 붙여넣어요 (Ctrl+V와 같아요). 잘라낸 칸은 옮겨지고(원래 칸은 비워져요), 복사한 칸은 원래 칸이 그대로 남아요">붙여넣기</button><button type="button" data-cfcut="ins" title="잘라내거나(Ctrl+X) 복사한(Ctrl+C) 칸을, 지금 클릭한 칸(범위를 골랐다면 그 왼쪽 위 칸)을 시작으로 끼워 넣어요. 원래 있던 칸은 아래 또는 오른쪽으로 밀려요. 잘라낸 칸은 원래 자리가 당겨 메워지고, 복사한 칸은 원래 자리에 그대로 남아요">복사한 셀 삽입</button><i class="tbsep"></i><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button></div><div class="tbr"><button type="button" data-cfm="merge" title="선택한 여러 칸을 하나로 합쳐요 (칸을 드래그하거나 Shift+클릭으로 먼저 고르세요)">칸 병합</button><button type="button" data-cfm="unmerge" title="합쳐진 칸을 다시 낱칸으로 나눠요">병합 해제</button><i class="tbsep"></i><button type="button" data-cfm="w" title="선택한 칸이 걸친 열을 모두 같은 너비(px)로 맞춰요">열 너비 지정</button><button type="button" data-cfm="h" title="선택한 칸이 걸친 행을 모두 같은 높이(px)로 맞춰요">행 높이 지정</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div><div class="tbtg tbtg-b"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div></div>
+<div class="tbar" id="tbar" hidden role="toolbar" aria-label="표 편집"><div class="tbtg tbtg-t"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div><div class="tbr"><span class="tbgrp">행/열 추가</span><button type="button" data-t="rowAbove" title="커서가 있는 행의 위에 행 추가">▲</button><button type="button" data-t="rowBelow" title="커서가 있는 행의 아래에 행 추가">▼</button><button type="button" data-t="colLeft" title="커서가 있는 열의 왼쪽에 열 추가">◀</button><button type="button" data-t="colRight" title="커서가 있는 열의 오른쪽에 열 추가">▶</button><i class="tbsep"></i><span class="tbgrp">삭제</span><button type="button" class="del" data-t="delRow" title="커서가 있는 행 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>행</button><button type="button" class="del" data-t="delCol" title="커서가 있는 열 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M6.5 2.5v10" stroke-width="3.2"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>열</button><button type="button" class="del" data-t="delTable" title="표 전체 삭제"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="10" height="10" rx="1"/><path d="M1.5 7.5h10M6.5 2.5v10"/><path d="M10.5 10.5l4 4M14.5 10.5l-4 4"/></svg>표</button><i class="tbsep"></i><span class="tbgrp">표 결합</span><button type="button" data-t="joinUp" title="커서가 속한 표를 바로 위쪽 표의 아래에 결합 (위쪽 표가 없으면 동작 없음)">▲</button><button type="button" data-t="joinDown" title="커서가 속한 표를 바로 아래쪽 표의 위에 결합 (아래쪽 표가 없으면 동작 없음)">▼</button><button type="button" data-t="joinLeft" title="커서가 속한 표를 바로 왼쪽 표의 오른쪽에 결합 (왼쪽 표가 없으면 동작 없음)">◀</button><button type="button" data-t="joinRight" title="커서가 속한 표를 바로 오른쪽 표의 왼쪽에 결합 (오른쪽 표가 없으면 동작 없음)">▶</button><i class="tbsep"></i><span class="tbgrp">표 분리</span><button type="button" data-t="splitUp" title="커서 셀의 위쪽 행들은 위 표, 커서 셀 행부터 끝까지는 아래 표">▲</button><button type="button" data-t="splitDown" title="첫 행부터 커서 셀 행까지는 위 표, 커서 셀의 아래쪽 행부터 끝까지는 아래 표">▼</button><button type="button" data-t="splitLeft" title="커서 셀의 왼쪽 열들은 왼쪽 표, 커서 셀 열부터 끝까지는 오른쪽 표">◀</button><button type="button" data-t="splitRight" title="첫 열부터 커서 셀 열까지는 왼쪽 표, 커서 셀의 오른쪽 열들은 오른쪽 표">▶</button></div><div class="tbr"><button type="button" data-cfcut="cut" title="선택한 칸 범위를 잘라내요 (Ctrl+X). 칸을 드래그하거나 Shift+클릭으로 범위를 고른 뒤 눌러요. 넣을 자리의 칸을 클릭하고 [붙여넣기]를 누르면 옮겨지고, [복사한 셀 삽입]을 누르면 끼워 넣어져요">잘라내기</button><button type="button" data-cfcut="copy" title="선택한 칸 범위를 복사해요 (Ctrl+C와 같아요). 칸을 드래그하거나 Shift+클릭으로 범위를 고른 뒤 눌러요. 원래 칸은 그대로 남아요">복사하기</button><button type="button" data-cfcut="paste" title="잘라내거나 복사한 칸을, 지금 클릭한 칸(범위를 골랐다면 그 왼쪽 위 칸)을 왼쪽 위로 해서 덮어 붙여넣어요 (Ctrl+V와 같아요). 잘라낸 칸은 옮겨지고(원래 칸은 비워져요), 복사한 칸은 원래 칸이 그대로 남아요">붙여넣기</button><button type="button" data-cfcut="ins" title="잘라내거나(Ctrl+X) 복사한(Ctrl+C) 칸을, 지금 클릭한 칸(범위를 골랐다면 그 왼쪽 위 칸)을 시작으로 끼워 넣어요. 원래 있던 칸은 아래 또는 오른쪽으로 밀려요. 잘라낸 칸은 원래 자리가 당겨 메워지고, 복사한 칸은 원래 자리에 그대로 남아요">복사한 셀 삽입</button><i class="tbsep"></i><button type="button" data-body-to-table title="선택한 본문을 한 열짜리 표로 바꿔요"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h7M3 9h7M3 13h7M3 17h7M14 4v16M14 4l-3 3M14 4l3 3M14 20l-3-3M14 20l3-3"/></svg>본문→표</button><button type="button" data-table-to-body title="현재 표를 탭으로 구분된 본문으로 바꿔요"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h7M3 9h7M3 13h7M3 17h7M14 4v16M14 4l-3 3M14 4l3 3M14 20l-3-3M14 20l3-3"/></svg>표→본문</button><i class="tbsep"></i><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="cpImg" title="표를 이미지(PNG)로 만들어 클립보드에 복사해요 (표는 그대로 유지)">이미지 복사</button><button type="button" data-t="svImg" title="표를 이미지(PNG) 파일로 PC에 저장해요 (표는 그대로 유지)">이미지 저장</button></div><div class="tbr"><button type="button" data-cfopen="b" title="선택한 칸의 테두리 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">테두리</button><button type="button" data-cfopen="f" title="선택한 칸의 배경색 (칸을 드래그하거나 Shift+클릭하면 여러 칸 선택)">채우기</button><i class="tbsep"></i><button type="button" data-table-sort title="선택한 범위의 행을 여러 열 기준으로 정렬">↕ 표 정렬</button><i class="tbsep"></i><button type="button" data-cfm="merge" title="선택한 여러 칸을 하나로 합쳐요 (칸을 드래그하거나 Shift+클릭으로 먼저 고르세요)">칸 병합</button><button type="button" data-cfm="unmerge" title="합쳐진 칸을 다시 낱칸으로 나눠요">병합 해제</button><i class="tbsep"></i><button type="button" data-cfm="w" title="선택한 칸이 걸친 열을 모두 같은 너비(px)로 맞춰요">열 너비 지정</button><button type="button" data-cfm="h" title="선택한 칸이 걸친 행을 모두 같은 높이(px)로 맞춰요">행 높이 지정</button><i class="tbsep"></i><button type="button" data-t="alL" title="표를 왼쪽에 놓아요 (같은 줄의 글자와 함께)">표 왼쪽</button><button type="button" data-t="alC" title="표를 가운데에 놓아요 (같은 줄의 글자와 함께)">표 가운데</button><button type="button" data-t="alR" title="표를 오른쪽에 놓아요 (같은 줄의 글자와 함께)">표 오른쪽</button></div><div class="tbtg tbtg-b"><button type="button" class="tbmn" data-tmin title="표 편집 막대를 작게 줄이거나 다시 펼쳐요 — 글꼴·글자 크기 도구가 가려질 때 눌러요">－ 최소화</button></div></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <div class="pwb" id="pwBox" hidden><form id="pwForm" autocomplete="off"><b id="pwT"></b><p id="pwD"></p><input type="password" id="pw1" placeholder="비밀번호" aria-label="비밀번호"><input type="password" id="pw2" placeholder="비밀번호 확인" aria-label="비밀번호 확인" hidden><div class="pwe" id="pwE" role="alert"></div><div class="pwr"><button type="button" id="pwCancel">취소</button><button type="submit">확인</button></div></form></div>
 <div class="fbar" id="fbar" hidden role="search"><input id="fq" type="search" placeholder="메모에서 찾기" aria-label="찾기"><span id="fcnt" aria-live="polite"></span><button type="button" id="fprev" title="이전 (Shift+Enter)" aria-label="이전">↑</button><button type="button" id="fnext" title="다음 (Enter)" aria-label="다음">↓</button><button type="button" id="fclose" title="닫기 (Esc)" aria-label="닫기">✕</button></div>
@@ -6285,6 +6287,175 @@ onEd("click", e => {
       toast("표를 이미지로 PC에 저장했어요: " + name);
     }
   };
+
+  /* ===== 본문 ↔ 표 변환 / 선택 범위 다중 기준 정렬 ===== */
+  const tableToolbar = document.getElementById("tbar");
+  const activeCell = () => {
+    const sl = getSelection();
+    return sl.rangeCount ? closestIn(sl.anchorNode, "td,th") : null;
+  };
+  function bodyToTable() {
+    const sl = getSelection();
+    if (!sl.rangeCount) { toast("표로 바꿀 본문을 먼저 선택해 주세요"); return; }
+    const range = sl.getRangeAt(0), root = elOf(range.commonAncestorContainer)?.closest(".rich");
+    if (!root || !EDS.includes(root) || closestIn(range.commonAncestorContainer, "td,th")) {
+      toast("표 밖의 본문 내용을 선택해 주세요"); return;
+    }
+    const raw = range.toString();
+    if (!raw.trim()) { toast("표로 바꿀 본문 내용을 선택해 주세요"); return; }
+    const lines = raw.replace(/\r\n?/g, "\n").split("\n");
+    const tab = document.createElement("table");
+    tab.style.borderCollapse = "collapse";
+    const body = document.createElement("tbody");
+    lines.forEach(line => {
+      const tr = document.createElement("tr"), td = document.createElement("td");
+      td.textContent = line || "\u200b";
+      tr.appendChild(td); body.appendChild(tr);
+    });
+    tab.appendChild(body);
+    hFlush(root);
+    range.deleteContents();
+    range.insertNode(tab);
+    const first = tab.rows[0]?.cells[0];
+    if (first) putCaret(first);
+    root.dispatchEvent(new Event("input", { bubbles: true }));
+    hCap(root);
+    toast(lines.length + "행 × 1열 표로 바꿨어요");
+  }
+  function tableToBody() {
+    const cell = activeCell(), tab = cell && cell.closest("table"), ed = tab && edOf(tab);
+    if (!tab || !ed || !ed.isContentEditable) { toast("본문으로 바꿀 표 안의 칸을 먼저 클릭해 주세요"); return; }
+    if (tab.querySelector(".cmpgap")) { toast("비교 중인 표는 바꿀 수 없어요"); return; }
+    const G = gridOf(tab), nr = G.g.length, nc = G.g.reduce((m, row) => Math.max(m, row?.length || 0), 0);
+    if (!nr || !nc) return;
+    const lines = [];
+    for (let r = 0; r < nr; r++) {
+      const vals = [];
+      for (let c = 0; c < nc; c++) {
+        const td = G.g[r]?.[c];
+        vals.push(td && G.info.get(td)?.r === r && G.info.get(td)?.c === c
+          ? td.innerText.replace(/\u200b/g, "").replace(/[\r\n]+/g, " ").trim() : "");
+      }
+      lines.push(vals.join("\t"));
+    }
+    const frag = document.createDocumentFragment();
+    lines.forEach((line, i) => {
+      if (i) frag.appendChild(document.createElement("br"));
+      const span = document.createElement("span");
+      span.style.whiteSpace = "pre";
+      span.style.tabSize = "8";
+      span.textContent = line || "\u200b";
+      frag.appendChild(span);
+    });
+    hFlush(ed);
+    const firstInserted = frag.firstChild;
+    const marker = document.createRange();
+    marker.selectNode(tab);
+    marker.deleteContents();
+    marker.insertNode(frag);
+    const r = document.createRange();
+    if (firstInserted && firstInserted.isConnected) { r.selectNodeContents(firstInserted); r.collapse(true); }
+    else { r.selectNodeContents(ed); r.collapse(true); }
+    const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r);
+    ed.dispatchEvent(new Event("input", { bubbles: true }));
+    hCap(ed);
+    toast(nr + "행 × " + nc + "열 내용을 탭으로 구분된 본문으로 바꿨어요");
+  }
+
+  const sortOverlay = document.createElement("div");
+  sortOverlay.id = "tblSortDialog";
+  sortOverlay.hidden = true;
+  sortOverlay.style.cssText = "position:fixed;inset:0;z-index:220;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;padding:14px";
+  sortOverlay.innerHTML = '<section role="dialog" aria-modal="true" aria-labelledby="tblSortTitle" style="width:min(460px,96vw);max-height:85vh;overflow:auto;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 8px 28px rgba(0,0,0,.3)"><b id="tblSortTitle" style="font-size:16px">선택 범위 정렬</b><p id="tblSortDesc" style="font-size:12.5px;color:var(--mute);margin:6px 0 12px"></p><div id="tblSortCriteria" style="display:flex;flex-direction:column;gap:7px"></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px"><button type="button" id="tblSortAdd" style="flex:none;padding:6px 10px">＋ 기준추가</button><button type="button" id="tblSortRemove" style="flex:none;padding:6px 10px">－ 기준삭제</button></div><div style="display:flex;justify-content:flex-end;gap:7px;margin-top:16px"><button type="button" id="tblSortCancel" style="flex:none;padding:7px 14px;background:transparent;color:var(--ink);border:1px solid var(--line)">취소</button><button type="button" id="tblSortApply" style="flex:none;padding:7px 14px">확인</button></div></section>';
+  document.body.appendChild(sortOverlay);
+  const sortCriteria = sortOverlay.querySelector("#tblSortCriteria");
+  let sortTarget = null, sortRows = 0, sortCols = 0;
+  const sortSelectCss = "min-width:0;flex:1;padding:6px 8px;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)";
+  function addSortCriterion(col = 0, dir = "asc") {
+    const row = document.createElement("div");
+    row.className = "tbl-sort-criterion";
+    row.style.cssText = "display:flex;gap:7px;align-items:center";
+    const label = document.createElement("span"); label.textContent = "기준 " + (sortCriteria.children.length + 1); label.style.cssText = "width:48px;flex:none;font-size:13px";
+    const select = document.createElement("select"); select.style.cssText = sortSelectCss; select.className = "sort-col";
+    for (let c = 0; c < sortCols; c++) { const o = document.createElement("option"); o.value = c; o.textContent = (sortTarget.c1 + c + 1) + "열"; select.appendChild(o); }
+    select.value = String(Math.min(col, Math.max(0, sortCols - 1)));
+    const order = document.createElement("select"); order.style.cssText = sortSelectCss; order.className = "sort-dir";
+    order.innerHTML = '<option value="asc">오름차순 ↑</option><option value="desc">내림차순 ↓</option>'; order.value = dir;
+    row.append(label, select, order); sortCriteria.appendChild(row);
+  }
+  function openSortDialog() {
+    const x = selInfo();
+    if (!x || x.s.r2 <= x.s.r1) { toast("정렬할 행을 2개 이상 포함하도록 칸 범위를 선택해 주세요"); return; }
+    const ed = editableTab(x.s); if (!ed) return;
+    const hasMerge = x.cells.some(c => { const i = x.s.G.info.get(c); return !i || i.rs > 1 || i.cs > 1; });
+    if (hasMerge) { toast("병합된 칸이 포함된 범위는 정렬할 수 없어요. 먼저 병합을 해제해 주세요"); return; }
+    sortTarget = x.s; sortRows = x.s.r2 - x.s.r1 + 1; sortCols = x.s.c2 - x.s.c1 + 1;
+    sortOverlay.querySelector("#tblSortDesc").textContent = sortRows + "행 × " + sortCols + "열 범위에서 정렬 기준 열과 방향을 지정하세요. 정렬 결과는 선택 범위 안에 반영됩니다.";
+    sortCriteria.innerHTML = ""; addSortCriterion();
+    sortOverlay.hidden = false;
+    sortOverlay.querySelector("#tblSortApply").focus();
+  }
+  function closeSortDialog() { sortOverlay.hidden = true; sortTarget = null; }
+  sortOverlay.querySelector("#tblSortAdd").addEventListener("click", () => {
+    if (sortCriteria.children.length >= sortCols) { toast("선택 범위의 열 수만큼만 기준을 추가할 수 있어요"); return; }
+    const used = new Set(Array.from(sortCriteria.querySelectorAll(".sort-col"), x => x.value));
+    let next = Array.from({ length: sortCols }, (_, i) => i).find(i => !used.has(String(i)));
+    addSortCriterion(next ?? 0);
+  });
+  sortOverlay.querySelector("#tblSortRemove").addEventListener("click", () => {
+    if (sortCriteria.children.length <= 1) { toast("정렬 기준은 하나 이상 필요해요"); return; }
+    sortCriteria.lastElementChild.remove();
+    Array.from(sortCriteria.children).forEach((r, i) => r.firstElementChild.textContent = "기준 " + (i + 1));
+  });
+  sortOverlay.querySelector("#tblSortCancel").addEventListener("click", closeSortDialog);
+  sortOverlay.addEventListener("click", e => { if (e.target === sortOverlay) closeSortDialog(); });
+  sortOverlay.querySelector("#tblSortApply").addEventListener("click", () => {
+    if (!sortTarget || !sortTarget.tab.isConnected) { closeSortDialog(); return; }
+    const s = sortTarget, ed = editableTab(s); if (!ed) { closeSortDialog(); return; }
+    const keys = Array.from(sortCriteria.children).map(row => ({
+      c: s.c1 + Number(row.querySelector(".sort-col").value),
+      dir: row.querySelector(".sort-dir").value
+    }));
+    const G = gridOf(s.tab), records = [];
+    for (let r = s.r1; r <= s.r2; r++) {
+      const cells = [];
+      for (let c = s.c1; c <= s.c2; c++) {
+        const td = G.g[r]?.[c];
+        if (!td) { toast("정렬 범위의 셀 구조가 일정하지 않아요"); return; }
+        cells.push({ html: td.innerHTML, style: td.getAttribute("style"), cls: td.className });
+      }
+      records.push({ cells, values: keys.map(k => cellText(G.g[r][k.c])) });
+    }
+    const collator = new Intl.Collator("ko", { numeric: true, sensitivity: "base" });
+    records.sort((a, b) => {
+      for (let i = 0; i < keys.length; i++) {
+        const n = collator.compare(a.values[i], b.values[i]);
+        if (n) return keys[i].dir === "desc" ? -n : n;
+      }
+      return 0;
+    });
+    hFlush(ed);
+    records.forEach((rec, ri) => rec.cells.forEach((v, ci) => {
+      const td = G.g[s.r1 + ri][s.c1 + ci];
+      td.innerHTML = v.html;
+      if (v.style == null) td.removeAttribute("style"); else td.setAttribute("style", v.style);
+      td.className = v.cls;
+    }));
+    const a = G.g[s.r1][s.c1], b = G.g[s.r2][s.c2];
+    putCaret(a); anchor = a; setMulti(a, b, true);
+    ed.dispatchEvent(new Event("input", { bubbles: true }));
+    hCap(ed);
+    closeSortDialog();
+    toast("선택한 범위를 " + keys.length + "개 기준으로 정렬했어요");
+  });
+
+  tableToolbar?.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.hasAttribute("data-body-to-table")) { e.preventDefault(); bodyToTable(); }
+    else if (b.hasAttribute("data-table-to-body")) { e.preventDefault(); tableToBody(); }
+    else if (b.hasAttribute("data-table-sort")) { e.preventDefault(); openSortDialog(); }
+  });
+
   document.addEventListener("click", e => { const cb = e.target.closest("[data-cfopen]"); if (cb) { e.preventDefault(); open(cb.dataset.cfopen); } });
 })();
 
