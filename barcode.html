@@ -3155,11 +3155,50 @@ let imgBack = null;
     if (rt > 0) img.setAttribute("height", clamp(Math.round(W * rt), MINW, 4000)); else img.removeAttribute("height");
     place();
   }
-  function hide() { closeSave(); closeShp(); img = null; box.hidden = bar.hidden = tbg.hidden = true; }
+  /* 모바일: 이미지 편집 패널이 화면 아래에 떠 있어서 그 아래 본문이 가려져요.
+     ① 본문 아래 여백을 가려지는 만큼 늘려, 끝까지 스크롤하면 패널 위로 올라오게 하고
+     ② 고른 이미지가 패널에 가리지 않고 보이도록 본문을 스크롤해요 (PC·패널이 화면에 떠 있지 않을 때는 아무것도 안 해요) */
+  var sheetMq = window.matchMedia ? window.matchMedia("(pointer:coarse)") : null, sheetPad = new Map();
+  function sheetOn() { return !!(sheetMq && sheetMq.matches && img && !bar.hidden && getComputedStyle(bar).position === "fixed"); }
+  function sheetPads() {
+    const top = sheetOn() ? bar.getBoundingClientRect().top : null;
+    EDS.forEach(ed => {
+      let rec = sheetPad.get(ed);
+      if (top === null || !ed.offsetParent || ed.offsetHeight < 40) { if (rec) { ed.style.paddingBottom = rec.inline; sheetPad.delete(ed); } return; }
+      const cs = getComputedStyle(ed);
+      if (!rec) { rec = { inline: ed.style.paddingBottom, base: parseFloat(cs.paddingBottom) || 0 }; sheetPad.set(ed, rec); }
+      const fixed = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.borderBottomWidth) || 0) + rec.base;
+      let over = Math.max(0, ed.getBoundingClientRect().bottom - top);
+      over = Math.max(0, Math.min(over, ed.offsetHeight - fixed - 24));   // 편집 칸 자체가 커지지 않게 (글자 줄 하나쯤은 남겨요)
+      ed.style.paddingBottom = (rec.base + over) + "px";
+    });
+  }
+  function sheetFit() {
+    if (!sheetOn() || !img || !img.isConnected) return;
+    let sc = img.parentElement;
+    while (sc && sc !== document.body && sc !== document.documentElement) {
+      if (/(auto|scroll)/.test(getComputedStyle(sc).overflowY) && sc.scrollHeight > sc.clientHeight) break;
+      sc = sc.parentElement;
+    }
+    if (!sc || sc === document.body || sc === document.documentElement) return;
+    const r = img.getBoundingClientRect(), v = sc.getBoundingClientRect();
+    const lo = Math.max(v.top, 0) + 4, hi = Math.min(v.bottom, bar.getBoundingClientRect().top - 8);
+    if (hi - lo < 40) return;
+    let d = 0;
+    if (r.height > hi - lo) d = r.top - lo;        // 이미지가 보이는 구간보다 크면 윗부분이 보이게
+    else if (r.bottom > hi) d = r.bottom - hi;     // 패널에 가려지면 위로 올려요
+    else if (r.top < lo) d = r.top - lo;
+    if (Math.abs(d) > 1) sc.scrollTop += d;
+  }
+  const sheetSync = () => { try { sheetPads(); sheetFit(); } catch (_) {} };
+  try { if (window.ResizeObserver) new ResizeObserver(() => { if (sheetOn()) sheetSync(); }).observe(bar); } catch (_) {}   // 글자 넣기처럼 패널이 커질 때
+  window.addEventListener("resize", () => { if (sheetOn()) sheetSync(); });
+  function hide() { closeSave(); closeShp(); img = null; box.hidden = bar.hidden = tbg.hidden = true; try { sheetPads(); } catch (_) {} }
   function show(i) {
     if (img !== i) closeShp();
     img = i; box.hidden = bar.hidden = tbg.hidden = false;
     place(); ensureOrigin(i); baseSync();
+    requestAnimationFrame(sheetSync);   // 패널이 자리 잡은 뒤 (모바일) 본문 여백·이미지 위치를 맞춰요
   }
   function place() {
     raf = 0;
