@@ -6665,8 +6665,9 @@ onEd("click", e => {
       frag.appendChild(span);
     });
     hFlush(ed);
-    const firstInserted = frag.firstChild;
+    const firstInserted = frag.firstChild;   // (첫 span)
     {   // 표는 그대로 두고, 표 바로 다음 줄에 독립된 줄로 배치 (뒤에 이어지는 글과 같은 줄에 붙지 않게 줄바꿈을 더해요)
+      frag.insertBefore(document.createElement("br"), frag.firstChild);   // 표가 글자처럼(inline-table) 놓이므로, 줄바꿈으로 표 줄을 끝내고 다음 줄부터 시작해요
       const nx = tab.nextSibling, blk = /^(DIV|P|LI|UL|OL|H[1-6]|BLOCKQUOTE|PRE|TABLE|BR)$/;
       if (nx && !(nx.nodeType === 1 && blk.test(nx.tagName)) && !(nx.nodeType === 3 && !nx.nodeValue.trim())) frag.appendChild(document.createElement("br"));
       tab.parentNode.insertBefore(frag, nx);
