@@ -5604,7 +5604,9 @@ onEd("click", e => {
   document.addEventListener("pointerdown", e => {
     if (e.pointerType === "mouse") return;   // PC(마우스)에서는 아무것도 바꾸지 않아요. 손가락·펜으로 누를 때만 동작
     const t = e.target; if (!t || !t.closest) return;
-    if (EDS.some(x => x.contains(t))) {
+    const hostEd = EDS.find(x => x.contains(t));
+    if (hostEd) {
+      if (t.tagName === "IMG") { kbOff(hostEd); return; }   // 이미지를 눌러 고르거나 옮길 때는 키보드가 필요 없어요
       if (noKb) { kbBack = noKb; noKb = null; kbBack.removeAttribute("inputmode"); }
       return;
     }
