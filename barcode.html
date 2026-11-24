@@ -416,6 +416,13 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tb .imgx-tbg .imgx-sl{display:inline-flex;flex-direction:row;align-items:center;gap:5px;flex:none;color:var(--ink);font-size:13px;white-space:nowrap}.tb .imgx-tbg .imgx-sl input[type=range]{width:130px;margin:0;padding:0;border:0;background:transparent;height:auto;min-width:0}.tb .imgx-tbg .imgx-sl input[type=number]{width:62px;height:28px;margin:0;padding:0 4px;box-sizing:border-box;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
 .mpane .tb .expand{position:static;width:32px;height:32px;font-size:15px;opacity:.7;background:transparent;border:0;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}
 .mpane .tb .expand:hover,.mpane .tb .expand:focus-visible{opacity:1;background:var(--line)}
+/* 모바일(터치): 이미지를 고르면 나오는 편집 패널·버튼 줄이 편집 영역의 세로 공간을 밀어내지 않게 해요 */
+@media (pointer:coarse){
+  body .imgx-bar{position:fixed;left:6px;right:6px;bottom:calc(6px + env(safe-area-inset-bottom,0px));margin:0;max-height:38vh;overflow-y:auto;overscroll-behavior:contain;z-index:119;box-shadow:0 -2px 14px rgba(0,0,0,.28)}
+  .tb .imgx-tbg{display:flex;flex:0 0 100%;flex-wrap:nowrap;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:2px}
+  .tb .imgx-tbg>*{flex:none}
+  .toast{z-index:125}
+}
 .mpane .rich{padding-right:10px}
 .mpane:not(.max)>.tb,.mpane:not(.max)>.fbar{margin-bottom:6px}
 .mpane.max{display:flex;flex-direction:column;gap:6px}
@@ -1750,7 +1757,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.con
 /* ===== Firebase Realtime Database 사용/미사용 (memo 파일과 같은 DB 경로 /memo 를 사용해요) ===== */
 /* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요. memo 파일과 같은 주소를 넣으세요 ▼▼ */
 const DB_URLS = [
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB1 (처음 기본값)
+  "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
 ];
