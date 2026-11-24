@@ -5894,6 +5894,7 @@ onEd("click", e => {
      입력칸(글자 크기 숫자칸, 찾기, 대화상자 입력 등)은 키보드가 필요하니 그대로 둬요. 본문을 다시 탭하면 입력기가 돌아와요 */
   const TXT = 'input:not([type=color]):not([type=range]):not([type=checkbox]):not([type=radio]):not([type=button]):not([type=file]), textarea, [contenteditable]:not([contenteditable="false"])';
   document.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse") return;   // PC(마우스)에서는 아무것도 바꾸지 않아요. 손가락·펜으로 누를 때만 동작
     const t = e.target; if (!t || !t.closest) return;
     if (EDS.some(x => x.contains(t))) {
       if (noKb) { kbBack = noKb; noKb = null; kbBack.removeAttribute("inputmode"); }
