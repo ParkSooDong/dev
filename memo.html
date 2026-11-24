@@ -5585,6 +5585,38 @@ onEd("click", e => {
     ed.dispatchEvent(new KeyboardEvent("keydown", { key: b.dataset.selpad, shiftKey: true, bubbles: true, cancelable: true }));
     placeTbar();
   });
+  /* 모바일: 툴바·표 도구 등을 눌러도 화면 키보드가 올라오지 않게 해요 (커서·선택은 그대로 유지) */
+  let noKb = null, kbBack = null;
+  const curEd = () => {
+    const a = document.activeElement; if (a && EDS.includes(a)) return a;
+    if (multi && multi.a.isConnected) return edOf(multi.a);
+    const sl = getSelection(), n = sl.rangeCount && sl.anchorNode;
+    return n ? edOf(n.nodeType === 1 ? n : n.parentElement) : null;
+  };
+  const kbOff = ed => {
+    if (!ed) return;
+    if (noKb !== ed) { if (noKb) noKb.removeAttribute("inputmode"); noKb = ed; ed.setAttribute("inputmode", "none"); }
+    try { if (navigator.virtualKeyboard && navigator.virtualKeyboard.hide) navigator.virtualKeyboard.hide(); } catch (_) {}
+  };
+  /* 편집 영역과 글자를 입력하는 칸을 뺀 모든 곳(툴바·메뉴·팝업·표 도구 등)을 누르면 키보드를 내려요.
+     입력칸(글자 크기 숫자칸, 찾기, 대화상자 입력 등)은 키보드가 필요하니 그대로 둬요. 본문을 다시 탭하면 입력기가 돌아와요 */
+  const TXT = 'input:not([type=color]):not([type=range]):not([type=checkbox]):not([type=radio]):not([type=button]):not([type=file]), textarea, [contenteditable]:not([contenteditable="false"])';
+  document.addEventListener("pointerdown", e => {
+    const t = e.target; if (!t || !t.closest) return;
+    if (EDS.some(x => x.contains(t))) {
+      if (noKb) { kbBack = noKb; noKb = null; kbBack.removeAttribute("inputmode"); }
+      return;
+    }
+    if (t.closest(TXT)) return;
+    kbOff(curEd());
+  }, true);
+  document.addEventListener("click", e => {
+    const ed = kbBack; if (!ed) return; kbBack = null;
+    if (!ed.contains(e.target) || document.activeElement !== ed) return;
+    const s = getSelection(), r = s.rangeCount ? s.getRangeAt(0).cloneRange() : null;
+    ed.blur(); ed.focus();   // 이미 포커스가 있는 상태에서는 키보드가 다시 뜨지 않는 브라우저가 있어서 한 번 다시 줘요
+    if (r) { s.removeAllRanges(); s.addRange(r); }
+  }, true);
   const escH = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   function updateInfo(s) {
     const cells = cellsIn(s), nr = s.r2 - s.r1 + 1, nc = s.c2 - s.c1 + 1;
