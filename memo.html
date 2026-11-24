@@ -2853,8 +2853,17 @@ let imgBack = null;
      ② 고른 이미지가 패널에 가리지 않고 보이도록 본문을 스크롤해요 (PC·패널이 화면에 떠 있지 않을 때는 아무것도 안 해요) */
   var sheetMq = window.matchMedia ? window.matchMedia("(pointer:coarse)") : null, sheetPad = new Map();
   function sheetOn() { return !!(sheetMq && sheetMq.matches && img && !bar.hidden && getComputedStyle(bar).position === "fixed"); }
+  var sheetBody = null;
+  function sheetBodyPad(top) {   // 페이지(본문) 자체가 스크롤되는 화면: 맨 아래에 패널 높이만큼 여백을 둬서 끝까지 스크롤하면 패널 위로 올라오게 해요
+    const bd = document.body, scrolls = getComputedStyle(bd).overflowY !== "hidden" && getComputedStyle(document.documentElement).overflowY !== "hidden";
+    if (top !== null && scrolls) {
+      if (sheetBody === null) sheetBody = bd.style.paddingBottom;
+      bd.style.paddingBottom = Math.ceil(Math.max(0, window.innerHeight - top) + 16) + "px";
+    } else if (sheetBody !== null) { bd.style.paddingBottom = sheetBody; sheetBody = null; }
+  }
   function sheetPads() {
     const top = sheetOn() ? bar.getBoundingClientRect().top : null;
+    sheetBodyPad(top);
     EDS.forEach(ed => {
       let rec = sheetPad.get(ed);
       if (top === null || !ed.offsetParent || ed.offsetHeight < 40) { if (rec) { ed.style.paddingBottom = rec.inline; sheetPad.delete(ed); } return; }
@@ -2868,6 +2877,17 @@ let imgBack = null;
   }
   function sheetFit() {
     if (!sheetOn() || !img || !img.isConnected) return;
+    {   // 1) 페이지 스크롤: 메모 칸(안 들어가면 이미지)이 패널 위 보이는 구간에 오도록
+      const barTop = bar.getBoundingClientRect().top, hi0 = barTop - 8, lo0 = 4;
+      const ed = EDS.find(e => e.contains(img)), tgt = ed && ed.offsetParent ? ed : img;
+      let tr = tgt.getBoundingClientRect();
+      if (tr.height > hi0 - lo0) tr = img.getBoundingClientRect();
+      let dy = 0;
+      if (tr.height > hi0 - lo0) dy = tr.top - lo0;
+      else if (tr.bottom > hi0) dy = tr.bottom - hi0;
+      else if (tr.top < lo0) dy = tr.top - lo0;
+      if (Math.abs(dy) > 1) { const y0 = window.scrollY; window.scrollBy(0, dy); if (window.scrollY !== y0) place(); }
+    }
     let sc = img.parentElement;
     while (sc && sc !== document.body && sc !== document.documentElement) {
       if (/(auto|scroll)/.test(getComputedStyle(sc).overflowY) && sc.scrollHeight > sc.clientHeight) break;
@@ -2883,7 +2903,9 @@ let imgBack = null;
     else if (r.top < lo) d = r.top - lo;
     if (Math.abs(d) > 1) sc.scrollTop += d;
   }
-  const sheetSync = () => { try { sheetPads(); sheetFit(); } catch (_) {} };
+  const sheetSync = () => { try { sheetPads(); sheetFit(); sheetPads(); } catch (_) {} };
+  var sheetRaf = 0;
+  window.addEventListener("scroll", () => { if (sheetBody === null && !sheetOn()) return; if (sheetRaf) return; sheetRaf = requestAnimationFrame(() => { sheetRaf = 0; try { sheetPads(); } catch (_) {} }); }, { passive: true });
   try { if (window.ResizeObserver) new ResizeObserver(() => { if (sheetOn()) sheetSync(); }).observe(bar); } catch (_) {}   // 글자 넣기처럼 패널이 커질 때
   window.addEventListener("resize", () => { if (sheetOn()) sheetSync(); });
   function hide() { closeSave(); closeShp(); img = null; box.hidden = bar.hidden = tbg.hidden = true; try { sheetPads(); } catch (_) {} }
