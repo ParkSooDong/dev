@@ -6666,7 +6666,11 @@ onEd("click", e => {
     });
     hFlush(ed);
     const firstInserted = frag.firstChild;
-    tab.parentNode.insertBefore(frag, tab.nextSibling);   // 표는 그대로 두고 표 다음 줄에 배치
+    {   // 표는 그대로 두고, 표 바로 다음 줄에 독립된 줄로 배치 (뒤에 이어지는 글과 같은 줄에 붙지 않게 줄바꿈을 더해요)
+      const nx = tab.nextSibling, blk = /^(DIV|P|LI|UL|OL|H[1-6]|BLOCKQUOTE|PRE|TABLE|BR)$/;
+      if (nx && !(nx.nodeType === 1 && blk.test(nx.tagName)) && !(nx.nodeType === 3 && !nx.nodeValue.trim())) frag.appendChild(document.createElement("br"));
+      tab.parentNode.insertBefore(frag, nx);
+    }
     const r = document.createRange();
     if (firstInserted && firstInserted.isConnected) { r.selectNodeContents(firstInserted); r.collapse(true); }
     else { r.selectNodeContents(ed); r.collapse(true); }
