@@ -7,7 +7,8 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000002b888206a58582a020c65781%26fn%3Dbarcode_parksoodong_github_io__dev_updated.html%26cd%3Dattachment%26ts%3D498748%26p%3Dfs%26cid%3D1%26sig%3D60d9a9ef42907424de7ace21bd7ccd2cc05c8982128114f1c3063c7e63367c2e%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795498428548&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004b9c8209ae3f5a7b30e1588a%26fn%3Dbarcode.html%26cd%3Dattachment%26ts%3D498754%26p%3Dfs%26cid%3D1%26sig%3Dbaca16523e3ec2478561830561a22f8cccc822463321527a9ccd5274380f2d4a%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795498428548&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000002b888206a58582a020c65781%26fn%3Dbarcode_parksoodong_github_io__dev_updated.html%26cd%3Dattachment%26ts%3D498748%26p%3Dfs%26cid%3D1%26sig%3D60d9a9ef42907424de7ace21bd7ccd2cc05c8982128114f1c3063c7e63367c2e%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004448820b844b7f24561bf8f6%26fn%3Dbarcode_fixed.html%26cd%3Dattachment%26ts%3D498733%26p%3Dfs%26cid%3D1%26sig%3D870477fccadb2de30d6211996db68d7eafa9f465238997578a7fc311d6e2433b%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
@@ -187,11 +188,10 @@ button:disabled{opacity:.35;cursor:default}
 #cnt.cw{color:#e8590c}
 #cnt.ce{color:var(--warn);font-weight:600}
 /* 메모 확대 중에는 제목줄 전체(Firebase 버튼 | DB1~3 | 저장 상태 | DB 크기)를 memo 파일처럼 한 줄 알약으로 오른쪽 아래에 띄워 둠 */
-body.has-max .mhead{position:fixed;right:20px;top:max(8px,env(safe-area-inset-top,0px));bottom:auto;z-index:101;max-width:calc(100vw - 40px);flex-wrap:nowrap;gap:6px 10px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
+body.has-max .mhead{position:fixed;left:8px;right:auto;top:max(6px,env(safe-area-inset-top,0px));bottom:auto;z-index:101;max-width:calc(100vw - 56px);flex-wrap:wrap;gap:4px 6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:3px 8px;opacity:.96}
 body.has-max .mhead:hover,body.has-max .mhead:focus-within{opacity:1}
-body.has-max .mhead>span:first-child{display:none}
-@media (pointer:coarse){body.has-max .mpane.max{padding-top:calc(44px + env(safe-area-inset-top,0px))}body.has-max .mhead{right:10px;top:max(6px,env(safe-area-inset-top,0px));max-width:calc(100vw - 20px)}}   /* "메모" 글자는 숨김 */
-@media (max-width:760px){body.has-max .mhead{flex-wrap:wrap;justify-content:flex-end;border-radius:16px}}   /* 좁은 화면은 넘치지 않게 줄바꿈 */
+body.has-max .mhead>span:first-child{display:none}   /* "메모" 글자는 숨김 */
+@media (max-width:760px){body.has-max .mhead{left:6px;right:auto;max-width:calc(100vw - 52px);justify-content:flex-start;border-radius:12px}}
 .mslot{position:relative}
 .mpane{position:relative}
 .edsplit{display:grid;grid-template-rows:minmax(0,80fr) 10px minmax(0,10fr) 10px minmax(0,10fr);min-height:0}
@@ -297,7 +297,7 @@ tr.cmpgap>td{padding:0;border:0;line-height:0;font-size:0;background:repeating-l
 .mpane .rich{padding-right:44px}
 .expand{flex:none;position:absolute;top:6px;right:8px;z-index:5;width:28px;height:28px;padding:0;display:grid;place-items:center;font-size:15px;font-weight:400;line-height:1;color:var(--ink);opacity:.55;background:var(--card);border:1.5px solid var(--line);border-radius:7px;cursor:pointer}
 .expand:hover,.expand:focus-visible{opacity:1}
-.mpane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))}
+.mpane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:54px 12px max(12px,env(safe-area-inset-bottom,0px))}
 .mpane.max .rich{height:100%;min-height:0;resize:none;padding:14px 48px 14px 14px;border-radius:10px}
 .mpane.max .expand{top:max(20px,calc(env(safe-area-inset-top,0px) + 8px));right:26px}
 .rich h1{font-size:1.6em;line-height:1.3;margin:.5em 0 .25em;letter-spacing:-.01em}
@@ -419,7 +419,7 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .mpane .tb .expand:hover,.mpane .tb .expand:focus-visible{opacity:1;background:var(--line)}
 /* 모바일(터치): 이미지를 고르면 나오는 편집 패널·버튼 줄이 편집 영역의 세로 공간을 밀어내지 않게 해요 */
 @media (pointer:coarse){
-  body .imgx-bar{position:fixed;left:6px;right:6px;bottom:calc(6px + env(safe-area-inset-bottom,0px));margin:0;max-height:38vh;overflow-y:auto;overscroll-behavior:contain;z-index:119;box-shadow:0 -2px 14px rgba(0,0,0,.28)}
+  body .imgx-bar{position:relative;left:auto;right:auto;bottom:auto;width:auto;max-height:30vh;margin:0 0 6px;overflow-y:auto;overscroll-behavior:contain;z-index:2;box-shadow:0 2px 10px rgba(0,0,0,.16)}
   .tb .imgx-tbg{display:flex;flex:0 0 100%;flex-wrap:nowrap;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:2px}
   .tb .imgx-tbg>*{flex:none}
   .toast{z-index:125}
@@ -3159,56 +3159,58 @@ let imgBack = null;
   /* 모바일: 이미지 편집 패널이 화면 아래에 떠 있어서 그 아래 본문이 가려져요.
      ① 본문 아래 여백을 가려지는 만큼 늘려, 끝까지 스크롤하면 패널 위로 올라오게 하고
      ② 고른 이미지가 패널에 가리지 않고 보이도록 본문을 스크롤해요 (PC·패널이 화면에 떠 있지 않을 때는 아무것도 안 해요) */
-  var sheetMq = window.matchMedia ? window.matchMedia("(pointer:coarse)") : null, sheetPad = new Map();
+  var sheetMq = window.matchMedia ? window.matchMedia("(pointer:coarse), (hover:none)") : null, sheetPad = new Map();
   function sheetOn() { return !!(sheetMq && sheetMq.matches && img && !bar.hidden && getComputedStyle(bar).position === "fixed"); }
+  var sheetBody = null;
+  function sheetBodyPad(top) {   // 페이지(본문) 자체가 스크롤되는 화면: 맨 아래에 패널 높이만큼 여백을 둬서 끝까지 스크롤하면 패널 위로 올라오게 해요
+    const bd = document.body, scrolls = getComputedStyle(bd).overflowY !== "hidden" && getComputedStyle(document.documentElement).overflowY !== "hidden";
+    if (top !== null && scrolls) {
+      if (sheetBody === null) sheetBody = bd.style.paddingBottom;
+      bd.style.paddingBottom = Math.ceil(Math.max(0, window.innerHeight - top) + 16) + "px";
+    } else if (sheetBody !== null) { bd.style.paddingBottom = sheetBody; sheetBody = null; }
+  }
   function sheetPads() {
-    const active = sheetOn();
+    const top = sheetOn() ? bar.getBoundingClientRect().top : null;
+    sheetBodyPad(top);
     EDS.forEach(ed => {
       let rec = sheetPad.get(ed);
-      if (!active || !ed.offsetParent || ed.offsetHeight < 40) {
-        if (rec) {
-          ed.style.paddingBottom = rec.inline;
-          ed.style.scrollPaddingBottom = rec.scrollInline;
-          ed.style.overflowY = rec.overflowY;
-          ed.style.overscrollBehaviorY = rec.overscrollBehaviorY;
-          sheetPad.delete(ed);
-        }
-        return;
-      }
+      if (top === null || !ed.offsetParent || ed.offsetHeight < 40) { if (rec) { ed.style.paddingBottom = rec.inline; sheetPad.delete(ed); } return; }
       const cs = getComputedStyle(ed);
-      if (!rec) {
-        rec = { inline: ed.style.paddingBottom, scrollInline: ed.style.scrollPaddingBottom,
-                overflowY: ed.style.overflowY, overscrollBehaviorY: ed.style.overscrollBehaviorY, base: parseFloat(cs.paddingBottom) || 0 };
-        sheetPad.set(ed, rec);
-      }
-      // Firebase 버튼이 있는 페이지(header)는 절대로 스크롤하거나 밀지 않습니다.
-      // 편집영역(.rich) 안쪽에만 툴바 높이만큼 스크롤 여유를 추가합니다.
-      const reserve = Math.ceil(bar.getBoundingClientRect().height + 24);
-      ed.style.paddingBottom = (rec.base + reserve) + "px";
-      ed.style.scrollPaddingBottom = (reserve + 8) + "px";
-      ed.style.overflowY = "auto";
-      ed.style.overscrollBehaviorY = "contain";
+      if (!rec) { rec = { inline: ed.style.paddingBottom, base: parseFloat(cs.paddingBottom) || 0 }; sheetPad.set(ed, rec); }
+      // 고정 툴바가 편집 영역을 덮는 실제 높이만큼 스크롤 끝 여백을 확보합니다.
+      // 편집 영역 높이로 여백을 제한하면 작은 화면/짧은 메모에서 툴바 높이보다 여백이 작아져
+      // 이미지 아래쪽을 끝까지 스크롤해도 계속 가려지는 문제가 생깁니다.
+      const over = Math.max(0, ed.getBoundingClientRect().bottom - top + 16);
+      ed.style.paddingBottom = (rec.base + over) + "px";
     });
   }
   function sheetFit() {
     if (!sheetOn() || !img || !img.isConnected) return;
-    // 이미지가 속한 메모 편집영역 자체만 스크롤합니다.
-    // window.scrollBy()는 사용하지 않아 상단 헤더/Firebase 버튼이 움직이지 않습니다.
-    const ed = EDS.find(e => e.contains(img) && e.offsetParent);
-    if (!ed) return;
-    const barTop = bar.getBoundingClientRect().top;
-    const r = img.getBoundingClientRect(), v = ed.getBoundingClientRect();
-    const lo = Math.max(v.top, 0) + 6;
-    const hi = Math.min(v.bottom, barTop - 10);
-    if (hi - lo <= 40) return;
-    let d = 0;
-    if (r.height > hi - lo) d = r.top - lo;       // 큰 이미지는 위쪽부터 편집 가능하게
-    else if (r.bottom > hi) d = r.bottom - hi;   // 이미지 하단이 툴바에 가리면 위로
-    else if (r.top < lo) d = r.top - lo;
-    if (Math.abs(d) > 1) {
-      ed.scrollTop += d;
-      place();
+    {   // 1) 페이지 스크롤: 메모 칸(안 들어가면 이미지)이 패널 위 보이는 구간에 오도록
+      const barTop = bar.getBoundingClientRect().top, hi0 = barTop - 8, lo0 = 4;
+      const ed = EDS.find(e => e.contains(img)), tgt = ed && ed.offsetParent ? ed : img;
+      let tr = tgt.getBoundingClientRect();
+      if (tr.height > hi0 - lo0) tr = img.getBoundingClientRect();
+      let dy = 0;
+      if (tr.height > hi0 - lo0) dy = tr.top - lo0;
+      else if (tr.bottom > hi0) dy = tr.bottom - hi0;
+      else if (tr.top < lo0) dy = tr.top - lo0;
+      if (Math.abs(dy) > 1) { const y0 = window.scrollY; window.scrollBy(0, dy); if (window.scrollY !== y0) place(); }
     }
+    let sc = img.parentElement;
+    while (sc && sc !== document.body && sc !== document.documentElement) {
+      if (/(auto|scroll)/.test(getComputedStyle(sc).overflowY) && sc.scrollHeight > sc.clientHeight) break;
+      sc = sc.parentElement;
+    }
+    if (!sc || sc === document.body || sc === document.documentElement) return;
+    const r = img.getBoundingClientRect(), v = sc.getBoundingClientRect();
+    const lo = Math.max(v.top, 0) + 4, hi = Math.min(v.bottom, bar.getBoundingClientRect().top - 8);
+    if (hi - lo < 40) return;
+    let d = 0;
+    if (r.height > hi - lo) d = r.top - lo;        // 이미지가 보이는 구간보다 크면 윗부분이 보이게
+    else if (r.bottom > hi) d = r.bottom - hi;     // 패널에 가려지면 위로 올려요
+    else if (r.top < lo) d = r.top - lo;
+    if (Math.abs(d) > 1) sc.scrollTop += d;
   }
   const sheetSync = () => { try { sheetPads(); sheetFit(); sheetPads(); } catch (_) {} };
   var sheetRaf = 0;
