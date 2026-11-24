@@ -292,6 +292,13 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tb .imgx-tbg .imgx-sl{display:inline-flex;align-items:center;gap:5px;font-size:13px;white-space:nowrap}.tb .imgx-tbg .imgx-sl input[type=range]{width:130px;margin:0;padding:0;border:0;background:transparent;height:auto;min-width:0}.tb .imgx-tbg .imgx-sl input[type=number]{width:62px;height:28px;margin:0;padding:0 4px;box-sizing:border-box;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
 .tb .expand{margin-left:auto;font-size:15px;line-height:1;opacity:.7}
 .tb .expand:hover,.tb .expand:focus-visible{opacity:1}
+/* 모바일(터치): 이미지를 고르면 나오는 편집 패널·버튼 줄이 편집 영역(가·나·다)의 세로 공간을 밀어내지 않게 해요 */
+@media (pointer:coarse){
+  body .imgx-bar{position:fixed;left:6px;right:6px;bottom:calc(6px + env(safe-area-inset-bottom,0px));margin:0;max-height:38vh;overflow-y:auto;overscroll-behavior:contain;z-index:119;box-shadow:0 -2px 14px rgba(0,0,0,.28)}
+  .tb .imgx-tbg{display:flex;flex:0 0 100%;flex-wrap:nowrap;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:2px}
+  .tb .imgx-tbg>*{flex:none}
+  .toast{z-index:125}
+}
 /* 확대: 화면 전체를 메모가 차지 (CSS 만 바꾸므로 입력 중인 내용/커서/저장 상태는 그대로) */
 .pane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))}
 /* 확대 중에는 제목을 숨기고 저장 상태만 우하단에 작게 표시 */
