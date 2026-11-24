@@ -252,6 +252,7 @@ tr.cmpgap>td{padding:0;border:0;line-height:0;font-size:0;background:repeating-l
 .edsplit{flex:1;min-width:0}
 .edgut{flex:none;width:34px;display:grid;grid-template-rows:minmax(28px,80fr) 10px minmax(28px,10fr) 10px minmax(28px,10fr);min-height:0}
 .edwrap.c1 #memo,.edwrap.c2 #memo2,.edwrap.c3 #memo3{padding:0;border-width:0;overflow:hidden;visibility:hidden}
+.lb{touch-action:manipulation}
 .lb{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;min-height:0;padding:0;white-space:nowrap;font:inherit;font-size:12px;font-weight:600;line-height:1;border:1.5px solid var(--line);border-radius:7px;background:transparent;color:var(--mute);cursor:pointer;width:auto}
 .lb:hover{background:var(--line)}
 .lb.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -1592,14 +1593,26 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
   LB.forEach((lb, i) => {
     const ed = ED[i];
     lb.addEventListener("mousedown", e => e.preventDefault());
+    let tch = false, dblAt = 0, tapAt = 0, tapX = 0, tapY = 0;   // tch: 손가락·펜으로 눌렀는지 (이때는 화면 키보드를 띄우지 않아요)
+    const focusEd = () => { if (tch && window.kbSuppress) window.kbSuppress(ed); ed.focus(); };
+    lb.addEventListener("pointerdown", e => { tch = e.pointerType !== "mouse"; });
     lb.addEventListener("click", () => {
+      if (Date.now() - dblAt < 450) return;   // 더블탭 직후의 클릭은 무시 (방금 바꾼 비율을 되돌리지 않게)
       if (!compare()) {
         const small = (mode() === "v" ? ed.offsetHeight : ed.offsetWidth) < 24;
         if (small || ed.offsetParent === null) { arr().splice(0, 3, ...[10, 10, 10].map((x, k) => k === i ? 80 : x)); apply(); keep(); }   // 접혀 있거나 숨겨진 쪽 → 바로 가기
       }
-      ed.focus();
+      focusEd();
     });
-    lb.addEventListener("dblclick", () => { if (!compare()) lead(i); ed.focus(); });   // 더블클릭한 쪽 메모를 80% 로 (이미 80% 이상이면 기본 비율로)
+    const dbl = () => { if (Date.now() - dblAt < 450) return; dblAt = Date.now(); if (!compare()) lead(i); focusEd(); };   // 더블클릭한 쪽 메모를 80% 로 (이미 80% 이상이면 기본 비율로)
+    lb.addEventListener("dblclick", dbl);
+    /* 모바일은 더블탭에 dblclick 이 오지 않거나 확대로 처리돼서, 짧은 간격의 두 번 탭을 직접 알아봐요 */
+    lb.addEventListener("pointerup", e => {
+      if (e.pointerType === "mouse") return;
+      const now = Date.now();
+      if (now - tapAt < 400 && Math.hypot(e.clientX - tapX, e.clientY - tapY) < 30) { tapAt = 0; dbl(); }
+      else { tapAt = now; tapX = e.clientX; tapY = e.clientY; }
+    });
   });
   apply();
 })();
@@ -1737,7 +1750,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.con
 /* ===== Firebase Realtime Database 사용/미사용 (memo 파일과 같은 DB 경로 /memo 를 사용해요) ===== */
 /* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요. memo 파일과 같은 주소를 넣으세요 ▼▼ */
 const DB_URLS = [
-  "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
+  "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB1 (처음 기본값)
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
 ];
@@ -5885,6 +5898,7 @@ onEd("click", e => {
     const sl = getSelection(), n = sl.rangeCount && sl.anchorNode;
     return n ? edOf(n.nodeType === 1 ? n : n.parentElement) : null;
   };
+  window.kbSuppress = ed => kbOff(ed);   // 다른 곳(분할 이름표 등)에서 쓸 수 있게
   const kbOff = ed => {
     if (!ed) return;
     if (noKb !== ed) { if (noKb) noKb.removeAttribute("inputmode"); noKb = ed; ed.setAttribute("inputmode", "none"); }
