@@ -559,12 +559,17 @@ p{margin:6px 0 0}
 #cfInfo .cfiv{display:flex;flex-wrap:wrap;gap:3px 5px;min-width:0}
 #cfInfo .cfit{background:rgba(255,255,255,.12);border-radius:4px;padding:0 6px;word-break:break-all}
 #cfInfo .cfim{opacity:.75;padding:0 2px}
-#cfInfo .cfad{display:block;margin-top:3px;padding:2px 8px;border-left:4px solid #ffd43b;border-radius:4px;background:rgba(255,212,59,.16);line-height:1.45}
-#cfInfo .cfad .cfal{font-weight:700;color:#ffe066;margin-right:6px;white-space:nowrap}
+#cfInfo .cfhd{display:block}
+#cfInfo .cfad{display:block;margin-top:4px;padding:3px 8px;border:1.5px solid #22d3ee;border-left-width:5px;border-radius:5px;background:rgba(34,211,238,.16);line-height:1.5}
+#cfInfo .cfad .cfat{display:inline-block;margin-right:6px;padding:0 6px;border-radius:4px;background:#22d3ee;color:#083344;font-weight:700;white-space:nowrap}
+#cfInfo .cfad .cfal{font-weight:700;color:#67e8f9;margin-right:6px;white-space:nowrap}
+#cfInfo .cfad .cfit{background:rgba(34,211,238,.24)}
 #cfInfo .cfad .cfit{display:inline-block;margin:1px 3px 1px 0}
 #cfInfo .cfad .cfit i{font-style:normal;font-size:.82em;opacity:.7;margin-right:4px}
-#cfInfo .cfad.cfdel{border-left-color:#ff8787;background:rgba(255,135,135,.16)}
+#cfInfo .cfad.cfdel{border-color:#ff8787;background:rgba(255,135,135,.16)}
+#cfInfo .cfad.cfdel .cfat{background:#ff8787;color:#450a0a}
 #cfInfo .cfad.cfdel .cfal{color:#ffa8a8}
+#cfInfo .cfad.cfdel .cfit{background:rgba(255,135,135,.24)}
 #cfInfo.cfmin .cfad{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rich.cfsel ::selection{background:transparent}
 .cfov{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.35)}
@@ -5465,7 +5470,8 @@ onEd("click", e => {
   let infoData = null, infoView = null;   // 요약 창의 열별 값·개수 전체(표 복사용) / 화면에 보이는 모양(화면 복사용)
   let infoTogAt = 0;   // [최소화]/[펼치기]를 누른 시각 — 요약 창이 줄어든 뒤 같은 자리를 또 눌러 아래 도구가 눌리는 일을 막아요
   document.addEventListener("click", e => { if (infoTogAt && performance.now() - infoTogAt < 400 && !INFO.contains(e.target)) { e.stopPropagation(); e.preventDefault(); } }, true);
-  let infoMin = false;   // 요약 창을 한 줄로 줄인 상태인지 ([최소화] ↔ [펼치기])
+  const isMobile = () => { try { return matchMedia("(pointer: coarse)").matches || innerWidth <= 600; } catch (x) { return false; } };
+  let infoMin = isMobile();   // 요약 창을 한 줄로 줄인 상태인지 ([최소화] ↔ [펼치기]) — 모바일에서는 선택을 새로 시작할 때마다 늘 최소화로 시작해요
   let infoTop = 0;   // 요약 창을 스크롤해 둔 위치 (선택 표시를 다시 그려도 유지)
   INFO.addEventListener("scroll", () => { if (!INFO.hidden && !INFO.classList.contains("cfmin")) infoTop = INFO.scrollTop; });
   /* 요약 창 위치: 표 편집 막대([행 추가]·[칸 병합] 등)를 가리지 않게 표(와 편집 막대) 바로 위에 놓아요.
@@ -5630,8 +5636,8 @@ onEd("click", e => {
   function paint() {
     try { paintCut(); } catch (x) {}
     OV.textContent = ""; INFO.hidden = true;
-    if (!multi) { infoTop = 0; return; }
-    if (!multi.a.isConnected || !multi.b.isConnected) { multi = null; return; }
+    if (!multi) { infoTop = 0; if (isMobile()) infoMin = true; return; }
+    if (!multi.a.isConnected || !multi.b.isConnected) { multi = null; if (isMobile()) infoMin = true; return; }
     const s = rectOf(multi.a, multi.b); if (!s) return;
     updateInfo(s);
     const ed = s.tab.closest(".rich");
@@ -6167,7 +6173,7 @@ onEd("click", e => {
   function addHtml() {
     const A = lastAdd; if (!A || !multi) return "";
     const MAXC = 8;
-    let h = '<div class="cfad' + (A.del ? " cfdel" : "") + '"><span class="cfal">' + escH(A.label) + " · " + A.n + "칸</span>";
+    let h = '<div class="cfad' + (A.del ? " cfdel" : "") + '"><span class="cfat">방금 바뀐 칸</span><span class="cfal">' + escH(A.label) + " · " + A.n + "칸</span>";
     A.items.slice(0, MAXC).forEach(it => {
       const t = it.t || "(빈칸)";
       h += '<span class="cfit"><i>' + (A.vert ? it.c + 1 + "열" : it.r + 1 + "행") + "</i>" + escH(t.length > 20 ? t.slice(0, 20) + "…" : t) + "</span>";
