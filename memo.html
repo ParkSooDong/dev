@@ -512,7 +512,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000a6a08211a1e838a8269f1422%26fn%3Dmemo_parksoodong_github_io__dev_updated.html%26cd%3Dattachment%26ts%3D498748%26p%3Dfs%26cid%3D1%26sig%3Dbd953f5158506c053ef7ceb361ac17b756580a154ce07d32c3f5df9498665616%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000779c8211a8d1d7dbc9e96251%26fn%3Dmemo_parksoodong_github_io__dev_updated.html%26cd%3Dattachment%26ts%3D498748%26p%3Dfs%26cid%3D1%26sig%3Da6a3c69011777f849f54b9154508b1125fe15afe98a170506813f5861150cbea%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000006f8481fa82b59ecf10546b8d%26fn%3Dmemo_parksoodong_github_io__dev%25285%2529_modified.html%26cd%3Dattachment%26ts%3D498745%26p%3Dfs%26cid%3D1%26sig%3D725309a81b561c6a4ff14cb7b2e14b863b0ed3907635ba68cb1865b9958392e4%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004b3c820bb60a7433b7801834%26fn%3Dmemo_fixed.html%26cd%3Dattachment%26ts%3D498733%26p%3Dfs%26cid%3D1%26sig%3D43c3631b039c3e079a3e483ecca487da6e5f174c3aea8a05391a24e7a1b479ea%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><style id="tbl-sort-style">#tblSortDialog[hidden]{display:none!important}#tblSortDialog button{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--ink);color:var(--bg);cursor:pointer}#tblSortDialog button:hover{opacity:.85}#tblSortDialog select:focus-visible{outline:2px solid #339af0;outline-offset:1px}</style>
@@ -5204,6 +5204,11 @@ onEd("click", e => {
   document.addEventListener("mouseup", () => {
     if (drag && multi && anchor && anchor.isConnected) { const r = document.createRange(); r.selectNodeContents(anchor); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
     drag = false;
+  });
+  onEd("keydown", e => {   // 셀 범위를 선택한 상태에서 Del 키를 누르면 선택한 셀의 값만 지워요
+    if (e.key !== "Delete" || !multi || e.altKey || e.ctrlKey || e.metaKey) return;
+    e.preventDefault(); e.stopPropagation();
+    seqClear();
   });
   onEd("keydown", e => {   // 칸을 여러 개 고른 상태의 Ctrl+B / I / U 는 고른 칸 모두에
     if (!multi || e.altKey || e.shiftKey || !(e.ctrlKey || e.metaKey)) return;
