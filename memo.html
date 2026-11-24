@@ -294,25 +294,13 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tb .expand:hover,.tb .expand:focus-visible{opacity:1}
 /* 모바일(터치): 이미지를 고르면 나오는 편집 패널·버튼 줄이 편집 영역(가·나·다)의 세로 공간을 밀어내지 않게 해요 */
 @media (pointer:coarse){
-  /* 이미지 편집 패널(.imgx-bar)은 문서 흐름에서 분리(position:fixed)해 메모(가·나·다)의 세로 크기와 이미지의 크기·위치를 바꾸지 않아요.
-     패널이 쓸 공간은 JS(imSync)가 문서 맨 아래(.imgx-resv)에 따로 확보하고, 그래도 이미지를 가리게 되면 .fl(플로팅)로 바뀌어요. */
+  /* 문서 흐름에서 분리해 메모 가·나·다의 높이를 바꾸지 않습니다.
+     하단에 겹치는 부분은 sheetPads/sheetFit이 스크롤 여백과 선택 이미지 위치로 보정합니다. */
   body .imgx-bar{position:fixed;left:6px;right:6px;bottom:calc(6px + env(safe-area-inset-bottom,0px));width:auto;max-height:38vh;margin:0;overflow-y:auto;overscroll-behavior:contain;z-index:119;box-shadow:0 -2px 14px rgba(0,0,0,.28)}
-  /* 이미지 도구 줄(.imgx-tbg)은 #tb 가 아니라 이 패널 안에 둬서, 이미지를 눌러도 서식 툴바가 커지지 않아요 */
-  .imgx-bar .imgx-tbg{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:4px;padding-top:4px;border-top:1px solid var(--line)}
-  .imgx-bar .imgx-tbg[hidden]{display:none!important}
-  .imgx-bar .imgx-tbg>.sep{display:none}
-  /* 플로팅: 위/아래로 끌어 옮기고 접을 수 있어요 */
-  body .imgx-bar.fl{bottom:auto}
-  body .imgx-bar.fl.fold{left:auto;width:max-content;max-width:calc(100vw - 12px);overflow:hidden}
-  .imgx-bar.fold>:not(.imgx-fh){display:none!important}
-  .imgx-bar.fl .imgx-fh{display:flex;align-items:center;gap:6px;position:sticky;top:-4px;z-index:2;margin:-4px -4px 4px;padding:3px 4px;background:var(--card);border-bottom:1px solid var(--line);border-radius:10px 10px 0 0}
-  .imgx-bar.fl.fold .imgx-fh{margin:-4px;border-bottom:0;border-radius:10px}
-  .imgx-fg{flex:1;min-width:0;padding:5px 6px;font-size:12px;color:var(--mute);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;white-space:nowrap}
+  .tb .imgx-tbg{display:flex;flex:0 0 100%;flex-wrap:nowrap;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:2px}
+  .tb .imgx-tbg>*{flex:none}
   .toast{z-index:125}
 }
-/* 이미지 편집 패널이 쓸 공간 (터치에서 이미지를 고른 동안만 문서 맨 아래에 생겨요. 메모 영역은 건드리지 않아요) */
-.imgx-resv{display:block;height:0;pointer-events:none;visibility:hidden}
-.imgx-fh{display:none}
 /* 확대: 화면 전체를 메모가 차지 (CSS 만 바꾸므로 입력 중인 내용/커서/저장 상태는 그대로) */
 .pane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:54px 12px max(12px,env(safe-area-inset-bottom,0px))}
 /* 확대 중에는 제목을 숨기고 저장 상태만 우하단에 작게 표시 */
@@ -536,7 +524,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad>summary i{display:inline-block;width:28px;height:16px;border:1px solid var(--line);border-radius:4px;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/8px 8px}
 .fo-pad .cpk{margin-top:4px}
 </style>
-<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795498428548&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000a8b48209a46b39616725dfca%26fn%3Dmemo.html%26cd%3Dattachment%26ts%3D498754%26p%3Dfs%26cid%3D1%26sig%3D0a4e119813acb684155c62ef40259128e2b270538866ded61ed1a2fec951b4fa%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795498428548&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000002ab88211a2eff34fe7f10912%26fn%3Dmemo%25281%2529.html%26cd%3Dattachment%26ts%3D498755%26p%3Dfs%26cid%3D1%26sig%3D05110089729cbb1c7a0f7637c2e5e1c8262d737e17da547eac4c03842a6b7171%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795498428548&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000779c8211a8d1d7dbc9e96251%26fn%3Dmemo_parksoodong_github_io__dev_updated.html%26cd%3Dattachment%26ts%3D498748%26p%3Dfs%26cid%3D1%26sig%3Da6a3c69011777f849f54b9154508b1125fe15afe98a170506813f5861150cbea%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000006f8481fa82b59ecf10546b8d%26fn%3Dmemo_parksoodong_github_io__dev%25285%2529_modified.html%26cd%3Dattachment%26ts%3D498745%26p%3Dfs%26cid%3D1%26sig%3D725309a81b561c6a4ff14cb7b2e14b863b0ed3907635ba68cb1865b9958392e4%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795475003208&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="84b92046eea14a90b61afa8f777" src="//local.adguard.org?ts=1795430012811&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004b3c820bb60a7433b7801834%26fn%3Dmemo_fixed.html%26cd%3Dattachment%26ts%3D498733%26p%3Dfs%26cid%3D1%26sig%3D43c3631b039c3e079a3e483ecca487da6e5f174c3aea8a05391a24e7a1b479ea%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
@@ -2863,87 +2851,84 @@ let imgBack = null;
     if (rt > 0) img.setAttribute("height", clamp(Math.round(W * rt), MINW, 4000)); else img.removeAttribute("height");
     place();
   }
-  /* ===== 모바일(터치): 이미지 편집 패널(bar)이 메모를 가리거나 밀어내지 않게 해요 =====
-     ① 메모(가·나·다) 영역의 세로 크기, 이미지의 크기·위치는 건드리지 않아요 (메모 아래 여백 추가·메모 안 스크롤 강제 이동 없음)
-     ② 패널이 쓸 공간은 문서 맨 아래(<html> 끝)에 패널 높이만큼 따로 확보해요. 패널에 이미지가 가려질 때만 페이지를 그만큼 스크롤하고, 이미지 편집이 끝나면 확보한 공간은 사라져요
-     ③ 그래도 이미지를 가릴 수밖에 없으면(확대 화면·스크롤이 막힌 화면·이미지가 너무 큼) 패널을 플로팅으로 바꿔요: 이미지를 덜 가리는 쪽(위/아래)에 놓고, 끌어서 옮기거나 접을 수 있어요
-     ④ 도형·글자 도구가 열려 패널이 커져도 같은 규칙으로 다시 맞춰요 (한 번 플로팅이 되면 그 이미지를 고르는 동안은 플로팅을 유지해요) */
-  var imMq = window.matchMedia ? window.matchMedia("(pointer:coarse)") : null, imMode = "";
-  const imTouch = () => !!(imMq && imMq.matches);
-  const imRoot = document.documentElement, imResv = el("div", "imgx-resv");
-  const imFh = el("div", "imgx-fh", '<span class="imgx-fg" role="button" aria-label="이미지 도구 막대 이동">⋮⋮ 끌어서 이동</span><button type="button" class="imgx-fd" aria-expanded="true">접기</button>');
-  const imFg = imFh.querySelector(".imgx-fg"), imFd = imFh.querySelector(".imgx-fd");
-  bar.prepend(imFh);
-  function imHome() {   // 터치: 이미지 도구 줄을 패널 안으로 (서식 툴바가 커지지 않게) / PC: 원래 자리(서식 툴바 2행 끝)
-    if (imTouch()) { if (tbg.parentNode !== bar) bar.insertBefore(tbg, shp); }
-    else { const ex = document.getElementById("ex"); if (ex && tbg.nextSibling !== ex) ex.before(tbg); }
+  /* 모바일: 이미지 편집 패널이 화면 아래에 떠 있어서 그 아래 본문이 가려져요.
+     ① 본문 아래 여백을 가려지는 만큼 늘려, 끝까지 스크롤하면 패널 위로 올라오게 하고
+     ② 고른 이미지가 패널에 가리지 않고 보이도록 본문을 스크롤해요 (PC·패널이 화면에 떠 있지 않을 때는 아무것도 안 해요) */
+  var sheetMq = window.matchMedia ? window.matchMedia("(pointer:coarse), (hover:none)") : null, sheetPad = new Map();
+  function sheetOn() { return !!(sheetMq && sheetMq.matches && img && !bar.hidden && getComputedStyle(bar).position === "fixed"); }
+  var sheetBody = null;
+  function sheetBodyPad(top) {   // 페이지(본문) 자체가 스크롤되는 화면: 맨 아래에 패널 높이만큼 여백을 둬서 끝까지 스크롤하면 패널 위로 올라오게 해요
+    const bd = document.body, scrolls = getComputedStyle(bd).overflowY !== "hidden" && getComputedStyle(document.documentElement).overflowY !== "hidden";
+    if (top !== null && scrolls) {
+      if (sheetBody === null) sheetBody = bd.style.paddingBottom;
+      bd.style.paddingBottom = Math.ceil(Math.max(0, window.innerHeight - top) + 16) + "px";
+    } else if (sheetBody !== null) { bd.style.paddingBottom = sheetBody; sheetBody = null; }
   }
-  imHome();
-  try { if (imMq) { const f = () => { imHome(); imSync(); }; if (imMq.addEventListener) imMq.addEventListener("change", f); else if (imMq.addListener) imMq.addListener(f); } } catch (_) {}
-  function imVis() {   // 지금 화면에 보이는 이미지 구간(메모 칸 밖으로 스크롤된 부분은 뺌)
-    if (!img || !img.isConnected) return null;
-    const r = img.getBoundingClientRect(), ed = EDS.find(e => e.contains(img));
-    let t = r.top, b = r.bottom;
-    if (ed) { const v = ed.getBoundingClientRect(); t = Math.max(t, v.top); b = Math.min(b, v.bottom); }
-    return b - t > 1 ? { top: t, bottom: b } : null;
+  function sheetPads() {
+    const top = sheetOn() ? bar.getBoundingClientRect().top : null;
+    sheetBodyPad(top);
+    const active = top === null || !img ? null : EDS.find(ed => ed.contains(img));
+    EDS.forEach(ed => {
+      let rec = sheetPad.get(ed);
+      // 선택된 이미지가 들어 있는 편집 영역에만 스크롤 끝 여백을 줍니다.
+      // 나머지 메모 영역의 패딩을 건드리지 않아 가·나·다의 배분 높이가 바뀌지 않게 합니다.
+      if (!active || ed !== active || !ed.offsetParent || ed.offsetHeight < 40) {
+        if (rec) {
+          ed.style.paddingBottom = rec.inline;
+          ed.style.boxSizing = rec.boxSizing;
+          sheetPad.delete(ed);
+        }
+        return;
+      }
+      const cs = getComputedStyle(ed);
+      if (!rec) {
+        rec = { inline: ed.style.paddingBottom, boxSizing: ed.style.boxSizing,
+          base: parseFloat(cs.paddingBottom) || 0 };
+        sheetPad.set(ed, rec);
+      }
+      const over = Math.max(0, ed.getBoundingClientRect().bottom - top + 16);
+      // 패딩은 편집 영역 내부에서만 소비해 바깥 레이아웃/분할 높이를 늘리지 않습니다.
+      ed.style.boxSizing = "border-box";
+      ed.style.paddingBottom = (rec.base + over) + "px";
+    });
   }
-  function imPageLocked() {   // 페이지 스크롤이 막힌 화면인가 (html 이 visible 이면 body 의 overflow 가 화면에 적용돼요)
-    const h = getComputedStyle(imRoot).overflowY, b = getComputedStyle(document.body).overflowY, v = h !== "visible" ? h : b;
-    return v === "hidden" || v === "clip";
-  }
-  function imDock() {   // 문서 맨 아래에 패널 공간을 확보해 겹치지 않게 해요. 확보해도 이미지를 가리면 false
-    if ((img.closest && img.closest(".pane.max,.mpane.max")) || document.body.classList.contains("has-max") || imPageLocked()) return false;
-    const T = Math.max(0, imRoot.clientHeight - bar.getBoundingClientRect().top);   // 패널이 화면 아래에서 차지하는 높이
-    imResv.style.height = Math.ceil(T) + "px"; if (!imResv.isConnected) imRoot.appendChild(imResv);
-    const v = imVis(); if (!v) return true;
-    const dy = Math.ceil(v.bottom - (bar.getBoundingClientRect().top - 8));
-    if (dy <= 0) return true;                       // 이미 패널 위에 있어요: 아무것도 움직이지 않아요
-    const se = document.scrollingElement || imRoot, room = se.scrollHeight - se.clientHeight - se.scrollTop;   // 더 내려갈 수 있는 양(확보한 공간 포함)
-    if (dy > room + 1 || v.top - dy < 0) return false;   // 스크롤해도 이미지를 다 못 보여줘요
-    window.scrollBy(0, dy); place();                // 메모 안이 아니라 페이지만 움직여요
-    return true;
-  }
-  function imFloat(init) {   // 플로팅: 문서 흐름·여백·스크롤에 영향이 없어요
-    bar.classList.add("fl");
-    const h = bar.offsetHeight, vh = imRoot.clientHeight, m = 8;
-    if (init) {
-      const v = imVis(), tb = vh - h - m, ov = t => v ? Math.max(0, Math.min(v.bottom, t + h) - Math.max(v.top, t)) : 0;
-      bar.style.top = (ov(tb) <= ov(m) ? tb : m) + "px";   // 이미지를 덜 가리는 쪽 (같으면 아래)
+  function sheetFit() {
+    if (!sheetOn() || !img || !img.isConnected) return;
+    {   // 페이지 자체는 편집 영역 전체가 아니라 선택 이미지가 툴바와 겹칠 때만 이동합니다.
+      const hi0 = bar.getBoundingClientRect().top - 8, lo0 = 4;
+      const r0 = img.getBoundingClientRect();
+      let dy = 0;
+      if (r0.height > hi0 - lo0) dy = r0.top - lo0;
+      else if (r0.bottom > hi0) dy = r0.bottom - hi0;
+      else if (r0.top < lo0) dy = r0.top - lo0;
+      if (Math.abs(dy) > 1) { const y0 = window.scrollY; window.scrollBy(0, dy); if (window.scrollY !== y0) place(); }
     }
-    const t = parseFloat(bar.style.top);
-    bar.style.top = Math.max(m, Math.min(isNaN(t) ? m : t, Math.max(m, vh - h - m))) + "px";
+    let sc = img.parentElement;
+    while (sc && sc !== document.body && sc !== document.documentElement) {
+      if (/(auto|scroll)/.test(getComputedStyle(sc).overflowY) && sc.scrollHeight > sc.clientHeight) break;
+      sc = sc.parentElement;
+    }
+    if (!sc || sc === document.body || sc === document.documentElement) return;
+    const r = img.getBoundingClientRect(), v = sc.getBoundingClientRect();
+    const lo = Math.max(v.top, 0) + 4, hi = Math.min(v.bottom, bar.getBoundingClientRect().top - 8);
+    if (hi - lo < 40) return;
+    let d = 0;
+    if (r.height > hi - lo) d = r.top - lo;        // 이미지가 보이는 구간보다 크면 윗부분이 보이게
+    else if (r.bottom > hi) d = r.bottom - hi;     // 패널에 가려지면 위로 올려요
+    else if (r.top < lo) d = r.top - lo;
+    if (Math.abs(d) > 1) sc.scrollTop += d;
   }
-  function imOff() {
-    imMode = ""; if (imResv.isConnected) imResv.remove(); imResv.style.height = "0px";
-    bar.classList.remove("fl", "fold"); bar.style.top = ""; imFd.textContent = "접기"; imFd.setAttribute("aria-expanded", "true");
-  }
-  function imSync() {
-    try {
-      if (!imTouch() || !img || bar.hidden) { imOff(); return; }
-      if (imMode === "float") { imFloat(false); return; }
-      bar.classList.remove("fl");
-      if (imDock()) { imMode = "dock"; return; }
-      if (imResv.isConnected) imResv.remove();
-      imMode = "float"; imFloat(true);
-    } catch (_) {}
-  }
-  let imDrag = null;
-  imFg.addEventListener("pointerdown", e => { e.preventDefault(); try { imFg.setPointerCapture(e.pointerId); } catch (_) {} imDrag = { y: e.clientY, t: bar.getBoundingClientRect().top }; });
-  imFg.addEventListener("pointermove", e => { if (!imDrag) return; bar.style.top = (imDrag.t + e.clientY - imDrag.y) + "px"; imFloat(false); });
-  imFg.addEventListener("pointerup", () => { imDrag = null; }); imFg.addEventListener("pointercancel", () => { imDrag = null; });
-  imFd.addEventListener("click", e => {
-    e.stopPropagation();
-    const f = bar.classList.toggle("fold"); imFd.textContent = f ? "펴기" : "접기"; imFd.setAttribute("aria-expanded", String(!f)); imFloat(false);
-  });
-  try { if (window.ResizeObserver) new ResizeObserver(() => { if (imTouch() && img && !bar.hidden) imSync(); }).observe(bar); } catch (_) {}   // 도형·글자 도구가 열려 패널이 커질 때
-  window.addEventListener("resize", () => { if (imTouch() && img && !bar.hidden) imSync(); });
-  function hide() { closeSave(); closeShp(); img = null; box.hidden = bar.hidden = tbg.hidden = true; imOff(); }
+  const sheetSync = () => { try { sheetPads(); sheetFit(); sheetPads(); } catch (_) {} };
+  var sheetRaf = 0;
+  window.addEventListener("scroll", () => { if (sheetBody === null && !sheetOn()) return; if (sheetRaf) return; sheetRaf = requestAnimationFrame(() => { sheetRaf = 0; try { sheetPads(); } catch (_) {} }); }, { passive: true });
+  try { if (window.ResizeObserver) new ResizeObserver(() => { if (sheetOn()) sheetSync(); }).observe(bar); } catch (_) {}   // 글자 넣기처럼 패널이 커질 때
+  window.addEventListener("resize", () => { if (sheetOn()) sheetSync(); });
+  function hide() { closeSave(); closeShp(); img = null; box.hidden = bar.hidden = tbg.hidden = true; try { sheetPads(); } catch (_) {} }
   function show(i) {
-    const nw = img !== i;
-    if (nw) { closeShp(); imOff(); }
+    if (img !== i) closeShp();
     img = i; box.hidden = bar.hidden = tbg.hidden = false;
     place(); ensureOrigin(i); baseSync();
-    imSync(); requestAnimationFrame(imSync);   // 패널이 자리 잡은 뒤에도 한 번 더 맞춰요
+    requestAnimationFrame(sheetSync);   // 패널이 자리 잡은 뒤 (모바일) 본문 여백·이미지 위치를 맞춰요
   }
   function place() {
     raf = 0;
@@ -3022,7 +3007,7 @@ let imgBack = null;
     }
     if (a === "cpy") toggleSave(b); else if (a === "cpy1") { if (sh) { finishPoly(); commit(); } closeSave(); copyImg(); } else if (a === "sav1") { if (sh) { finishPoly(); commit(); } closeSave(); saveImg(); }
   };
-  bar.addEventListener("click", e => { if (!tbg.contains(e.target)) barClick(e); }); tbg.addEventListener("click", barClick);   // 터치에서는 tbg 가 bar 안에 있어서 클릭이 두 번 처리되지 않게 해요
+  bar.addEventListener("click", barClick); tbg.addEventListener("click", barClick);
 
   /* 이미지 복사: 글자·도형·올린 이미지가 합쳐진 전체 이미지를 PNG 로 클립보드에 넣어 다른 곳에 붙여넣을 수 있게 함 */
   async function copyImg() {
