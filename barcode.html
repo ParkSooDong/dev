@@ -559,6 +559,13 @@ p{margin:6px 0 0}
 #cfInfo .cfiv{display:flex;flex-wrap:wrap;gap:3px 5px;min-width:0}
 #cfInfo .cfit{background:rgba(255,255,255,.12);border-radius:4px;padding:0 6px;word-break:break-all}
 #cfInfo .cfim{opacity:.75;padding:0 2px}
+#cfInfo .cfad{display:block;margin-top:3px;padding:2px 8px;border-left:4px solid #ffd43b;border-radius:4px;background:rgba(255,212,59,.16);line-height:1.45}
+#cfInfo .cfad .cfal{font-weight:700;color:#ffe066;margin-right:6px;white-space:nowrap}
+#cfInfo .cfad .cfit{display:inline-block;margin:1px 3px 1px 0}
+#cfInfo .cfad .cfit i{font-style:normal;font-size:.82em;opacity:.7;margin-right:4px}
+#cfInfo .cfad.cfdel{border-left-color:#ff8787;background:rgba(255,135,135,.16)}
+#cfInfo .cfad.cfdel .cfal{color:#ffa8a8}
+#cfInfo.cfmin .cfad{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rich.cfsel ::selection{background:transparent}
 .cfov{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.35)}
 .cfov[hidden]{display:none}
@@ -5500,7 +5507,8 @@ onEd("click", e => {
   document.addEventListener("selectionchange", reInfo);
   { const tb0 = document.getElementById("tbar"); if (tb0 && window.MutationObserver) new MutationObserver(reInfo).observe(tb0, { attributes: true, attributeFilter: ["style", "hidden", "class"] }); }   // 편집 막대가 움직이면 같이 맞춰요
   INFO.addEventListener("mousedown", e => e.preventDefault());   // 창을 눌러도 메모의 커서·선택이 풀리지 않게 해요
-  let anchor = null, drag = false, multi = null;   // multi = {a, b} (칸 2개 이상 선택했을 때)
+  let anchor = null, drag = false, multi = null;
+  let lastAdd = null;   // 방향키로 방금 늘이거나 줄인 칸들 (요약 창 머리줄에 보여줘요)   // multi = {a, b} (칸 2개 이상 선택했을 때)
   const edOf = n => EDS.find(e => e.contains(n));
   const cellAt = t => { const c = t && t.closest && t.closest("td,th"); return c && c.closest(".rich") ? c : null; };
   const SIDES = ["top", "right", "bottom", "left"], OPP = { top: "bottom", bottom: "top", left: "right", right: "left" };
@@ -5558,6 +5566,67 @@ onEd("click", e => {
   }
 
   /* ---- 칸 여러 개 선택 (드래그 / Shift+클릭) ---- */
+  /* 표 편집 막대·요약 창처럼 화면 위에 떠서 표를 가리는 영역 */
+  function obstacles() {
+    const o = [], tb = document.getElementById("tbar");
+    if (tb && !tb.hidden) o.push(tb.getBoundingClientRect());
+    if (!INFO.hidden) o.push(INFO.getBoundingClientRect());
+    return o.filter(r => r.width > 0 && r.height > 0);
+  }
+  /* 사각형 [l,t,r,b] 에서 가리는 영역들을 뺀 나머지 조각들 */
+  function subRects(l, t, r, b, obs) {
+    let parts = [[l, t, r, b]];
+    for (const o of obs) {
+      const next = [];
+      for (const p of parts) {
+        if (o.right <= p[0] || o.left >= p[2] || o.bottom <= p[1] || o.top >= p[3]) { next.push(p); continue; }
+        if (o.top > p[1]) next.push([p[0], p[1], p[2], o.top]);
+        if (o.bottom < p[3]) next.push([p[0], o.bottom, p[2], p[3]]);
+        const mt = Math.max(p[1], o.top), mb = Math.min(p[3], o.bottom);
+        if (o.left > p[0]) next.push([p[0], mt, o.left, mb]);
+        if (o.right < p[2]) next.push([o.right, mt, p[2], mb]);
+      }
+      parts = next;
+    }
+    return parts.filter(p => p[2] - p[0] > 0.5 && p[3] - p[1] > 0.5);
+  }
+  /* 방향키로 늘인 끝 칸이 편집 막대·요약 창 뒤에 숨지 않도록, 가려지지 않은 화면 구간으로 표를 스크롤해요 */
+  let revealTok = 0;
+  function revealCell(cell, tries) {
+    tries = tries || 0;
+    if (!tries) revealTok++;
+    const tok = revealTok;
+    if (cell && cell.isConnected) {
+      try {
+        const vh = document.documentElement.clientHeight, r = cell.getBoundingClientRect();
+        const ed = cell.closest(".rich"), er = ed ? ed.getBoundingClientRect() : { top: 0, bottom: vh };
+        const obs = obstacles().filter(o => o.right > r.left && o.left < r.right);
+        let bands = [[Math.max(0, er.top), Math.min(vh, er.bottom)]];
+        for (const o of obs) {
+          const nb = [];
+          for (const [t, b] of bands) {
+            if (o.bottom <= t || o.top >= b) { nb.push([t, b]); continue; }
+            if (o.top > t) nb.push([t, o.top]);
+            if (o.bottom < b) nb.push([o.bottom, b]);
+          }
+          bands = nb;
+        }
+        bands = bands.filter(b => b[1] - b[0] > 8);
+        const ok = bands.some(b => r.top >= b[0] - 1 && r.bottom <= b[1] + 1);
+        if (bands.length && !ok) {
+          const need = Math.min(r.height, 48), cy = (r.top + r.bottom) / 2;
+          let cand = bands.filter(b => b[1] - b[0] >= need);
+          if (!cand.length) cand = [bands.reduce((a, b) => (b[1] - b[0] > a[1] - a[0] ? b : a))];
+          const dist = b => cy < b[0] ? b[0] - cy : (cy > b[1] ? cy - b[1] : 0);
+          const bd = cand.reduce((a, b) => (dist(b) < dist(a) ? b : a));
+          const delta = r.height <= bd[1] - bd[0] ? cy - (bd[0] + bd[1]) / 2 : r.top - bd[0];
+          const sv = scrollerOf(cell, true);
+          if (Math.abs(delta) >= 1) sv.scrollTop += delta;
+        }
+      } catch (x) {}
+    }
+    if (tries < 2) requestAnimationFrame(() => requestAnimationFrame(() => { if (tok === revealTok) revealCell(cell, tries + 1); }));   // 막대·요약 창이 자리를 옮긴 뒤 한 번 더 확인
+  }
   function paint() {
     try { paintCut(); } catch (x) {}
     OV.textContent = ""; INFO.hidden = true;
@@ -5565,11 +5634,30 @@ onEd("click", e => {
     if (!multi.a.isConnected || !multi.b.isConnected) { multi = null; return; }
     const s = rectOf(multi.a, multi.b); if (!s) return;
     updateInfo(s);
-    const er = s.tab.closest(".rich").getBoundingClientRect();
-    OV.style.clipPath = "inset(" + er.top + "px " + (innerWidth - er.right) + "px " + (innerHeight - er.bottom) + "px " + er.left + "px)";
-    for (const c of cellsIn(s)) { const r = c.getBoundingClientRect(), d = document.createElement("div"); d.style.cssText = "left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px;height:" + r.height + "px"; OV.appendChild(d); }
+    const ed = s.tab.closest(".rich");
+    if (!ed || !ed.isConnected) return;
+    const er = ed.getBoundingClientRect();
+    // 뷰포트와 실제 편집 영역의 교집합만 표시합니다. 표 편집 막대·요약 창 위로는 그리지 않아요.
+    const L = Math.max(0, er.left), T = Math.max(0, er.top);
+    const R = Math.min(document.documentElement.clientWidth, er.right);
+    const B = Math.min(document.documentElement.clientHeight, er.bottom);
+    OV.style.clipPath = "none";
+    if (R <= L || B <= T) return;
+    const obs = obstacles();
+    for (const c of cellsIn(s)) {
+      const r = c.getBoundingClientRect();
+      const l = Math.max(L, r.left), t = Math.max(T, r.top);
+      const rr = Math.min(R, r.right), bb = Math.min(B, r.bottom);
+      if (rr <= l || bb <= t) continue;
+      for (const p of subRects(l, t, rr, bb, obs)) {
+        const d = document.createElement("div");
+        d.style.cssText = "left:" + p[0] + "px;top:" + p[1] + "px;width:" + (p[2] - p[0]) + "px;height:" + (p[3] - p[1]) + "px";
+        OV.appendChild(d);
+      }
+    }
   }
-  function setMulti(a, b, keep) {   // keep: 같은 칸이어도 선택 표시 유지 (Shift+클릭)
+  function setMulti(a, b, keep, add) {   // keep: 같은 칸이어도 선택 표시 유지 (Shift+클릭) / add: 방향키로 방금 바뀐 칸 정보
+    lastAdd = add || null;
     multi = a === b && !keep ? null : { a, b };
     const ed = edOf(a); EDS.forEach(e => e.classList.toggle("cfsel", !!multi && e === ed));
     paint();
@@ -5679,8 +5767,31 @@ onEd("click", e => {
     }
     e.preventDefault(); e.stopPropagation();   // 글자 선택이 늘어나는 기본 동작은 막아요
     if (!nb) return;
-    anchor = ma; setMulti(ma, nb, true);
+    /* 이번 키로 범위에 새로 들어온(또는 빠진) 칸의 값을 모아 요약 창에 보여줘요 */
+    let add = null;
+    try {
+      const s0 = rectOf(ma, mb), s1 = rectOf(ma, nb);
+      if (s1) {
+        const was = new Set(s0 ? cellsIn(s0) : [ma]), now = cellsIn(s1), nowSet = new Set(now);
+        let g = now.filter(x => !was.has(x)), del = false;
+        if (!g.length) { g = Array.from(was).filter(x => !nowSet.has(x)); del = true; }
+        if (g.length) {
+          const items = []; let r1 = 1e9, r2 = -1, c1 = 1e9, c2 = -1;
+          for (const x of g) {
+            const i = G.info.get(x); if (!i) continue;
+            items.push({ t: cellText(x), r: i.r, c: i.c });
+            r1 = Math.min(r1, i.r); r2 = Math.max(r2, i.r); c1 = Math.min(c1, i.c); c2 = Math.max(c2, i.c);
+          }
+          const vert = dir[0] !== 0, arrow = { ArrowUp: "▲", ArrowDown: "▼", ArrowLeft: "◀", ArrowRight: "▶" }[e.key] || "";
+          const span = vert ? (r1 === r2 ? r1 + 1 + "행" : r1 + 1 + "~" + (r2 + 1) + "행") : (c1 === c2 ? c1 + 1 + "열" : c1 + 1 + "~" + (c2 + 1) + "열");
+          if (items.length) add = { del, vert, items, n: items.length, label: arrow + " " + span + (del ? " 선택에서 빠짐" : " 선택에 추가") };
+        }
+      }
+    } catch (x) { add = null; }
+    anchor = ma; setMulti(ma, nb, true, add);
     try { nb.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (x) {}
+    paint();   // 스크롤 뒤 요약 창·선택 표시 자리를 먼저 확정한 다음
+    revealCell(nb);   // 끝 칸이 막대·요약 창에 가려져 있으면 보이는 구간으로 옮겨요
     schedulePaint();
   });
   // 화면 방향·뷰포트·확대/축소·분할 영역 크기 변경 뒤 선택 표시를 새 좌표로 다시 그립니다.
@@ -5690,6 +5801,7 @@ onEd("click", e => {
     paintPending = true;
     requestAnimationFrame(() => { paintPending = false; paint(); });
   }
+  { const tb1 = document.getElementById("tbar"); if (tb1 && window.MutationObserver) new MutationObserver(() => { if (multi) schedulePaint(); }).observe(tb1, { attributes: true, attributeFilter: ["style", "hidden", "class"] }); }   // 편집 막대가 움직이면 선택 표시도 맞춰요
   addEventListener("scroll", e => { if (e.target !== INFO) schedulePaint(); }, true);
   addEventListener("resize", schedulePaint);
   if (window.visualViewport) {
@@ -6051,11 +6163,23 @@ onEd("click", e => {
     if (r) { s.removeAllRanges(); s.addRange(r); }
   }, true);
   const escH = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  /* 방향키로 방금 늘이거나 줄인 칸의 값 — 요약 창 머리줄에 늘 보여서, 표가 편집 막대에 가려도 어떤 데이터가 들어오고 나가는지 알 수 있어요 */
+  function addHtml() {
+    const A = lastAdd; if (!A || !multi) return "";
+    const MAXC = 8;
+    let h = '<div class="cfad' + (A.del ? " cfdel" : "") + '"><span class="cfal">' + escH(A.label) + " · " + A.n + "칸</span>";
+    A.items.slice(0, MAXC).forEach(it => {
+      const t = it.t || "(빈칸)";
+      h += '<span class="cfit"><i>' + (A.vert ? it.c + 1 + "열" : it.r + 1 + "행") + "</i>" + escH(t.length > 20 ? t.slice(0, 20) + "…" : t) + "</span>";
+    });
+    if (A.items.length > MAXC) h += '<span class="cfim">… 외 ' + (A.items.length - MAXC) + "칸</span>";
+    return h + "</div>";
+  }
   function updateInfo(s) {
     const cells = cellsIn(s), nr = s.r2 - s.r1 + 1, nc = s.c2 - s.c1 + 1;
     const note = nr >= 2 ? "열마다 값은 개수 많은 순서로 12종류까지, 값은 20글자까지 표시해요 (전체는 [표 복사])" : "행을 2개 이상 고르면 열별 값·개수가 나와요";   // 요약 맨 위에 늘 보이는 안내
     const info = [], view = { n: cells.length, dims: nr + "행 × " + nc + "열", note, cols: [] };
-    let h = '<div class="cfhd"><div class="cfih">' + (nr >= 2 ? '<span class="cfbtns"><button type="button" class="cfmn" title="요약을 한 줄로 줄여요 — 글꼴·글자 크기 도구가 가려질 때 눌러요. 다시 누르면 원래대로 돌아와요">' + (infoMin ? "＋ 펼치기" : "－ 최소화") + '</button><button type="button" class="cfcopy" data-k="tbl" title="열 / 값 / 개수 표로 복사 — 엑셀 필터·피벗이나 메모 표로 붙여넣기">표 복사</button><button type="button" class="cfcopy" data-k="img" title="지금 보이는 모양 그대로 글자(표)로 복사 — 메모에 붙여넣으면 글자를 고칠 수 있어요">화면 복사</button></span>' : "") + '<span class="cfcn"><b>' + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)</span>" + '<span class="cfnt">' + escH(note) + "</span></div></div>";
+    let h = '<div class="cfhd"><div class="cfih">' + (nr >= 2 ? '<span class="cfbtns"><button type="button" class="cfmn" title="요약을 한 줄로 줄여요 — 글꼴·글자 크기 도구가 가려질 때 눌러요. 다시 누르면 원래대로 돌아와요">' + (infoMin ? "＋ 펼치기" : "－ 최소화") + '</button><button type="button" class="cfcopy" data-k="tbl" title="열 / 값 / 개수 표로 복사 — 엑셀 필터·피벗이나 메모 표로 붙여넣기">표 복사</button><button type="button" class="cfcopy" data-k="img" title="지금 보이는 모양 그대로 글자(표)로 복사 — 메모에 붙여넣으면 글자를 고칠 수 있어요">화면 복사</button></span>' : "") + '<span class="cfcn"><b>' + cells.length + "칸 선택</b> (" + nr + "행 × " + nc + "열)</span>" + '<span class="cfnt">' + escH(note) + "</span></div>" + addHtml() + "</div>";
     if (nr >= 2) {   // 선택한 행이 2개 이상이면 열별로 값별 개수 (열마다 색 띠·열 이름·값 칩으로 구분)
       for (let c = s.c1, k = 0; c <= s.c2; c++, k++) {
         if (k >= 100) { h += '<div class="cfim">… 외 ' + (s.c2 - c + 1) + "개 열</div>"; break; }
