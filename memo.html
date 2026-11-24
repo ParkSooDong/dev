@@ -301,9 +301,15 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 }
 /* 확대: 화면 전체를 메모가 차지 (CSS 만 바꾸므로 입력 중인 내용/커서/저장 상태는 그대로) */
 .pane.max{position:fixed;inset:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))}
-/* 확대 중에는 제목을 숨기고 저장 상태만 우하단에 작게 표시 */
-body.has-max header{position:fixed;right:20px;bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
+/* 확대 중에는 제목을 숨기고 Firebase 상태 영역을 화면 상단에 고정합니다.
+   .pane.max가 별도 쌓임 영역(z-index:100)이므로 header는 그 위(z-index:101)에 놓되,
+   모바일에서는 편집 툴바와 겹치지 않도록 상단 공간을 확보합니다. */
+body.has-max header{position:fixed;right:20px;top:max(8px,env(safe-area-inset-top,0px));bottom:auto;z-index:101;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;opacity:.92}
 body.has-max header h1{display:none}
+@media (pointer:coarse){
+  body.has-max .pane.max{padding-top:calc(44px + env(safe-area-inset-top,0px))}
+  body.has-max header{right:10px;top:max(6px,env(safe-area-inset-top,0px));max-width:calc(100vw - 20px)}
+}
 .rich:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .rich[contenteditable=false]{opacity:.6}
 /* 타이머 (오른쪽 끝) */
@@ -2853,65 +2859,54 @@ let imgBack = null;
      ② 고른 이미지가 패널에 가리지 않고 보이도록 본문을 스크롤해요 (PC·패널이 화면에 떠 있지 않을 때는 아무것도 안 해요) */
   var sheetMq = window.matchMedia ? window.matchMedia("(pointer:coarse)") : null, sheetPad = new Map();
   function sheetOn() { return !!(sheetMq && sheetMq.matches && img && !bar.hidden && getComputedStyle(bar).position === "fixed"); }
-  var sheetBody = null;
-  function sheetBodyPad(top) {   // 페이지(본문) 자체가 스크롤되는 화면: 맨 아래에 패널 높이만큼 여백을 둬서 끝까지 스크롤하면 패널 위로 올라오게 해요
-    const bd = document.body, scrolls = getComputedStyle(bd).overflowY !== "hidden" && getComputedStyle(document.documentElement).overflowY !== "hidden";
-    if (top !== null && scrolls) {
-      if (sheetBody === null) sheetBody = bd.style.paddingBottom;
-      bd.style.paddingBottom = Math.ceil(Math.max(0, window.innerHeight - top) + 16) + "px";
-    } else if (sheetBody !== null) { bd.style.paddingBottom = sheetBody; sheetBody = null; }
-  }
   function sheetPads() {
-    const top = sheetOn() ? bar.getBoundingClientRect().top : null;
-    sheetBodyPad(top);
+    const active = sheetOn();
     EDS.forEach(ed => {
       let rec = sheetPad.get(ed);
-      if (top === null || !ed.offsetParent || ed.offsetHeight < 40) {
-        if (rec) { ed.style.paddingBottom = rec.inline; ed.style.scrollPaddingBottom = rec.scrollInline; sheetPad.delete(ed); }
+      if (!active || !ed.offsetParent || ed.offsetHeight < 40) {
+        if (rec) {
+          ed.style.paddingBottom = rec.inline;
+          ed.style.scrollPaddingBottom = rec.scrollInline;
+          ed.style.overflowY = rec.overflowY;
+          ed.style.overscrollBehaviorY = rec.overscrollBehaviorY;
+          sheetPad.delete(ed);
+        }
         return;
       }
       const cs = getComputedStyle(ed);
-      if (!rec) { rec = { inline: ed.style.paddingBottom, scrollInline: ed.style.scrollPaddingBottom, base: parseFloat(cs.paddingBottom) || 0 }; sheetPad.set(ed, rec); }
-      // 모바일 편집 툴바는 .rich 편집영역 바깥에 fixed로 떠 있으므로,
-      // 단순히 겹치는 높이가 아니라 툴바 전체 높이만큼 스크롤 끝 여유를 확보해야 해요.
-      const reserve = Math.ceil(bar.getBoundingClientRect().height + 20 + (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('scroll-padding-bottom')) || 0));
+      if (!rec) {
+        rec = { inline: ed.style.paddingBottom, scrollInline: ed.style.scrollPaddingBottom,
+                overflowY: ed.style.overflowY, overscrollBehaviorY: ed.style.overscrollBehaviorY, base: parseFloat(cs.paddingBottom) || 0 };
+        sheetPad.set(ed, rec);
+      }
+      // Firebase 버튼이 있는 페이지(header)는 절대로 스크롤하거나 밀지 않습니다.
+      // 편집영역(.rich) 안쪽에만 툴바 높이만큼 스크롤 여유를 추가합니다.
+      const reserve = Math.ceil(bar.getBoundingClientRect().height + 24);
       ed.style.paddingBottom = (rec.base + reserve) + "px";
       ed.style.scrollPaddingBottom = (reserve + 8) + "px";
+      ed.style.overflowY = "auto";
+      ed.style.overscrollBehaviorY = "contain";
     });
   }
   function sheetFit() {
     if (!sheetOn() || !img || !img.isConnected) return;
-    const barTop = bar.getBoundingClientRect().top;
+    // 이미지가 속한 메모 편집영역 자체만 스크롤합니다.
+    // window.scrollBy()는 사용하지 않아 상단 헤더/Firebase 버튼이 움직이지 않습니다.
     const ed = EDS.find(e => e.contains(img) && e.offsetParent);
-    // 중요: 메모 편집영역(.rich) 자체가 overflow:auto 스크롤 컨테이너예요.
-    // 기존 코드는 img.parentElement부터만 찾으면서 이 요소를 건너뛰어
-    // 실제 모바일 메모 영역의 scrollTop을 전혀 조정하지 못했어요.
-    let sc = ed && /(auto|scroll)/.test(getComputedStyle(ed).overflowY) && ed.scrollHeight > ed.clientHeight ? ed : null;
-    if (!sc) {
-      sc = img.parentElement;
-      while (sc && sc !== document.body && sc !== document.documentElement) {
-        if (/(auto|scroll)/.test(getComputedStyle(sc).overflowY) && sc.scrollHeight > sc.clientHeight) break;
-        sc = sc.parentElement;
-      }
-      if (sc === document.body || sc === document.documentElement) sc = null;
+    if (!ed) return;
+    const barTop = bar.getBoundingClientRect().top;
+    const r = img.getBoundingClientRect(), v = ed.getBoundingClientRect();
+    const lo = Math.max(v.top, 0) + 6;
+    const hi = Math.min(v.bottom, barTop - 10);
+    if (hi - lo <= 40) return;
+    let d = 0;
+    if (r.height > hi - lo) d = r.top - lo;       // 큰 이미지는 위쪽부터 편집 가능하게
+    else if (r.bottom > hi) d = r.bottom - hi;   // 이미지 하단이 툴바에 가리면 위로
+    else if (r.top < lo) d = r.top - lo;
+    if (Math.abs(d) > 1) {
+      ed.scrollTop += d;
+      place();
     }
-    if (sc) {
-      const r = img.getBoundingClientRect(), v = sc.getBoundingClientRect();
-      const lo = Math.max(v.top, 0) + 6;
-      const hi = Math.min(v.bottom, barTop - 10);
-      if (hi - lo > 40) {
-        let d = 0;
-        if (r.height > hi - lo) d = r.top - lo;       // 이미지가 표시 높이보다 크면 위쪽부터 편집
-        else if (r.bottom > hi) d = r.bottom - hi;   // 이미지 하단이 툴바에 닿으면 위로 이동
-        else if (r.top < lo) d = r.top - lo;
-        if (Math.abs(d) > 1) { sc.scrollTop += d; place(); }
-      }
-      return;
-    }
-    // 문서 자체가 스크롤되는 레이아웃에 대한 예비 처리
-    const r = img.getBoundingClientRect(), hi = barTop - 10, lo = 6;
-    let d = r.height > hi - lo ? r.top - lo : (r.bottom > hi ? r.bottom - hi : (r.top < lo ? r.top - lo : 0));
-    if (Math.abs(d) > 1) { window.scrollBy(0, d); place(); }
   }
   const sheetSync = () => { try { sheetPads(); sheetFit(); sheetPads(); } catch (_) {} };
   var sheetRaf = 0;
