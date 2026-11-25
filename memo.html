@@ -3213,7 +3213,7 @@ let imgBack = null;
   window.addEventListener("scroll", closeBg, true); window.addEventListener("resize", closeBg);
   /* 페인트 색(바탕색): 글자·도형·선의 색(sd.color)과 완전히 따로 저장. 페인트 색을 바꾸면 글자·도형·선의 기본 색만 보색으로 맞추고, 그 반대(글자·도형·선 색 → 페인트 색)는 하지 않음 */
   const PPAL = ["#fff3a3", "#ffffff", "#000000", "#f1f3f5", "#ffe3e3", "#d0ebff", "#d3f9d8", "#e5dbff"];
-  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '<button type="button" data-pptransparent title="선택 영역을 실제 투명하게 지워요" aria-label="투명" style="width:28px;height:28px;padding:0;border:1px solid #888;background:repeating-conic-gradient(#ddd 0% 25%,#fff 0% 50%) 50% / 10px 10px">◇</button></div><div data-pptrans-options hidden style="grid-template-columns:82px 1fr;gap:6px 8px;align-items:center;font-size:12px;margin:8px 0;padding:7px;border:1px solid #bbb;border-radius:7px;background:#f8f9fa"><b style="grid-column:1/3;font-size:12px">투명 페인트일 때 도형·글자 처리</b><b title="투명 페인트를 적용할 때 도형·글자 내부를 처리하는 방식입니다">내부 배경</b><select data-ppbgmode style="min-width:0"><option value="transparent" selected>투명 (기본값)</option><option value="keep">기존 색상 유지</option><option value="new">새 색상</option></select><input type="color" data-ppbgcolor value="#fff3a3" title="내부 배경을 새 색상으로 바꿀 때 사용할 색" style="grid-column:2;width:100%;height:44px;padding:2px"><b>테두리</b><select data-ppedgemode style="min-width:0"><option value="transparent" selected>투명 (기본값)</option><option value="keep">기존 색상 유지</option><option value="new">새 색상</option></select><input type="color" data-ppedgecolor value="#2b8a3e" title="테두리를 새 색상으로 바꿀 때 사용할 색" style="grid-column:2;width:100%;height:44px;padding:2px"><small style="grid-column:1/3;opacity:.75">위 선택은 적용 방식이고, 바로 아래 색상칸은 새 색상 선택용입니다. 배경과 테두리는 서로 독립적으로 적용됩니다.</small></div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:32px;height:32px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="팝업을 연 뒤 변경한 페인트 색·투명도·배경·테두리 설정을 모두 열기 전 상태로 되돌려요">변경 취소 · 열기 전 상태로 복원</button>');
+  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '<button type="button" data-pptransparent title="선택 영역을 실제 투명하게 지워요" aria-label="투명" style="width:28px;height:28px;padding:0;border:1px solid #888;background:repeating-conic-gradient(#ddd 0% 25%,#fff 0% 50%) 50% / 10px 10px">◇</button></div><div data-pptrans-options hidden style="grid-template-columns:82px 1fr;gap:6px 8px;align-items:center;font-size:12px;margin:8px 0;padding:7px;border:1px solid #bbb;border-radius:7px;background:#f8f9fa"><b style="grid-column:1/3;font-size:12px">투명 페인트일 때 도형·글자 처리</b><b title="투명 페인트를 적용할 때 도형·글자 내부를 처리하는 방식입니다">내부 배경</b><select data-ppbgmode style="min-width:0"><option value="transparent" selected>투명 (기본값)</option><option value="keep">기존 색상 유지</option><option value="new">새 색상</option></select><input type="color" data-ppbgcolor value="#fff3a3" title="내부 배경을 새 색상으로 바꿀 때 사용할 색" style="grid-column:2;width:100%;height:44px;padding:2px"><label style="grid-column:1/3;display:flex;align-items:center;gap:6px;font-size:12px" title="새 색상·기존 색상 유지일 때만 조절돼요. 투명(기본값)은 100% 투명이라 조절할 수 없어요">투명도<input type="range" data-ppbgtr min="0" max="95" step="5" value="80" disabled style="flex:1;min-width:90px" aria-label="내부 배경 투명도"><span data-ppbgtv style="min-width:36px;text-align:right">100%</span></label><b>테두리</b><select data-ppedgemode style="min-width:0"><option value="transparent" selected>투명 (기본값)</option><option value="keep">기존 색상 유지</option><option value="new">새 색상</option></select><input type="color" data-ppedgecolor value="#2b8a3e" title="테두리를 새 색상으로 바꿀 때 사용할 색" style="grid-column:2;width:100%;height:44px;padding:2px"><label style="grid-column:1/3;display:flex;align-items:center;gap:6px;font-size:12px" title="새 색상·기존 색상 유지일 때만 조절돼요. 투명(기본값)은 100% 투명이라 조절할 수 없어요">투명도<input type="range" data-ppedgetr min="0" max="95" step="5" value="80" disabled style="flex:1;min-width:90px" aria-label="테두리 투명도"><span data-ppedgetv style="min-width:36px;text-align:right">100%</span></label><button type="button" data-ppreset title="내부 배경·테두리를 모두 투명, 투명도 80%로 되돌려요. 이미 칠한 도형은 그대로이고, 다음에 클릭할 때부터 적용돼요" style="grid-column:1/3">기본값으로 초기화 (내부 배경·테두리 모두 투명)</button><small style="grid-column:1/3;opacity:.75">각 줄의 색상칸은 새 색상 선택용이에요. 새 색상은 그 도형의 현재 색상으로 저장되고, 기존 색상 유지는 그 현재 색상을 그대로 둬요 (원본 색으로 되돌리지 않아요). 투명도 막대는 새 색상·기존 색상 유지에서만 쓸 수 있고, 배경과 테두리는 서로 독립적으로 적용돼요.</small></div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:32px;height:32px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="팝업을 연 뒤 변경한 페인트 색·투명도·배경·테두리 설정을 모두 열기 전 상태로 되돌려요 (기본값으로 초기화와는 달라요)">변경 취소 · 열기 전 상태로 복원</button>');
   ppop.hidden = true; document.body.appendChild(ppop);
   ppop.querySelector("[data-ppbgmode]").value = "transparent";
   ppop.querySelector("[data-ppedgemode]").value = "transparent";
@@ -3222,6 +3222,27 @@ let imgBack = null;
   ppk.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"; bar.appendChild(ppk);
   const ppr = ppop.querySelector("[data-ppr]"), ppv = ppop.querySelector("[data-ppv]");
   let ppTransparent = false; // sd 생성 전 TDZ 방지: 실제 공통 상태 연결은 sd 선언 직후 수행
+  /* 내부 배경·테두리 투명도 막대: 투명(기본값)=100% 투명(막대 비활성), 새 색상·기존 색상 유지=막대 활성(기본 80%).
+     새 색상·기존 색상 유지일 때 쓸 값은 여기(ppTr)에 따로 기억해서, 투명으로 갔다가 돌아와도 유지돼요 */
+  const PP_TR_DEF = 80, ppTr = { bg: PP_TR_DEF, edge: PP_TR_DEF };
+  const ppOpacity = k => Math.max(0.05, Math.min(1, Math.round((1 - ppTr[k] / 100) * 100) / 100));   // 투명도% → 불투명도(0.05~1)
+  function ppTrSync() {
+    for (const [k, ms, rs, vs] of [["bg", "[data-ppbgmode]", "[data-ppbgtr]", "[data-ppbgtv]"], ["edge", "[data-ppedgemode]", "[data-ppedgetr]", "[data-ppedgetv]"]]) {
+      const off = ppop.querySelector(ms).value === "transparent", r = ppop.querySelector(rs), v = ppop.querySelector(vs);
+      const val = off ? 100 : Math.min(95, ppTr[k]);
+      r.disabled = off; r.max = off ? "100" : "95"; r.value = String(val); v.textContent = val + "%";
+    }
+  }
+  /* [기본값으로 초기화]: 내부 배경·테두리 모두 '투명', 새 색상 칸은 기본 색, 투명도는 80%로. ([변경 취소]는 팝업을 열기 전 상태로 되돌리는 별개 기능) */
+  function ppResetDefaults() {
+    ppop.querySelector("[data-ppbgmode]").value = "transparent";
+    ppop.querySelector("[data-ppedgemode]").value = "transparent";
+    ppop.querySelector("[data-ppbgcolor]").value = "#fff3a3";
+    ppop.querySelector("[data-ppedgecolor]").value = "#2b8a3e";
+    ppTr.bg = ppTr.edge = PP_TR_DEF;
+    ppSync();
+  }
+  ppTrSync();
   let ppAnchor = null;
   function closePp() { ppop.hidden = true; ppAnchor = null; ppop.style.maxHeight = ""; ppop.style.overflowY = ""; }
   function positionPp() {
@@ -3264,7 +3285,7 @@ let imgBack = null;
       pcc.querySelector(".hexnote").textContent = sd.ppTransparent ? "· 실제 투명" : (sd.fop < 1 ? "· " + Math.round((1 - sd.fop) * 100) + "% 투명" : ""); }
     const transOptions = ppop.querySelector("[data-pptrans-options]"); if (transOptions) { transOptions.hidden = !sd.ppTransparent; transOptions.style.display = sd.ppTransparent ? "grid" : "none"; }
     const tb = ppop.querySelector("[data-pptransparent]"); if (tb) { tb.style.outline = sd.ppTransparent ? "2px solid #1971c2" : ""; tb.style.outlineOffset = "2px"; tb.setAttribute("aria-pressed", String(!!sd.ppTransparent)); }
-    ppr.disabled = false; ppr.value = String(Math.round((1 - sd.fop) * 100)); ppv.textContent = ppr.value + "%";
+    ppr.disabled = !!sd.ppTransparent; ppr.value = String(Math.round((1 - sd.fop) * 100)); ppv.textContent = (sd.ppTransparent ? 100 : ppr.value) + "%"; ppTrSync();
     if (!ppop.hidden && ppAnchor) requestAnimationFrame(positionPp);
   }
   function ppApply(c, t, quiet) {
@@ -3281,7 +3302,7 @@ let imgBack = null;
   function togglePp(b) {
     if (!ppop.hidden) { closePp(); return; }
     closeSave(); closeBg(); ppSync(); ppop.hidden = false;
-    ppSnap = { pcolor: sd.pcolor, fop: sd.fop, color: sd.color, ppTransparent: !!sd.ppTransparent, bgMode: ppop.querySelector("[data-ppbgmode]").value, bgColor: ppop.querySelector("[data-ppbgcolor]").value, edgeMode: ppop.querySelector("[data-ppedgemode]").value, edgeColor: ppop.querySelector("[data-ppedgecolor]").value };   // 팝업을 열 때의 전체 상태
+    ppSnap = { bgTr: ppTr.bg, edgeTr: ppTr.edge, pcolor: sd.pcolor, fop: sd.fop, color: sd.color, ppTransparent: !!sd.ppTransparent, bgMode: ppop.querySelector("[data-ppbgmode]").value, bgColor: ppop.querySelector("[data-ppbgcolor]").value, edgeMode: ppop.querySelector("[data-ppedgemode]").value, edgeColor: ppop.querySelector("[data-ppedgecolor]").value };   // 팝업을 열 때의 전체 상태
     const r = b.getBoundingClientRect();
     ppAnchor = b;
     positionPp();
@@ -3289,14 +3310,18 @@ let imgBack = null;
   ppop.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     if (b.dataset.ppc) ppApply(b.dataset.ppc, null);
-    else if (b.hasAttribute("data-pptransparent")) { sd.ppTransparent = ppTransparent = true; sd.fop = 0.5; ppSync(); toast("투명을 선택했어요. 원본 영역은 투명해지고, 새 배경·테두리 색은 기본 50% 투명도로 적용됩니다"); }
+    else if (b.hasAttribute("data-pptransparent")) { sd.ppTransparent = ppTransparent = true; sd.fop = 0.5; ppSync(); toast("투명을 선택했어요. 원본 영역은 투명해지고, 새 배경·테두리 색은 기본 투명도 80%로 적용됩니다 (아래 투명도 막대로 조절)"); }
     else if (b.hasAttribute("data-ppkeep")) {
-      if (ppSnap) { sd.pcolor = ppSnap.pcolor; sd.fop = ppSnap.fop; sd.color = ppSnap.color; sd.ppTransparent = ppTransparent = ppSnap.ppTransparent; qc("color").value = sd.color; ppop.querySelector("[data-ppbgmode]").value = ppSnap.bgMode; ppop.querySelector("[data-ppbgcolor]").value = ppSnap.bgColor; ppop.querySelector("[data-ppedgemode]").value = ppSnap.edgeMode; ppop.querySelector("[data-ppedgecolor]").value = ppSnap.edgeColor; }
+      if (ppSnap) { ppTr.bg = ppSnap.bgTr; ppTr.edge = ppSnap.edgeTr; sd.pcolor = ppSnap.pcolor; sd.fop = ppSnap.fop; sd.color = ppSnap.color; sd.ppTransparent = ppTransparent = ppSnap.ppTransparent; qc("color").value = sd.color; ppop.querySelector("[data-ppbgmode]").value = ppSnap.bgMode; ppop.querySelector("[data-ppbgcolor]").value = ppSnap.bgColor; ppop.querySelector("[data-ppedgemode]").value = ppSnap.edgeMode; ppop.querySelector("[data-ppedgecolor]").value = ppSnap.edgeColor; }
       ppSync(); closePp(); toast("팝업을 열기 전 상태로 복원했어요");
     }
+    else if (b.hasAttribute("data-ppreset")) { ppResetDefaults(); toast("내부 배경·테두리를 기본값(모두 투명, 투명도 80%)으로 초기화했어요. 도형·글자 안쪽을 클릭하면 적용돼요"); }
     else if (b.hasAttribute("data-ppk")) { openColorDlg({ title: "페인트 색 선택 (84색)", value: sd.pcolor, onOk: v => ppApply(v, null) }); }
   });
-  ppop.addEventListener("input", e => { if (e.target === ppr) { ppv.textContent = ppr.value + "%"; ppApply(null, +ppr.value); } });
+  ppop.addEventListener("input", e => {
+    if (e.target === ppr) { ppv.textContent = ppr.value + "%"; ppApply(null, +ppr.value); }
+    else if (e.target.matches && e.target.matches("[data-ppbgtr],[data-ppedgetr]") && !e.target.disabled) { ppTr[e.target.hasAttribute("data-ppbgtr") ? "bg" : "edge"] = +e.target.value; ppTrSync(); }
+  });
   // 새 색상칸을 직접 조작하면 해당 항목의 적용 방식도 자동으로 "새 색상"으로 전환합니다.
   for (const [colorSel, modeSel] of [
     ["[data-ppbgcolor]", "[data-ppbgmode]"],
@@ -3801,7 +3826,7 @@ let imgBack = null;
     const edgeMode = ppop.querySelector("[data-ppedgemode]").value || "transparent";
     const bgColor = ppop.querySelector("[data-ppbgcolor]").value;
     const edgeColor = ppop.querySelector("[data-ppedgecolor]").value;
-    const replacementOpacity = Math.max(0.05, Math.min(1, Number.isFinite(+sd.fop) ? +sd.fop : 0.5));
+    const bgOp = ppOpacity("bg"), edgeOp = ppOpacity("edge");   // 내부 배경·테두리 각각의 투명도 막대 값
     let changed = false;
     // 클릭 지점을 포함하는 도형/텍스트 요소만 대상으로 하며, 사진·페인트층·선·손그림은 제외합니다.
     for (const it of s.items) {
@@ -3814,16 +3839,28 @@ let imgBack = null;
         if (!it.bgOff || it.fill) changed = true;
         it.bgOff = true; it.fill = false;
       } else if (bgMode === "new") {
-        if (it.bgOff || !it.fill || it.bgc !== bgColor || it.bo !== replacementOpacity) changed = true;
-        it.bgOff = false; it.bgc = bgColor; it.fill = true; it.bo = replacementOpacity;
+        // 새 색상: 지정한 색으로 바꾸고, 이 도형의 '현재 색상'으로 저장합니다 (it.bgc). 이후 '기존 색상 유지'는 이 색을 기준으로 합니다.
+        const call = isCall(it.t);
+        if (it.bgOff || it.bgc !== bgColor || (call ? it.op !== bgOp : (!it.fill || it.bo !== bgOp))) changed = true;
+        it.bgOff = false; it.bgc = bgColor; it.fill = true; it.bo = bgOp; if (call) it.op = bgOp;   // 말풍선·글상자는 배경 투명도가 op
+      } else if (bgMode === "keep") {
+        // 기존 색상 유지: 직전에 적용된 현재 색을 그대로 둡니다 (원본 색으로 되돌리지 않음). 투명도만 막대 값으로 맞춰요.
+        // 지금 투명(색 없음)인 요소는 그대로 투명으로 둡니다.
+        if (!it.bgOff) {
+          if (isCall(it.t)) { if (it.op > 0 && it.op !== bgOp) { it.op = bgOp; changed = true; } }
+          else if (it.fill && it.bo !== bgOp) { it.bo = bgOp; changed = true; }
+        }
       }
-      // keep은 요소의 현재 테두리 상태/색을 그대로 둡니다.
       if (edgeMode === "transparent") {
         if (!it.strokeOff || it.ol) changed = true;
         it.strokeOff = true; it.ol = false;
       } else if (edgeMode === "new") {
-        if (it.strokeOff || it.color !== edgeColor || it.oc !== edgeColor || it.strokeOpacity !== replacementOpacity) changed = true;
-        it.strokeOff = false; it.color = edgeColor; it.oc = edgeColor; it.strokeOpacity = replacementOpacity;
+        // 새 색상: 지정한 색으로 바꾸고 이 도형의 현재 테두리 색으로 저장합니다 (it.color / it.oc).
+        if (it.strokeOff || it.color !== edgeColor || it.oc !== edgeColor || it.strokeOpacity !== edgeOp) changed = true;
+        it.strokeOff = false; it.color = edgeColor; it.oc = edgeColor; it.strokeOpacity = edgeOp;
+      } else if (edgeMode === "keep") {
+        // 기존 색상 유지: 현재 테두리 색은 그대로, 투명도만 막대 값으로. 지금 투명(테두리 없음)이면 그대로 둡니다.
+        if (!it.strokeOff && it.strokeOpacity !== edgeOp) { it.strokeOpacity = edgeOp; changed = true; }
       }
     }
     return changed;
@@ -4202,7 +4239,7 @@ let imgBack = null;
   function resetSd() {
     if (!sh) return;
     Object.assign(sd, { color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, bold: false, italic: false, underline: false, strike: false, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, bold: false, ol: false, top: null, ew: 16 });
-    qc("color").value = "#2b8a3e"; ppSync(); qc("lw").value = "3"; qc("fs").value = "15"; qc("fsr").value = "15"; if (typeof szSync === "function") szSync(15); qc("ew").value = "16"; qc("bg").value = DEF_BG;
+    qc("color").value = "#2b8a3e"; ppResetDefaults(); qc("lw").value = "3"; qc("fs").value = "15"; qc("fsr").value = "15"; if (typeof szSync === "function") szSync(15); qc("ew").value = "16"; qc("bg").value = DEF_BG;
     qc("op").value = sh.mode === "text" ? String(sd.tool === "ctext" ? 0 : 0.5) : sh.mode === "shape" ? "0.5" : "1"; popSync(1);
     ["dash", "ol"].forEach(k => { const b = qc(k); if (b) setP(b, false); }); syncTextFormatButtons(sh.items[sh.sel]);
     drawCur(); toast("도구 설정을 기본값으로 되돌렸어요");
