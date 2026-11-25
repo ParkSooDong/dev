@@ -254,6 +254,8 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(240,101,149,.0)}50%{box-shadow:0 0 0 4px rgba(240,101,149,.55)}}
 .tb .menu.pulse>button{animation:pulse .9s ease-in-out 3}
 .tb .pop{position:absolute;top:calc(100% + 4px);left:0;z-index:10;display:flex;flex-direction:column;min-width:150px;padding:4px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.tb .pop{overflow-y:auto;overscroll-behavior:contain;max-width:calc(100vw - 16px)}
+.tb .pop.up{top:auto;bottom:calc(100% + 4px)}
 .tb .pop[hidden]{display:none}
 .tb .pop.r{left:auto;right:0}
 .tb .pop button{justify-content:flex-start;padding:0 10px;white-space:nowrap}
@@ -553,7 +555,8 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad .cpk{margin-top:4px}
 </style>
 <style id="tbl-sort-style">#tblSortDialog[hidden]{display:none!important}#tblSortDialog button{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--ink);color:var(--bg);cursor:pointer}#tblSortDialog button:hover{opacity:.85}#tblSortDialog select:focus-visible{outline:2px solid #339af0;outline-offset:1px}</style>
-</head>
+<script type="text/javascript" nonce="597ff2512f834a45bf9d9e8a7cf" src="//local.adguard.org?ts=1795567103389&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000008168820b8ae639c39fcdb091%26fn%3Dmemo_parksoodong_github_io__dev.html%26cd%3Dattachment%26ts%3D498768%26p%3Dfs%26cid%3D1%26sig%3Dc114b2dcd5b5f3f603c063d827f74c6f360fbabe0d3c7e755f3bf99457761571%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="597ff2512f834a45bf9d9e8a7cf" src="//local.adguard.org?ts=1795567103389&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -878,8 +881,12 @@ window.hexInput = function (inp, commit, resync) {
     const place = () => {
       const r = btnEl.getBoundingClientRect(), st = popEl.style;
       st.position = "fixed"; st.right = "auto"; st.bottom = "auto"; st.margin = "0";
-      st.maxHeight = Math.max(120, Math.min(420, innerHeight * 0.6, innerHeight - r.bottom - 16)) + "px";
-      st.top = (r.bottom + 4) + "px";
+      const natural = Math.max(popEl.scrollHeight, popEl.getBoundingClientRect().height);
+      const below = Math.max(0, innerHeight - r.bottom - 8), above = Math.max(0, r.top - 8);
+      const useAbove = natural > below && above > below;
+      st.maxHeight = Math.max(96, Math.min(420, innerHeight - 16, useAbove ? above : below)) + "px";
+      st.top = useAbove ? "auto" : (r.bottom + 4) + "px";
+      st.bottom = useAbove ? (innerHeight - r.top + 4) + "px" : "auto";
       st.left = Math.max(8, Math.min(r.left, innerWidth - popEl.offsetWidth - 8)) + "px";
     };
     const isOpen = () => { try { return popEl.matches(":popover-open"); } catch (e) { return false; } };
@@ -6894,14 +6901,27 @@ onEd("click", e => {
 })();
 
 function closePop() {
-  tb.querySelectorAll(".pop").forEach(p => { p.hidden = true; p.classList.remove("r"); });
+  tb.querySelectorAll(".pop").forEach(p => { p.hidden = true; p.classList.remove("r", "up"); p.style.maxHeight = ""; });
   tb.querySelectorAll("[aria-expanded]").forEach(b => b.setAttribute("aria-expanded", "false"));
+}
+function positionMenuPop(btn, p) {
+  const r = btn.getBoundingClientRect();
+  p.classList.remove("up", "r"); p.style.maxHeight = "";
+  // 먼저 기본 아래쪽 위치에서 실제 메뉴 높이를 측정한 뒤, 화면에 들어오지 않으면 위쪽으로 전환
+  const naturalHeight = Math.max(p.scrollHeight, p.getBoundingClientRect().height);
+  const below = Math.max(0, innerHeight - r.bottom - 8);
+  const above = Math.max(0, r.top - 8);
+  const useAbove = naturalHeight > below && above > below;
+  const room = useAbove ? above : below;
+  if (useAbove) p.classList.add("up");
+  if (naturalHeight > room) p.style.maxHeight = Math.max(96, room) + "px";
+  if (p.getBoundingClientRect().right > innerWidth - 8) p.classList.add("r");
 }
 function openPop(btn, p) {
   closePop(); p.hidden = false; btn.setAttribute("aria-expanded", "true");
   if (p.id === "popFc" || p.id === "popBg") { palBack = saveRange(); syncPal(p); }
   if (p.querySelector("#bgW")) { bgBack = saveRange(); bgDefaults(); }   // 이미지 메뉴: 커서 위치 기억 + 현재 메모창 기준 기본 크기 표시
-  if (p.getBoundingClientRect().right > innerWidth - 8) p.classList.add("r");   // 화면 밖으로 나가면 오른쪽 정렬
+  positionMenuPop(btn, p);
 }
 expBtn.addEventListener("click", () => {
   if (!pop.hidden) { closePop(); return; }
@@ -7499,8 +7519,12 @@ updateAttN();
   const place = () => {
     const r = btn.getBoundingClientRect(), st = pop.style;
     st.position = "fixed"; st.right = "auto"; st.bottom = "auto"; st.margin = "0";
-    st.maxHeight = Math.max(120, Math.min(420, innerHeight * 0.6, innerHeight - r.bottom - 16)) + "px";
-    st.top = (r.bottom + 4) + "px";
+    const natural = Math.max(pop.scrollHeight, pop.getBoundingClientRect().height);
+    const below = Math.max(0, innerHeight - r.bottom - 8), above = Math.max(0, r.top - 8);
+    const useAbove = natural > below && above > below;
+    st.maxHeight = Math.max(96, Math.min(420, innerHeight - 16, useAbove ? above : below)) + "px";
+    st.top = useAbove ? "auto" : (r.bottom + 4) + "px";
+    st.bottom = useAbove ? (innerHeight - r.top + 4) + "px" : "auto";
     st.left = Math.max(8, Math.min(r.left, innerWidth - pop.offsetWidth - 8)) + "px";
   };
   const isOpen = () => { try { return pop.matches(":popover-open"); } catch (e) { return false; } };
