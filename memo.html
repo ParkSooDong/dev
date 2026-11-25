@@ -3801,71 +3801,28 @@ let imgBack = null;
         }
         reg = g;
       }
-      /* 투명 색상: 원본 이미지뿐 아니라 도형·글자·올린 이미지·페인트 등
-         편집 레이어의 해당 영역도 모두 제거합니다. 기존 요소를 그대로 두면
-         투명해진 원본 위에 노란색 도형/페인트가 다시 그려지므로 전체를 한 번
-         합성한 뒤 마스크를 적용하고, 결과를 새 원본 레이어로 만듭니다. */
+      /* 투명 색상: 선택 영역의 원본 이미지 픽셀과 기존 페인트 픽셀을 실제로 제거 */
       if (ppTransparent) {
         const mask = document.createElement("canvas"); mask.width = cw; mask.height = ch;
         const mx = mask.getContext("2d"), md = mx.createImageData(cw, ch);
         for (let i = 0; i < N; i++) if (reg[i]) md.data[i * 4 + 3] = 255;
         mx.putImageData(md, 0, 0);
         if (sh !== s) return;
-
-        // 먼저 모든 편집 요소를 투명 배경의 오버레이에 정확히 합성합니다.
-        const overlay = document.createElement("canvas"); overlay.width = s.nw; overlay.height = s.nh;
-        const ox = overlay.getContext("2d");
-        const allItems = outItems(s);
-        let seg = [];
-        const flushSeg = async () => {
-          if (!seg.length) return;
-          const batch = seg; seg = [];
-          let svg;
-          SKIPTXT = true;
-          try {
-            svg = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
-              '<svg xmlns="http://www.w3.org/2000/svg" style="color-scheme:light" width="' + s.nw + '" height="' + s.nh + '" viewBox="0 0 ' + s.W + ' ' + s.H + '" preserveAspectRatio="none" overflow="hidden">' +
-              batch.map(it => itemSvg(it, s.W, s.H, true)).join("") + '</svg>'
-            );
-          } finally { SKIPTXT = false; }
-          const vi = await loadI(svg);
-          if (sh !== s) return;
-          if (vi) ox.drawImage(vi, 0, 0, s.nw, s.nh);
-          paintTexts(ox, batch, s.nw / s.W, s.nh / s.H);
-        };
-        for (const it of allItems) {
-          if (it.t === "pic") {
-            await flushSeg();
-            if (sh !== s) return;
-            const pi = await loadI(it.src);
-            if (sh !== s) return;
-            if (!pi) continue;
-            const kx = s.nw / s.W, ky = s.nh / s.H;
-            ox.save(); ox.beginPath(); ox.rect(0, 0, s.nw, s.nh); ox.clip(); ox.globalAlpha = it.op;
-            if (xfOn(it)) {
-              const pc = xfC(it); ox.setTransform(kx, 0, 0, ky, 0, 0); ox.translate(pc[0], pc[1]);
-              if (rotOf(it)) ox.rotate(rotOf(it) * Math.PI / 180);
-              if (flipOf(it)) ox.scale(-1, 1);
-              ox.translate(-pc[0], -pc[1]);
-              ox.drawImage(pi, Math.min(it.x1, it.x2), Math.min(it.y1, it.y2), Math.abs(it.x2 - it.x1), Math.abs(it.y2 - it.y1));
-            } else ox.drawImage(pi, Math.min(it.x1, it.x2) * kx, Math.min(it.y1, it.y2) * ky, Math.abs(it.x2 - it.x1) * kx, Math.abs(it.y2 - it.y1) * ky);
-            ox.restore();
-          } else seg.push(it);
-        }
-        await flushSeg();
-        if (sh !== s) return;
-
-        // 원본 + 모든 편집 요소를 합친 다음, 선택 영역의 알파를 0으로 만듭니다.
-        const flat = document.createElement("canvas"); flat.width = s.nw; flat.height = s.nh;
-        const fx = flat.getContext("2d"); fx.drawImage(s.cv, 0, 0); fx.drawImage(overlay, 0, 0);
-        fx.save(); fx.globalCompositeOperation = "destination-out"; fx.drawImage(mask, 0, 0, s.nw, s.nh); fx.restore();
-
         pushUndo(true);
-        s.ctx.clearRect(0, 0, s.nw, s.nh); s.ctx.drawImage(flat, 0, 0);
-        // 요소를 남겨두면 투명 구멍 위에 다시 나타나므로, 합성 결과를 원본으로 고정합니다.
-        s.items = []; s.sel = -1; s.erased = true; s.alpha = true;
-        syncCtl(); render();
-        toast("선택 영역의 원본과 그 위의 모든 요소를 실제 투명하게 제거했어요"); return;
+        const bx = s.ctx; bx.save(); bx.globalCompositeOperation = "destination-out"; bx.drawImage(mask, 0, 0, s.nw, s.nh); bx.restore();
+        s.erased = true; s.alpha = true;
+        const oldPaint = s.items.find(q => q.paint), oldPic = oldPaint && PICS.get(oldPaint.pid);
+        if (oldPaint && oldPic) {
+          const im = await loadI(oldPic.url);
+          if (sh !== s) return;
+          if (im) {
+            const layer = document.createElement("canvas"); layer.width = im.naturalWidth || im.width; layer.height = im.naturalHeight || im.height;
+            const lx = layer.getContext("2d"); lx.drawImage(im, 0, 0, layer.width, layer.height);
+            lx.save(); lx.globalCompositeOperation = "destination-out"; lx.drawImage(mask, 0, 0, layer.width, layer.height); lx.restore();
+            oldPaint.pid = regPic(layer.toDataURL("image/png"));
+          }
+        }
+        render(); toast("선택 영역의 이미지와 기존 페인트 픽셀을 실제 투명하게 제거했어요"); return;
       }
       /* 4) 페인트 층에 합성 (같은 자리를 다시 칠하면 이전 색을 바꿔 넣음) */
       const pc = document.createElement("canvas"); pc.width = cw; pc.height = ch;
