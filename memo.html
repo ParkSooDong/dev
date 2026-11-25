@@ -18,6 +18,7 @@ header{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center
 .fbbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 #dbGrp{display:inline-flex;gap:4px;align-items:center}
 #dbGrp[hidden]{display:none}
+#dbPause[hidden]{display:none}
 .dbbtn{font-size:11px;padding:1px 9px}
 .dbbtn:disabled{opacity:.4;cursor:not-allowed}
 h1{font-size:17px;margin:0;letter-spacing:-.01em}
@@ -583,7 +584,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   height:25px !important; padding:2px 4px !important;
   text-align:center !important; font-variant-numeric:tabular-nums !important;
 }
-#tm .rm { display:inline-flex !important; align-items:center !important; white-space:nowrap !important; }
+#tm .rm { display:inline-flex !important; align-items:center !important; white-space:nowrap !important; gap:.4em !important; }
 #rem {
   display:inline-block !important;
   min-width:7.2ch !important; width:7.2ch !important;
@@ -591,10 +592,27 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   font-weight:700 !important; font-variant-numeric:tabular-nums !important;
   letter-spacing:0 !important; text-align:left !important;
 }
+/* 타이머: [타이머] 글자가 접기/펼치기 버튼. 펼치면 핑크 바탕이 오른쪽으로 열리고, 접으면 [타이머] 알약 버튼만 남아 [기본값으로 초기화] 왼쪽에 놓여요 */
+#tm { gap:0 !important; transition:background-color .3s, border-color .3s; }
+#tm .tmwrap { justify-content:flex-start !important; }
+#tm .tmin { display:flex; align-items:center; gap:14px; flex:none; padding:0 12px 0 10px; }
+#rem { width:auto !important; min-width:8.4ch !important; }   /* 22:13:15 처럼 8글자가 잘리지 않게 */
+#tm.pink #tmBtn { background:transparent !important; border-color:transparent !important; color:inherit !important; padding:0 !important; height:auto !important; min-height:0 !important; font-weight:700 !important; text-decoration:underline dotted; text-underline-offset:4px; cursor:pointer; }
+#tm.pink #tmBtn:hover { text-decoration-style:solid; }
+#tm:not(.pink) { background:transparent !important; border-color:transparent !important; padding:0 !important; }
+/* 뉴스 티커: 메모장 위 한 줄, 오른쪽에서 왼쪽으로 흘러요 */
+#newsTk{flex:none;position:relative;overflow:hidden;height:28px;border:1.5px solid var(--line);border-radius:8px;background:var(--card);font-size:13px;line-height:25px;white-space:nowrap}
+#newsTrack{position:absolute;left:0;top:0;display:inline-block;white-space:nowrap;will-change:transform;transform:translateX(100vw)}
+#newsTrack .ni{display:inline-block;margin-right:48px;color:inherit;text-decoration:none}
+#newsTrack a.ni:hover{text-decoration:underline}
+#newsTrack b{font-weight:700}
+#newsTrack .nm{color:var(--mute)}
+body.has-max #newsTk{display:none}
 </style>
 </head>
 <body>
-<header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
+<header><h1>메모장</h1><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
+<div id="newsTk" role="marquee" aria-label="최근 15분 이내 뉴스 헤드라인"><div id="newsTrack"></div></div>
 <div class="slot"><div class="pane" id="pane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
@@ -1345,7 +1363,7 @@ const IDLE_MS = 1500;        // 입력을 멈춘 뒤 DB 저장까지 기다리�
 const MAX_WAIT_MS = 30000;   // 계속 입력해도 이 시간이 지나면 한 번 저장
 const KEY = "memo-state";    // 이 PC(브라우저)에 저장되는 이름
 
-const ed1 = document.getElementById("memo"), st = document.getElementById("st"), fbBtn = document.getElementById("fbBtn"), dbGrp = document.getElementById("dbGrp"), dbBtns = Array.from(dbGrp.querySelectorAll(".dbbtn"));
+const ed1 = document.getElementById("memo"), st = document.getElementById("st"), fbBtn = document.getElementById("fbBtn"), dbGrp = document.getElementById("dbGrp"), dbBtns = Array.from(dbGrp.querySelectorAll(".dbbtn:not(.dbloc)"));
 makeRich(ed1);
 /* ===== 메모 영역 2분할: 위(memo) / 아래(memo2). 툴바는 하나이고, 마지막으로 클릭한 영역(ta)에 적용돼요 ===== */
 const ed2 = document.getElementById("memo2"), ed3 = document.getElementById("memo3"), EDS = [ed1, ed2, ed3];
@@ -1539,11 +1557,11 @@ function saveLocal() {
   catch (e) { if (!useFb) say("브라우저 저장 공간이 가득 차서 저장하지 못했어요. 이미지를 줄여 주세요", "err"); return false; }
 }
 function renderFb(){ if (window.refreshSplit) window.refreshSplit();
-  fbBtn.textContent = "Firebase Realtime Database " + (useFb ? "사용" : "미사용");
-  fbBtn.setAttribute("aria-pressed", String(useFb));
-  dbGrp.hidden = !useFb;   // DB1~3 버튼은 "사용"일 때만
+  fbBtn.setAttribute("aria-pressed", String(!useFb));   // [Local PC 사용] [DB1] [DB2] [DB3] 중 지금 쓰는 하나만 눌린 모양
+  dbGrp.hidden = false;
+  { const pb = document.getElementById("dbPause"); if (pb) pb.hidden = !useFb; }   // 저장 일시정지는 DB 를 쓸 때만
   dbBtns.forEach((b, i) => {
-    b.setAttribute("aria-pressed", String(i === dbIdx));
+    b.setAttribute("aria-pressed", String(useFb && i === dbIdx));
     b.disabled = !isSet(DB_URLS[i]);
     b.title = "DB" + (i + 1) + (b.disabled ? " — 주소가 설정되지 않았어요 (DB_URLS)" : " 로 전환");
   });
@@ -1729,7 +1747,20 @@ function setFb(on) {
   if (!dbSet) { say(needUrlMsg(), "err"); return; }
   say("불러오는 중…"); firstTry = true; connect();
 }
-fbBtn.addEventListener("click", () => setFb(!useFb));
+function pickDb(i) {   // 저장 위치 선택: i=-1 이면 Local PC, 0~2 이면 DB1~DB3 (넷 중 하나만 선택돼요)
+  if (switching) return;
+  if (i < 0) { if (useFb) setFb(false); return; }
+  if (!DB_URLS[i] || !isSet(DB_URLS[i])) return;
+  if (useFb) { switchDb(i); return; }                 // DB 사용 중 → 다른 DB 로 전환
+  if (i !== dbIdx) {                                  // Local PC 에서 DB 로: 대상 DB 의 주소·비밀번호로 맞춘 뒤 연결 (지금 메모는 그대로 두고, 연결할 때 DB 내용과 비교해요)
+    gen++; connecting = false; dbIdx = i; applyDb();
+    try { localStorage.setItem(DBSEL, String(i)); } catch (e) {}
+    pw = null; dbSalt = null; keyCache.clear();
+    try { pw = localStorage.getItem(pwKey()) || null; } catch (e) {}
+  }
+  setFb(true);
+}
+fbBtn.addEventListener("click", () => pickDb(-1));
 
 /* DB1/2/3 전환: 지금 DB 의 변경을 저장해 두고, 선택한 DB 의 주소·비밀번호·이 PC 사본으로 바꾼 뒤 다시 연결.
    선택한 번호는 이 PC 에 기억돼서 다음에 켜도 그 DB 로 시작해요 */
@@ -1756,7 +1787,7 @@ async function switchDb(i) {
   } finally { switching = false; }
   if (useFb && dbIdx === i) connect();
 }
-dbBtns.forEach((b, i) => b.addEventListener("click", () => switchDb(i)));
+dbBtns.forEach((b, i) => b.addEventListener("click", () => pickDb(i)));
 const dbPauseBtn = document.getElementById("dbPause");
 function syncPauseButton() { if (!dbPauseBtn) return; dbPauseBtn.setAttribute("aria-pressed", String(savePaused)); dbPauseBtn.textContent = savePaused ? "실시간 저장 재개" : "저장 일시정지"; dbPauseBtn.title = savePaused ? "누르면 실시간 저장을 다시 시작합니다" : "누르면 실시간 저장을 잠시 멈춥니다"; }
 syncPauseButton();
@@ -4103,7 +4134,8 @@ let imgBack = null;
   }
   const hintEl = el("div", "imgx-hint", "새 요소를 넣으려면 Shift 키를 누른 채 클릭하세요"); hintEl.hidden = true; document.body.appendChild(hintEl);
   let hintT = 0;
-  function showHint(x, y) {   // 커서 부근에 잠깐 보였다가 사라지는 안내
+  function showHint(x, y) {
+    if (window.matchMedia && window.matchMedia("(pointer:coarse), (hover:none)").matches) return;   // 모바일에는 Shift 키가 없으므로 안내를 보이지 않음   // 커서 부근에 잠깐 보였다가 사라지는 안내
     hintEl.hidden = false;
     hintEl.style.left = clamp(x + 14, 4, Math.max(4, innerWidth - hintEl.offsetWidth - 4)) + "px";
     hintEl.style.top = clamp(y + 18, 4, Math.max(4, innerHeight - hintEl.offsetHeight - 4)) + "px";
@@ -4243,7 +4275,7 @@ let imgBack = null;
     });
     wrap.addEventListener("pointerleave", () => { if (sh && !sh.drag) { sh.cur = null; drawCur(); } });
     syncCtl(); render(); drawCur(); place();
-    toast(mode === "fill" ? "페인트: 색과 투명도를 고른 뒤 칠할 곳을 클릭하세요. 클릭한 곳에서 시작해 글자·도형·선으로 막힌 범위가 칠해지고, 막히지 않은 쪽은 이미지 끝까지 칠해져요. 색이 마음에 안 들면 [실행 취소]로 되돌릴 수 있어요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "pic" ? "이미지 넣기: 이미지를 더 올리려면 [이미지 넣기]를 다시 누르거나 Ctrl+V·끌어다 놓기를 쓰세요. 올린 이미지는 끌어서 옮기고, 모서리를 끌면 비율을 유지한 채, 변을 끌면 가로·세로로 늘이고 줄여요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)"
+    if (!(window.matchMedia && window.matchMedia("(pointer:coarse), (hover:none)").matches && (mode === "text" || mode === "shape" || mode === "line"))) toast(mode === "fill" ? "페인트: 색과 투명도를 고른 뒤 칠할 곳을 클릭하세요. 클릭한 곳에서 시작해 글자·도형·선으로 막힌 범위가 칠해지고, 막히지 않은 쪽은 이미지 끝까지 칠해져요. 색이 마음에 안 들면 [실행 취소]로 되돌릴 수 있어요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "pic" ? "이미지 넣기: 이미지를 더 올리려면 [이미지 넣기]를 다시 누르거나 Ctrl+V·끌어다 놓기를 쓰세요. 올린 이미지는 끌어서 옮기고, 모서리를 끌면 비율을 유지한 채, 변을 끌면 가로·세로로 늘이고 줄여요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)"
       : mode === "edit" ? (tool === "lasso" ? "올가미: 지울 글자·도형·선을 감싸듯 끌어서 그리면, 걸친 요소가 모두 삭제돼요" : "지우개: 이미지 위를 끌어서 원본 이미지를 지워요. 굵기는 지우개 옆에서 골라요")
       : mode === "text" ? "글자: 이미지 위를 클릭해 놓고 글자를 입력하세요. 연필 아이콘은 마우스나 펜으로 직접 글씨를 써요. 말풍선은 꼬리 손잡이를 끌어 방향을 정해요 (고른 아이콘은 유지돼요. 기존 요소 위에 새로 넣으려면 Shift를 누른 채 클릭하세요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "line" ? "아이콘을 고른 뒤 이미지 위를 클릭하세요. 손잡이를 끌면 위치를 옮길 수 있어요 (고른 아이콘은 유지돼요. 기존 요소 위에 새로 넣으려면 Shift를 누른 채 클릭하세요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : "아이콘을 고른 뒤 이미지 위를 클릭하거나 끌어서 넣으세요 (자유형 도형: 점을 차례로 클릭하고 더블클릭으로 마침. 고른 아이콘은 유지돼요. 기존 요소 위에 새로 넣으려면 Shift를 누른 채 클릭하세요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)");
   }
@@ -7297,9 +7329,10 @@ let resetting=false;
 (function(){
   const $=id=>document.getElementById(id);
   const tt=$("tt"),rem=$("rem");
-  const box=$("tm"),wrap=$("tmw"),tbn=$("tmBtn");let on=TIMER_ON;
+  const outer=$("tm"),box=$("tmin"),wrap=$("tmw"),tbn=$("tmBtn");let on=TIMER_ON,pinkT=0;
   function setOn(v,anim){
-    on=v;tbn.setAttribute("aria-pressed",String(v));box.setAttribute("aria-hidden",String(!v));
+    on=v;tbn.setAttribute("aria-expanded",String(v));box.setAttribute("aria-hidden",String(!v));
+    clearTimeout(pinkT);if(v||!anim)outer.classList.toggle("pink",v);else pinkT=setTimeout(()=>outer.classList.remove("pink"),300);   /* 접을 때는 줄어든 뒤 핑크 바탕을 걷어요 */
     wrap.classList.toggle("off",!v);
     if(!anim){wrap.style.width=v?"auto":"0px";return}
     const w=box.offsetWidth+"px";
@@ -7342,6 +7375,113 @@ let resetting=false;
     requestAnimationFrame(tick);
   }
   tick();
+})();
+
+/* ===== 뉴스 티커: 최근 10분 이내 기사 (시각·제목) 를 5분마다 조회해 오른쪽→왼쪽으로 160px/초 로 흘려요 ===== */
+(function(){
+  const SOURCES=[
+    {name:"연합뉴스",url:"https://www.yna.co.kr/rss/news.xml"},
+    {name:"인포맥스",url:"https://news.einfomax.co.kr/rss/allArticle.xml"}
+  ];
+  /* RSS 는 다른 사이트라 브라우저가 바로 못 읽는 경우가 많아서, 막히면 아래 중계 주소를 차례로 써요 (직접 만든 중계 주소가 있으면 맨 앞에 넣으세요) */
+  const PROXIES=[
+    u=>u,
+    u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),
+    u=>"https://corsproxy.io/?url="+encodeURIComponent(u),
+    u=>"https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(u)
+  ];
+  const WINDOW_MS=15*60*1000, POLL_MS=5*60*1000, SPEED=160, MAX_ITEMS=100;   /* 15분 이내 / 5분마다 / 초당 160px / 최대 100개 */
+  const tk=document.getElementById("newsTk"),track=document.getElementById("newsTrack");
+  if(!tk||!track)return;
+  const bySrc={},okOnce={};let lastLoad=0,loaded=false,placeholder=true,shown=new Set();   /* shown: 지금 흐르는 기사들 */
+  const goodProxy={};
+  const dec=t=>{const a=document.createElement("textarea");a.innerHTML=t;return a.value};
+  const hhmm=t=>{const d=new Date(t+9*3600000);return String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0")};   /* 한국 시각 */
+  function parseTime(s){
+    if(!s)return NaN;s=s.trim();
+    const t=Date.parse(s);
+    if(!isNaN(t)&&/([+-]\d{2}:?\d{2}|GMT|UTC|Z)\s*$/i.test(s))return t;
+    const m=/(\d{4})[-./](\d{1,2})[-./](\d{1,2})[ T]+(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(s);   /* 시간대 표시가 없으면 한국 시각으로 */
+    if(m)return Date.UTC(+m[1],+m[2]-1,+m[3],+m[4]-9,+m[5],+(m[6]||0));
+    return t;
+  }
+  function parseFeed(xml,name){
+    const doc=new DOMParser().parseFromString(xml,"text/xml");
+    if(doc.querySelector("parsererror"))throw new Error("xml");
+    const out=[];
+    doc.querySelectorAll("item,entry").forEach(n=>{
+      const g=tag=>{const e=n.getElementsByTagName(tag)[0];return e?e.textContent:""};
+      const title=dec(g("title")).replace(/\s+/g," ").trim();
+      let ts=NaN;for(const tg of ["pubDate","dc:date","published","updated","date"]){ts=parseTime(g(tg));if(!isNaN(ts))break}
+      let link=g("link").trim();if(!link){const l=n.getElementsByTagName("link")[0];link=l?(l.getAttribute("href")||""):""}
+      if(title&&!isNaN(ts))out.push({src:name,t:ts,title,link:/^https?:\/\//i.test(link)?link:""});
+    });
+    return out;
+  }
+  async function getText(url,i){
+    const ac=new AbortController(),to=setTimeout(()=>ac.abort(),12000);
+    try{
+      const r=await fetch(PROXIES[i](url),{cache:"no-store",signal:ac.signal});
+      if(!r.ok)throw new Error("http "+r.status);
+      const buf=await r.arrayBuffer();
+      const head=new TextDecoder("latin1").decode(buf.slice(0,200)),m=/encoding=["']([\w-]+)["']/i.exec(head);
+      let txt;try{txt=new TextDecoder(m?m[1]:"utf-8").decode(buf)}catch(e){txt=new TextDecoder("utf-8").decode(buf)}
+      if(!/<(rss|feed|rdf)/i.test(txt))throw new Error("not rss");   /* 중계 서버의 오류 안내 화면 등은 버려요 */
+      return txt;
+    }finally{clearTimeout(to)}
+  }
+  async function loadSource(src){
+    const first=goodProxy[src.name]||0,order=[first,...PROXIES.map((_,i)=>i).filter(i=>i!==first)];
+    for(const i of order){
+      try{const items=parseFeed(await getText(src.url,i),src.name);goodProxy[src.name]=i;bySrc[src.name]=items;okOnce[src.name]=true;return}
+      catch(e){}
+    }
+  }
+  async function load(){
+    lastLoad=Date.now();
+    await Promise.all(SOURCES.map(loadSource));
+    loaded=true;
+    const fresh=visible().some(it=>!shown.has(it.src+"|"+it.title));   /* 이번 조회로 새로 나타난 기사가 있는지 */
+    if(placeholder||fresh)restart();   /* 안내 문구가 흐르는 중이거나 새 기사가 있으면, 새 기사부터 처음부터 다시 흘려요 */
+  }
+  function visible(){
+    const now=Date.now(),seen=new Set(),out=[];
+    Object.values(bySrc).flat().forEach(it=>{
+      const age=now-it.t;if(age>WINDOW_MS||age<-60000)return;   /* 현재 시각 기준 15분 이내만 */
+      const k=it.src+"|"+it.title;if(seen.has(k))return;seen.add(k);out.push(it);
+    });
+    return out.sort((a,b)=>b.t-a.t).slice(0,MAX_ITEMS);   /* 최신순 100개까지 */
+  }
+  function render(){
+    track.textContent="";
+    const items=visible();placeholder=!items.length;shown=new Set(items.map(it=>it.src+"|"+it.title));
+    if(placeholder){
+      const sp=document.createElement("span");sp.className="ni nm";
+      sp.textContent=!loaded?"뉴스를 불러오는 중…":Object.keys(okOnce).length?"최근 15분 이내 새 기사가 없어요":"뉴스를 불러오지 못했어요. 잠시 후 다시 시도해요";
+      track.appendChild(sp);return;
+    }
+    items.forEach(it=>{
+      const a=document.createElement(it.link?"a":"span");a.className="ni";
+      if(it.link){a.href=it.link;a.target="_blank";a.rel="noopener noreferrer"}
+      const b=document.createElement("b");b.textContent=it.src;
+      a.append("[",b," "+hhmm(it.t)+" "+it.title+"]");   /* [연합뉴스 17:46 기사 제목] */
+      track.appendChild(a);
+    });
+  }
+  let x=0,tw=0,last=0,paused=false;
+  function restart(){render();tw=track.offsetWidth;x=tk.clientWidth;track.style.transform="translateX("+x+"px)"}
+  function frame(ts){
+    if(last){
+      const dt=Math.min(ts-last,100)/1000;
+      if(!paused&&!document.hidden){x-=SPEED*dt;if(x<-tw)restart();else track.style.transform="translateX("+x+"px)"}
+    }
+    last=ts;requestAnimationFrame(frame);
+  }
+  tk.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")paused=true});   /* 마우스를 올리면 멈춰서 읽거나 클릭할 수 있어요 */
+  tk.addEventListener("pointerleave",()=>{paused=false});
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()-lastLoad>POLL_MS)load()});
+  restart();requestAnimationFrame(frame);
+  load();setInterval(load,POLL_MS);
 })();
 
 /* ===== 비교: 위 메모(원본)를 기준으로 아래 메모(변경본)와 다른 곳을 찾아요 =====
