@@ -5497,6 +5497,11 @@ onEd("click", e => {
      위에 자리가 없으면 표·편집 막대 아래, 그래도 없으면 화면 아래쪽 편집 막대 바로 위에 쌓아요 */
   function placeInfo() {
     if (INFO.hidden) return;
+    /* 위치를 잴 때 잠깐 max-height를 풀면 스크롤 위치가 0 쪽으로 눌려 버려요 → 재기 전 위치를 기억했다가 되돌려요 */
+    const keepTop = INFO.classList.contains("cfmin") ? null : INFO.scrollTop;
+    try { placeInfo0(); } finally { if (keepTop != null && INFO.scrollTop !== keepTop) INFO.scrollTop = keepTop; }
+  }
+  function placeInfo0() {
     const tb = document.getElementById("tbar"), M = 8, GAP = 6, MINH = 110;
     const tab = multi && multi.a.isConnected ? multi.a.closest("table") : null;
     const tr = tab ? tab.getBoundingClientRect() : null;
