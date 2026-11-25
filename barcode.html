@@ -136,6 +136,7 @@ button:disabled{opacity:.35;cursor:default}
 .imgx-tgrip{position:absolute;left:-22px;top:-2px;width:20px;height:20px;border-radius:5px;background:#339af0;color:#fff;font-size:13px;line-height:20px;text-align:center;cursor:move;touch-action:none;user-select:none}
 .imgx-box[hidden],.imgx-bar[hidden],.imgx-row[hidden]{display:none}
 .imgx-ov{position:fixed;z-index:109;display:block;overflow:hidden;touch-action:none;cursor:crosshair;background:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0) 0 0/16px 16px}
+img[data-alpha-view="1"]{background-color:transparent!important;background-image:conic-gradient(#cfcfcf 25%,#fff 0 50%,#cfcfcf 0 75%,#fff 0)!important;background-size:16px 16px!important;background-position:0 0!important}
 .imgx-ov.er{cursor:none}
 .imgx-ov>canvas,.imgx-ov>svg{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
 .imgx-bar textarea{width:150px;height:44px;margin:0;padding:4px 6px;font:inherit;font-size:13px;line-height:1.3;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);resize:none}
@@ -4329,7 +4330,7 @@ let imgBack = null;
       if (sh !== mine) return;
       mine.nw = cv.width = bi.naturalWidth; mine.nh = cv.height = bi.naturalHeight;
       const x = mine.ctx = cv.getContext("2d", { willReadFrequently: true });
-      x.drawImage(bi, 0, 0); mine.alpha = hasAlpha(x, cv.width, cv.height); mine.ready = true;
+      x.drawImage(bi, 0, 0); mine.alpha = hasAlpha(x, cv.width, cv.height); if (mine.alpha) img.setAttribute("data-alpha-view", "1"); else img.removeAttribute("data-alpha-view"); mine.ready = true;
     };
     bi.onerror = () => { if (sh === mine) { closeShp(); toast("이미지를 읽지 못했어요"); } };
     bi.src = mine.baseUrl;
@@ -4427,11 +4428,12 @@ let imgBack = null;
     else if (a === "vitems") { sh.showItems = !sh.showItems; setP(b, sh.showItems); if (!sh.showItems) sh.sel = -1; syncCtl(); render(); }
   }
   /* 이미지의 레이어 상태: 화면에 보이는 그림(src, 합성본) + 원본(data-base) + 추가 요소(data-layers) */
-  const stateOf = t => ({ src: t.src, base: t.getAttribute("data-base"), layers: t.getAttribute("data-layers"), w: t.getAttribute("width"), h: t.getAttribute("height") });
+  const stateOf = t => ({ src: t.src, base: t.getAttribute("data-base"), layers: t.getAttribute("data-layers"), w: t.getAttribute("width"), h: t.getAttribute("height"), alphaView: t.getAttribute("data-alpha-view") });
   function putState(t, st) {
     t.src = st.src;
     if (st.base) t.setAttribute("data-base", st.base); else t.removeAttribute("data-base");
     if (st.layers) t.setAttribute("data-layers", st.layers); else t.removeAttribute("data-layers");
+    if (st.alphaView === "1") t.setAttribute("data-alpha-view", "1"); else t.removeAttribute("data-alpha-view");
     if ("w" in st) { if (st.w) t.setAttribute("width", st.w); else t.removeAttribute("width"); if (st.h) t.setAttribute("height", st.h); else t.removeAttribute("height"); }
   }
   /* 그림 → 데이터 주소. 투명한 부분(지운 곳)이 있으면 투명도를 지원하는 형식으로, 너무 크면 줄여서 저장 */
@@ -4487,7 +4489,7 @@ let imgBack = null;
       if (bc.width !== nw && r0 > 0 && !target.getAttribute("width")) target.setAttribute("width", Math.round(r0));   // 용량 때문에 줄였어도 보이는 크기는 그대로
       say("이미지에 반영했어요", "ok"); fire(); sched(); return true;
     };
-    if (!items.length) return Promise.resolve(finish({ src: base, base: null, layers: null }));   // 추가 요소가 없으면 레이어 정보도 없앰
+    if (!items.length) return Promise.resolve(finish({ src: base, base: null, layers: null, alphaView: alpha ? "1" : null }));   // 추가 요소가 없으면 레이어 정보도 없앰
     const loadI = u => new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = u; });
     const segSvg = arr => { SKIPTXT = true; try { return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" style="color-scheme:light" width="' + bc.width + '" height="' + bc.height + '" viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="none" overflow="hidden">' + arr.map(it => itemSvg(it, W, H, true)).join("") + "</svg>"); } finally { SKIPTXT = false; } };
     return (async () => {   // 올린 이미지는 SVG 안에 넣으면 합성에서 빠질 수 있어서 캔버스에 직접 그려요 (바탕 밖은 잘림)
@@ -4514,7 +4516,7 @@ let imgBack = null;
       await flush();
       let enc; try { enc = encodeCv(c, alpha); } catch (e) { toast("이 이미지에는 적용할 수 없어요"); return false; }
       if (enc.c.width < bc.width) bc = enc.c;
-      return finish({ src: enc.url, base, layers: JSON.stringify({ W, H, items }) });
+      return finish({ src: enc.url, base, layers: JSON.stringify({ W, H, items }), alphaView: alpha ? "1" : null });
     })();
   }
   /* Esc: [선택 해제] 아이콘과 같음 (반영 + 아이콘 해제). 반영할 것도 고른 아이콘도 없으면 편집 화면을 닫음 */
