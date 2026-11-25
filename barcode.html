@@ -678,7 +678,11 @@ main>.lbl .edwrap.cmpm .cmphd{background:var(--mz)}
 @media (min-width:561px) and (max-width:1279px){main>.lbl{background:none;border-width:2px 0 0;border-radius:0;padding:10px 0 0}}
 /* 좁은 화면(모바일): 좌우 여백을 늘리면 가로폭이 넘치므로, 배경색 + 위·아래 굵은 선으로만 나눠요 */
 @media (max-width:560px){main>.lbl{border-width:2px 0;border-radius:0;padding:8px 0 10px}}
-</style>
+#dbGrp .dbbtn[aria-pressed="true"]{background:#174ea6!important;color:#fff!important;border:2px solid #0b2f6f!important;box-shadow:0 0 0 2px rgba(23,78,166,.25);font-weight:800;transform:scale(1.06)}
+#dbGrp .dbbtn{min-width:42px;min-height:30px;font-weight:600}
+#dbPause{font-size:11px;padding:3px 8px}
+#dbPause[aria-pressed="true"]{background:#b42318!important;color:#fff!important;border-color:#8f1d14!important;font-weight:800}
+#tm,#tmBtn,.rm{font-size:80%!important}#tm label,#tm input{font-size:80%}#dbGrp .dbbtn[aria-pressed="true"]{background:#174ea6!important;color:#fff!important;border:2px solid #0b2f6f!important;box-shadow:0 0 0 2px rgba(23,78,166,.25);font-weight:800;transform:scale(1.06)}#dbGrp .dbbtn{min-width:42px;min-height:30px;font-weight:700}#dbPause{font-size:11px;padding:3px 8px}#dbPause[aria-pressed="true"]{background:#b42318!important;color:#fff!important;border-color:#8f1d14!important;font-weight:800}</style>
 <style id="tbl-tight-css">
 /* 표 도구(표 편집 막대)·표 요약의 줄 간격을 글자가 겹치지 않는 선까지 촘촘하게 */
 .tbar{gap:1px;padding:2px}
@@ -791,7 +795,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 <label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
 </div>
 <div class="grid" id="g"></div>
-<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><span id="dbCtl"><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button></span></span><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
+<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><span id="dbCtl"><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span></span><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
   <button type="button" data-cmd="redo" title="다시 실행 (Ctrl+Y)" aria-label="다시 실행"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
@@ -1242,7 +1246,7 @@ function makeRich(el) {
      ※ 빈 목록/제목(글자가 없어도 서식을 막 켠 상태)이 "빈 메모"로 오해돼 지워지지 않도록 ul,ol,h1~h3 도 내용으로 취급 */
   Object.defineProperty(el, "value", {
     get() { return (!el.querySelector("img,table,ul,ol,h1,h2,h3,hr,pre,blockquote") && !el.textContent.replace(/\u200b/g, "").trim()) ? "" : RICH_PREFIX + rawHtml(); },
-    set(v) { v = String(v || ""); el.innerHTML = v.startsWith(RICH_PREFIX) ? clean(v.slice(RICH_PREFIX.length)) : esc(v).replace(/\r?\n/g, "<br>"); if (window.cfHistReset) window.cfHistReset(el); }
+    set(v) { v = String(v || ""); el.innerHTML = v.startsWith(RICH_PREFIX) ? clean(v.slice(RICH_PREFIX.length)) : (v ? esc(v).replace(/\r?\n/g, "<br>") : "<br>"); if (window.cfHistReset) window.cfHistReset(el); }
   });
   Object.defineProperty(el, "disabled", {
     get() { return el.contentEditable !== "true"; },
@@ -1255,7 +1259,8 @@ function makeRich(el) {
   /* 글자를 다 지우면 남는 찌꺼기(<br> 하나 등)만 비워서 안내 문구(placeholder)가 다시 보이게 함
      ※ 예전에는 글자가 없으면 무조건 비워서, 빈 메모에서 Enter 로 만든 빈 줄도 바로 지워졌어요 */
   el.addEventListener("input", () => {
-    if (el.value === "" && /^(<br>|<div><br><\/div>|<p><br><\/p>)?$/i.test(rawHtml().trim())) el.innerHTML = "";
+    /* 빈 편집면의 <br> 앵커를 유지해 한글 IME 첫 음절이 앞에 분리되는 현상을 방지 */
+    if (el.value === "" && !el.firstChild) el.innerHTML = "<br>";
   });
 
   /* 이미지 → 가로 1600px 이하로 줄여서 data URL 로 (저장 용량 절약) */
@@ -1802,7 +1807,7 @@ const dbName=()=>"DB"+(dbIdx+1);
 const needUrlMsg=()=>dbName()+" 주소(DB_URLS)를 먼저 설정해 주세요";
 const stashKey=i=>"bc9-dbmemo-"+(i+1);   /* 지금 선택되지 않은 DB 의 이 PC 메모 사본 보관 칸 (지금 DB 의 사본은 기존 bc9-state 에 그대로 저장) */
 let gen=0,switching=false;   /* gen: DB 를 바꾸면 올라가는 번호 (바꾸기 전 DB 의 진행 중 작업을 버리기 위함) */
-const memoEl=$("memo"),mst=$("mst"),fbBtn=$("fbBtn"),dbGrp=$("dbGrp"),dbBtns=Array.from(dbGrp.querySelectorAll("button"));
+const memoEl=$("memo"),mst=$("mst"),fbBtn=$("fbBtn"),dbGrp=$("dbGrp"),dbBtns=Array.from(dbGrp.querySelectorAll(".dbbtn"));
 
 /* ===== DB 저장 크기(바이트) 표시 =====
    Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 크기(UTF-8 바이트)를 한도(MAX_BYTES)와 함께 보여줘요.
@@ -1822,7 +1827,7 @@ function updateCnt() {
 let cntDelay = 250;
 observeEds(() => { if (!cntT) cntT = setTimeout(updateCnt, cntDelay); }, { childList: true, subtree: true, characterData: true, attributes: true });
 updateCnt();
-let useFb=false,dirty=false,knownAt=0,ready=false,saving=false,again=false,connecting=false,firstTry=false,idleT=null,maxT=null;
+let useFb=false,dirty=false,knownAt=0,ready=false,saving=false,again=false,connecting=false,firstTry=false,idleT=null,maxT=null,savePaused=false;
 const hhmm=()=>new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});
 const say=(t,c)=>{mst.textContent=t;mst.className=c||""};
 const localNote=()=>say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
@@ -1832,7 +1837,7 @@ function renderFb(){ try { if (window.refreshSplit) window.refreshSplit(); } cat
   dbBtns.forEach((b,i)=>{b.setAttribute("aria-pressed",String(i===dbIdx));b.disabled=!isSet(DB_URLS[i]);b.title="DB"+(i+1)+(b.disabled?" — 주소가 설정되지 않았어요 (DB_URLS)":" 로 전환")});
 }
 function clearTimers(){clearTimeout(idleT);clearTimeout(maxT);idleT=maxT=null}
-function schedule(){clearTimeout(idleT);idleT=setTimeout(saveRemote,IDLE_MS);if(!maxT)maxT=setTimeout(saveRemote,MAX_WAIT_MS)}
+function schedule(){if(savePaused)return;clearTimeout(idleT);idleT=setTimeout(saveRemote,400);if(!maxT)maxT=setTimeout(saveRemote,5000)}
 /* ===== 암호화: 비밀번호 → PBKDF2(SHA-256, 250000회) → AES-GCM 256. DB 에는 암호문만 올라가고 비밀번호는 저장하지 않아요 ===== */
 const pwKey = () => dbIdx === 0 ? "memo-pw" : "memo-pw-" + (dbIdx + 1);   // 비밀번호는 DB 마다 따로 이 PC(브라우저)에 기억해요 (memo 파일과 같은 이름이라 서로 공유): 처음 한 번만 묻고, 틀리면 다시 물어요
 let pw = null, dbSalt = null;
@@ -1901,9 +1906,9 @@ async function unlock(d) {
 function fetchT(u,o,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||20000);return fetch(u,Object.assign({},o,{signal:c.signal})).finally(()=>clearTimeout(t))}   /* 응답이 없으면 20초 뒤 포기하고 다시 시도 */
 async function fetchRemote(){const r=await fetchT(URL_MEMO,{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}  /* null 또는 {enc,salt,iv,ct,updatedAt} (구버전: {text,updatedAt}) */
 
-async function saveRemote(unloading){
+async function saveRemote(unloading,force){
   clearTimers();
-  if(!useFb||!ready||!dirty)return;
+  if(!useFb||!ready||!dirty||(savePaused&&!force&&unloading!==true))return;
   if(saving){again=true;return}
   const v=memoAll.value;
   if(utf8Len(v)*4/3>MAX_BYTES){say("메모가 너무 커서 DB에 저장할 수 없어요. 이미지·첨부 파일을 줄여 주세요","err");return}   /* 암호문(base64)은 약 1.33배 */
@@ -2021,13 +2026,14 @@ async function switchDb(i){
   if(useFb&&dbIdx===i)connect();
 }
 dbBtns.forEach((b,i)=>b.addEventListener("click",()=>switchDb(i)));
+const dbPauseBtn=$("dbPause"); if(dbPauseBtn)dbPauseBtn.addEventListener("click",()=>{savePaused=!savePaused;dbPauseBtn.setAttribute("aria-pressed",String(savePaused));dbPauseBtn.textContent=savePaused?"실시간 저장 재개":"저장 일시정지";dbPauseBtn.title=savePaused?"누르면 실시간 저장을 다시 시작합니다":"실시간 저장을 잠시 멈춥니다";if(savePaused){clearTimers();say("자동 저장 일시정지 · Ctrl+S로 지금 저장")}else if(dirty){say("저장 대기 중…");schedule()}});
 onEd("input",()=>{
-  if(useFb){dirty=true;if(ready){say(saving?"저장 중… (이후 변경은 이어서 저장해요)":"저장 대기 중…");schedule()}}
+  if(useFb){dirty=true;if(ready){say(savePaused?"자동 저장 일시정지 · Ctrl+S로 지금 저장":saving?"저장 중… (이후 변경은 이어서 저장해요)":"저장 대기 중…");schedule()}}
   clearTimeout(stT);stT=setTimeout(saveState,300);   /* 이 PC 사본은 입력을 멈추면 바로 저장 */
 });
 let stT=null;
-window.addEventListener("blur",()=>{if(useFb&&ready&&dirty&&!saving)saveRemote()});   /* 다른 창·탭으로 옮기면 바로 저장 */
-document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey&&(e.key==="s"||e.key==="S")&&useFb){e.preventDefault();if(dirty)saveRemote()}});
+window.addEventListener("blur",()=>{if(useFb&&ready&&dirty&&!saving&&!savePaused)saveRemote()});   /* 다른 창·탭으로 옮기면 바로 저장 */
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey&&(e.key==="s"||e.key==="S")&&useFb){e.preventDefault();if(dirty)saveRemote(false,true)}});
 setInterval(()=>{if(useFb&&dbSet)ready?poll():connect()},POLL_MS);
 document.addEventListener("visibilitychange",()=>{if(!useFb)return;if(document.hidden){if(dirty)saveRemote(true)}else poll()});
 window.addEventListener("focus",poll);
@@ -2824,7 +2830,7 @@ let imgBack = null;
   const shp = el("div", "imgx-row",
     '<button type="button" class="ic" data-m="text" data-s="ctext" aria-label="ctext" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 8V5.5h12V8M12 5.5V19M9 19h6"/></svg></button><button type="button" class="ic" data-m="text" data-s="hand" aria-label="손글씨" title="손글씨: 마우스나 펜으로 이미지 위에 자유롭게 글씨를 써요" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button><button type="button" class="ic" data-m="text" data-s="cround" aria-label="cround" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7l-4 4v-4H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></button><button type="button" class="ic" data-m="text" data-s="coval" aria-label="coval" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4C7 4 3 7 3 11s4 7 9 7c1 0 2-.1 3-.4L19 21l-1-4.2C20 15.7 21 13.5 21 11c0-4-4-7-9-7z"/></svg></button><button type="button" class="ic" data-m="text" data-s="cthink" aria-label="cthink" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 14.5a3.2 3.2 0 0 1-.4-6.3 4.5 4.5 0 0 1 8.6-1A3.6 3.6 0 0 1 17.5 14.5z"/><circle cx="7" cy="18" r="1.4"/><circle cx="4.5" cy="21" r=".9"/></svg></button><button type="button" class="ic" data-m="shape" data-s="rect" aria-label="rect" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button><button type="button" class="ic" data-m="shape" data-s="circle" aria-label="circle" aria-pressed="false"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8.5" ry="6"/></svg></button><button type="button" class="ic" data-m="shape" data-s="tri" aria-label="tri" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5L20 19H4z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="poly" aria-label="poly" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 9L11 4l8 5-3 10-9-2z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="free" aria-label="free" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 16C6 6 10 6 12 12s6 6 8-4"/></svg></button><button type="button" class="ic" data-m="shape" data-s="cloud" aria-label="cloud" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7.5 18a3.5 3.5 0 0 1-.4-7 5 5 0 0 1 9.6-1.2A4 4 0 0 1 17 18z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="heart" aria-label="heart" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 19.5C5.5 15 4 11.8 4 9a3.7 3.7 0 0 1 8-1.3A3.7 3.7 0 0 1 20 9c0 2.8-1.5 6-8 10.5z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="star" aria-label="star" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 4.5l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.7z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="burst" aria-label="burst" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3.5l1.9 4.3 3.9-2.6-.4 4.7 4.6.5-3.2 3.4 3 3.7-4.6.2.3 4.6-4-2.4-3.5 3-.8-4.6-4.5.9 1.8-4.4-3.8-2.9 4.7-.9-1.4-4.5 4 2.3z"/></svg></button><button type="button" class="ic" data-m="shape" data-s="clover" aria-label="clover" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 5.7A4.5 4.5 0 1 1 18.3 12A4.5 4.5 0 1 1 12 18.3A4.5 4.5 0 1 1 5.7 12A4.5 4.5 0 1 1 12 5.7z"/></svg></button><button type="button" class="ic" data-m="line" data-s="trend" aria-label="trend" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 18L19 6"/></svg></button><button type="button" class="ic" data-m="line" data-s="vline" aria-label="vline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18"/></svg></button><button type="button" class="ic" data-m="line" data-s="hline" aria-label="hline" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12h18"/></svg></button><button type="button" class="ic" data-m="line" data-s="cross" aria-label="cross" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke-dasharray="3 2"/></svg></button><button type="button" class="ic" data-m="line" data-s="arrow" aria-label="arrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20L19 5"/><path d="M10 5h9v9"/></svg></button><button type="button" class="ic" data-m="line" data-s="darrow" aria-label="darrow" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M6 18L18 6"/><path d="M6 11v7h7"/><path d="M11 6h7v7"/></svg></button><i class="sep" data-m="text shape line"></i>' +
     '' +
-    '<button type="button" data-m="fill" data-sa="pmenu" title="페인트 색: 바탕을 칠할 색을 고르고 투명 비율을 슬라이드바로 정해요. 색을 바꾸면 글자·도형·선 넣기의 기본 색은 보색으로 바뀌어요">페인트 색 <i data-pchip style="display:inline-block;width:12px;height:12px;vertical-align:-1px;border:1px solid #888;border-radius:2px;background:#fff3a3"></i></button><input type="color" data-q="color" data-m="text shape line" value="#2b8a3e" title="색 (글자·도형·선 공통)" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><span hidden data-m="none"><input type="number" data-q="fs" value="15" tabindex="-1" aria-hidden="true"><input type="range" data-q="fsr" min="5" max="300" value="15" tabindex="-1" aria-hidden="true"></span><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><input type="color" data-m="none" data-q="bg" value="#fff3a3" hidden aria-hidden="true" tabindex="-1"><button type="button" data-m="text shape" data-sa="bgmenu" title="배경색: 색을 고르고 투명 비율을 슬라이드바로 정해요">배경색</button><select data-q="op" data-m="none" hidden aria-hidden="true" tabindex="-1" title="투명도" aria-label="투명도"></select><label class="imgx-sl" data-m="line pic" title="투명도: 0%는 불투명, 올릴수록 투명해져요 (선택한 요소·이미지에 바로 적용돼요)">투명도 <input type="range" data-q="pop" min="0" max="95" step="1" value="0" aria-label="투명도"><input type="number" data-q="pn" min="0" max="95" step="1" value="0" aria-label="투명도 숫자 입력" title="숫자로 입력하고 Enter (0~95)">%</label><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><input type="color" data-m="text" data-q="oc" value="#000000" title="외곽선 색 (고르면 외곽선이 켜져요)" aria-label="외곽선 색"><input type="number" data-m="text shape pic" data-q="rot" step="1" placeholder="각도°" title="각도 (0~359도, 계속 순환): 359 다음은 0, 0 아래는 359예요. 요소 전체가 이 각도만큼 시계 방향으로 기울어요" aria-label="각도"><button type="button" data-m="text shape pic" data-q="fh" aria-pressed="false" title="요소 전체를 좌우로 뒤집어요">좌우 반전</button>' +
+    '<button type="button" data-m="fill" data-sa="pmenu" hidden title="페인트 색: 바탕을 칠할 색을 고르고 투명 비율을 슬라이드바로 정해요. 색을 바꾸면 글자·도형·선 넣기의 기본 색은 보색으로 바뀌어요">페인트 색 <i data-pchip style="display:inline-block;width:12px;height:12px;vertical-align:-1px;border:1px solid #888;border-radius:2px;background:#fff3a3"></i></button><input type="color" data-q="color" data-m="text shape line" value="#2b8a3e" title="색 (글자·도형·선 공통)" aria-label="색"><select data-q="lw" data-m="text shape line" title="선 굵기" aria-label="선 굵기"><option value="2">가늘게</option><option value="3" selected>보통</option><option value="5">굵게</option><option value="8">아주 굵게</option></select><span hidden data-m="none"><input type="number" data-q="fs" value="15" tabindex="-1" aria-hidden="true"><input type="range" data-q="fsr" min="5" max="300" value="15" tabindex="-1" aria-hidden="true"></span><button type="button" data-m="shape line" data-q="dash" aria-pressed="false" title="점선">점선</button><input type="color" data-m="none" data-q="bg" value="#fff3a3" hidden aria-hidden="true" tabindex="-1"><button type="button" data-m="text shape" data-sa="bgmenu" title="배경색: 색을 고르고 투명 비율을 슬라이드바로 정해요">배경색</button><select data-q="op" data-m="none" hidden aria-hidden="true" tabindex="-1" title="투명도" aria-label="투명도"></select><label class="imgx-sl" data-m="line pic" title="투명도: 0%는 불투명, 올릴수록 투명해져요 (선택한 요소·이미지에 바로 적용돼요)">투명도 <input type="range" data-q="pop" min="0" max="95" step="1" value="0" aria-label="투명도"><input type="number" data-q="pn" min="0" max="95" step="1" value="0" aria-label="투명도 숫자 입력" title="숫자로 입력하고 Enter (0~95)">%</label><button type="button" data-m="text" data-q="ol" aria-pressed="false" title="글자 둘레에 외곽선">외곽선</button><input type="color" data-m="text" data-q="oc" value="#000000" title="외곽선 색 (고르면 외곽선이 켜져요)" aria-label="외곽선 색"><input type="number" data-m="text shape pic" data-q="rot" step="1" placeholder="각도°" title="각도 (0~359도, 계속 순환): 359 다음은 0, 0 아래는 359예요. 요소 전체가 이 각도만큼 시계 방향으로 기울어요" aria-label="각도"><button type="button" data-m="text shape pic" data-q="fh" aria-pressed="false" title="요소 전체를 좌우로 뒤집어요">좌우 반전</button>' +
     '<textarea data-q="text" rows="2" placeholder="글자 입력" aria-label="글자" hidden></textarea>');
   shp.hidden = true;
   box.append(grip, gripR, gripB); bar.append(main, shp); document.body.append(box); document.getElementById("tb").after(bar);
@@ -3363,7 +3369,7 @@ let imgBack = null;
     if (TL[a]) {   // 2행(공통)의 도구 버튼은 편집 중에도 보여요: 열려 있는 도구를 다시 누르면 닫고, 다른 도구를 누르면 지금까지 편집을 반영한 뒤 그 도구로 바꿔요
       const m2 = TL[a][0], t2 = TL[a][1];
       if (sh) { const same = sh.mode === m2 && (m2 !== "edit" || sd.tool === t2); finishPoly(); commit(); closeShp(); if (same) return; }
-      openShp(m2, t2); return;
+      openShp(m2, t2); if(a==="fil"){const pb=shp.querySelector('[data-sa="pmenu"]');if(pb){pb.hidden=true;togglePp(b)}} return;
     }
     if (a === "cpy") toggleSave(b); else if (a === "cpy1") { if (sh) { finishPoly(); commit(); } closeSave(); copyImg(); } else if (a === "sav1") { if (sh) { finishPoly(); commit(); } closeSave(); saveImg(); }
   };
@@ -3448,7 +3454,7 @@ let imgBack = null;
   window.addEventListener("scroll", closeBg, true); window.addEventListener("resize", closeBg);
   /* 페인트 색(바탕색): 글자·도형·선의 색(sd.color)과 완전히 따로 저장. 페인트 색을 바꾸면 글자·도형·선의 기본 색만 보색으로 맞추고, 그 반대(글자·도형·선 색 → 페인트 색)는 하지 않음 */
   const PPAL = ["#fff3a3", "#ffffff", "#000000", "#f1f3f5", "#ffe3e3", "#d0ebff", "#d3f9d8", "#e5dbff"];
-  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="이 창을 연 뒤에 바꾼 페인트 색·투명도·글자/도형/선 색을 모두 취소하고, 연 때의 상태로 되돌려요">기존 페인트 색 유지</button>');
+  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-pptransparent title="칠하지 않음(완전 투명)">투명</button><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="이 창을 연 뒤에 바꾼 페인트 색·투명도·글자/도형/선 색을 모두 취소하고, 연 때의 상태로 되돌려요">기존 페인트 색 유지</button>');
   ppop.hidden = true; document.body.appendChild(ppop);
   ppop.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
   const ppk = document.createElement("input"); ppk.type = "color"; ppk.tabIndex = -1; ppk.setAttribute("aria-hidden", "true");
@@ -3496,6 +3502,7 @@ let imgBack = null;
   ppop.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     if (b.dataset.ppc) ppApply(b.dataset.ppc, null);
+    else if (b.hasAttribute("data-pptransparent")) { sd.fop = 0; ppSync(); toast("페인트 투명을 선택했어요"); }
     else if (b.hasAttribute("data-ppkeep")) {
       if (ppSnap) { sd.pcolor = ppSnap.pcolor; sd.fop = ppSnap.fop; sd.color = ppSnap.color; qc("color").value = sd.color; }
       ppSync(); closePp(); toast("기존 페인트 색을 유지했어요");
