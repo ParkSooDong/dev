@@ -3208,7 +3208,7 @@ let imgBack = null;
   const ppk = document.createElement("input"); ppk.type = "color"; ppk.tabIndex = -1; ppk.setAttribute("aria-hidden", "true");
   ppk.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"; bar.appendChild(ppk);
   const ppr = ppop.querySelector("[data-ppr]"), ppv = ppop.querySelector("[data-ppv]");
-  let ppTransparent = !!sd.ppTransparent;
+  let ppTransparent = false;
   function closePp() { ppop.hidden = true; }
   function complement(hex) {   // 보색: 색상환에서 반대 색상 + 바탕과 확실히 구분되도록 밝기 대비 확보 (무채색·거의 흰/검은 색은 흑/백)
     const n = parseInt(hex.slice(1), 16), r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
