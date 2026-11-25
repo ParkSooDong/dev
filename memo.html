@@ -329,14 +329,14 @@ body.has-max header .tr{display:none}
 .tmwrap.off{visibility:hidden;transition:width .3s ease-in,visibility 0s .3s}
 @media (prefers-reduced-motion:reduce){.tmwrap,.tmwrap.off{transition:none}}
 .tmbtn{font-size:16px;padding:6px 16px}
-.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:nowrap;white-space:nowrap;flex:none;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:24px;color:var(--ink)}
+.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:nowrap;white-space:nowrap;flex:none;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:15px;color:var(--ink)}
 .tm.pink{background:#ffe3ec;border-color:#f4a9c0;color:#3a1020}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tm.pink{background:#4a2332;border-color:#a8506d;color:#ffe3ec}}
 .tm label{display:flex;flex-direction:row;align-items:center;gap:6px;font-size:inherit;color:inherit;white-space:nowrap}
-.tm input{width:5.6em;min-width:5.6em;box-sizing:border-box;text-align:center;font:inherit;font-weight:700;font-size:24px;padding:2px 6px;font-variant-numeric:tabular-nums;color:inherit;background:transparent;border:1.5px solid currentColor;border-radius:8px}
+.tm input{width:5.6em;min-width:5.6em;box-sizing:border-box;text-align:center;font:inherit;font-weight:700;font-size:15px;padding:2px 6px;font-variant-numeric:tabular-nums;color:inherit;background:transparent;border:1.5px solid currentColor;border-radius:8px}
 .tm input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .tm .rm{white-space:nowrap}
-#rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
+#rem{display:inline-block;min-width:4.8em;font:700 15px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
 #rem.neg{color:var(--err)}
 /* 표 셀 서식 (테두리 · 채우기) */
 #cfOv{position:fixed;inset:0;pointer-events:none;z-index:105;overflow:hidden}
@@ -1493,7 +1493,7 @@ const localNote = () => say("수정 내용은 이 PC의 지금 브라우저에�
 let saved = null; try { saved = JSON.parse(localStorage.getItem(stateKey())); } catch (e) {}
 let useFb = !!(saved && saved.fb === true);
 let dirty = !!(saved && useFb && saved.d), knownAt = (saved && useFb && +saved.at) || 0;
-let ready = false, saving = false, again = false, connecting = false, firstTry = false, idleT = null, maxT = null, localT = null;
+let ready = false, saving = false, again = false, connecting = false, firstTry = false, idleT = null, maxT = null, localT = null, savePaused = false;
 if (saved && typeof saved.memo === "string") memoAll.value = saved.memo;
 
 function saveLocal() {
@@ -1611,11 +1611,12 @@ async function save(unloading, force) {
       : fetchT(URL_MEMO, { method: "PUT", headers: { "Content-Type": "application/json" }, body }, 20000));
     if (!r.ok) throw new Error("HTTP " + r.status);
     knownAt = at;
-    if (memoAll.value === v) { dirty = false; say("저장됨 " + hhmm(), "ok"); }
+    if (memoAll.value === v) { dirty = false; say("저장됨 " + hhmm(), "ok"); if (force) toast("Ctrl+S: Firebase 저장 완료 · " + hhmm()); }
     else schedule();                               // 저장 중에 더 입력한 경우
     saveLocal();
   } catch (e) {
     say("저장 실패. 5초 뒤 다시 시도해요", "err");
+    if (force) toast("Ctrl+S 저장 실패 · 연결 상태를 확인해 주세요");
     clearTimeout(idleT); idleT = setTimeout(save, 5000);
   } finally { saving = false; if (again && dirty) { again = false; schedule(); } else again = false; }
 }
@@ -1741,11 +1742,13 @@ document.addEventListener("click", function (ev) {
   if (savePaused) {
     clearTimers();
     say("자동 저장 일시정지 · Ctrl+S로 지금 저장");
+    toast("실시간 자동 저장을 일시정지했습니다");
   } else if (dirty) {
     say("저장 대기 중…");
     schedule();
   } else {
     say("실시간 저장 재개");
+    toast("실시간 자동 저장을 재개했습니다");
   }
 }, true);
 
@@ -1755,7 +1758,15 @@ onEd("input", () => {
   clearTimeout(localT); localT = setTimeout(saveLocal, 300);   // 이 PC 사본은 입력을 멈추면 바로 저장
 });
 window.addEventListener("blur", () => { if (useFb && ready && dirty && !saving && !savePaused) save(); });   // 다른 창·탭으로 옮기면 바로 저장
-document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === "s" || e.key === "S") && useFb) { e.preventDefault(); if (dirty) save(false, true); } });
+document.addEventListener("keydown", e => {
+  if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || (e.key || "").toLowerCase() !== "s") return;
+  e.preventDefault(); e.stopPropagation();
+  const localSaved = saveLocal();
+  if (!useFb) { say(localSaved ? "이 PC 브라우저에 저장했습니다" : "이 PC 브라우저 저장에 실패했습니다", localSaved ? "ok" : "err"); toast(localSaved ? "이 PC 브라우저에 저장했습니다" : "브라우저 저장에 실패했습니다"); return; }
+  if (!ready) { say("Firebase 연결이 완료되지 않아 지금은 저장할 수 없습니다", "err"); toast("Firebase 연결 상태를 확인해 주세요"); return; }
+  if (dirty) { say("Ctrl+S 수동 저장 중…"); toast("Ctrl+S: Firebase에 지금 저장합니다"); save(false, true); }
+  else { say("저장할 변경 사항이 없습니다"); toast("저장할 변경 사항이 없습니다"); }
+}, true);
 setInterval(() => { if (useFb && dbSet) ready ? poll() : connect(); }, POLL_MS);
 if (useFb && dbSet) { firstTry = true; connect(); }   // 페이지를 열면 바로 비밀번호를 물어요
 
