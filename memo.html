@@ -592,8 +592,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   letter-spacing:0 !important; text-align:left !important;
 }
 </style>
-<script type="text/javascript" nonce="597ff2512f834a45bf9d9e8a7cf" src="//local.adguard.org?ts=1795572417719&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000535082119081bd67c08fe437%26fn%3Dmemo_parksoodong_github_io__dev%25282%2529.html%26cd%3Dattachment%26ts%3D498772%26p%3Dfs%26cid%3D1%26sig%3Dbcd87f04d898aef253b744b8bb37b8b10d7b9385cab67b29f53af1f2a9237498%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="597ff2512f834a45bf9d9e8a7cf" src="//local.adguard.org?ts=1795572417719&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+</head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -3164,7 +3163,7 @@ let imgBack = null;
 
   /* 배경색 버튼(글자 넣기·도형 넣기): 색 고르기 + 투명 비율 슬라이드바(기본 50%) */
   const BPAL = ["#fff3a3", "#ffffff", "#000000", "#f1f3f5", "#fffbe0", "#fff0f5", "#f0fff0"];
-  const bpop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">배경색</div><div style="font-size:11.5px;opacity:.7">색을 누르면 바로 적용돼요</div><div style="display:flex;gap:6px">' + BPAL.map(c => '<button type="button" data-bpc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-bpk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-bpcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-bpr min="0" max="100" step="5" value="50" style="flex:1;min-width:110px"><span data-bpv style="min-width:36px;text-align:right">50%</span></label><button type="button" data-bpn title="배경을 칠하지 않아요">배경 없음</button>');
+  const bpop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">배경색</div><div style="font-size:11.5px;opacity:.7">색을 누르면 바로 적용돼요</div><div style="display:flex;gap:6px">' + BPAL.map(c => '<button type="button" data-bpc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-bpk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-bpcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:32px;height:32px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-bpr min="0" max="100" step="5" value="50" style="flex:1;min-width:110px"><span data-bpv style="min-width:36px;text-align:right">50%</span></label><button type="button" data-bpn title="배경을 칠하지 않아요">배경 없음</button>');
   bpop.hidden = true; document.body.appendChild(bpop);   /* 이미지 편집 화면(overlay) 위에 보이도록 body 에 둠 */
   bpop.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
   const bpk = document.createElement("input"); bpk.type = "color"; bpk.tabIndex = -1; bpk.setAttribute("aria-hidden", "true");
@@ -3214,7 +3213,7 @@ let imgBack = null;
   window.addEventListener("scroll", closeBg, true); window.addEventListener("resize", closeBg);
   /* 페인트 색(바탕색): 글자·도형·선의 색(sd.color)과 완전히 따로 저장. 페인트 색을 바꾸면 글자·도형·선의 기본 색만 보색으로 맞추고, 그 반대(글자·도형·선 색 → 페인트 색)는 하지 않음 */
   const PPAL = ["#fff3a3", "#ffffff", "#000000", "#f1f3f5", "#ffe3e3", "#d0ebff", "#d3f9d8", "#e5dbff"];
-  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:grid;grid-template-columns:82px 1fr;gap:6px 8px;align-items:center;font-size:12px;margin:8px 0;padding:7px;border:1px solid #bbb;border-radius:7px"><b>내부 배경</b><select data-ppbgmode style="min-width:0"><option value="transparent" selected>투명 (기본값)</option><option value="keep">기존 색상 유지</option><option value="new">새 색상</option></select><input type="color" data-ppbgcolor value="#fff3a3" style="grid-column:2;width:100%;height:27px"><b>테두리</b><select data-ppedgemode style="min-width:0"><option value="transparent" selected>투명 (기본값)</option><option value="keep">기존 색상 유지</option><option value="new">새 색상</option></select><input type="color" data-ppedgecolor value="#2b8a3e" style="grid-column:2;width:100%;height:27px"><small style="grid-column:1/3;opacity:.75">각 항목은 서로 독립적으로 설정됩니다.</small></div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '<button type="button" data-pptransparent title="선택 영역을 실제 투명하게 지워요" aria-label="투명" style="width:28px;height:28px;padding:0;border:1px solid #888;background:repeating-conic-gradient(#ddd 0% 25%,#fff 0% 50%) 50% / 10px 10px">◇</button></div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="이 창을 연 뒤에 바꾼 페인트 색·투명도·글자/도형/선 색을 모두 취소하고, 연 때의 상태로 되돌려요">기존 페인트 색 유지</button>');
+  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div data-pptrans-options hidden style="display:grid;grid-template-columns:82px 1fr;gap:6px 8px;align-items:center;font-size:12px;margin:8px 0;padding:7px;border:1px solid #bbb;border-radius:7px;background:#f8f9fa"><b style="grid-column:1/3;font-size:12px">투명 페인트일 때 도형·글자 처리</b><b title="투명 페인트를 적용할 때 도형·글자 내부를 처리하는 방식입니다">내부 배경</b><select data-ppbgmode style="min-width:0"><option value="transparent" selected>투명 (기본값)</option><option value="keep">기존 색상 유지</option><option value="new">새 색상</option></select><input type="color" data-ppbgcolor value="#fff3a3" title="내부 배경을 새 색상으로 바꿀 때 사용할 색" style="grid-column:2;width:100%;height:44px;padding:2px"><b>테두리</b><select data-ppedgemode style="min-width:0"><option value="transparent" selected>투명 (기본값)</option><option value="keep">기존 색상 유지</option><option value="new">새 색상</option></select><input type="color" data-ppedgecolor value="#2b8a3e" title="테두리를 새 색상으로 바꿀 때 사용할 색" style="grid-column:2;width:100%;height:44px;padding:2px"><small style="grid-column:1/3;opacity:.75">위 선택은 적용 방식이고, 바로 아래 색상칸은 새 색상 선택용입니다. 배경과 테두리는 서로 독립적으로 적용됩니다.</small></div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '<button type="button" data-pptransparent title="선택 영역을 실제 투명하게 지워요" aria-label="투명" style="width:28px;height:28px;padding:0;border:1px solid #888;background:repeating-conic-gradient(#ddd 0% 25%,#fff 0% 50%) 50% / 10px 10px">◇</button></div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:32px;height:32px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="팝업을 연 뒤 변경한 페인트 색·투명도·배경·테두리 설정을 모두 열기 전 상태로 되돌려요">변경 취소 · 열기 전 상태로 복원</button>');
   ppop.hidden = true; document.body.appendChild(ppop);
   ppop.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
   const ppk = document.createElement("input"); ppk.type = "color"; ppk.tabIndex = -1; ppk.setAttribute("aria-hidden", "true");
@@ -3239,6 +3238,7 @@ let imgBack = null;
     const chip = bar.querySelector("[data-pchip]"); if (chip) chip.style.background = sd.pcolor;
     const pcc = ppop.querySelector("[data-ppcur]"); if (pcc) { pcc.querySelector("i").style.background = ppTransparent ? "repeating-conic-gradient(#ddd 0% 25%,#fff 0% 50%) 50% / 8px 8px" : sd.pcolor; const pi = pcc.querySelector("input"); if (pi) { pi.value = ppTransparent ? "투명" : sd.pcolor; pi.classList.remove("bad"); }
       pcc.querySelector(".hexnote").textContent = ppTransparent ? "· 실제 투명" : (sd.fop < 1 ? "· " + Math.round((1 - sd.fop) * 100) + "% 투명" : ""); }
+    const transOptions = ppop.querySelector("[data-pptrans-options]"); if (transOptions) transOptions.hidden = !ppTransparent;
     const tb = ppop.querySelector("[data-pptransparent]"); if (tb) { tb.style.outline = ppTransparent ? "2px solid #1971c2" : ""; tb.style.outlineOffset = "2px"; tb.setAttribute("aria-pressed", String(ppTransparent)); }
     ppr.disabled = ppTransparent; ppr.value = String(Math.round((1 - sd.fop) * 100)); ppv.textContent = ppr.value + "%";
   }
@@ -3256,7 +3256,7 @@ let imgBack = null;
   function togglePp(b) {
     if (!ppop.hidden) { closePp(); return; }
     closeSave(); closeBg(); ppSync(); ppop.hidden = false;
-    ppSnap = { pcolor: sd.pcolor, fop: sd.fop, color: sd.color };   // 열 때의 상태 (기존 페인트 색 유지용)
+    ppSnap = { pcolor: sd.pcolor, fop: sd.fop, color: sd.color, ppTransparent: !!sd.ppTransparent, bgMode: ppop.querySelector("[data-ppbgmode]").value, bgColor: ppop.querySelector("[data-ppbgcolor]").value, edgeMode: ppop.querySelector("[data-ppedgemode]").value, edgeColor: ppop.querySelector("[data-ppedgecolor]").value };   // 팝업을 열 때의 전체 상태
     const r = b.getBoundingClientRect();
     ppop.style.left = clamp(r.left, 4, Math.max(4, innerWidth - ppop.offsetWidth - 4)) + "px";
     ppop.style.top = clamp(r.bottom + 4, 4, Math.max(4, innerHeight - ppop.offsetHeight - 4)) + "px";
@@ -3267,8 +3267,8 @@ let imgBack = null;
     if (b.dataset.ppc) ppApply(b.dataset.ppc, null);
     else if (b.hasAttribute("data-pptransparent")) { sd.ppTransparent = ppTransparent = !ppTransparent; ppSync(); toast(ppTransparent ? "투명을 선택했어요. 클릭한 영역의 픽셀을 실제로 제거합니다" : "투명 선택을 해제했어요"); }
     else if (b.hasAttribute("data-ppkeep")) {
-      if (ppSnap) { sd.pcolor = ppSnap.pcolor; sd.fop = ppSnap.fop; sd.color = ppSnap.color; sd.ppTransparent = ppTransparent = false; qc("color").value = sd.color; }
-      ppSync(); closePp(); toast("기존 페인트 색을 유지했어요");
+      if (ppSnap) { sd.pcolor = ppSnap.pcolor; sd.fop = ppSnap.fop; sd.color = ppSnap.color; sd.ppTransparent = ppTransparent = ppSnap.ppTransparent; qc("color").value = sd.color; ppop.querySelector("[data-ppbgmode]").value = ppSnap.bgMode; ppop.querySelector("[data-ppbgcolor]").value = ppSnap.bgColor; ppop.querySelector("[data-ppedgemode]").value = ppSnap.edgeMode; ppop.querySelector("[data-ppedgecolor]").value = ppSnap.edgeColor; }
+      ppSync(); closePp(); toast("팝업을 열기 전 상태로 복원했어요");
     }
     else if (b.hasAttribute("data-ppk")) { openColorDlg({ title: "페인트 색 선택 (84색)", value: sd.pcolor, onOk: v => ppApply(v, null) }); }
   });
@@ -3757,16 +3757,28 @@ let imgBack = null;
     const bgColor = ppop.querySelector("[data-ppbgcolor]").value;
     const edgeColor = ppop.querySelector("[data-ppedgecolor]").value;
     let changed = false;
+    // 클릭 지점을 포함하는 도형/텍스트 요소만 대상으로 하며, 사진·페인트층·선·손그림은 제외합니다.
     for (const it of s.items) {
       if (it.t === "pic" || it.paint || it.t === "hand" || LINEM.has(it.t) || it.drawing) continue;
       let b;
       if (isCall(it.t)) b = callBox(it);
       else b = { x: Math.min(it.x1, it.x2), y: Math.min(it.y1, it.y2), w: Math.abs(it.x2-it.x1), h: Math.abs(it.y2-it.y1) };
       if (!b || px < b.x || px > b.x + b.w || py < b.y || py > b.y + b.h) continue;
-      if (bgMode === "transparent") { it.bgOff = true; it.fill = false; changed = true; }
-      else if (bgMode === "new") { it.bgOff = false; it.bgc = bgColor; it.fill = true; it.bo = 1; changed = true; }
-      if (edgeMode === "transparent") { it.strokeOff = true; if (it.ol) it.ol = false; changed = true; }
-      else if (edgeMode === "new") { it.strokeOff = false; it.color = edgeColor; if (it.oc) it.oc = edgeColor; changed = true; }
+      if (bgMode === "transparent") {
+        if (!it.bgOff || it.fill) changed = true;
+        it.bgOff = true; it.fill = false;
+      } else if (bgMode === "new") {
+        if (it.bgOff || !it.fill || it.bgc !== bgColor || it.bo !== 1) changed = true;
+        it.bgOff = false; it.bgc = bgColor; it.fill = true; it.bo = 1;
+      }
+      // keep은 요소의 현재 테두리 상태/색을 그대로 둡니다.
+      if (edgeMode === "transparent") {
+        if (!it.strokeOff || it.ol) changed = true;
+        it.strokeOff = true; it.ol = false;
+      } else if (edgeMode === "new") {
+        if (it.strokeOff || it.color !== edgeColor || it.oc !== edgeColor) changed = true;
+        it.strokeOff = false; it.color = edgeColor; it.oc = edgeColor;
+      }
     }
     return changed;
   }
@@ -3843,7 +3855,7 @@ let imgBack = null;
             oldPaint.pid = regPic(layer.toDataURL("image/png"));
           }
         }
-        render(); toast("선택 영역의 배경·테두리 설정을 적용하고 기존 페인트만 투명하게 했어요"); return;
+        render(); toast("선택 영역의 배경·테두리 설정을 적용하고 기존 페인트를 투명하게 했어요"); return;
       }
       /* 4) 페인트 층에 합성 (같은 자리를 다시 칠하면 이전 색을 바꿔 넣음) */
       const pc = document.createElement("canvas"); pc.width = cw; pc.height = ch;
