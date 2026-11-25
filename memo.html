@@ -3815,10 +3815,13 @@ let imgBack = null;
       const sampleX = sampleCv.getContext("2d", { willReadFrequently: true }); sampleX.drawImage(s.cv, 0, 0, cw, ch);
       const sdta = sampleX.getImageData(0, 0, cw, ch).data, si = (sy * cw + sx) * 4;
       const sr = sdta[si], sg = sdta[si + 1], sb = sdta[si + 2], sa = sdta[si + 3];
-      const tol2 = 52 * 52;
+      const tol2 = 52 * 52, srcBoundary = new Uint8Array(N);
       for (let i = 0; i < N; i++) {
         const o = i * 4, dr = sdta[o] - sr, dg = sdta[o + 1] - sg, db = sdta[o + 2] - sb;
-        if (sdta[o + 3] !== sa && Math.abs(sdta[o + 3] - sa) > 40 || dr * dr + dg * dg + db * db > tol2) bl[i] = 1;
+        if ((sdta[o + 3] !== sa && Math.abs(sdta[o + 3] - sa) > 40) || dr * dr + dg * dg + db * db > tol2) {
+          bl[i] = 1;
+          srcBoundary[i] = 1;
+        }
       }
       /* 2) 클릭한 곳에서 번지는 영역 (4방향, 줄 단위 채우기) */
       let reg = new Uint8Array(N); const st = [sx, sy];
@@ -3856,7 +3859,23 @@ let imgBack = null;
       if (transparentPaint) {
         const mask = document.createElement("canvas"); mask.width = cw; mask.height = ch;
         const mx = mask.getContext("2d"), md = mx.createImageData(cw, ch);
-        for (let i = 0; i < N; i++) if (reg[i]) md.data[i * 4 + 3] = 255;
+        // 내부 영역을 먼저 포함하고, 원본 이미지에서 검출한 경계 픽셀만 최대 2픽셀 확장합니다.
+        // 경계가 아닌 픽셀에는 절대 확장하지 않으므로 인접한 색상 영역으로 번지지 않습니다.
+        const eraseReg = reg.slice();
+        for (let edge = 0; edge < 2; edge++) {
+          const add = [];
+          for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
+            const i = y * cw + x;
+            if (!srcBoundary[i] || eraseReg[i]) continue;
+            if ((x > 0 && eraseReg[i - 1]) ||
+                (x + 1 < cw && eraseReg[i + 1]) ||
+                (y > 0 && eraseReg[i - cw]) ||
+                (y + 1 < ch && eraseReg[i + cw])) add.push(i);
+          }
+          if (!add.length) break;
+          for (const i of add) eraseReg[i] = 1;
+        }
+        for (let i = 0; i < N; i++) if (eraseReg[i]) md.data[i * 4 + 3] = 255;
         mx.putImageData(md, 0, 0);
         if (sh !== s) return;
         s.ctx.save(); s.ctx.globalCompositeOperation = "destination-out";
