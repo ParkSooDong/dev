@@ -579,7 +579,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   <div class="tbbr"></div>
   <button type="button" data-cmd="link" title="링크 (Ctrl+클릭으로 열기)" aria-label="링크" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
   <div class="menu" id="tblWrap"><button type="button" data-pal id="tblBtn" title="표: 표 삽입 / 표 편집" aria-label="표" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/></svg><span>표</span></button><div class="pop" id="tblPop" hidden><div id="tblMv"><button type="button" data-cmd="table" title="행·열 수를 정해 표를 넣어요">표 삽입</button><button type="button" data-body-to-table title="본문에서 영역을 선택한 뒤 누르세요. 탭은 열 구분, 줄바꿈(Enter)은 행 구분으로 표를 만들어요">본문->표</button><button type="button" data-table-to-body title="표 안의 칸을 클릭한 뒤 누르세요. 표에서 선택한 칸(칸을 드래그하거나 Shift+클릭, 선택이 없으면 클릭한 칸)을 탭·줄바꿈으로 구분된 본문으로 표 다음 줄에 넣어요">표->본문</button></div><div id="tblLv" hidden><button type="button" data-tbl-back="1">← 뒤로</button><div class="tblOps"><span class="tbgrp">행/열 추가</span><button type="button" data-t="rowAbove" title="현재 행 위에 행 추가">▲</button><button type="button" data-t="rowBelow" title="현재 행 아래에 행 추가">▼</button><button type="button" data-t="colLeft" title="현재 열 왼쪽에 열 추가">◀</button><button type="button" data-t="colRight" title="현재 열 오른쪽에 열 추가">▶</button></div><div class="tblOps"><span class="tbgrp">표 결합</span><button type="button" data-t="joinUp" title="현재 표를 바로 위쪽 표의 아래에 결합">▲</button><button type="button" data-t="joinDown" title="현재 표를 바로 아래쪽 표의 위에 결합">▼</button><button type="button" data-t="joinLeft" title="현재 표를 바로 왼쪽 표의 오른쪽에 결합">◀</button><button type="button" data-t="joinRight" title="현재 표를 바로 오른쪽 표의 왼쪽에 결합">▶</button></div><div class="tblOps"><span class="tbgrp">표 분리</span><button type="button" data-t="splitUp" title="커서 행 위에서 분리">▲</button><button type="button" data-t="splitDown" title="커서 행 아래에서 분리">▼</button><button type="button" data-t="splitLeft" title="커서 열 왼쪽에서 분리">◀</button><button type="button" data-t="splitRight" title="커서 열 오른쪽에서 분리">▶</button></div><button type="button" data-cfm="merge" title="먼저 칸을 드래그하거나 Shift+클릭으로 고르세요">선택한 칸 병합</button><button type="button" data-cfm="unmerge">병합 해제</button><button type="button" data-cfm="w">선택한 칸 열 너비 지정</button><button type="button" data-cfm="h">선택한 칸 행 높이 지정</button><button type="button" data-t="cpAll" title="표 전체를 칸 그대로 복사해요 (엑셀이나 이 메모의 칸에 Ctrl+V)">표 전체 복사</button><button type="button" data-t="toImg" title="표를 그림(PNG)으로 바꿔요">표를 이미지로 바꾸기</button><button type="button" data-t="toImgKeep" title="원본 표는 그대로 두고 이미지를 추가해요">표를 이미지로 추가 (표 유지)</button><button type="button" data-t="alL">표 왼쪽 정렬</button><button type="button" data-t="alC">표 가운데 정렬</button><button type="button" data-t="alR">표 오른쪽 정렬</button><button type="button" data-t="delRow">행 삭제</button><button type="button" data-t="delCol">열 삭제</button><button type="button" data-t="delTable">표 삭제</button></div></div></div>
-  <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="shapeimg" title="이미지를 붙여넣거나 열어서 도형·각도·색·크기를 바꾼 뒤 복사하거나 PC에 저장하거나 메모에 넣어요">이미지 형태 변경 및 메모 삽입</button><div class="bgsec"><div class="bgttl" title="고른 색을 바탕으로 한 이미지를 메모에 넣어요 (손글씨·도형으로 그리기용)">단일 색상의 이미지를 메모에 넣기</div><div class="bgnote">색을 눌러도 바로 들어가지 않아요. 미리 보기를 확인하고 [확인]을 누르세요</div><div class="bgsz"><span>크기</span><input type="number" id="bgW" min="24" max="4000" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" id="bgH" min="24" max="4000" step="1" aria-label="세로 픽셀"><span>px</span></div><div class="bgsz"><span>도형</span><select id="bgShp" aria-label="도형" style="height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px"><option value="rect">사각형</option><option value="circle">원</option><option value="tri">삼각형</option><option value="cloud">구름</option><option value="pent">오각형</option><option value="heart">하트</option><option value="star">별</option><option value="burst">폭발</option><option value="clover">클로버</option></select></div><div class="bgsz" title="시계 방향으로 돌려요 (0~359도, 계속 순환)"><span>각도</span><input type="number" id="bgRot" step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="bgpk" data-bgflip aria-pressed="false" title="좌우로 뒤집어요">좌우 반전</button></div><details class="fo-pad"><summary>도형 색 <i data-bgv1></i></summary><div class="cpk" id="bgCpk"></div></details><details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 색 없음) <i data-bgv2></i></summary><div class="cpk" id="bgCpk2"></div></details><div class="bgprev" id="bgPrev" style="border:0"></div><div class="bgnote" id="bgCap" style="text-align:center"></div><button type="button" class="bgpk" data-bgreset title="현재 메모창 비율에 맞춘 크기로 되돌려요">기본 크기로</button><div class="bgft"><button type="button" class="ok" data-bgok>확인</button><button type="button" data-bgx>취소</button></div></div></div></div>
+  <div class="menu"><button type="button" data-pal title="이미지 삽입" aria-label="이미지 삽입" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10.5" r="1.5"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg><span>이미지</span></button><div class="pop" hidden><button type="button" data-cmd="shapeimg" title="이미지를 붙여넣거나 열어서 도형·각도·색·크기를 바꾼 뒤 복사하거나 PC에 저장하거나 메모에 넣어요">이미지 형태 변경 및 메모 삽입</button><div class="bgsec"><div class="bgttl" title="고른 색을 바탕으로 한 이미지를 메모에 넣어요 (손글씨·도형으로 그리기용)">단일 색상의 이미지를 메모에 넣기</div><div class="bgnote">색을 눌러도 바로 들어가지 않아요. 미리 보기를 확인하고 [확인]을 누르세요</div><div class="bgsz"><span>크기</span><input type="number" id="bgW" min="24" max="4000" step="1" aria-label="가로 픽셀"><span>×</span><input type="number" id="bgH" min="24" max="4000" step="1" aria-label="세로 픽셀"><span>px</span></div><div class="bgsz"><span>도형</span><select id="bgShp" aria-label="도형" style="height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px"><option value="rect">사각형</option><option value="circle">원</option><option value="tri">삼각형</option><option value="cloud">구름</option><option value="pent">오각형</option><option value="heart">하트</option><option value="star">별</option><option value="burst">폭발</option><option value="clover">클로버</option></select></div><div class="bgsz" title="시계 방향으로 돌려요 (0~359도, 계속 순환)"><span>각도</span><input type="number" id="bgRot" step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="bgpk" data-bgflip aria-pressed="false" title="좌우로 뒤집어요">좌우 반전</button></div><details class="fo-pad"><summary>도형 색 <i data-bgv1></i></summary><div class="cpk" id="bgCpk"></div></details><details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 투명) <i data-bgv2></i></summary><div class="cpk" id="bgCpk2"></div></details><div class="bgprev" id="bgPrev" style="border:0"></div><div class="bgnote" id="bgCap" style="text-align:center"></div><button type="button" class="bgpk" data-bgreset title="현재 메모창 비율에 맞춘 크기로 되돌려요">기본 크기로</button><div class="bgft"><button type="button" class="ok" data-bgok>확인</button><button type="button" data-bgx>취소</button></div></div></div></div>
   <input type="color" id="fcPick" value="#2b8a3e" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="color" id="bgPick" value="#ffffff" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
   <input type="color" id="bgcPick" value="#f6cbed" tabindex="-1" aria-hidden="true" style="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"><input type="file" id="imgFile" accept="image/*" multiple hidden>
@@ -2688,13 +2688,13 @@ let imgBack = null;
       '<div class="cs-sz" title="결과 이미지를 담을 도형이에요. 도형 밖은 투명해요"><span>도형</span><select data-csshp aria-label="도형" style="height:28px;padding:0 6px;box-sizing:border-box;border:1.5px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px"><option value="rect">사각형</option><option value="circle">원</option><option value="tri">삼각형</option><option value="cloud">구름</option><option value="pent">오각형</option><option value="heart">하트</option><option value="star">별</option><option value="burst">폭발</option><option value="clover">클로버</option></select><span style="margin-left:10px">각도</span><input type="number" data-csrot step="1" placeholder="0" aria-label="각도"><span>°</span><button type="button" class="cs-btn" data-cs="flip" aria-pressed="false" style="margin:0 0 0 8px" title="결과 이미지를 좌우로 뒤집어요">좌우 반전</button></div>' +
       '<div class="cfnote" style="margin:0 0 4px;font-size:11.5px">도형·각도·좌우반전을 쓰면 글자·도형 레이어는 하나의 그림으로 합쳐져요.</div>' +
       '<details class="fo-pad"><summary>빈 곳을 채울 색 <i data-cspv></i></summary><div class="cpk" data-cscpk></div></details>' +
-      '<details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 색 없음) <i data-csbv></i></summary><div class="cpk" data-csbcpk></div></details>' +
+      '<details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 투명) <i data-csbv></i></summary><div class="cpk" data-csbcpk></div></details>' +
       '<div class="fo-btns"><button type="button" class="cs-btn" data-cs="orig" title="처음 삽입했을 때의 가로·세로 크기를 칸에 넣어요 (확인을 눌러야 적용돼요)">원본 크기로</button></div></div>' +
       '<div class="cfft"><button type="button" class="ok" data-cs="ok">확인</button><button type="button" data-cs="x">취소</button></div></div>';
     document.body.appendChild(csDlg);
     csW = csDlg.querySelector("[data-csw]"); csH = csDlg.querySelector("[data-csh]");
     csCpk = cpkInit(csDlg.querySelector("[data-cscpk]"), csPad, v => { csPad = v; if (cs) { cs.pad = v || null; csDraw(); } });
-    csBCpk = cpkInit(csDlg.querySelector("[data-csbcpk]"), csBgC, v => { csBgC = v || ""; if (cs) { cs.bg = v || null; csDraw(); } });
+    csBCpk = cpkInit(csDlg.querySelector("[data-csbcpk]"), csBgC, v => { csBgC = v || ""; if (cs) { cs.bg = v || null; csDraw(); } }); const csNone = csDlg.querySelector("[data-csbcpk] .no"); if (csNone) csNone.textContent = "투명";
     csRot = csDlg.querySelector("[data-csrot]"); csShp = csDlg.querySelector("[data-csshp]"); csFlip = csDlg.querySelector('[data-cs="flip"]');
     csRot.addEventListener("input", () => {
       if (!cs) return;
@@ -3192,12 +3192,20 @@ let imgBack = null;
   window.addEventListener("scroll", closeBg, true); window.addEventListener("resize", closeBg);
   /* 페인트 색(바탕색): 글자·도형·선의 색(sd.color)과 완전히 따로 저장. 페인트 색을 바꾸면 글자·도형·선의 기본 색만 보색으로 맞추고, 그 반대(글자·도형·선 색 → 페인트 색)는 하지 않음 */
   const PPAL = ["#fff3a3", "#ffffff", "#000000", "#f1f3f5", "#ffe3e3", "#d0ebff", "#d3f9d8", "#e5dbff"];
-  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-pptransparent title="칠하지 않음(완전 투명)">투명</button><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppkeep title="이 창을 연 뒤에 바꾼 페인트 색·투명도·글자/도형/선 색을 모두 취소하고, 연 때의 상태로 되돌려요">기존 페인트 색 유지</button>');
+  const ppop = el("div", "imgx-pop", '<div style="font-size:13px;font-weight:600">페인트 색</div><div style="font-size:11.5px;opacity:.7">색을 고른 뒤 이미지에서 채울 곳을 클릭하면 칠해져요</div><div style="display:flex;gap:6px;flex-wrap:wrap;max-width:260px">' + PPAL.map(c => '<button type="button" data-ppc="' + c + '" title="' + c + '" aria-label="' + c + '" style="width:28px;height:28px;padding:0;background:' + c + '"></button>').join("") + '</div><button type="button" data-ppk title="색상 팔레트에서 원하는 색을 골라요">색상 팔레트에서 선택…</button><div data-ppcur style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px"><em style="font-style:normal">선택한 색</em><i style="display:inline-block;width:18px;height:18px;border:1.5px solid #888;border-radius:4px"></i><input type="text" class="hexin" maxlength="7" spellcheck="false" autocomplete="off" inputmode="text" placeholder="#rrggbb" title="#과 함께 색상값(예: #4dffff)을 입력하고 Enter를 누르면 그 색이 선택돼요" aria-label="색상값 입력"><span class="hexnote"></span></div><label style="display:flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 4px">투명<input type="range" data-ppr min="0" max="95" step="5" value="0" style="flex:1;min-width:110px"><span data-ppv style="min-width:36px;text-align:right">0%</span></label><button type="button" data-ppclear aria-pressed="false" title="클릭한 영역을 이미지 외곽처럼 실제 투명 픽셀로 바꿔요">투명</button><button type="button" data-ppkeep title="이 창을 연 뒤에 바꾼 페인트 색·투명도·글자/도형/선 색을 모두 취소하고, 연 때의 상태로 되돌려요">기존 페인트 색 유지</button>');
   ppop.hidden = true; document.body.appendChild(ppop);
   ppop.addEventListener("mousedown", e => { if (e.target.closest("button")) e.preventDefault(); });
   const ppk = document.createElement("input"); ppk.type = "color"; ppk.tabIndex = -1; ppk.setAttribute("aria-hidden", "true");
   ppk.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"; bar.appendChild(ppk);
-  const ppr = ppop.querySelector("[data-ppr]"), ppv = ppop.querySelector("[data-ppv]");
+  const ppr = ppop.querySelector("[data-ppr]"), ppv = ppop.querySelector("[data-ppv]"), ppClearBtn = ppop.querySelector("[data-ppclear]");
+  let ppClearMode = false;
+  function ppClearSync() {
+    if (!ppClearBtn) return;
+    ppClearBtn.setAttribute("aria-pressed", ppClearMode ? "true" : "false");
+    ppClearBtn.style.background = ppClearMode ? "#d0ebff" : "";
+    ppClearBtn.style.borderColor = ppClearMode ? "#1971c2" : "";
+    ppClearBtn.style.fontWeight = ppClearMode ? "700" : "";
+  }
   function closePp() { ppop.hidden = true; }
   function complement(hex) {   // 보색: 색상환에서 반대 색상 + 바탕과 확실히 구분되도록 밝기 대비 확보 (무채색·거의 흰/검은 색은 흑/백)
     const n = parseInt(hex.slice(1), 16), r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
@@ -3217,14 +3225,16 @@ let imgBack = null;
     const pcc = ppop.querySelector("[data-ppcur]"); if (pcc) { pcc.querySelector("i").style.background = sd.pcolor; const pi = pcc.querySelector("input"); if (pi) { pi.value = sd.pcolor; pi.classList.remove("bad"); }
       pcc.querySelector(".hexnote").textContent = sd.fop < 1 ? "· " + Math.round((1 - sd.fop) * 100) + "% 투명" : ""; }
     ppr.value = String(Math.round((1 - sd.fop) * 100)); ppv.textContent = ppr.value + "%";
+    ppClearSync();
   }
   function ppApply(c, t, quiet) {
     if (!sh) return;
     if (c) {
+      ppClearMode = false;
       sd.pcolor = c; sd.color = complement(c); qc("color").value = sd.color;   // 글자·도형·선 기본 색 = 페인트 색의 보색
       if (!quiet) toast("페인트 색을 골랐어요. 이미지에서 채울 곳을 클릭하면 칠해져요 (글자·도형·선 색은 보색 " + sd.color + ")");
     }
-    if (t != null) sd.fop = Math.max(0.05, 1 - t / 100);
+    if (t != null) { ppClearMode = false; sd.fop = Math.max(0.05, 1 - t / 100); }
     ppSync();
   }
   let ppSnap = null;
@@ -3240,7 +3250,11 @@ let imgBack = null;
   ppop.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     if (b.dataset.ppc) ppApply(b.dataset.ppc, null);
-    else if (b.hasAttribute("data-pptransparent")) { sd.fop = 0; ppSync(); toast("페인트 투명을 선택했어요"); }
+    else if (b.hasAttribute("data-ppclear")) {
+      ppClearMode = !ppClearMode;
+      ppSync();
+      toast(ppClearMode ? "투명 모드: 이미지에서 영역을 클릭하면 그 부분이 실제 투명해져요" : "투명 모드를 해제했어요");
+    }
     else if (b.hasAttribute("data-ppkeep")) {
       if (ppSnap) { sd.pcolor = ppSnap.pcolor; sd.fop = ppSnap.fop; sd.color = ppSnap.color; qc("color").value = sd.color; }
       ppSync(); closePp(); toast("기존 페인트 색을 유지했어요");
@@ -3773,7 +3787,33 @@ let imgBack = null;
         }
         reg = g;
       }
-      /* 4) 페인트 층에 합성 (같은 자리를 다시 칠하면 이전 색을 바꿔 넣음) */
+      /* 4) 투명 모드: 원본 이미지와 기존 페인트 층에서 선택 영역의 픽셀을 실제로 제거 */
+      if (ppClearMode) {
+        pushUndo(true);
+        const mask = document.createElement("canvas"); mask.width = cw; mask.height = ch;
+        const mx = mask.getContext("2d"), md = mx.createImageData(cw, ch);
+        for (let i = 0; i < N; i++) if (reg[i]) { const o = i * 4; md.data[o + 3] = 255; }
+        mx.putImageData(md, 0, 0);
+        s.ctx.save(); s.ctx.globalCompositeOperation = "destination-out"; s.ctx.drawImage(mask, 0, 0, s.nw, s.nh); s.ctx.restore();
+        s.erased = true; s.alpha = true;
+        const oldPaint = s.items.find(q => q.paint), oldPaintData = oldPaint && PICS.get(oldPaint.pid);
+        if (oldPaintData) {
+          const oldPaintImg = await loadI(oldPaintData.url);
+          if (oldPaintImg) {
+            const paintCv = document.createElement("canvas");
+            paintCv.width = oldPaintImg.naturalWidth || oldPaintImg.width;
+            paintCv.height = oldPaintImg.naturalHeight || oldPaintImg.height;
+            const paintCx = paintCv.getContext("2d");
+            paintCx.drawImage(oldPaintImg, 0, 0, paintCv.width, paintCv.height);
+            paintCx.save(); paintCx.globalCompositeOperation = "destination-out"; paintCx.drawImage(mask, 0, 0, paintCv.width, paintCv.height); paintCx.restore();
+            oldPaint.pid = regPic(paintCv.toDataURL("image/png"));
+          }
+        }
+        render();
+        toast("선택한 영역을 실제 투명 픽셀로 바꿨어요");
+        return;
+      }
+      /* 5) 일반 페인트 층에 합성 (같은 자리를 다시 칠하면 이전 색을 바꿔 넣음) */
       const pc = document.createElement("canvas"); pc.width = cw; pc.height = ch;
       const px = pc.getContext("2d"), P0 = s.items.find(q => q.paint), P0p = P0 && PICS.get(P0.pid);
       if (P0p) { const im = await loadI(P0p.url); if (im) px.drawImage(im, 0, 0, cw, ch); }
@@ -4036,7 +4076,7 @@ let imgBack = null;
   /* 도구 설정을 기본값으로: 색 빨강, 선 굵기 보통, 글자 크기 21, 배경·채움 연한 노랑(도형 투명도 50%), 점선·굵게·외곽선 해제, 지우개 보통 (이미 넣은 요소는 건드리지 않음) */
   function resetSd() {
     if (!sh) return;
-    Object.assign(sd, { color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, bold: false, italic: false, underline: false, strike: false, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, bold: false, ol: false, top: null, ew: 16 });
+    ppClearMode = false; ppSync(); Object.assign(sd, { color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, bold: false, italic: false, underline: false, strike: false, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, bold: false, ol: false, top: null, ew: 16 });
     qc("color").value = "#2b8a3e"; ppSync(); qc("lw").value = "3"; qc("fs").value = "15"; qc("fsr").value = "15"; if (typeof szSync === "function") szSync(15); qc("ew").value = "16"; qc("bg").value = DEF_BG;
     qc("op").value = sh.mode === "text" ? String(sd.tool === "ctext" ? 0 : 0.5) : sh.mode === "shape" ? "0.5" : "1"; popSync(1);
     ["dash", "ol"].forEach(k => { const b = qc(k); if (b) setP(b, false); }); syncTextFormatButtons(sh.items[sh.sel]);
@@ -4479,7 +4519,7 @@ function bgPrevDraw() {   // 미리 보기: 입력한 가로·세로 비율의 �
   if (cap) cap.textContent = w + " × " + h + " px" + (rot ? " · " + rot + "°" : "") + (bgColor ? "" : " (투명)");
 }
 const bgCpk = cpkInit(document.getElementById("bgCpk"), bgColor, v => { bgColor = v; bgPrevDraw(); });
-const bgCpk2 = cpkInit(document.getElementById("bgCpk2"), bgRest, v => { bgRest = v || ""; bgPrevDraw(); });
+const bgCpk2 = cpkInit(document.getElementById("bgCpk2"), bgRest, v => { bgRest = v || ""; bgPrevDraw(); }); const bgNone = document.querySelector("#bgCpk2 .no"); if (bgNone) bgNone.textContent = "투명";
 bgW.addEventListener("input", bgPrevDraw); bgH.addEventListener("input", bgPrevDraw);
 if (bgShp) bgShp.addEventListener("change", bgPrevDraw);
 if (bgRot) {
@@ -4550,7 +4590,7 @@ function foBuild() {
     '<div class="cs-sz" title="최종 저장 크기를 이 비율로 줄여요. 저장 공간이 부족하다는 안내가 나오면 비율을 낮춰 보세요"><span>저장 크기 비율</span><input type="number" data-fosc min="1" max="100" step="1" value="100" aria-label="저장 크기 비율"><span>%</span></div>' +
     '<div class="cfnote" data-fomsg hidden style="margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--err,var(--warn,#b3261e))"></div>' +
     '<details class="fo-pad"><summary>빈 곳을 채울 색 <i data-fopv></i></summary><div class="cpk" data-focpk></div></details>' +
-    '<details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 색 없음) <i data-fobv></i></summary><div class="cpk" data-fobcpk></div></details>' +
+    '<details class="fo-pad"><summary>도형 밖·돌린 모서리 색 (기본: 투명) <i data-fobv></i></summary><div class="cpk" data-fobcpk></div></details>' +
     '<div class="fo-btns"><button type="button" class="cs-btn" data-fo="orig" title="원본 이미지의 실제 가로·세로 크기를 칸에 넣어요 (제한 없음)">원본 크기로</button>' +
     '<button type="button" class="cs-btn" data-fo="all" title="범위를 정하지 않고, 이미지 전체를 가로 ' + FODEF + 'px 이하로 줄여서 바로 넣어요 (예전 방식)">전체를 줄여서 넣기</button></div></div></div>' +
     '<div class="cfft" data-fonft><button type="button" class="ok" data-fo="ok">확인</button><button type="button" data-fo="x">취소</button></div>' +
@@ -4559,7 +4599,7 @@ function foBuild() {
   const q = s => foDlg.querySelector(s);
   foW = q("[data-fow]"); foH = q("[data-foh]"); foPX = q("[data-fopx]"); foPY = q("[data-fopy]"); foSC = q("[data-fosc]"); foMsg = q("[data-fomsg]"); foRot = q("[data-forot]"); foFlip = foDlg.querySelector('[data-fo="flip"]'); foShp = q("[data-foshp]");
   foCpk = cpkInit(q("[data-focpk]"), foPad, v => { foPad = v; if (foSt) { foSt.pad = v || null; foDraw(); foSync(); } });
-  foBCpk = cpkInit(q("[data-fobcpk]"), foBgC, v => { foBgC = v || ""; if (foSt) { foSt.bg = v || null; foDraw(); foSync(); } });
+  foBCpk = cpkInit(q("[data-fobcpk]"), foBgC, v => { foBgC = v || ""; if (foSt) { foSt.bg = v || null; foDraw(); foSync(); } }); const foNone = q("[data-fobcpk] .no"); if (foNone) foNone.textContent = "투명";
   const cv = q("canvas");
   foFileIn = q("[data-fofile]");
   foFileIn.addEventListener("change", () => { const f = (foFileIn.files || [])[0]; foFileIn.value = ""; if (!f) return; if (/^image\//.test(f.type)) foShapeLoad(f); else toast("이미지 파일이 아니에요"); });
