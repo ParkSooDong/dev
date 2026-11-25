@@ -7388,7 +7388,7 @@ let resetting=false;
         if (c.nodeType === 3) { if (c.nodeValue) { cur.t += c.nodeValue; cur.nodes.push(c); } }
         else if (c.nodeType === 1) {
           const tg = c.nodeName.toUpperCase();
-          if (c.classList.contains("cmpgap")) continue;   // 줄맞춤용 빈 칸은 내용이 아님
+          if (c.classList.contains("cmpgap") || c.classList.contains("cmp-serial-cell")) continue;   // 비교용 여백·일련번호 열은 비교 대상이 아님
           if (tg === "BR") { flush(); continue; }
           if (tg === "TD" || tg === "TH") { if (c.previousElementSibling) cur.t += "\t"; walk(c); continue; }
           if (tg === "STYLE" || tg === "SCRIPT" || tg === "SVG") continue;
@@ -7575,6 +7575,48 @@ let resetting=false;
     if (CH) CSS.highlights.set("cmp-cur", new Highlight(...ls.map(rng)));
     for (const L of ls) { const p = L.nodes[0].parentElement; if (p) p.scrollIntoView({ block: "center", behavior: "smooth" }); }
   }
+  function addTableSerials(A, B, rows) {
+    // 양쪽 모두 표 하나로 구성된 경우에만 표 첫 열에 일련번호를 추가
+    const ta = ed1.querySelectorAll("table"), tb = ed2.querySelectorAll("table");
+    if (ta.length !== 1 || tb.length !== 1) return false;
+    const trsA = Array.from(ta[0].rows), trsB = Array.from(tb[0].rows);
+    if (!trsA.length || !trsB.length || A.length !== trsA.length || B.length !== trsB.length) return false;
+
+    const rowFor = L => {
+      const n = L.nodes && L.nodes[0];
+      const e = n && (n.parentElement || n);
+      return e && e.closest ? e.closest("tr") : null;
+    };
+    const mapA = A.map(rowFor), mapB = B.map(rowFor);
+    if (mapA.some((r, i) => !r || r !== trsA[i]) || mapB.some((r, i) => !r || r !== trsB[i])) return false;
+
+    const putCell = (tr, value, header) => {
+      let cell = tr.querySelector(":scope > .cmp-serial-cell");
+      if (!cell) {
+        cell = document.createElement(header ? "th" : "td");
+        cell.className = "cmp-serial-cell";
+        cell.setAttribute("contenteditable", "false");
+        cell.style.whiteSpace = "nowrap";
+        cell.style.textAlign = "center";
+        cell.style.minWidth = "3.2em";
+        tr.insertBefore(cell, tr.firstElementChild);
+      }
+      cell.textContent = value == null ? "" : String(value);
+    };
+
+    // 첫 행은 제목 행으로 보고 '번호'를 표시. 데이터 행은 나 영역 순서 기준으로 번호 부여.
+    putCell(trsA[0], "번호", true);
+    putCell(trsB[0], "번호", true);
+    for (let i = 1; i < trsA.length; i++) putCell(trsA[i], "", false);
+    for (let j = 1; j < trsB.length; j++) putCell(trsB[j], j, false);
+
+    // 비교 알고리즘이 찾아낸 동일/변경 행의 짝을 이용해 가 영역에도 나 영역 번호를 연결
+    for (const [i, j] of rows) {
+      if (i > 0 && j > 0 && trsA[i] && trsB[j]) putCell(trsA[i], j, false);
+    }
+    return true;
+  }
+
   function run() {
     ensurePanel(); clearHl(); clearGaps();
     // barcode 는 확대해야 두 영역이 모두 보여요
@@ -7585,6 +7627,7 @@ let resetting=false;
     if (!A.length && !B.length) { sumEl.textContent = "비교할 내용이 없어요 (가·나 메모가 모두 비어 있어요)"; return; }
     const { hs, rows, approx } = hunks(A, B);
     st.rows = rows; st.approx = approx;
+    addTableSerials(A, B, rows);
     if (!approx) { align(A, B, rows); lw1 = ed1.clientWidth; lw2 = ed2.clientWidth; }   // 같은 줄이 좌우 같은 높이에 오도록 빈 칸 끼워 넣기
     const c = { chg: 0, del: 0, add: 0 }; hs.forEach(h => c[h.k]++);
     if (!hs.length) { sumEl.className = "cmps ok"; sumEl.textContent = "✔ 일치해요 (가 " + A.length + "행 = 나 " + B.length + "행)"; return; }
