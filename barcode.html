@@ -171,6 +171,7 @@ img[data-alpha-view="1"]{background-color:transparent!important;background-image
 .fbbtn[aria-pressed=true]{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
 #dbGrp{display:inline-flex;gap:4px;align-items:center}
 #dbGrp[hidden]{display:none}
+#dbPause[hidden]{display:none}
 .dbbtn{font-size:11px;padding:1px 9px}
 .dbbtn:disabled{opacity:.4;cursor:not-allowed}
 #mst{font-size:12px;font-weight:400;text-align:left;color:var(--mute)}
@@ -802,7 +803,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   height:25px !important; padding:2px 4px !important;
   text-align:center !important; font-variant-numeric:tabular-nums !important;
 }
-#tm .rm { display:inline-flex !important; align-items:center !important; white-space:nowrap !important; }
+#tm .rm { display:inline-flex !important; align-items:center !important; white-space:nowrap !important; gap:.4em !important; }
 #rem {
   display:inline-block !important;
   min-width:7.2ch !important; width:7.2ch !important;
@@ -810,6 +811,14 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   font-weight:700 !important; font-variant-numeric:tabular-nums !important;
   letter-spacing:0 !important; text-align:left !important;
 }
+/* 타이머: [타이머] 글자가 접기/펼치기 버튼. 펼치면 핑크 바탕이 오른쪽으로 열리고, 접으면 [타이머] 알약 버튼만 남아 [기본값으로 초기화] 왼쪽에 놓여요 */
+#tm { gap:0 !important; transition:background-color .3s, border-color .3s; }
+#tm .tmwrap { justify-content:flex-start !important; }
+#tm .tmin { display:flex; align-items:center; gap:14px; flex:none; padding:0 12px 0 10px; }
+#rem { width:auto !important; min-width:8.4ch !important; }   /* 22:13:15 처럼 8글자가 잘리지 않게 */
+#tm.pink #tmBtn { background:transparent !important; border-color:transparent !important; color:inherit !important; padding:0 !important; height:auto !important; min-height:0 !important; font-weight:700 !important; text-decoration:underline dotted; text-underline-offset:4px; cursor:pointer; }
+#tm.pink #tmBtn:hover { text-decoration-style:solid; }
+#tm:not(.pink) { background:transparent !important; border-color:transparent !important; padding:0 !important; }
 </style>
 </head>
 <body>
@@ -817,13 +826,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 <div class="hd">
 <h1>미니 <span id="kind" role="button" tabindex="0" title="클릭하면 바코드/QR 전환">바코드</span> 3×3</h1>
 <div class="tr">
-<div class="tmwrap" id="tmw">
-<div class="tm pink" id="tm" role="timer" aria-live="off">
-<label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label>
-<span class="rm">남은 시간 <span id="rem">--:--:--</span></span>
-</div>
-</div>
-<button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button>
+<div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div>
 </div>
 </div>
 <div class="top">
@@ -834,7 +837,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 <label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
 </div>
 <div class="grid" id="g"></div>
-<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><span id="dbCtl"><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span></span><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
+<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><span id="dbCtl"><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span></span><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
   <button type="button" data-cmd="redo" title="다시 실행 (Ctrl+Y)" aria-label="다시 실행"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
@@ -1850,7 +1853,7 @@ const dbName=()=>"DB"+(dbIdx+1);
 const needUrlMsg=()=>dbName()+" 주소(DB_URLS)를 먼저 설정해 주세요";
 const stashKey=i=>"bc9-dbmemo-"+(i+1);   /* 지금 선택되지 않은 DB 의 이 PC 메모 사본 보관 칸 (지금 DB 의 사본은 기존 bc9-state 에 그대로 저장) */
 let gen=0,switching=false;   /* gen: DB 를 바꾸면 올라가는 번호 (바꾸기 전 DB 의 진행 중 작업을 버리기 위함) */
-const memoEl=$("memo"),mst=$("mst"),fbBtn=$("fbBtn"),dbGrp=$("dbGrp"),dbBtns=Array.from(dbGrp.querySelectorAll(".dbbtn"));
+const memoEl=$("memo"),mst=$("mst"),fbBtn=$("fbBtn"),dbGrp=$("dbGrp"),dbBtns=Array.from(dbGrp.querySelectorAll(".dbbtn:not(.dbloc)"));
 
 /* ===== DB 저장 크기(바이트) 표시 =====
    Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 크기(UTF-8 바이트)를 한도(MAX_BYTES)와 함께 보여줘요.
@@ -1875,9 +1878,10 @@ const hhmm=()=>new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-d
 const say=(t,c)=>{mst.textContent=t;mst.className=c||""};
 const localNote=()=>say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
 function renderFb(){ try { if (window.refreshSplit) window.refreshSplit(); } catch (e) { console.error("refreshSplit", e); }
-  fbBtn.textContent="Firebase Realtime Database "+(useFb?"사용":"미사용");fbBtn.setAttribute("aria-pressed",String(useFb));
-  dbGrp.hidden=!useFb;   /* DB1~3 버튼은 "사용"일 때만 */
-  dbBtns.forEach((b,i)=>{b.setAttribute("aria-pressed",String(i===dbIdx));b.disabled=!isSet(DB_URLS[i]);b.title="DB"+(i+1)+(b.disabled?" — 주소가 설정되지 않았어요 (DB_URLS)":" 로 전환")});
+  fbBtn.setAttribute("aria-pressed",String(!useFb));   /* [Local PC 사용] [DB1] [DB2] [DB3] 중 지금 쓰는 하나만 눌린 모양 */
+  dbGrp.hidden=false;
+  {const pb=document.getElementById("dbPause");if(pb)pb.hidden=!useFb}   /* 저장 일시정지는 DB 를 쓸 때만 */
+  dbBtns.forEach((b,i)=>{b.setAttribute("aria-pressed",String(useFb&&i===dbIdx));b.disabled=!isSet(DB_URLS[i]);b.title="DB"+(i+1)+(b.disabled?" — 주소가 설정되지 않았어요 (DB_URLS)":" 로 전환")});
 }
 function clearTimers(){clearTimeout(idleT);clearTimeout(maxT);idleT=maxT=null}
 function schedule(){if(savePaused)return;clearTimeout(idleT);idleT=setTimeout(saveRemote,400);if(!maxT)maxT=setTimeout(saveRemote,5000)}
@@ -2040,7 +2044,20 @@ function setFb(on){
   if(!dbSet){say(needUrlMsg(),"err");return}
   say("불러오는 중…");firstTry=true;connect();
 }
-fbBtn.addEventListener("click",()=>setFb(!useFb));
+function pickDb(i) {   // 저장 위치 선택: i=-1 이면 Local PC, 0~2 이면 DB1~DB3 (넷 중 하나만 선택돼요)
+  if (switching) return;
+  if (i < 0) { if (useFb) setFb(false); return; }
+  if (!DB_URLS[i] || !isSet(DB_URLS[i])) return;
+  if (useFb) { switchDb(i); return; }                 // DB 사용 중 → 다른 DB 로 전환
+  if (i !== dbIdx) {                                  // Local PC 에서 DB 로: 대상 DB 의 주소·비밀번호로 맞춘 뒤 연결 (지금 메모는 그대로 두고, 연결할 때 DB 내용과 비교해요)
+    gen++; connecting = false; dbIdx = i; applyDb();
+    try { localStorage.setItem(DBSEL, String(i)); } catch (e) {}
+    pw = null; dbSalt = null; keyCache.clear();
+    try { pw = localStorage.getItem(pwKey()) || null; } catch (e) {}
+  }
+  setFb(true);
+}
+fbBtn.addEventListener("click",()=>pickDb(-1));
 
 /* DB1/2/3 전환: 지금 DB 의 변경을 저장해 두고, 선택한 DB 의 주소·비밀번호·이 PC 메모 사본으로 바꾼 뒤 다시 연결.
    선택한 번호는 이 PC 에 기억돼서 다음에 켜도 그 DB 로 시작해요 (바코드 입력값 등 메모 이외의 설정은 DB 와 상관없이 그대로) */
@@ -2068,7 +2085,7 @@ async function switchDb(i){
   }finally{switching=false}
   if(useFb&&dbIdx===i)connect();
 }
-dbBtns.forEach((b,i)=>b.addEventListener("click",()=>switchDb(i)));
+dbBtns.forEach((b,i)=>b.addEventListener("click",()=>pickDb(i)));
 const dbPauseBtn=$("dbPause");
 function syncPauseButton(){if(!dbPauseBtn)return;dbPauseBtn.setAttribute("aria-pressed",String(savePaused));dbPauseBtn.textContent=savePaused?"실시간 저장 재개":"저장 일시정지";dbPauseBtn.title=savePaused?"누르면 실시간 저장을 다시 시작합니다":"누르면 실시간 저장을 잠시 멈춥니다";}
 syncPauseButton();
@@ -4410,7 +4427,8 @@ let imgBack = null;
   }
   const hintEl = el("div", "imgx-hint", "새 요소를 넣으려면 Shift 키를 누른 채 클릭하세요"); hintEl.hidden = true; document.body.appendChild(hintEl);
   let hintT = 0;
-  function showHint(x, y) {   // 커서 부근에 잠깐 보였다가 사라지는 안내
+  function showHint(x, y) {
+    if (window.matchMedia && window.matchMedia("(pointer:coarse), (hover:none)").matches) return;   // 모바일에는 Shift 키가 없으므로 안내를 보이지 않음   // 커서 부근에 잠깐 보였다가 사라지는 안내
     hintEl.hidden = false;
     hintEl.style.left = clamp(x + 14, 4, Math.max(4, innerWidth - hintEl.offsetWidth - 4)) + "px";
     hintEl.style.top = clamp(y + 18, 4, Math.max(4, innerHeight - hintEl.offsetHeight - 4)) + "px";
@@ -4550,7 +4568,7 @@ let imgBack = null;
     });
     wrap.addEventListener("pointerleave", () => { if (sh && !sh.drag) { sh.cur = null; drawCur(); } });
     syncCtl(); render(); drawCur(); place();
-    toast(mode === "fill" ? "페인트: 색과 투명도를 고른 뒤 칠할 곳을 클릭하세요. 클릭한 곳에서 시작해 글자·도형·선으로 막힌 범위가 칠해지고, 막히지 않은 쪽은 이미지 끝까지 칠해져요. 색이 마음에 안 들면 [실행 취소]로 되돌릴 수 있어요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "pic" ? "이미지 넣기: 이미지를 더 올리려면 [이미지 넣기]를 다시 누르거나 Ctrl+V·끌어다 놓기를 쓰세요. 올린 이미지는 끌어서 옮기고, 모서리를 끌면 비율을 유지한 채, 변을 끌면 가로·세로로 늘이고 줄여요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)"
+    if (!(window.matchMedia && window.matchMedia("(pointer:coarse), (hover:none)").matches && (mode === "text" || mode === "shape" || mode === "line"))) toast(mode === "fill" ? "페인트: 색과 투명도를 고른 뒤 칠할 곳을 클릭하세요. 클릭한 곳에서 시작해 글자·도형·선으로 막힌 범위가 칠해지고, 막히지 않은 쪽은 이미지 끝까지 칠해져요. 색이 마음에 안 들면 [실행 취소]로 되돌릴 수 있어요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "pic" ? "이미지 넣기: 이미지를 더 올리려면 [이미지 넣기]를 다시 누르거나 Ctrl+V·끌어다 놓기를 쓰세요. 올린 이미지는 끌어서 옮기고, 모서리를 끌면 비율을 유지한 채, 변을 끌면 가로·세로로 늘이고 줄여요 (맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)"
       : mode === "edit" ? (tool === "lasso" ? "올가미: 지울 글자·도형·선을 감싸듯 끌어서 그리면, 걸친 요소가 모두 삭제돼요" : "지우개: 이미지 위를 끌어서 원본 이미지를 지워요. 굵기는 지우개 옆에서 골라요")
       : mode === "text" ? "글자: 이미지 위를 클릭해 놓고 글자를 입력하세요. 연필 아이콘은 마우스나 펜으로 직접 글씨를 써요. 말풍선은 꼬리 손잡이를 끌어 방향을 정해요 (고른 아이콘은 유지돼요. 기존 요소 위에 새로 넣으려면 Shift를 누른 채 클릭하세요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : mode === "line" ? "아이콘을 고른 뒤 이미지 위를 클릭하세요. 손잡이를 끌면 위치를 옮길 수 있어요 (고른 아이콘은 유지돼요. 기존 요소 위에 새로 넣으려면 Shift를 누른 채 클릭하세요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)" : "아이콘을 고른 뒤 이미지 위를 클릭하거나 끌어서 넣으세요 (자유형 도형: 점을 차례로 클릭하고 더블클릭으로 마침. 고른 아이콘은 유지돼요. 기존 요소 위에 새로 넣으려면 Shift를 누른 채 클릭하세요. 맨 왼쪽 아이콘·Esc·이미지 밖 클릭: 이미지에 반영)");
   }
@@ -7583,9 +7601,10 @@ const TKEY="bc9-target";
 (function(){
   const tt=$("tt"),rem=$("rem");
   /* [타이머] 버튼: 켜면 연핑크 영역에 목표 시각·남은 시간 표시, 끄면 색 없는 빈 공간 */
-  const box=$("tm"),wrap=$("tmw"),tb=$("tmBtn");let on=TIMER_ON;
+  const outer=$("tm"),box=$("tmin"),wrap=$("tmw"),tb=$("tmBtn");let on=TIMER_ON,pinkT=0;
   function setOn(v,anim){
-    on=v;tb.setAttribute("aria-pressed",String(v));box.setAttribute("aria-hidden",String(!v));
+    on=v;tb.setAttribute("aria-expanded",String(v));box.setAttribute("aria-hidden",String(!v));
+    clearTimeout(pinkT);if(v||!anim)outer.classList.toggle("pink",v);else pinkT=setTimeout(()=>outer.classList.remove("pink"),300);   /* 접을 때는 줄어든 뒤 핑크 바탕을 걷어요 */
     wrap.classList.toggle("off",!v);
     if(!anim){wrap.style.width=v?"auto":"0px";return}
     const w=box.offsetWidth+"px";
