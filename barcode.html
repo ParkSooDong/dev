@@ -774,6 +774,42 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad .cpk{margin-top:4px}
 </style>
 <style id="tbl-sort-style">#tblSortDialog[hidden]{display:none!important}#tblSortDialog button{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--ink);color:var(--bg);cursor:pointer}#tblSortDialog button:hover{opacity:.85}#tblSortDialog select:focus-visible{outline:2px solid #339af0;outline-offset:1px}</style>
+
+<style id="timer-fixed-15px-css">
+/* 목표시각·남은시간·타이머 버튼: 글자 크기와 세로 높이 통일 */
+#tm, #tmBtn, #tm label, #tm input, #tm .rm, #rem {
+  font-size:15px !important;
+  line-height:1.2 !important;
+}
+#tm {
+  box-sizing:border-box !important;
+  height:36px !important; min-height:36px !important;
+  padding:0 12px !important;
+  align-items:center !important;
+}
+#tmBtn {
+  box-sizing:border-box !important;
+  height:36px !important; min-height:36px !important;
+  padding:0 16px !important;
+  display:inline-flex !important; align-items:center !important; justify-content:center !important;
+}
+#tm label { display:flex !important; align-items:center !important; flex:0 0 auto !important; }
+#tm input#tt {
+  box-sizing:border-box !important;
+  width:5.6em !important; min-width:5.6em !important; max-width:5.6em !important;
+  flex:0 0 5.6em !important;
+  height:25px !important; padding:2px 4px !important;
+  text-align:center !important; font-variant-numeric:tabular-nums !important;
+}
+#tm .rm { display:inline-flex !important; align-items:center !important; white-space:nowrap !important; }
+#rem {
+  display:inline-block !important;
+  min-width:7.2ch !important; width:7.2ch !important;
+  font-family:ui-monospace,Menlo,monospace !important;
+  font-weight:700 !important; font-variant-numeric:tabular-nums !important;
+  letter-spacing:0 !important; text-align:left !important;
+}
+</style>
 </head>
 <body>
 <main>
@@ -2032,14 +2068,27 @@ async function switchDb(i){
   if(useFb&&dbIdx===i)connect();
 }
 dbBtns.forEach((b,i)=>b.addEventListener("click",()=>switchDb(i)));
-const dbPauseBtn=$("dbPause"); if(dbPauseBtn)dbPauseBtn.addEventListener("click",()=>{savePaused=!savePaused;dbPauseBtn.setAttribute("aria-pressed",String(savePaused));dbPauseBtn.textContent=savePaused?"실시간 저장 재개":"저장 일시정지";dbPauseBtn.title=savePaused?"누르면 실시간 저장을 다시 시작합니다":"실시간 저장을 잠시 멈춥니다";if(savePaused){clearTimers();say("자동 저장 일시정지 · Ctrl+S로 지금 저장")}else if(dirty){say("저장 대기 중…");schedule()}});
+const dbPauseBtn=$("dbPause");
+function syncPauseButton(){if(!dbPauseBtn)return;dbPauseBtn.setAttribute("aria-pressed",String(savePaused));dbPauseBtn.textContent=savePaused?"실시간 저장 재개":"저장 일시정지";dbPauseBtn.title=savePaused?"누르면 실시간 저장을 다시 시작합니다":"누르면 실시간 저장을 잠시 멈춥니다";}
+syncPauseButton();
+if(dbPauseBtn)dbPauseBtn.addEventListener("click",()=>{savePaused=!savePaused;syncPauseButton();if(savePaused){clearTimers();say("자동 저장 일시정지 · Ctrl+S로 지금 저장")}else if(dirty){say("저장 대기 중…");schedule()}else say("실시간 저장 재개");});
+async function saveOnceFromShortcut(){
+  const restorePause=savePaused;
+  if(restorePause){savePaused=false;syncPauseButton();say("실시간 저장으로 잠시 전환해 저장합니다…");}
+  try{
+    while(saving)await new Promise(r=>setTimeout(r,50));
+    if(dirty)await saveRemote(false,true);else say("저장할 변경 내용이 없습니다");
+  }finally{
+    if(restorePause){savePaused=true;clearTimers();syncPauseButton();if(dirty)say("자동 저장 일시정지 · Ctrl+S로 지금 저장");}
+  }
+}
 onEd("input",()=>{
   if(useFb){dirty=true;if(ready){say(savePaused?"자동 저장 일시정지 · Ctrl+S로 지금 저장":saving?"저장 중… (이후 변경은 이어서 저장해요)":"저장 대기 중…");schedule()}}
   clearTimeout(stT);stT=setTimeout(saveState,300);   /* 이 PC 사본은 입력을 멈추면 바로 저장 */
 });
 let stT=null;
 window.addEventListener("blur",()=>{if(useFb&&ready&&dirty&&!saving&&!savePaused)saveRemote()});   /* 다른 창·탭으로 옮기면 바로 저장 */
-document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey&&(e.key==="s"||e.key==="S")&&useFb){e.preventDefault();if(dirty)saveRemote(false,true)}});
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey&&(e.key==="s"||e.key==="S")&&useFb){e.preventDefault();e.stopImmediatePropagation();saveOnceFromShortcut();}},true);
 setInterval(()=>{if(useFb&&dbSet)ready?poll():connect()},POLL_MS);
 document.addEventListener("visibilitychange",()=>{if(!useFb)return;if(document.hidden){if(dirty)saveRemote(true)}else poll()});
 window.addEventListener("focus",poll);
@@ -3466,7 +3515,7 @@ let imgBack = null;
   const ppk = document.createElement("input"); ppk.type = "color"; ppk.tabIndex = -1; ppk.setAttribute("aria-hidden", "true");
   ppk.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"; bar.appendChild(ppk);
   const ppr = ppop.querySelector("[data-ppr]"), ppv = ppop.querySelector("[data-ppv]");
-  let ppTransparent = false;
+  let ppTransparent = !!sd.ppTransparent;
   function closePp() { ppop.hidden = true; }
   function complement(hex) {   // 보색: 색상환에서 반대 색상 + 바탕과 확실히 구분되도록 밝기 대비 확보 (무채색·거의 흰/검은 색은 흑/백)
     const n = parseInt(hex.slice(1), 16), r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
@@ -3491,11 +3540,11 @@ let imgBack = null;
   function ppApply(c, t, quiet) {
     if (!sh) return;
     if (c) {
-      ppTransparent = false;
+      sd.ppTransparent = ppTransparent = false;
       sd.pcolor = c; sd.color = complement(c); qc("color").value = sd.color;   // 글자·도형·선 기본 색 = 페인트 색의 보색
       if (!quiet) toast("페인트 색을 골랐어요. 이미지에서 채울 곳을 클릭하면 칠해져요 (글자·도형·선 색은 보색 " + sd.color + ")");
     }
-    if (t != null) { ppTransparent = false; sd.fop = Math.max(0.05, 1 - t / 100); }
+    if (t != null) { sd.ppTransparent = ppTransparent = false; sd.fop = Math.max(0.05, 1 - t / 100); }
     ppSync();
   }
   let ppSnap = null;
@@ -3511,9 +3560,9 @@ let imgBack = null;
   ppop.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
     if (b.dataset.ppc) ppApply(b.dataset.ppc, null);
-    else if (b.hasAttribute("data-pptransparent")) { ppTransparent = !ppTransparent; ppSync(); toast(ppTransparent ? "투명을 선택했어요. 클릭한 영역의 픽셀을 실제로 제거합니다" : "투명 선택을 해제했어요"); }
+    else if (b.hasAttribute("data-pptransparent")) { sd.ppTransparent = ppTransparent = !ppTransparent; ppSync(); toast(ppTransparent ? "투명을 선택했어요. 클릭한 영역의 픽셀을 실제로 제거합니다" : "투명 선택을 해제했어요"); }
     else if (b.hasAttribute("data-ppkeep")) {
-      if (ppSnap) { sd.pcolor = ppSnap.pcolor; sd.fop = ppSnap.fop; sd.color = ppSnap.color; ppTransparent = false; qc("color").value = sd.color; }
+      if (ppSnap) { sd.pcolor = ppSnap.pcolor; sd.fop = ppSnap.fop; sd.color = ppSnap.color; sd.ppTransparent = ppTransparent = false; qc("color").value = sd.color; }
       ppSync(); closePp(); toast("기존 페인트 색을 유지했어요");
     }
     else if (b.hasAttribute("data-ppk")) { openColorDlg({ title: "페인트 색 선택 (84색)", value: sd.pcolor, onOk: v => ppApply(v, null) }); }
