@@ -329,11 +329,11 @@ body.has-max header .tr{display:none}
 .tmwrap.off{visibility:hidden;transition:width .3s ease-in,visibility 0s .3s}
 @media (prefers-reduced-motion:reduce){.tmwrap,.tmwrap.off{transition:none}}
 .tmbtn{font-size:16px;padding:6px 16px}
-.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:nowrap;white-space:nowrap;flex:none;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:16px;color:var(--ink)}
+.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:nowrap;white-space:nowrap;flex:none;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:24px;color:var(--ink)}
 .tm.pink{background:#ffe3ec;border-color:#f4a9c0;color:#3a1020}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tm.pink{background:#4a2332;border-color:#a8506d;color:#ffe3ec}}
 .tm label{display:flex;flex-direction:row;align-items:center;gap:6px;font-size:inherit;color:inherit;white-space:nowrap}
-.tm input{width:4.6em;text-align:center;font:inherit;font-weight:700;font-size:18px;padding:2px 6px;font-variant-numeric:tabular-nums;color:inherit;background:transparent;border:1.5px solid currentColor;border-radius:8px}
+.tm input{width:5.6em;min-width:5.6em;box-sizing:border-box;text-align:center;font:inherit;font-weight:700;font-size:24px;padding:2px 6px;font-variant-numeric:tabular-nums;color:inherit;background:transparent;border:1.5px solid currentColor;border-radius:8px}
 .tm input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .tm .rm{white-space:nowrap}
 #rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
@@ -555,8 +555,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .fo-pad .cpk{margin-top:4px}
 </style>
 <style id="tbl-sort-style">#tblSortDialog[hidden]{display:none!important}#tblSortDialog button{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--ink);color:var(--bg);cursor:pointer}#tblSortDialog button:hover{opacity:.85}#tblSortDialog select:focus-visible{outline:2px solid #339af0;outline-offset:1px}</style>
-<script type="text/javascript" nonce="597ff2512f834a45bf9d9e8a7cf" src="//local.adguard.org?ts=1795567103389&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000008168820b8ae639c39fcdb091%26fn%3Dmemo_parksoodong_github_io__dev.html%26cd%3Dattachment%26ts%3D498768%26p%3Dfs%26cid%3D1%26sig%3Dc114b2dcd5b5f3f603c063d827f74c6f360fbabe0d3c7e755f3bf99457761571%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="597ff2512f834a45bf9d9e8a7cf" src="//local.adguard.org?ts=1795567103389&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+</head>
 <body>
 <header><h1>메모장</h1><button type="button" id="fbBtn" class="fbbtn" aria-pressed="false" title="클릭하면 Firebase Realtime Database 사용/미사용 전환"></button><span id="dbGrp" hidden><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tmwrap" id="tmw"><div class="tm pink" id="tm" role="timer" aria-live="off"><label>목표 시각<input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"></label><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-pressed="true" title="클릭하면 타이머 표시/숨김 전환">타이머</button><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -1721,7 +1720,35 @@ async function switchDb(i) {
   if (useFb && dbIdx === i) connect();
 }
 dbBtns.forEach((b, i) => b.addEventListener("click", () => switchDb(i)));
-const dbPauseBtn = document.getElementById("dbPause"); if (dbPauseBtn) dbPauseBtn.addEventListener("click", () => { savePaused = !savePaused; dbPauseBtn.setAttribute("aria-pressed", String(savePaused)); dbPauseBtn.textContent = savePaused ? "실시간 저장 재개" : "저장 일시정지"; dbPauseBtn.title = savePaused ? "누르면 실시간 저장을 다시 시작합니다" : "실시간 저장을 잠시 멈춥니다"; if (savePaused) { clearTimers(); say("자동 저장 일시정지 · Ctrl+S로 지금 저장"); } else if (dirty) { say("저장 대기 중…"); schedule(); } });
+
+/* 저장 일시정지 버튼: 상위 UI의 클릭 처리와 무관하게 캡처 단계에서 직접 처리 */
+document.addEventListener("click", function (ev) {
+  const pauseBtn = ev.target && ev.target.closest ? ev.target.closest("#dbPause") : null;
+  if (!pauseBtn) return;
+  ev.preventDefault();
+  ev.stopPropagation();
+  savePaused = !savePaused;
+  pauseBtn.setAttribute("aria-pressed", String(savePaused));
+  pauseBtn.textContent = savePaused ? "실시간 저장 재개" : "저장 일시정지";
+  pauseBtn.title = savePaused
+    ? "누르면 실시간 저장을 다시 시작합니다"
+    : "실시간 저장을 잠시 멈춥니다";
+  pauseBtn.classList.toggle("is-paused", savePaused);
+  pauseBtn.style.background = savePaused ? "#b42318" : "";
+  pauseBtn.style.color = savePaused ? "#fff" : "";
+  pauseBtn.style.borderColor = savePaused ? "#8f1d14" : "";
+  pauseBtn.style.fontWeight = savePaused ? "800" : "";
+  if (savePaused) {
+    clearTimers();
+    say("자동 저장 일시정지 · Ctrl+S로 지금 저장");
+  } else if (dirty) {
+    say("저장 대기 중…");
+    schedule();
+  } else {
+    say("실시간 저장 재개");
+  }
+}, true);
+
 
 onEd("input", () => {
   if (useFb) { dirty = true; if (ready) { say(savePaused ? "자동 저장 일시정지 · Ctrl+S로 지금 저장" : saving ? "저장 중… (이후 변경은 이어서 저장해요)" : "저장 대기 중…"); schedule(); } }
