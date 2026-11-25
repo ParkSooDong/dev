@@ -3222,7 +3222,29 @@ let imgBack = null;
   ppk.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"; bar.appendChild(ppk);
   const ppr = ppop.querySelector("[data-ppr]"), ppv = ppop.querySelector("[data-ppv]");
   let ppTransparent = false; // sd 생성 전 TDZ 방지: 실제 공통 상태 연결은 sd 선언 직후 수행
-  function closePp() { ppop.hidden = true; }
+  let ppAnchor = null;
+  function closePp() { ppop.hidden = true; ppAnchor = null; ppop.style.maxHeight = ""; ppop.style.overflowY = ""; }
+  function positionPp() {
+    if (ppop.hidden || !ppAnchor || !ppAnchor.isConnected) return;
+    const r = ppAnchor.getBoundingClientRect(), gap = 6, pad = 8;
+    const vw = document.documentElement.clientWidth || innerWidth;
+    const vh = document.documentElement.clientHeight || innerHeight;
+    ppop.style.position = "fixed"; ppop.style.right = "auto"; ppop.style.bottom = "auto";
+    ppop.style.left = clamp(r.left, pad, Math.max(pad, vw - ppop.offsetWidth - pad)) + "px";
+    ppop.style.maxHeight = ""; ppop.style.overflowY = "";
+    const naturalH = Math.max(ppop.scrollHeight, ppop.getBoundingClientRect().height);
+    const below = Math.max(0, vh - r.bottom - gap - pad);
+    const above = Math.max(0, r.top - gap - pad);
+    const placeAbove = naturalH > below && above > below;
+    const room = placeAbove ? above : below;
+    const maxH = Math.max(80, Math.min(naturalH, room || Math.max(80, vh - pad * 2), vh - pad * 2));
+    ppop.style.maxHeight = maxH + "px";
+    ppop.style.overflowY = naturalH > maxH ? "auto" : "visible";
+    const actualH = Math.min(naturalH, maxH);
+    const top = placeAbove ? r.top - gap - actualH : r.bottom + gap;
+    ppop.style.top = clamp(top, pad, Math.max(pad, vh - actualH - pad)) + "px";
+    ppk.style.left = ppop.style.left; ppk.style.top = ppop.style.top;
+  }
   function complement(hex) {   // 보색: 색상환에서 반대 색상 + 바탕과 확실히 구분되도록 밝기 대비 확보 (무채색·거의 흰/검은 색은 흑/백)
     const n = parseInt(hex.slice(1), 16), r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
     const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let h = 0, l = (mx + mn) / 2;
@@ -3243,6 +3265,7 @@ let imgBack = null;
     const transOptions = ppop.querySelector("[data-pptrans-options]"); if (transOptions) { transOptions.hidden = !sd.ppTransparent; transOptions.style.display = sd.ppTransparent ? "grid" : "none"; }
     const tb = ppop.querySelector("[data-pptransparent]"); if (tb) { tb.style.outline = sd.ppTransparent ? "2px solid #1971c2" : ""; tb.style.outlineOffset = "2px"; tb.setAttribute("aria-pressed", String(!!sd.ppTransparent)); }
     ppr.disabled = !!sd.ppTransparent; ppr.value = String(Math.round((1 - sd.fop) * 100)); ppv.textContent = ppr.value + "%";
+    if (!ppop.hidden && ppAnchor) requestAnimationFrame(positionPp);
   }
   function ppApply(c, t, quiet) {
     if (!sh) return;
@@ -3260,9 +3283,8 @@ let imgBack = null;
     closeSave(); closeBg(); ppSync(); ppop.hidden = false;
     ppSnap = { pcolor: sd.pcolor, fop: sd.fop, color: sd.color, ppTransparent: !!sd.ppTransparent, bgMode: ppop.querySelector("[data-ppbgmode]").value, bgColor: ppop.querySelector("[data-ppbgcolor]").value, edgeMode: ppop.querySelector("[data-ppedgemode]").value, edgeColor: ppop.querySelector("[data-ppedgecolor]").value };   // 팝업을 열 때의 전체 상태
     const r = b.getBoundingClientRect();
-    ppop.style.left = clamp(r.left, 4, Math.max(4, innerWidth - ppop.offsetWidth - 4)) + "px";
-    ppop.style.top = clamp(r.bottom + 4, 4, Math.max(4, innerHeight - ppop.offsetHeight - 4)) + "px";
-    ppk.style.left = ppop.style.left; ppk.style.top = ppop.style.top;
+    ppAnchor = b;
+    positionPp();
   }
   ppop.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
@@ -3280,7 +3302,12 @@ let imgBack = null;
   document.addEventListener("pointerdown", e => { if (!ppop.hidden && !ppop.contains(e.target) && !(e.target.closest && e.target.closest('[data-sa="pmenu"]')) && !(e.target.closest && e.target.closest(".cfov"))) closePp(); }, true);
   { const hi = ppop.querySelector("[data-ppcur] input"); if (hi) window.hexInput(hi, v => ppApply(v, null), ppSync); }   // #값 입력 + Enter: 그 페인트 색 선택
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !ppop.hidden) { e.preventDefault(); e.stopImmediatePropagation(); closePp(); } }, true);
-  window.addEventListener("scroll", closePp, true); window.addEventListener("resize", closePp);
+  window.addEventListener("scroll", closePp, true);
+  window.addEventListener("resize", () => { if (!ppop.hidden) requestAnimationFrame(positionPp); });
+  if (typeof ResizeObserver === "function") {
+    const ppResizeObserver = new ResizeObserver(() => { if (!ppop.hidden) requestAnimationFrame(positionPp); });
+    ppResizeObserver.observe(ppop);
+  }
   function toggleSave(b) {
     if (!spop.hidden) { closeSave(); return; }
     spop.hidden = false;
