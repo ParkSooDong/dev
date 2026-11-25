@@ -600,19 +600,10 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #tm.pink #tmBtn { background:transparent !important; border-color:transparent !important; color:inherit !important; padding:0 !important; height:auto !important; min-height:0 !important; font-weight:700 !important; text-decoration:underline dotted; text-underline-offset:4px; cursor:pointer; }
 #tm.pink #tmBtn:hover { text-decoration-style:solid; }
 #tm:not(.pink) { background:transparent !important; border-color:transparent !important; padding:0 !important; }
-/* 뉴스 티커: 메모장 위 한 줄, 오른쪽에서 왼쪽으로 흘러요 */
-#newsTk{flex:none;position:relative;overflow:hidden;height:28px;border:1.5px solid var(--line);border-radius:8px;background:var(--card);font-size:13px;line-height:25px;white-space:nowrap}
-#newsTrack{position:absolute;left:0;top:0;display:inline-block;white-space:nowrap;will-change:transform;transform:translateX(100vw)}
-#newsTrack .ni{display:inline-block;margin-right:48px;color:inherit;text-decoration:none}
-#newsTrack a.ni:hover{text-decoration:underline}
-#newsTrack b{font-weight:700}
-#newsTrack .nm{color:var(--mute)}
-body.has-max #newsTk{display:none}
 </style>
 </head>
 <body>
 <header><h1>메모장</h1><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
-<div id="newsTk" role="marquee" aria-label="최근 15분 이내 뉴스 헤드라인"><div id="newsTrack"></div></div>
 <div class="slot"><div class="pane" id="pane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
@@ -7377,112 +7368,6 @@ let resetting=false;
   tick();
 })();
 
-/* ===== 뉴스 티커: 최근 10분 이내 기사 (시각·제목) 를 5분마다 조회해 오른쪽→왼쪽으로 160px/초 로 흘려요 ===== */
-(function(){
-  const SOURCES=[
-    {name:"연합뉴스",url:"https://www.yna.co.kr/rss/news.xml"},
-    {name:"인포맥스",url:"https://news.einfomax.co.kr/rss/allArticle.xml"}
-  ];
-  /* RSS 는 다른 사이트라 브라우저가 바로 못 읽는 경우가 많아서, 막히면 아래 중계 주소를 차례로 써요 (직접 만든 중계 주소가 있으면 맨 앞에 넣으세요) */
-  const PROXIES=[
-    u=>u,
-    u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),
-    u=>"https://corsproxy.io/?url="+encodeURIComponent(u),
-    u=>"https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(u)
-  ];
-  const WINDOW_MS=15*60*1000, POLL_MS=5*60*1000, SPEED=160, MAX_ITEMS=100;   /* 15분 이내 / 5분마다 / 초당 160px / 최대 100개 */
-  const tk=document.getElementById("newsTk"),track=document.getElementById("newsTrack");
-  if(!tk||!track)return;
-  const bySrc={},okOnce={};let lastLoad=0,loaded=false,placeholder=true,shown=new Set();   /* shown: 지금 흐르는 기사들 */
-  const goodProxy={};
-  const dec=t=>{const a=document.createElement("textarea");a.innerHTML=t;return a.value};
-  const hhmm=t=>{const d=new Date(t+9*3600000);return String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0")};   /* 한국 시각 */
-  function parseTime(s){
-    if(!s)return NaN;s=s.trim();
-    const t=Date.parse(s);
-    if(!isNaN(t)&&/([+-]\d{2}:?\d{2}|GMT|UTC|Z)\s*$/i.test(s))return t;
-    const m=/(\d{4})[-./](\d{1,2})[-./](\d{1,2})[ T]+(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(s);   /* 시간대 표시가 없으면 한국 시각으로 */
-    if(m)return Date.UTC(+m[1],+m[2]-1,+m[3],+m[4]-9,+m[5],+(m[6]||0));
-    return t;
-  }
-  function parseFeed(xml,name){
-    const doc=new DOMParser().parseFromString(xml,"text/xml");
-    if(doc.querySelector("parsererror"))throw new Error("xml");
-    const out=[];
-    doc.querySelectorAll("item,entry").forEach(n=>{
-      const g=tag=>{const e=n.getElementsByTagName(tag)[0];return e?e.textContent:""};
-      const title=dec(g("title")).replace(/\s+/g," ").trim();
-      let ts=NaN;for(const tg of ["pubDate","dc:date","published","updated","date"]){ts=parseTime(g(tg));if(!isNaN(ts))break}
-      let link=g("link").trim();if(!link){const l=n.getElementsByTagName("link")[0];link=l?(l.getAttribute("href")||""):""}
-      if(title&&!isNaN(ts))out.push({src:name,t:ts,title,link:/^https?:\/\//i.test(link)?link:""});
-    });
-    return out;
-  }
-  async function getText(url,i){
-    const ac=new AbortController(),to=setTimeout(()=>ac.abort(),12000);
-    try{
-      const r=await fetch(PROXIES[i](url),{cache:"no-store",signal:ac.signal});
-      if(!r.ok)throw new Error("http "+r.status);
-      const buf=await r.arrayBuffer();
-      const head=new TextDecoder("latin1").decode(buf.slice(0,200)),m=/encoding=["']([\w-]+)["']/i.exec(head);
-      let txt;try{txt=new TextDecoder(m?m[1]:"utf-8").decode(buf)}catch(e){txt=new TextDecoder("utf-8").decode(buf)}
-      if(!/<(rss|feed|rdf)/i.test(txt))throw new Error("not rss");   /* 중계 서버의 오류 안내 화면 등은 버려요 */
-      return txt;
-    }finally{clearTimeout(to)}
-  }
-  async function loadSource(src){
-    const first=goodProxy[src.name]||0,order=[first,...PROXIES.map((_,i)=>i).filter(i=>i!==first)];
-    for(const i of order){
-      try{const items=parseFeed(await getText(src.url,i),src.name);goodProxy[src.name]=i;bySrc[src.name]=items;okOnce[src.name]=true;return}
-      catch(e){}
-    }
-  }
-  async function load(){
-    lastLoad=Date.now();
-    await Promise.all(SOURCES.map(loadSource));
-    loaded=true;
-    const fresh=visible().some(it=>!shown.has(it.src+"|"+it.title));   /* 이번 조회로 새로 나타난 기사가 있는지 */
-    if(placeholder||fresh)restart();   /* 안내 문구가 흐르는 중이거나 새 기사가 있으면, 새 기사부터 처음부터 다시 흘려요 */
-  }
-  function visible(){
-    const now=Date.now(),seen=new Set(),out=[];
-    Object.values(bySrc).flat().forEach(it=>{
-      const age=now-it.t;if(age>WINDOW_MS||age<-60000)return;   /* 현재 시각 기준 15분 이내만 */
-      const k=it.src+"|"+it.title;if(seen.has(k))return;seen.add(k);out.push(it);
-    });
-    return out.sort((a,b)=>b.t-a.t).slice(0,MAX_ITEMS);   /* 최신순 100개까지 */
-  }
-  function render(){
-    track.textContent="";
-    const items=visible();placeholder=!items.length;shown=new Set(items.map(it=>it.src+"|"+it.title));
-    if(placeholder){
-      const sp=document.createElement("span");sp.className="ni nm";
-      sp.textContent=!loaded?"뉴스를 불러오는 중…":Object.keys(okOnce).length?"최근 15분 이내 새 기사가 없어요":"뉴스를 불러오지 못했어요. 잠시 후 다시 시도해요";
-      track.appendChild(sp);return;
-    }
-    items.forEach(it=>{
-      const a=document.createElement(it.link?"a":"span");a.className="ni";
-      if(it.link){a.href=it.link;a.target="_blank";a.rel="noopener noreferrer"}
-      const b=document.createElement("b");b.textContent=it.src;
-      a.append("[",b," "+hhmm(it.t)+" "+it.title+"]");   /* [연합뉴스 17:46 기사 제목] */
-      track.appendChild(a);
-    });
-  }
-  let x=0,tw=0,last=0,paused=false;
-  function restart(){render();tw=track.offsetWidth;x=tk.clientWidth;track.style.transform="translateX("+x+"px)"}
-  function frame(ts){
-    if(last){
-      const dt=Math.min(ts-last,100)/1000;
-      if(!paused&&!document.hidden){x-=SPEED*dt;if(x<-tw)restart();else track.style.transform="translateX("+x+"px)"}
-    }
-    last=ts;requestAnimationFrame(frame);
-  }
-  tk.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")paused=true});   /* 마우스를 올리면 멈춰서 읽거나 클릭할 수 있어요 */
-  tk.addEventListener("pointerleave",()=>{paused=false});
-  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()-lastLoad>POLL_MS)load()});
-  restart();requestAnimationFrame(frame);
-  load();setInterval(load,POLL_MS);
-})();
 
 /* ===== 비교: 위 메모(원본)를 기준으로 아래 메모(변경본)와 다른 곳을 찾아요 =====
    - 줄 단위로 비교하고(빈 줄은 건너뜀, 앞뒤 공백·연속 공백은 무시, 표는 한 행이 한 줄·칸 사이는 탭), 바뀐 줄은 단어 단위로 다시 비교해요
