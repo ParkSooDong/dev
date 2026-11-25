@@ -7,8 +7,7 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script type="text/javascript" nonce="597ff2512f834a45bf9d9e8a7cf" src="//local.adguard.org?ts=1795567103389&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000008b78820ba61306c496943f66%26fn%3Dbarcode_parksoodong_github_io__dev.html%26cd%3Dattachment%26ts%3D498768%26p%3Dfs%26cid%3D1%26sig%3D33eb82fd2390913562be96fba3dd51a95b82b62d0630757dd0dfb299afbe6cab%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="597ff2512f834a45bf9d9e8a7cf" src="//local.adguard.org?ts=1795567103389&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script>
+<script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
 window.armPicker = function (pk, apply) {
@@ -69,11 +68,11 @@ h1{font-size:24px;margin:0;letter-spacing:-.01em}
 .tmwrap.off{visibility:hidden;transition:width .3s ease-in,visibility 0s .3s}
 @media (prefers-reduced-motion:reduce){.tmwrap,.tmwrap.off{transition:none}}
 .tmbtn{font-size:16px;padding:6px 16px}
-.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:nowrap;white-space:nowrap;flex:none;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:16px;color:var(--ink)}
+.tm{display:flex;align-items:center;gap:8px 14px;flex-wrap:nowrap;white-space:nowrap;flex:none;padding:4px 12px;border-radius:10px;border:1.5px solid transparent;font-size:24px;color:var(--ink)}
 .tm.pink{background:#ffe3ec;border-color:#f4a9c0;color:#3a1020}
 :root[data-theme="dark"] .tm.pink{background:#4a2332;border-color:#a8506d;color:#ffe3ec}
 .tm label{flex-direction:row;align-items:center;gap:6px;font-size:inherit;color:inherit;white-space:nowrap}
-.tm input{width:4.6em;text-align:center;font-weight:700;font-size:18px;padding:2px 6px;font-variant-numeric:tabular-nums;color:inherit;border-color:currentColor}
+.tm input{width:5.6em;min-width:5.6em;box-sizing:border-box;text-align:center;font-weight:700;font-size:24px;padding:2px 6px;font-variant-numeric:tabular-nums;color:inherit;border-color:currentColor}
 .tm .rm{white-space:nowrap}
 #rem{display:inline-block;min-width:4.8em;font:700 24px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:left}
 #rem.neg{color:var(--warn)}
@@ -2033,7 +2032,35 @@ async function switchDb(i){
   if(useFb&&dbIdx===i)connect();
 }
 dbBtns.forEach((b,i)=>b.addEventListener("click",()=>switchDb(i)));
-const dbPauseBtn=$("dbPause"); if(dbPauseBtn)dbPauseBtn.addEventListener("click",()=>{savePaused=!savePaused;dbPauseBtn.setAttribute("aria-pressed",String(savePaused));dbPauseBtn.textContent=savePaused?"실시간 저장 재개":"저장 일시정지";dbPauseBtn.title=savePaused?"누르면 실시간 저장을 다시 시작합니다":"실시간 저장을 잠시 멈춥니다";if(savePaused){clearTimers();say("자동 저장 일시정지 · Ctrl+S로 지금 저장")}else if(dirty){say("저장 대기 중…");schedule()}});
+
+/* 저장 일시정지 버튼: 상위 UI의 클릭 처리와 무관하게 캡처 단계에서 직접 처리 */
+document.addEventListener("click", function (ev) {
+  const pauseBtn = ev.target && ev.target.closest ? ev.target.closest("#dbPause") : null;
+  if (!pauseBtn) return;
+  ev.preventDefault();
+  ev.stopPropagation();
+  savePaused = !savePaused;
+  pauseBtn.setAttribute("aria-pressed", String(savePaused));
+  pauseBtn.textContent = savePaused ? "실시간 저장 재개" : "저장 일시정지";
+  pauseBtn.title = savePaused
+    ? "누르면 실시간 저장을 다시 시작합니다"
+    : "실시간 저장을 잠시 멈춥니다";
+  pauseBtn.classList.toggle("is-paused", savePaused);
+  pauseBtn.style.background = savePaused ? "#b42318" : "";
+  pauseBtn.style.color = savePaused ? "#fff" : "";
+  pauseBtn.style.borderColor = savePaused ? "#8f1d14" : "";
+  pauseBtn.style.fontWeight = savePaused ? "800" : "";
+  if (savePaused) {
+    clearTimers();
+    say("자동 저장 일시정지 · Ctrl+S로 지금 저장");
+  } else if (dirty) {
+    say("저장 대기 중…");
+    schedule();
+  } else {
+    say("실시간 저장 재개");
+  }
+}, true);
+
 onEd("input",()=>{
   if(useFb){dirty=true;if(ready){say(savePaused?"자동 저장 일시정지 · Ctrl+S로 지금 저장":saving?"저장 중… (이후 변경은 이어서 저장해요)":"저장 대기 중…");schedule()}}
   clearTimeout(stT);stT=setTimeout(saveState,300);   /* 이 PC 사본은 입력을 멈추면 바로 저장 */
