@@ -7866,19 +7866,37 @@ saveState();
     for (const L of ls) { const p = L.nodes[0].parentElement; if (p) p.scrollIntoView({ block: "center", behavior: "smooth" }); }
   }
   function addTableSerials(A, B, rows) {
-    // 양쪽 모두 표 하나로 구성된 경우에만 표 첫 열에 일련번호를 추가
+    // 양쪽 영역이 각각 표 하나로 구성된 경우에만 일련번호 열을 추가해요.
     const ta = ed1.querySelectorAll("table"), tb = ed2.querySelectorAll("table");
     if (ta.length !== 1 || tb.length !== 1) return false;
     const trsA = Array.from(ta[0].rows), trsB = Array.from(tb[0].rows);
-    if (!trsA.length || !trsB.length || A.length !== trsA.length || B.length !== trsB.length) return false;
+    if (trsA.length < 2 || trsB.length < 2) return false;
 
+    // 비교 대상 줄과 실제 표 행을 연결해요. 빈 행이 있어도 표의 행 순서는 유지해요.
     const rowFor = L => {
       const n = L.nodes && L.nodes[0];
       const e = n && (n.parentElement || n);
       return e && e.closest ? e.closest("tr") : null;
     };
-    const mapA = A.map(rowFor), mapB = B.map(rowFor);
-    if (mapA.some((r, i) => !r || r !== trsA[i]) || mapB.some((r, i) => !r || r !== trsB[i])) return false;
+    const indexA = new Map(trsA.map((tr, i) => [tr, i]));
+    const indexB = new Map(trsB.map((tr, i) => [tr, i]));
+    const mapA = A.map(L => indexA.get(rowFor(L)));
+    const mapB = B.map(L => indexB.get(rowFor(L)));
+    if (mapA.some(i => i == null || i === 0) || mapB.some(i => i == null || i === 0)) return false;
+    if (new Set(mapA).size !== mapA.length || new Set(mapB).size !== mapB.length) return false;
+
+    // 표 바깥에 별도 내용이 섞인 영역은 일련번호 대상에서 제외해요.
+    const onlyTableContent = ed => {
+      const table = ed.querySelector("table");
+      const walker = document.createTreeWalker(ed, NodeFilter.SHOW_TEXT);
+      let n;
+      while ((n = walker.nextNode())) {
+        if (!n.nodeValue.trim()) continue;
+        if (!table.contains(n)) return false;
+      }
+      return true;
+    };
+    if (!onlyTableContent(ed1) || !onlyTableContent(ed2)) return false;
 
     const putCell = (tr, value, header) => {
       let cell = tr.querySelector(":scope > .cmp-serial-cell");
@@ -7894,19 +7912,21 @@ saveState();
       cell.textContent = value == null ? "" : String(value);
     };
 
-    // 첫 행은 제목 행으로 보고 '번호'를 표시. 데이터 행은 나 영역 순서 기준으로 번호 부여.
+    // 첫 행은 제목 행. 기존 번호 열이 있으면 재사용하므로 중복 생성되지 않아요.
     putCell(trsA[0], "번호", true);
     putCell(trsB[0], "번호", true);
     for (let i = 1; i < trsA.length; i++) putCell(trsA[i], "", false);
     for (let j = 1; j < trsB.length; j++) putCell(trsB[j], j, false);
 
-    // 비교 알고리즘이 찾아낸 동일/변경 행의 짝을 이용해 가 영역에도 나 영역 번호를 연결
+    // 동일/변경으로 대응되는 가 영역 행에는 나 영역의 실제 행 번호를 넣어요.
+    // 나 영역에만 있는 행은 대응 관계가 없으므로 가 영역은 빈칸으로 남아요.
     for (const [i, j] of rows) {
-      if (i > 0 && j > 0 && trsA[i] && trsB[j]) putCell(trsA[i], j, false);
+      if (i < 0 || j < 0 || i >= A.length || j >= B.length) continue;
+      const ai = mapA[i], bj = mapB[j];
+      if (ai > 0 && bj > 0) putCell(trsA[ai], bj, false);
     }
     return true;
   }
-
   function run() {
     ensurePanel(); clearHl(); clearGaps();
     // barcode 는 확대해야 두 영역이 모두 보여요
