@@ -3515,7 +3515,7 @@ let imgBack = null;
   const ppk = document.createElement("input"); ppk.type = "color"; ppk.tabIndex = -1; ppk.setAttribute("aria-hidden", "true");
   ppk.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none"; bar.appendChild(ppk);
   const ppr = ppop.querySelector("[data-ppr]"), ppv = ppop.querySelector("[data-ppv]");
-  let ppTransparent = false;
+  let ppTransparent = false; // sd 생성 전 TDZ 방지: 실제 공통 상태 연결은 sd 선언 직후 수행
   function closePp() { ppop.hidden = true; }
   function complement(hex) {   // 보색: 색상환에서 반대 색상 + 바탕과 확실히 구분되도록 밝기 대비 확보 (무채색·거의 흰/검은 색은 흑/백)
     const n = parseInt(hex.slice(1), 16), r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
@@ -3624,7 +3624,8 @@ let imgBack = null;
   }
   const DEF_BG = "#fff3a3";   // 배경·채움 기본색(연한 노랑)
   const LINEM = new Set("arrow darrow trend vline hline cross".split(" "));   // 선 넣기 도구(도형 넣기와 투명도 기본값을 따로 둠)
-  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, italic: false, underline: false, strike: false, ol: false, top: null, color: "#2b8a3e", pcolor: "#fff3a3", lw: 3, dash: false, fill: true, fs: 15, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, ew: 16 };
+  const sd = { tool: "ctext", last: { text: "ctext", shape: "rect", line: "trend" }, bold: false, italic: false, underline: false, strike: false, ol: false, top: null, color: "#2b8a3e", pcolor: "#fff3a3", ppTransparent: false, lw: 3, dash: false, fill: true, fs: 15, op: 1, sop: 0.5, pop: 1, fop: 1, bgc: DEF_BG, bgo: 0.5, bgOn: null, ew: 16 };
+  ppTransparent = !!sd.ppTransparent; // 공통 설정 객체의 투명 선택 상태 복원
   const HM = [["x1", "y1"], ["y1"], ["x2", "y1"], ["x2"], ["x2", "y2"], ["y2"], ["x1", "y2"], ["x1"]];   // 상자형 도형의 8개 손잡이가 움직이는 좌표
   const HLN = [["x1", "y1"], ["x2", "y2"]];                                                              // 선형 도형의 양 끝 손잡이
   const HCUR = ["nwse-resize", "ns-resize", "nesw-resize", "ew-resize", "nwse-resize", "ns-resize", "nesw-resize", "ew-resize"];
