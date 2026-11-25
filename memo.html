@@ -7381,19 +7381,22 @@ let resetting=false;
   const CH = !!(window.CSS && CSS.highlights && typeof Highlight !== "undefined");
   const BLKT = /^(DIV|P|LI|TR|H[1-6]|BLOCKQUOTE|PRE|UL|OL|TABLE|HR)$/;
   function linesOf(ed) {   // 메모 영역 → 줄 목록 [{t: 원문, n: 비교용 글자, nodes: [글자 노드]}]
-    const out = []; let cur = { t: "", nodes: [] };
+    const out = []; let cur = { t: "", nodes: [] }, inTr = 0;
     const flush = () => { if (cur.t.replace(/[\s​]/g, "")) out.push(cur); cur = { t: "", nodes: [] }; };
+    const brk = () => { if (inTr) cur.t += " "; else flush(); };   // 표 행 안에서는 <br>·<div> 등으로 줄을 나누지 않고 공백으로 이어요 (표는 한 행 = 한 줄)
+    const cellBefore = c => { for (let p = c.previousElementSibling; p; p = p.previousElementSibling) if (!p.classList.contains("cmpgap") && !p.classList.contains("cmp-serial-cell")) return true; return false; };   // 앞에 비교 대상 칸이 있을 때만 탭 (일련번호 열은 제외)
     (function walk(n) {
       for (const c of n.childNodes) {
         if (c.nodeType === 3) { if (c.nodeValue) { cur.t += c.nodeValue; cur.nodes.push(c); } }
         else if (c.nodeType === 1) {
           const tg = c.nodeName.toUpperCase();
           if (c.classList.contains("cmpgap") || c.classList.contains("cmp-serial-cell")) continue;   // 비교용 여백·일련번호 열은 비교 대상이 아님
-          if (tg === "BR") { flush(); continue; }
-          if (tg === "TD" || tg === "TH") { if (c.previousElementSibling) cur.t += "\t"; walk(c); continue; }
+          if (tg === "BR") { brk(); continue; }
+          if (tg === "TD" || tg === "TH") { if (cellBefore(c)) cur.t += "\t"; walk(c); continue; }
+          if (tg === "TR") { flush(); inTr++; walk(c); inTr--; flush(); continue; }   // 표 행 하나를 비교 줄 하나로
           if (tg === "STYLE" || tg === "SCRIPT" || tg === "SVG") continue;
-          const blk = BLKT.test(tg); if (blk) flush();
-          walk(c); if (blk) flush();
+          const blk = BLKT.test(tg); if (blk) brk();
+          walk(c); if (blk) brk();
         }
       }
     })(ed);
