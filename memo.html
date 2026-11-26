@@ -5681,6 +5681,13 @@ onEd("click", e => {
       for (const r of RS) for (const c of CS) { const cell = s.G.g[r] && s.G.g[r][c]; if (cell && !done.has(cell)) { done.add(cell); drawCell(cell); } }
     }
   }
+  let paintPending = false;
+  function schedulePaint() {
+    if (paintPending) return;
+    paintPending = true;
+    requestAnimationFrame(() => { paintPending = false; paint(); });
+  }
+  { const tb1 = document.getElementById("tbar"); if (tb1 && window.MutationObserver) new MutationObserver(() => { if (multi) schedulePaint(); }).observe(tb1, { attributes: true, attributeFilter: ["style", "hidden", "class"] }); }   // 편집 막대가 움직이면 선택 표시도 맞춰요
   function setMulti(a, b, keep, add, keepPart) {   // keep: 같은 칸이어도 선택 표시 유지 (Shift+클릭) / add: 방향키로 방금 바뀐 칸 정보
     lastAdd = add || null;
     if (!keepPart) { part = null; if (pickMode) endPick(); }   // 새로 고르면 [행 일부]/[열 일부]로 더한 것은 풀려요 (인접 행/열 버튼으로 넓힐 때만 유지)
