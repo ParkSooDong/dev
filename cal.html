@@ -667,7 +667,8 @@ body{padding:8px 6px;gap:6px}
 #calgrid.zooming{overflow:hidden}
 }
 </style>
-</head>
+<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000038c88206bb7a5b300d4282a7%26fn%3Dcal_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498806%26p%3Dfs%26cid%3D1%26sig%3D826141b5529cf2ee446c1d123f793b722d971a70bf57193487b45900738a167d%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 <header><h1>달력 메모</h1><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><span id="calNav"><button type="button" id="calLeg" hidden title="예전 가·나·다 메모를 커서가 있는 날짜 칸으로 가져와요">예전 메모 가져오기</button><button type="button" id="calToday" title="오늘이 있는 달로 이동">오늘</button><button type="button" id="calPrev" aria-label="이전 달" title="이전 달">◀</button><span id="calTitle" role="status" aria-live="polite"></span><button type="button" id="calNext" aria-label="다음 달" title="다음 달">▶</button></span><div class="tr"><div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -7923,11 +7924,31 @@ const AREA_NM = CAL_LBL;
 
 /* 확대/축소: 버튼 또는 Esc */
 const pane = document.getElementById("pane"), ex = document.getElementById("ex");
+function syncMaxHeaderSpace() {
+  if (!pane.classList.contains("max")) return;
+  const header = document.querySelector("body > header");
+  if (!header) return;
+  // 모바일 세로 화면에서는 DB/저장 상태 헤더가 여러 줄로 늘어날 수 있어요.
+  // 고정 헤더의 실제 높이만큼 메모 패널 상단 공간을 확보해 툴바가 가려지지 않게 합니다.
+  const headerRect = header.getBoundingClientRect();
+  const paneRect = pane.getBoundingClientRect();
+  const topSpace = Math.max(54, Math.ceil(headerRect.bottom - paneRect.top + 12));
+  pane.style.paddingTop = topSpace + "px";
+}
 function setMax(on) {
   pane.classList.toggle("max", on);
   document.body.classList.toggle("has-max", on);
+  if (on) syncMaxHeaderSpace();
+  else pane.style.paddingTop = "";
   ex.textContent = on ? "✕" : "⤢";
   ex.setAttribute("aria-label", on ? "축소" : "확대");
+}
+// 확대 상태에서 화면 회전·주소창 크기 변화·헤더 줄바꿈이 발생해도 겹침을 다시 계산합니다.
+window.addEventListener("resize", syncMaxHeaderSpace, { passive: true });
+window.addEventListener("orientationchange", () => requestAnimationFrame(syncMaxHeaderSpace), { passive: true });
+if (window.ResizeObserver) {
+  const maxHeader = document.querySelector("body > header");
+  if (maxHeader) new ResizeObserver(syncMaxHeaderSpace).observe(maxHeader);
 }
 ex.addEventListener("click", () => setMax(!pane.classList.contains("max")));   // (포커스 유지는 툴바의 mousedown 처리가 담당)
 document.addEventListener("keydown", e => {
