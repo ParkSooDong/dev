@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>메모장</title>
+<title>달력 메모</title>
 <style>
 :root{--bg:#f3f1ec;--ink:#1c1b19;--mute:#76726a;--line:#d9d5cb;--card:#fffefb;--mfg:#2b8a3e;--ok:#2e7d32;--err:#b3261e;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -24,7 +24,7 @@ header{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center
 h1{font-size:17px;margin:0;letter-spacing:-.01em}
 #st{font-size:12px;color:var(--mute)}
 #st:empty{display:none}
-/* 제목 줄: 메모장 | Firebase 버튼 | 상태 | DB 글자 수 — 왼쪽부터 차례로, 구분선만 둠 */
+/* 제목 줄: 달력 메모 | Firebase 버튼 | 상태 | DB 글자 수 — 왼쪽부터 차례로, 구분선만 둠 */
 header h1::after{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px;margin-left:10px}
 #st::before,#cnt::before{content:"";display:inline-block;width:1px;height:12px;background:var(--line);margin-right:10px;vertical-align:-1px}
 #st.ok{color:var(--ok)}
@@ -617,7 +617,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 </style>
 </head>
 <body>
-<header><h1>메모장</h1><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><span id="calNav"><button type="button" id="calLeg" hidden title="예전 가·나·다 메모를 커서가 있는 날짜 칸으로 가져와요">예전 메모 가져오기</button><button type="button" id="calToday" title="오늘이 있는 달로 이동">오늘</button><button type="button" id="calPrev" aria-label="이전 달" title="이전 달">◀</button><span id="calTitle" role="status" aria-live="polite"></span><button type="button" id="calNext" aria-label="다음 달" title="다음 달">▶</button></span><div class="tr"><div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
+<header><h1>달력 메모</h1><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><span id="calNav"><button type="button" id="calLeg" hidden title="예전 가·나·다 메모를 커서가 있는 날짜 칸으로 가져와요">예전 메모 가져오기</button><button type="button" id="calToday" title="오늘이 있는 달로 이동">오늘</button><button type="button" id="calPrev" aria-label="이전 달" title="이전 달">◀</button><span id="calTitle" role="status" aria-live="polite"></span><button type="button" id="calNext" aria-label="다음 달" title="다음 달">▶</button></span><div class="tr"><div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
