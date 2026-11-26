@@ -38,6 +38,15 @@ header h1::after{content:"";display:inline-block;width:1px;height:12px;backgroun
 #st:empty{display:block;visibility:hidden}
 #cnt{display:inline-block;min-width:17em;font-variant-numeric:tabular-nums}
 }
+/* 모바일도 같은 문제: 상태 글자가 생기고 사라질 때(display:none ↔ 표시) 헤더 줄 수가 달라져 아래 달력이 위아래로 출렁여요
+   → 상태 글자에 '한 줄 전체'를 항상 고정(높이도 고정)하고, 비어 있으면 투명하게만 둬요. 확대(.has-max) 중에는 기존대로 비면 숨김 */
+@media(max-width:720px){
+body:not(.has-max) #st{display:block;flex:0 0 100%;width:100%;max-width:100%;min-width:0;height:16px;line-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body:not(.has-max) #st:empty{display:block;visibility:hidden}
+body:not(.has-max) #st::before{display:none}
+body:not(.has-max) #cnt{display:inline-block;min-width:17em;font-variant-numeric:tabular-nums}
+body:not(.has-max) #cnt::before{display:none}
+}
 /* .slot 이 자리를 지키고 .pane(확대 대상)이 그 안을 채움 → 확대해도 원래 레이아웃은 그대로 */
 /* 메모와 이후 추가될 비메모 영역을 구분: 메모 작업면을 별도 패널로 묶어요 */
 .slot{flex:1;min-height:0;position:relative;margin-top:2px;padding:8px;border:1.5px solid var(--line);border-radius:12px;background:#ebe8df;box-shadow:0 1px 3px rgba(0,0,0,.06)}
