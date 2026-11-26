@@ -643,6 +643,12 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #monthMemo .mm-title:focus{background:rgba(51,154,240,.08)}
 #monthMemo .mm-title::placeholder{color:var(--mute);font-weight:400;opacity:.65}
 #monthMemo .mm-body{flex:1;min-height:0;width:auto;padding:5px 7px;border:0;border-radius:0;background:transparent;font-size:11px;line-height:1.4}
+/* 남는 달력 칸에 배치되는 월별 일괄 삭제 도구 */
+.memo-delete{z-index:2;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:4px;box-sizing:border-box;padding:5px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);overflow:hidden}
+.memo-delete .md-title{font-size:11px;font-weight:700;text-align:center;white-space:nowrap}
+.memo-delete .md-btn{min-width:0;width:100%;padding:4px 2px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit;font-size:10px;line-height:1.2;white-space:nowrap;cursor:pointer}
+.memo-delete .md-btn:hover,.memo-delete .md-btn:focus-visible{background:var(--line)}
+.memo-delete .md-btn:disabled{opacity:.45;cursor:not-allowed}
 #monthMemo.zoom{position:absolute;inset:0;z-index:7;grid-column:1 / 8;grid-row:1 / 7;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
 #monthMemo.zoom .mm-head{padding:7px 10px;font-size:15px}
 #monthMemo.zoom .mm-zoom{width:30px;height:30px;font-size:17px}
@@ -654,6 +660,9 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #monthMemo .mm-zoom{width:16px;height:16px;font-size:11px}
 #monthMemo .mm-title{height:calc(1.25em + 4px);padding:2px 3px;font-size:9px}
 #monthMemo .mm-body{padding:2px 3px;font-size:9px;line-height:1.25}
+.memo-delete{gap:2px;padding:2px;border-radius:4px}
+.memo-delete .md-title{font-size:8px;letter-spacing:-.04em}
+.memo-delete .md-btn{padding:3px 0;font-size:8px;letter-spacing:-.06em;border-radius:3px}
 #monthMemo.zoom .mm-head{padding:6px 8px;font-size:14px}
 #monthMemo.zoom .mm-zoom{width:26px;height:26px;font-size:15px}
 #monthMemo.zoom .mm-title{height:calc(1.4em + 14px);padding:7px 10px;font-size:14px}
@@ -693,7 +702,7 @@ body{padding:8px 6px;gap:6px}
 #calgrid.zooming{overflow:hidden}
 }
 </style>
-<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795704386159&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001870820683c03ccda4a8b7ca%26fn%3Dcal_parksoodong_github_io__dev_fixed%25282%2529.html%26cd%3Dattachment%26ts%3D498807%26p%3Dfs%26cid%3D1%26sig%3D6cb728deaf7c0cc78e78c741728c3a5467ff2fd98d6081713b56086484a31754%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795704386159&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004c9c8206b3cb6262d782e8f3%26ts%3D498808%26p%3Dfs%26cid%3D1%26sig%3D7e8bb9cbcdcfb3d4f79ab044b72fa1f10951a166a66e531198b92fe9bdd206d9%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795704386159&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000038c88206bb7a5b300d4282a7%26fn%3Dcal_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498806%26p%3Dfs%26cid%3D1%26sig%3D826141b5529cf2ee446c1d123f793b722d971a70bf57193487b45900738a167d%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
@@ -1502,6 +1511,12 @@ for (let i = 0; i < 42; i++) {
 const monthMemo = document.createElement("section"); monthMemo.id = "monthMemo"; monthMemo.setAttribute("aria-label", "월간 메모");
 monthMemo.innerHTML = '<div class="mm-head"><span class="mm-label" id="monthMemoLabel"></span><button type="button" class="mm-zoom" id="monthMemoZoom" aria-label="월간 메모 확대" title="월간 메모를 달력 전체 크기로 확대">⤢</button></div><input class="mm-title" id="monthMemoTitle" type="text" placeholder="월간 메모 제목 (한글 34자 기준)" aria-label="월간 메모 제목 (한글 34자 기준)"><div class="rich mm-body" id="monthMemoBody" contenteditable="true" data-ph="월간 메모를 입력하세요" role="textbox" aria-multiline="true"></div>';
 calGrid.appendChild(monthMemo);
+// 날짜가 배치되지 않는 남는 칸 중 하나를 골라, 현재 월의 일간/월간 메모 일괄 삭제 기능을 둬요.
+const deletePanel = document.createElement("section"); deletePanel.id = "memoDelete"; deletePanel.className = "memo-delete";
+deletePanel.setAttribute("aria-label", "메모 삭제");
+deletePanel.innerHTML = '<div class="md-title">메모 삭제</div><button type="button" class="md-btn" id="deleteDailyMemo">일간 메모</button><button type="button" class="md-btn" id="deleteMonthlyMemo">월간 메모</button>';
+calGrid.appendChild(deletePanel);
+const deleteDailyMemo = deletePanel.querySelector("#deleteDailyMemo"), deleteMonthlyMemo = deletePanel.querySelector("#deleteMonthlyMemo");
 const monthMemoLabel = monthMemo.querySelector("#monthMemoLabel"), monthMemoTitle = monthMemo.querySelector("#monthMemoTitle"), monthMemoBody = monthMemo.querySelector("#monthMemoBody"), monthMemoZoom = monthMemo.querySelector("#monthMemoZoom");
 makeRich(monthMemoBody);
 let monthZoom = false;
@@ -1516,7 +1531,7 @@ monthMemoZoom.addEventListener("click", () => {
   if (monthZoom) ta = monthMemoBody;
   window.dispatchEvent(new Event("resize"));
 });
-// 월간 제목은 한글 34자 폭을 기준으로 제한해요. 숫자·영문은 한글보다 폭이 좁으므로 실제 글자 수가 더 많아질 수 있어요.
+// 월간 제목은 한글 30자 폭을 기준으로 제한해요. 숫자·영문은 한글보다 폭이 좁으므로 실제 글자 수가 더 많아질 수 있어요.
 const MONTH_TITLE_UNITS = 51; // 한글 34자 × 한글/반각 문자 폭 비율 1.5
 const monthTitleW = str => titleW(str);
 const clipMonthTitle = str => { let w = 0, out = ""; for (const c of String(str)) { const cw = wideCh(c) ? 1.5 : 1; if (w + cw > MONTH_TITLE_UNITS) break; w += cw; out += c; } return out; };
@@ -1528,6 +1543,26 @@ monthMemoTitle.addEventListener("input", () => {
     try { monthMemoTitle.setSelectionRange(Math.min(pos, monthMemoTitle.value.length), Math.min(pos, monthMemoTitle.value.length)); } catch (_) {}
   }
   monthMemoBody.dispatchEvent(new Event("input", { bubbles:true }));
+});
+// 현재 표시 중인 달의 일간 메모(본문+제목) 또는 월간 메모(제목+본문)만 삭제해요.
+deleteDailyMemo.addEventListener("click", () => {
+  syncStore();
+  const prefix = monthKey() + "-", keys = new Set();
+  for (const k of store.keys()) if (k.startsWith(prefix)) keys.add(k);
+  for (const k of titles.keys()) if (k.startsWith(prefix)) keys.add(k);
+  if (!keys.size) { toast("이 달에는 삭제할 일간 메모가 없어요"); return; }
+  if (!confirm(calY + "년 " + (calM + 1) + "월의 일간 메모 " + keys.size + "개(제목·본문)를 모두 삭제할까요?")) return;
+  for (const k of keys) { store.delete(k); titles.delete(k); }
+  renderCal(); monthMemoBody.dispatchEvent(new Event("input", { bubbles:true }));
+  toast(calY + "년 " + (calM + 1) + "월 일간 메모 " + keys.size + "개를 삭제했어요");
+});
+deleteMonthlyMemo.addEventListener("click", () => {
+  syncStore();
+  const mk = monthKey(), v = monthStore.get(mk);
+  if (!v || (!v.title && !v.body)) { toast("이 달에는 삭제할 월간 메모가 없어요"); return; }
+  if (!confirm(calY + "년 " + (calM + 1) + "월의 월간 메모(제목·본문)를 삭제할까요?")) return;
+  monthStore.delete(mk); renderMonthMemo(); monthMemoBody.dispatchEvent(new Event("input", { bubbles:true }));
+  toast(calY + "년 " + (calM + 1) + "월 월간 메모를 삭제했어요");
 });
 let ta = EDS[0];   // 툴바가 적용되는 메모 칸
 const now0 = new Date(), p2 = n => String(n).padStart(2, "0");
@@ -1567,6 +1602,10 @@ function renderCal() {
   if (!ta || !ta.dataset.date) ta = EDS[off];
   calTitle.textContent = calY + "년 " + (calM + 1) + "월";
   renderMonthMemo();
+  // 삭제 패널 위치는 고정: 기본 1행 1열, 그 칸에 날짜가 있으면 6행 1열.
+  const deleteRow = EDS[0].dataset.date ? 6 : 1;
+  deletePanel.style.gridColumn = "1";
+  deletePanel.style.gridRow = String(deleteRow);
   calLeg.hidden = !legacy.some(x => x);
   window.dispatchEvent(new Event("resize"));
 }
@@ -1624,7 +1663,7 @@ const memoAll = {
     renderCal();
   },
   get disabled() { return calDis; },
-  set disabled(b) { calDis = !!b; EDS.forEach((e, i) => { e.disabled = calDis || !e.dataset.date; CAL_TT[i].disabled = e.disabled; }); monthMemoTitle.disabled = calDis; monthMemoBody.disabled = calDis; },
+  set disabled(b) { calDis = !!b; EDS.forEach((e, i) => { e.disabled = calDis || !e.dataset.date; CAL_TT[i].disabled = e.disabled; }); monthMemoTitle.disabled = calDis; monthMemoBody.disabled = calDis; deleteDailyMemo.disabled = calDis; deleteMonthlyMemo.disabled = calDis; },
   get textContent() { return EDS.map(e => e.textContent).join("") + Array.from(titles.values()).join("") + Array.from(monthStore.values()).map(x => (x.title || "") + (x.body || "")).join("") + legacy.join("") + Array.from(store.entries()).filter(([k]) => !EDS.some(e => e.dataset.date === k)).map(x => x[1]).join(""); }
 };
 const ALL_EDS = EDS.concat([monthMemoBody]);
