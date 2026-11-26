@@ -1071,7 +1071,7 @@ function makeRich(el) {
       if (t === "TD" || t === "TH") {
         for (const k of ["colspan", "rowspan"]) { const v = parseInt(n.getAttribute(k), 10); if (v > 1 && v < 100) e.setAttribute(k, v); }
         // 셀맞춤 설정은 메모 저장·불러오기에서도 유지해요.
-        for (const k of ["data-cf-fit", "data-cf-fit-min", "data-cf-fit-base", "data-cf-fit-inline"]) {
+        for (const k of ["data-cf-fit", "data-cf-fit-min", "data-cf-fit-base", "data-cf-fit-inline", "data-cf-fit-fontstyle", "data-cf-fit-clipped"]) {
           const v = n.getAttribute(k); if (v != null && (k !== "data-cf-fit" || v === "1")) e.setAttribute(k, v);
         }
       }
@@ -6994,23 +6994,35 @@ onEd("click", e => {
   function close() { if (dlg) dlg.hidden = true; st = null; }
   if (!document.getElementById('cfFitLiveStyle')) {
     const fitStyle = document.createElement('style'); fitStyle.id = 'cfFitLiveStyle';
-    fitStyle.textContent = '[data-cf-fit="1"]{white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;overflow-wrap:normal!important;word-break:normal!important}[data-cf-fit="1"] *{font-size:inherit!important}.rich table[data-cf-rz-fixed="1"]{table-layout:fixed!important;min-width:0!important}.rich table[data-cf-rz-fixed="1"] td,.rich table[data-cf-rz-fixed="1"] th{min-width:0!important}';
+    fitStyle.textContent = '[data-cf-fit="1"]{white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;overflow-wrap:normal!important;word-break:normal!important}[data-cf-fit-clipped="1"],[data-cf-fit-clipped="1"] *{font-style:italic!important}.rich table[data-cf-rz-fixed="1"]{table-layout:fixed!important;min-width:0!important}.rich table[data-cf-rz-fixed="1"] td,.rich table[data-cf-rz-fixed="1"] th{min-width:0!important}';
     document.head.appendChild(fitStyle);
   }
   function fitCellText(cell) {
     if (!cell || !cell.dataset || cell.dataset.cfFit !== "1") return;
     const min = Math.max(1, Math.min(200, Number(cell.dataset.cfFitMin) || 10));
-    const base = Math.max(1, Number(cell.dataset.cfFitBase) || parseFloat(getComputedStyle(cell).fontSize) || 16);
+    // 셀 자체와 내부 서식 요소 각각의 원래 글자 크기를 보관해 크기 비율을 유지합니다.
+    const nodes = [cell, ...cell.querySelectorAll("*")].filter(n => (n.textContent || "").trim());
+    for (const n of nodes) {
+      if (n.dataset.cfFitOrigSize === undefined) {
+        n.dataset.cfFitOrigSize = String(parseFloat(getComputedStyle(n).fontSize) || 16);
+        n.dataset.cfFitOrigInlineSize = n.style.fontSize || "";
+      }
+    }
+    const baseSizes = nodes.map(n => Math.max(1, Number(n.dataset.cfFitOrigSize) || 16));
+    const smallest = Math.min(...baseSizes);
     const cs = getComputedStyle(cell);
     const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
     const available = Math.max(1, cell.clientWidth - pad - 1);
-    const value = (cell.innerText || cell.textContent || "").replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim();
-    const canvas = fitCellText.canvas || (fitCellText.canvas = document.createElement("canvas"));
-    const ctx = canvas.getContext("2d");
-    ctx.font = [cs.fontStyle, cs.fontVariant, cs.fontWeight, base + "px", cs.fontFamily].filter(Boolean).join(" ");
-    const measured = Math.max(1, ctx.measureText(value).width);
-    const size = Math.max(min, Math.min(base, base * available / measured));
-    cell.style.fontSize = size.toFixed(2) + "px";
+    const applyScale = scale => nodes.forEach((n, i) => { n.style.fontSize = (baseSizes[i] * scale).toFixed(2) + "px"; });
+    // 먼저 최소 글자 크기를 기준으로 비율 축소를 계산하고, 그 크기 아래로는 내려가지 않습니다.
+    const minScale = Math.min(1, min / smallest);
+    applyScale(1);
+    const naturalWidth = Math.max(1, cell.scrollWidth - pad);
+    const scale = Math.max(minScale, Math.min(1, available / naturalWidth));
+    applyScale(scale);
+    // 셀 안에서 실제로 넘친 경우에만 이탤릭체 표시합니다.
+    cell.removeAttribute("data-cf-fit-clipped");
+    if (cell.scrollWidth > cell.clientWidth + 1) cell.setAttribute("data-cf-fit-clipped", "1");
   }
   function fitTableCells(tab) {
     if (!tab) return;
@@ -7048,12 +7060,20 @@ onEd("click", e => {
           if (c.dataset.cfFit !== "1") {
             c.dataset.cfFitBase = String(parseFloat(getComputedStyle(c).fontSize) || 16);
             c.dataset.cfFitInline = c.style.fontSize || "";
+            c.dataset.cfFitFontstyle = c.style.fontStyle || "";
           }
           c.dataset.cfFit = "1";
           c.dataset.cfFitMin = String(Math.max(1, Math.min(200, Number(st.fit.min) || 10)));
         } else if (c.dataset.cfFit === "1") {
           c.style.fontSize = c.dataset.cfFitInline || "";
-          delete c.dataset.cfFit; delete c.dataset.cfFitMin; delete c.dataset.cfFitBase; delete c.dataset.cfFitInline;
+          c.style.fontStyle = c.dataset.cfFitFontstyle || "";
+          c.querySelectorAll("*").forEach(n => {
+            if (n.dataset.cfFitOrigInlineSize !== undefined) n.style.fontSize = n.dataset.cfFitOrigInlineSize;
+            delete n.dataset.cfFitOrigSize; delete n.dataset.cfFitOrigInlineSize;
+          });
+          delete c.dataset.cfFitOrigSize; delete c.dataset.cfFitOrigInlineSize;
+          c.removeAttribute("data-cf-fit-clipped");
+          delete c.dataset.cfFit; delete c.dataset.cfFitMin; delete c.dataset.cfFitBase; delete c.dataset.cfFitInline; delete c.dataset.cfFitFontstyle;
         }
       }
     }
