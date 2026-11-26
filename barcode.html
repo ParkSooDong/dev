@@ -998,8 +998,11 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
       const host = mc[0].closest(".rich");
       if (host && host.isConnected && host.getAttribute("contenteditable") !== "false") {
         busy = true; host.focus();
+        if (window.cfCellStyle) window.cfCellStyle(mc, "fontFamily", stack(cur));   // [성능] 칸마다 execCommand 하지 않고 한 번에
+        else {
         try { document.execCommand("styleWithCSS", false, true); window.cfEachCell(mc, () => document.execCommand("fontName", false, cur)); }
         finally { try { document.execCommand("styleWithCSS", false, false); } catch (e) {} }
+        }
         mc.forEach(c => { if (!c.textContent.replace(/\u200b/g, "").trim() && !c.querySelector("img")) c.style.fontFamily = stack(cur); });   // 빈 칸은 칸 자체에
         host.dispatchEvent(new Event("input", { bubbles: true }));
         sel.value = cur; setTimeout(() => { busy = false; }, 80);
@@ -1052,6 +1055,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
     return { host, a: offOf(host, r.startContainer, r.startOffset), b: offOf(host, r.endContainer, r.endOffset) };
   }
   function memoPvStart(name) {
+    { const mc0 = window.cfSel && window.cfSel(); if (mc0 && mc0.length > 60) return false; }   // [성능] 칸을 많이 골랐으면 미리보기 생략
     const t = memoTarget(); if (!t || t.a >= t.b) return false;
     const recs = []; let acc = 0;
     for (const n0 of textNodes(t.host)) {
@@ -2159,6 +2163,7 @@ function eachCellSel(cells, fn) {
 }
 window.cfEachCell = eachCellSel;
 function execMulti(cells, c, v) {
+  if (window.cfBulkExec && window.cfBulkExec(cells, c, v)) return;   // [성능] 칸마다 execCommand 하지 않고 한 번에
   const q = () => { try { return document.queryCommandState(c); } catch (e) { return false; } };
   let allOn = true;
   if (TOGGLE_CMD.test(c)) {
@@ -2401,7 +2406,7 @@ function applyColor(kind, hex) {   // hex 가 "" 이면 되돌리기
 function paint(kind, c) {
   if (ta.disabled) return;
   ta.focus();
-  const mc = multiCells(); if (mc) { eachCellSel(mc, () => paint(kind, c)); return; }   // 고른 칸 모두에
+  const mc = multiCells(); if (mc) { window.cfBulkColor(mc, kind, c); return; }   // 고른 칸 모두에 (한 번에)
   const s = getSelection();
   if (!c && s.isCollapsed) { say("색을 되돌릴 글자를 먼저 선택해 주세요"); return; }   // 되돌리기는 선택한 글자에만 적용돼요
   if (c && s.isCollapsed) { caretStyle(kind === "fc" ? "color" : "backgroundColor", c); return; }   // 선택이 없으면 이어서 입력하는 글자에 적용 (글자 크기와 같은 방식이라 순서와 관계없이 함께 유지돼요)
@@ -2468,21 +2473,143 @@ function sizeAtCaret(px) {
   caretStyle("fontSize", (px || Math.round(parseFloat(getComputedStyle(ta).fontSize)) || 15) + "px");   // 기본 크기: 메모의 기본 글자 크기(15)
 }
 /* 칸을 여러 개 고른 상태(드래그/Shift+클릭)에서는 고른 칸 안의 모든 글자에 크기를 적용해요 (빈 칸은 칸 자체에 지정해 이어 입력하는 글자에도 적용) */
+/* [성능] 여러 칸에 글꼴/글자 크기를 적용: 칸마다 선택 범위를 잡고 execCommand 를 실행하면 칸 수 × 표 크기만큼 느려져요.
+   그래서 칸(td) 자체에 스타일을 직접 쓰고, 칸 안쪽 span/font 에 따로 지정된 같은 속성만 걷어내요. (한 번에 처리 / 실행취소도 1단계) */
+window.cfCellStyle = function (cells, prop, val) {
+  const isSize = prop === "fontSize", css = isSize ? "font-size" : "font-family";
+  const inner = isSize ? "span[style],font[size]" : "span[style],font[face]";
+  for (const cell of cells) {
+    cell.querySelectorAll(inner).forEach(sp => {
+      if (sp.tagName === "FONT") {
+        sp.removeAttribute(isSize ? "size" : "face");
+        if (sp.style && sp.style[prop]) sp.style[prop] = "";
+        if (!sp.attributes.length) unspan(sp);
+        return;
+      }
+      if (!sp.style[prop]) return;
+      sp.style[prop] = "";
+      if (!sp.attributes.length || (sp.attributes.length === 1 && sp.hasAttribute("style") && !sp.getAttribute("style"))) unspan(sp);
+    });
+    if (val) cell.style[prop] = val; else cell.style.removeProperty(css);
+    if (!cell.getAttribute("style")) cell.removeAttribute("style");
+  }
+};
 function sizeCells(cells, px) {
   const s = getSelection();
-  for (const cell of cells) {
+  const fit = cells.filter(c => c.dataset && c.dataset.cfFit === "1");   // 칸 맞춤 칸은 맞춤 기능이 글자 크기를 직접 다뤄서 기존 방식 유지
+  window.cfCellStyle(fit.length ? cells.filter(c => !fit.includes(c)) : cells, "fontSize", px ? px + "px" : "");
+  for (const cell of fit) {
     cell.style.removeProperty("font-size"); if (!cell.getAttribute("style")) cell.removeAttribute("style");
-    if (!cell.textContent.replace(/\u200b/g, "").trim() && !cell.querySelector("img")) {
-      cell.querySelectorAll("span[style]").forEach(sp => { if (!sp.style.fontSize) return; sp.style.fontSize = ""; if (!sp.getAttribute("style")) unspan(sp); });
-      if (px) cell.style.fontSize = px + "px";
-      continue;
-    }
+    if (cellBlank(cell)) { cell.querySelectorAll("span[style]").forEach(sp => { if (!sp.style.fontSize) return; sp.style.fontSize = ""; if (!sp.getAttribute("style")) unspan(sp); }); if (px) cell.style.fontSize = px + "px"; continue; }
     const r = document.createRange(); r.selectNodeContents(cell); s.removeAllRanges(); s.addRange(r);
     applySize(px, true);
   }
   const r0 = document.createRange(); r0.selectNodeContents(cells[0]); r0.collapse(false); s.removeAllRanges(); s.addRange(r0);
   ta.dispatchEvent(new Event("input", { bubbles: true }));
 }
+/* [성능] 칸 여러 개에 굵게/기울임/밑줄/취소선/글자색/배경색/정렬/서식 지우기: 칸마다 execCommand 하지 않고 칸 단위로 한 번에 */
+const CF_SKIP = '.att,[contenteditable="false"]';
+const cfDecTok = el => (el.style.textDecoration || "").split(/\s+/).filter(x => x === "underline" || x === "line-through" || x === "overline");
+function cfTrim(el) { if (el.getAttribute("style") === "") el.removeAttribute("style"); if (!el.getAttribute("style")) el.removeAttribute("style"); }
+function cfTexts(cell) {
+  const w = document.createTreeWalker(cell, NodeFilter.SHOW_TEXT), a = [];
+  for (let n; (n = w.nextNode());) {
+    if (!/\S/.test(n.nodeValue.replace(/\u200b/g, ""))) continue;
+    const p = n.parentElement; if (p && p.closest(CF_SKIP)) continue;
+    a.push(n);
+  }
+  return a;
+}
+/* 칸 안쪽에 따로 지정된 같은 서식(태그/스타일)을 걷어내요. spec: { tags, prop, fontAttr, dec } */
+function cfClearInner(cell, spec) {
+  const sel = [spec.tags, "span[style]", spec.fontAttr ? "font[" + spec.fontAttr + "]" : ""].filter(Boolean).join(",");
+  cell.querySelectorAll(sel).forEach(el => {
+    if (el.matches(CF_SKIP) || el.hasAttribute("data-att")) return;
+    if (spec.tags && el.matches(spec.tags)) { unspan(el); return; }
+    if (el.tagName === "FONT") { el.removeAttribute(spec.fontAttr); if (!el.attributes.length) unspan(el); return; }
+    if (spec.dec) { el.style.textDecoration = cfDecTok(el).filter(x => x !== spec.dec).join(" "); }
+    else { if (!el.style[spec.prop]) return; el.style[spec.prop] = ""; }
+    cfTrim(el); if (!el.attributes.length) unspan(el);
+  });
+}
+function cfAllOn(cells, kind) {
+  for (const cell of cells) {
+    if (cellBlank(cell)) continue;
+    for (const t of cfTexts(cell)) {
+      let ok = false; const pe = t.parentElement;
+      if (kind === "bold") ok = parseInt(getComputedStyle(pe).fontWeight, 10) >= 600;
+      else if (kind === "italic") ok = getComputedStyle(pe).fontStyle === "italic";
+      else {
+        const tok = kind === "underline" ? "underline" : "line-through";
+        for (let e = pe; e; e = e.parentElement) { if ((getComputedStyle(e).textDecorationLine || "").includes(tok)) { ok = true; break; } if (e === cell) break; }
+      }
+      if (!ok) return false;
+    }
+  }
+  return true;
+}
+function cfSetFmt(cell, kind, on) {
+  const st = cell.style;
+  if (kind === "bold") { cfClearInner(cell, { tags: "b,strong", prop: "fontWeight" }); st.fontWeight = on ? "700" : (cell.tagName === "TH" ? "400" : ""); }
+  else if (kind === "italic") { cfClearInner(cell, { tags: "i,em", prop: "fontStyle" }); st.fontStyle = on ? "italic" : ""; }
+  else {
+    const tok = kind === "underline" ? "underline" : "line-through";
+    cfClearInner(cell, { tags: kind === "underline" ? "u" : "s,strike", dec: tok });
+    const t = cfDecTok(cell).filter(x => x !== tok); if (on) t.push(tok);
+    st.textDecoration = t.join(" ");
+  }
+  cfTrim(cell);
+}
+function cfFinish(cells) {
+  const s = getSelection(), r0 = document.createRange(); r0.selectNodeContents(cells[0]); r0.collapse(false); s.removeAllRanges(); s.addRange(r0);
+  (cells[0].closest(".rich") || ta).dispatchEvent(new Event("input", { bubbles: true }));
+}
+window.cfBulkColor = function (cells, kind, c) {   // kind: "fc" 글자색 / "bg" 배경색(글자 뒤 형광펜), c 가 "" 이면 되돌리기
+  for (const cell of cells) {
+    if (cellBlank(cell)) continue;
+    if (kind === "fc") {
+      cfClearInner(cell, { tags: "", prop: "color", fontAttr: "color" });
+      if (c) cell.style.color = c; else cell.style.removeProperty("color");
+    } else {
+      cfClearInner(cell, { tags: "", prop: "backgroundColor" });
+      cell.normalize();   // 쪼개진 글자 조각을 합쳐서 한 덩어리로 칠해요
+      if (c) for (const t of cfTexts(cell)) { const sp = document.createElement("span"); sp.style.backgroundColor = c; t.replaceWith(sp); sp.appendChild(t); }
+    }
+    cfTrim(cell);
+  }
+  cfFinish(cells);
+};
+window.cfBulkExec = function (cells, c, v) {   // 처리했으면 true, 모르는 명령이면 false (기존 방식으로)
+  const KIND = { bold: "bold", italic: "italic", underline: "underline", strikeThrough: "strike" };
+  if (KIND[c]) {
+    const kind = KIND[c] === "strike" ? "strike" : KIND[c], on = !cfAllOn(cells, kind === "strike" ? "strike" : kind);
+    for (const cell of cells) if (!cellBlank(cell)) cfSetFmt(cell, kind, on);
+    cfFinish(cells); return true;
+  }
+  if (c === "foreColor" || c === "hiliteColor") { window.cfBulkColor(cells, c === "foreColor" ? "fc" : "bg", v); return true; }
+  const m = /^justify(Left|Center|Right)$/.exec(c);
+  if (m) {
+    const al = m[1].toLowerCase();
+    for (const cell of cells) {
+      if (cellBlank(cell)) continue;
+      cell.querySelectorAll("div,p,li,h1,h2,h3,blockquote,pre").forEach(b => { if (b.style.textAlign) { b.style.textAlign = ""; cfTrim(b); } });
+      cell.style.textAlign = al;
+    }
+    cfFinish(cells); return true;
+  }
+  return false;
+};
+window.cfBulkClear = function (cells) {   // 고른 칸 모두의 글자 서식 지우기
+  for (const cell of cells) {
+    for (const p of ["font-size", "font-family", "color", "font-weight", "font-style", "text-decoration", "text-align"]) cell.style.removeProperty(p);
+    cfTrim(cell);
+    if (cellBlank(cell)) continue;
+    cell.querySelectorAll("span[style],font,b,strong,i,em,u,s,strike").forEach(el => { if (el.matches(CF_SKIP) || el.hasAttribute("data-att")) return; unspan(el); });
+    cell.querySelectorAll("h1,h2,h3").forEach(h => { const d = document.createElement("div"); while (h.firstChild) d.appendChild(h.firstChild); h.replaceWith(d); });
+    cell.querySelectorAll("div,p,li,blockquote,pre").forEach(b => { b.style.textAlign = ""; b.style.marginLeft = ""; cfTrim(b); });
+  }
+  cfFinish(cells);
+};
 function setSize(px) {
   if (ta.disabled) return;
   ta.focus();
@@ -2623,7 +2750,7 @@ function clearFmt() {
   const mc = multiCells();
   if (mc) {   // 고른 칸 모두의 글자 서식을 지워요 (칸 자체에 지정한 글자 크기·글꼴 포함)
     mc.forEach(c => { c.style.removeProperty("font-size"); c.style.removeProperty("font-family"); if (!c.getAttribute("style")) c.removeAttribute("style"); });
-    eachCellSel(mc, clearFmt); return;
+    window.cfBulkClear(mc); return;
   }
   const s = getSelection(); if (!s.rangeCount || !ta.contains(s.anchorNode)) return;
   if (s.isCollapsed) { say("서식을 지울 글자를 먼저 선택해 주세요"); return; }
@@ -8513,6 +8640,7 @@ updateAttN();
   /* --- 글자 크기 --- */
   function sizeStart(v) {
     if (ta.disabled) return false;
+    { const mc0 = window.cfSel && window.cfSel(); if (mc0 && mc0.length > 60) return false; }   // [성능] 칸을 많이 골랐으면 미리보기 생략
     const s = getSelection(); if (!s.rangeCount || s.isCollapsed) return false;
     const r = s.getRangeAt(0); if (!ta.contains(r.commonAncestorContainer)) return false;
     const a = offOf(ta, r.startContainer, r.startOffset), b = offOf(ta, r.endContainer, r.endOffset), recs = []; let acc = 0;
