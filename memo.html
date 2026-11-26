@@ -600,8 +600,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #tm.pink #tmBtn:hover { text-decoration-style:solid; }
 #tm:not(.pink) { background:transparent !important; border-color:transparent !important; padding:0 !important; }
 </style>
-<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795669954126&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000003f18820b94edcc4d82152029%26fn%3Dmemo_parksoodong_github_io__dev%25281%2529.html%26cd%3Dattachment%26ts%3D498797%26p%3Dfs%26cid%3D1%26sig%3Dea8c924b84c04325fe32812f5238408d9af4a8de7fe7a3f305e5310724e86dc7%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
-<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795669954126&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+</head>
 <body>
 <header><h1>메모장</h1><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><div class="tr"><div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
 <div class="slot"><div class="pane" id="pane">
@@ -5894,6 +5893,9 @@ onEd("click", e => {
   RZ.addEventListener("pointerdown", e => {
     if (e.button > 0 || !rzTab) return;
     e.preventDefault();
+    // 표 너비를 줄일 때 셀 내용의 최소 콘텐츠 너비가 표 전체 너비를 막지 않도록 고정 레이아웃을 사용합니다.
+    // 일반 셀은 자연스럽게 줄바꿈되고, 셀맞춤 셀은 새 셀 너비에 맞춰 글자 크기를 다시 계산합니다.
+    rzTab.dataset.cfRzFixed = "1";
     rzDrag = { x: e.clientX, w: rzTab.getBoundingClientRect().width, id: e.pointerId };
     try { RZ.setPointerCapture(e.pointerId); } catch (x) {}
     RZ.classList.add("on");
@@ -6973,7 +6975,7 @@ onEd("click", e => {
   function close() { if (dlg) dlg.hidden = true; st = null; }
   if (!document.getElementById('cfFitLiveStyle')) {
     const fitStyle = document.createElement('style'); fitStyle.id = 'cfFitLiveStyle';
-    fitStyle.textContent = '[data-cf-fit="1"]{white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;overflow-wrap:normal!important;word-break:normal!important}';
+    fitStyle.textContent = '[data-cf-fit="1"]{white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;overflow-wrap:normal!important;word-break:normal!important}[data-cf-fit="1"] *{font-size:inherit!important}.rich table[data-cf-rz-fixed="1"]{table-layout:fixed!important;min-width:0!important}.rich table[data-cf-rz-fixed="1"] td,.rich table[data-cf-rz-fixed="1"] th{min-width:0!important}';
     document.head.appendChild(fitStyle);
   }
   function fitCellText(cell) {
