@@ -644,11 +644,17 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #monthMemo .mm-title::placeholder{color:var(--mute);font-weight:400;opacity:.65}
 #monthMemo .mm-body{flex:1;min-height:0;width:auto;padding:5px 7px;border:0;border-radius:0;background:transparent;font-size:11px;line-height:1.4}
 /* 남는 달력 칸에 배치되는 월별 일괄 삭제 도구 */
-.memo-delete{z-index:2;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:4px;box-sizing:border-box;padding:5px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);overflow:hidden}
+.memo-delete{z-index:2;min-width:0;min-height:0;display:flex;align-items:stretch;box-sizing:border-box;padding:4px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);overflow:hidden;gap:0}
+.memo-delete .md-actions{flex:0 0 20%;min-width:0;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:4px;padding:3px 5px 3px 2px}
 .memo-delete .md-title{font-size:11px;font-weight:700;text-align:center;white-space:nowrap}
 .memo-delete .md-btn{min-width:0;width:100%;padding:4px 2px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit;font-size:10px;line-height:1.2;white-space:nowrap;cursor:pointer}
 .memo-delete .md-btn:hover,.memo-delete .md-btn:focus-visible{background:var(--line)}
 .memo-delete .md-btn:disabled{opacity:.45;cursor:not-allowed}
+.memo-delete .md-always{flex:1 1 80%;min-width:0;min-height:0;display:flex;flex-direction:column;border-left:1px solid var(--line);padding-left:6px;overflow:hidden}
+.memo-delete .am-head{flex:none;padding:2px 4px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700}
+.memo-delete .am-title{flex:none;box-sizing:border-box;width:100%;height:calc(1.35em + 6px);padding:3px 5px;border:0;border-bottom:1px dashed var(--line);background:transparent;color:var(--mfg);font:inherit;font-size:11px;font-weight:600;outline:none}
+.memo-delete .am-body{flex:1;min-height:0;width:auto;padding:4px 5px;border:0;border-radius:0;background:transparent;font-size:11px;line-height:1.35;overflow:auto}
+.memo-delete .am-title:focus,.memo-delete .am-body:focus{background:rgba(51,154,240,.08)}
 #monthMemo.zoom{position:absolute;inset:0;z-index:7;grid-column:1 / 8;grid-row:1 / 7;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
 #monthMemo.zoom .mm-head{padding:7px 10px;font-size:15px}
 #monthMemo.zoom .mm-zoom{width:30px;height:30px;font-size:17px}
@@ -660,9 +666,14 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #monthMemo .mm-zoom{width:16px;height:16px;font-size:11px}
 #monthMemo .mm-title{height:calc(1.25em + 4px);padding:2px 3px;font-size:9px}
 #monthMemo .mm-body{padding:2px 3px;font-size:9px;line-height:1.25}
-.memo-delete{gap:2px;padding:2px;border-radius:4px}
+.memo-delete{gap:0;padding:2px;border-radius:4px}
+.memo-delete .md-actions{gap:2px;padding:1px 3px 1px 1px}
 .memo-delete .md-title{font-size:8px;letter-spacing:-.04em}
 .memo-delete .md-btn{padding:3px 0;font-size:8px;letter-spacing:-.06em;border-radius:3px}
+.memo-delete .md-always{padding-left:3px}
+.memo-delete .am-head{font-size:9px;padding:1px 2px}
+.memo-delete .am-title{height:calc(1.2em + 3px);padding:1px 2px;font-size:9px}
+.memo-delete .am-body{padding:2px;font-size:9px;line-height:1.2}
 #monthMemo.zoom .mm-head{padding:6px 8px;font-size:14px}
 #monthMemo.zoom .mm-zoom{width:26px;height:26px;font-size:15px}
 #monthMemo.zoom .mm-title{height:calc(1.4em + 14px);padding:7px 10px;font-size:14px}
@@ -702,7 +713,7 @@ body{padding:8px 6px;gap:6px}
 #calgrid.zooming{overflow:hidden}
 }
 </style>
-<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795727552916&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000002cac820693664b667e489a40%26fn%3Dcal_parksoodong_github_io__dev_fixed%25283%2529.html%26cd%3Dattachment%26ts%3D498814%26p%3Dfs%26cid%3D1%26sig%3Dde1c52ea60be88e39f4e3134aad5233845b595e9e78cc4e06c3bc803498bc151%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795727552916&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000b61882069a10a6bec7b5ad18%26fn%3Dcal_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498815%26p%3Dfs%26cid%3D1%26sig%3Ddceb187f56235f20e3f689b6741b1a334aef0a651b2ad32b51d321d86adf3749%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795727552916&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000038c88206bb7a5b300d4282a7%26fn%3Dcal_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498806%26p%3Dfs%26cid%3D1%26sig%3D826141b5529cf2ee446c1d123f793b722d971a70bf57193487b45900738a167d%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
@@ -1461,9 +1472,8 @@ const CAL_WD = ["일","월","화","수","목","금","토"];
 const S2 = "<!--s2-->", S3 = "<!--s3-->", SC = "<!--c1-->";
 const calGrid = document.getElementById("calgrid"), calTitle = document.getElementById("calTitle"), calLeg = document.getElementById("calLeg");
 const EDS = [], CELLS = [], CAL_LBL = [], CAL_HS = [], CAL_HL = [], CAL_ZB = [], CAL_TT = [];
-// 날짜 칸 제목(요약) 길이 제한: 글자 수가 아니라 '폭'으로 셈. 한글(전각) 1자 = 1.5칸, 숫자·영문·기호 = 1칸, 최대 27칸
-//  → 모바일 작은 칸(제목이 3줄까지 보임, 한 줄에 한글 6자·숫자 9자)에 맞춰 한글 18자 / 숫자 27자
-const TITLE_UNITS = 27, TITLE_LABEL = "한글 18자·숫자 27자 이내";
+// 날짜 칸 제목 길이 제한: 글자 폭 기준 한글 30자 / 숫자·영문 약 45자
+const TITLE_UNITS = 45, TITLE_LABEL = "한글 30자·숫자 45자 이내";
 const wideCh = c => /[\u1100-\u11FF\u2E80-\u303F\u3040-\u30FF\u3130-\u318F\u3400-\u4DBF\u4E00-\u9FFF\uA960-\uA97F\uAC00-\uD7FF\uF900-\uFAFF\uFF00-\uFF60\uFFE0-\uFFE6]/.test(c);
 const titleW = str => { let w = 0; for (const c of String(str)) w += wideCh(c) ? 1.5 : 1; return w; };
 const clipTitle = str => { let w = 0, out = ""; for (const c of String(str)) { w += wideCh(c) ? 1.5 : 1; if (w > TITLE_UNITS) break; out += c; } return out; };
@@ -1513,10 +1523,12 @@ monthMemo.innerHTML = '<div class="mm-head"><span class="mm-label" id="monthMemo
 calGrid.appendChild(monthMemo);
 // 날짜가 배치되지 않는 남는 칸 중 하나를 골라, 현재 월의 일간/월간 메모 일괄 삭제 기능을 둬요.
 const deletePanel = document.createElement("section"); deletePanel.id = "memoDelete"; deletePanel.className = "memo-delete";
-deletePanel.setAttribute("aria-label", "메모 삭제");
-deletePanel.innerHTML = '<div class="md-title">메모 삭제</div><button type="button" class="md-btn" id="deleteDailyMemo">일간 메모</button><button type="button" class="md-btn" id="deleteMonthlyMemo">월간 메모</button>';
+deletePanel.setAttribute("aria-label", "메모 삭제 및 상시 메모");
+deletePanel.innerHTML = '<div class="md-actions"><div class="md-title">메모 삭제</div><button type="button" class="md-btn" id="deleteDailyMemo">일간 메모</button><button type="button" class="md-btn" id="deleteMonthlyMemo">월간 메모</button></div><div class="md-always"><div class="am-head">[메모]</div><input class="am-title" id="alwaysMemoTitle" type="text" placeholder="메모 제목 (한글 30자 기준)" aria-label="메모 제목 (한글 30자 기준)"><div class="rich am-body" id="alwaysMemoBody" contenteditable="true" data-ph="메모 내용을 입력하세요" role="textbox" aria-multiline="true"></div></div>';
 calGrid.appendChild(deletePanel);
 const deleteDailyMemo = deletePanel.querySelector("#deleteDailyMemo"), deleteMonthlyMemo = deletePanel.querySelector("#deleteMonthlyMemo");
+const alwaysMemoTitle = deletePanel.querySelector("#alwaysMemoTitle"), alwaysMemoBody = deletePanel.querySelector("#alwaysMemoBody");
+makeRich(alwaysMemoBody);
 const monthMemoLabel = monthMemo.querySelector("#monthMemoLabel"), monthMemoTitle = monthMemo.querySelector("#monthMemoTitle"), monthMemoBody = monthMemo.querySelector("#monthMemoBody"), monthMemoZoom = monthMemo.querySelector("#monthMemoZoom");
 makeRich(monthMemoBody);
 let monthZoom = false;
@@ -1544,6 +1556,15 @@ monthMemoTitle.addEventListener("input", () => {
   }
   monthMemoBody.dispatchEvent(new Event("input", { bubbles:true }));
 });
+// 언제나 보이는 메모 제목은 한글 30자 폭 기준으로 제한해요.
+alwaysMemoTitle.addEventListener("input", () => {
+  if (titleW(alwaysMemoTitle.value) > 45) {
+    const pos = alwaysMemoTitle.selectionStart; alwaysMemoTitle.value = clipTitleTo(alwaysMemoTitle.value, 45);
+    try { alwaysMemoTitle.setSelectionRange(Math.min(pos, alwaysMemoTitle.value.length), Math.min(pos, alwaysMemoTitle.value.length)); } catch (_) {}
+  }
+  alwaysMemoBody.dispatchEvent(new Event("input", { bubbles:true }));
+});
+function clipTitleTo(str, limit) { let w = 0, out = ""; for (const c of String(str)) { w += wideCh(c) ? 1.5 : 1; if (w > limit) break; out += c; } return out; }
 // 현재 표시 중인 달의 일간 메모(본문+제목) 또는 월간 메모(제목+본문)만 삭제해요.
 deleteDailyMemo.addEventListener("click", () => {
   syncStore();
@@ -1566,7 +1587,7 @@ deleteMonthlyMemo.addEventListener("click", () => {
 });
 let ta = EDS[0];   // 툴바가 적용되는 메모 칸
 const now0 = new Date(), p2 = n => String(n).padStart(2, "0");
-const store = new Map(), titles = new Map(), monthStore = new Map(); let legacy = [], calDis = false;   // 날짜별 메모·제목, 월별 메모
+const store = new Map(), titles = new Map(), monthStore = new Map(); let alwaysMemo = { title:"", body:"" }, legacy = [], calDis = false;   // 날짜별 메모·제목, 월별 메모
 let calY = now0.getFullYear(), calM = now0.getMonth();
 const dkey = (y, m, d) => y + "-" + p2(m + 1) + "-" + p2(d);
 function dIdx(k) { return EDS.findIndex(e => e.dataset.date === k); }
@@ -1575,12 +1596,15 @@ function syncStore() {
   for (let i = 0; i < 42; i++) { const e = EDS[i], k = e.dataset.date; if (!k) continue; const v = e.value; if (v) store.set(k, v); else store.delete(k); const t = CAL_TT[i].value; if (t) titles.set(k, t); else titles.delete(k); }
   const mk = monthKey(), mt = monthMemoTitle.value.trim(), mb = monthMemoBody.value;
   if (mt || mb) monthStore.set(mk, { title: mt, body: mb }); else monthStore.delete(mk);
+  alwaysMemo = { title: alwaysMemoTitle.value.trim(), body: alwaysMemoBody.value };
 }
 function renderMonthMemo() {
   const mk = monthKey(), v = monthStore.get(mk) || { title:"", body:"" };
   monthMemoLabel.textContent = "[" + calY + "년 " + (calM + 1) + "월 월간 메모]";
   monthMemoTitle.value = v.title || ""; monthMemoBody.value = v.body || "";
   monthMemoTitle.disabled = calDis; monthMemoBody.disabled = calDis;
+  alwaysMemoTitle.value = alwaysMemo.title || ""; alwaysMemoBody.value = alwaysMemo.body || "";
+  alwaysMemoTitle.disabled = calDis; alwaysMemoBody.disabled = calDis;
 }
 function escH2(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\r?\n/g, "<br>"); }
 function renderCal() {
@@ -1648,13 +1672,13 @@ const memoAll = {
   get value() {
     syncStore();
     const lg = legacy.some(x => x) ? legacy : null;
-    if (!store.size && !titles.size && !monthStore.size && !lg) return "";
-    const o = { d: Object.fromEntries(store) }; if (titles.size) o.t = Object.fromEntries(titles); if (monthStore.size) o.m = Object.fromEntries(monthStore); if (lg) o.l = lg;
+    if (!store.size && !titles.size && !monthStore.size && !alwaysMemo.title && !alwaysMemo.body && !lg) return "";
+    const o = { d: Object.fromEntries(store) }; if (titles.size) o.t = Object.fromEntries(titles); if (monthStore.size) o.m = Object.fromEntries(monthStore); if (alwaysMemo.title || alwaysMemo.body) o.a = alwaysMemo; if (lg) o.l = lg;
     return SC + JSON.stringify(o);
   },
   set value(v) {
-    v = String(v || ""); store.clear(); titles.clear(); monthStore.clear(); legacy = [];
-    if (v.startsWith(SC)) { try { const p = JSON.parse(v.slice(SC.length)); for (const k in (p.d || {})) if (p.d[k]) store.set(k, p.d[k]); for (const k in (p.t || {})) if (p.t[k]) titles.set(k, clipTitle(String(p.t[k]))); for (const k in (p.m || {})) if (p.m[k] && typeof p.m[k] === "object") monthStore.set(k, { title: clipMonthTitle(String(p.m[k].title || "")), body: String(p.m[k].body || "") }); legacy = Array.isArray(p.l) ? p.l.map(x => String(x || "")) : []; } catch (e) {} }
+    v = String(v || ""); store.clear(); titles.clear(); monthStore.clear(); alwaysMemo = { title:"", body:"" }; legacy = [];
+    if (v.startsWith(SC)) { try { const p = JSON.parse(v.slice(SC.length)); for (const k in (p.d || {})) if (p.d[k]) store.set(k, p.d[k]); for (const k in (p.t || {})) if (p.t[k]) titles.set(k, clipTitle(String(p.t[k]))); for (const k in (p.m || {})) if (p.m[k] && typeof p.m[k] === "object") monthStore.set(k, { title: clipMonthTitle(String(p.m[k].title || "")), body: String(p.m[k].body || "") }); if (p.a && typeof p.a === "object") alwaysMemo = { title: clipTitleTo(String(p.a.title || ""), 45), body: String(p.a.body || "") }; legacy = Array.isArray(p.l) ? p.l.map(x => String(x || "")) : []; } catch (e) {} }
     else {
       let done = false;
       for (const P of [S3, S2]) if (v.startsWith(P)) { try { legacy = JSON.parse(v.slice(P.length)).map(x => String(x || "")); done = true; } catch (e) {} break; }
@@ -1664,7 +1688,7 @@ const memoAll = {
   },
   get disabled() { return calDis; },
   set disabled(b) { calDis = !!b; EDS.forEach((e, i) => { e.disabled = calDis || !e.dataset.date; CAL_TT[i].disabled = e.disabled; }); monthMemoTitle.disabled = calDis; monthMemoBody.disabled = calDis; deleteDailyMemo.disabled = calDis; deleteMonthlyMemo.disabled = calDis; },
-  get textContent() { return EDS.map(e => e.textContent).join("") + Array.from(titles.values()).join("") + Array.from(monthStore.values()).map(x => (x.title || "") + (x.body || "")).join("") + legacy.join("") + Array.from(store.entries()).filter(([k]) => !EDS.some(e => e.dataset.date === k)).map(x => x[1]).join(""); }
+  get textContent() { return EDS.map(e => e.textContent).join("") + Array.from(titles.values()).join("") + Array.from(monthStore.values()).map(x => (x.title || "") + (x.body || "")).join("") + (alwaysMemo.title || "") + (alwaysMemo.body || "") + legacy.join("") + Array.from(store.entries()).filter(([k]) => !EDS.some(e => e.dataset.date === k)).map(x => x[1]).join(""); }
 };
 const ALL_EDS = EDS.concat([monthMemoBody]);
 const onEd = (t, fn) => ALL_EDS.forEach(e => e.addEventListener(t, fn));
