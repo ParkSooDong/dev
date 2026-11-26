@@ -7342,7 +7342,9 @@ onEd("click", e => {
           const x = u.left - tr.left + pad, top = u.top - tr.top + pad, m = ctx.measureText(u.s), fa = m.fontBoundingBoxAscent || u.h * .8, fd = m.fontBoundingBoxDescent || u.h * .2;
           const base = top + (u.h - (fa + fd)) / 2 + fa, wd = u.right - u.left;
           if (hasBg) { ctx.fillStyle = cs.backgroundColor; ctx.fillRect(x, top, wd, u.h); }
-          ctx.fillStyle = cs.color; ctx.fillText(u.s, x, base);
+          ctx.fillStyle = cs.color;
+          if (cell.dataset.cfFit === "1") { const cr = cell.getBoundingClientRect(); ctx.save(); ctx.beginPath(); ctx.rect(cr.left - tr.left + pad, cr.top - tr.top + pad, cr.width, cr.height); ctx.clip(); ctx.fillText(u.s, x, base); ctx.restore(); }
+          else ctx.fillText(u.s, x, base);
           const fs = parseFloat(cs.fontSize) || 14;
           if (dl.includes("underline")) ctx.fillRect(x, base + fs * .12, wd, Math.max(1, fs / 16));
           if (dl.includes("line-through")) ctx.fillRect(x, base - fs * .3, wd, Math.max(1, fs / 16));
@@ -7704,7 +7706,151 @@ const AREA_NM = ["가", "나", "다"];
     else if (e.key === "Enter" && e.target.matches && e.target.matches("input[type=text]")) { e.preventDefault(); const ok = q("[data-ok]"); if (ok && !ok.disabled) ok.click(); }
   });
   const stamp = () => { const n = new Date(), p = x => String(x).padStart(2, "0"); return n.getFullYear() + p(n.getMonth() + 1) + p(n.getDate()) + "-" + p(n.getHours()) + p(n.getMinutes()); };
-  const EXP_TAIL = '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
+  const EXP_TAIL = '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n
+<style id="cell-fit-style">
+[data-cf-fit="1"]{white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;word-break:normal!important;overflow-wrap:normal!important}
+#cellFormatModal{position:fixed;inset:0;z-index:10050;background:rgba(0,0,0,.38);display:flex;align-items:center;justify-content:center;padding:14px}
+#cellFormatModal[hidden]{display:none}
+#cellFormatModal .cfm-box{width:min(460px,100%);max-height:min(620px,calc(100vh - 28px));overflow:auto;background:var(--card,#fff);color:var(--ink,#222);border:1px solid var(--line,#ccc);border-radius:14px;box-shadow:0 12px 40px #0004;padding:14px}
+#cellFormatModal .cfm-tabs{display:flex;gap:6px;border-bottom:1px solid var(--line,#ccc);margin-bottom:14px}
+#cellFormatModal .cfm-tab{border:0;background:transparent;padding:9px 14px;border-radius:8px 8px 0 0}
+#cellFormatModal .cfm-tab[aria-selected=true]{background:var(--soft,#e9ecef);font-weight:800}
+#cellFormatModal .cfm-pane[hidden]{display:none}
+#cellFormatModal .cfm-row{display:flex;align-items:center;gap:10px;margin:12px 0;flex-wrap:wrap}
+#cellFormatModal input[type=number]{width:84px;padding:7px;border:1px solid var(--line,#bbb);border-radius:7px;background:var(--bg,#fff);color:inherit}
+#cellFormatModal .cfm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+#cellFormatModal button{cursor:pointer}
+#cellFormatModal .cfm-primary{background:var(--accent,#339af0);color:white;border:0;border-radius:8px;padding:8px 14px}
+#cellFormatModal .cfm-secondary{border:1px solid var(--line,#bbb);border-radius:8px;padding:8px 12px;background:transparent}
+</style>
+<script id="cell-fit-feature">
+(() => {
+  const $ = (q, root=document) => root.querySelector(q);
+  const $$ = (q, root=document) => [...root.querySelectorAll(q)];
+  const toolbar = [...document.querySelectorAll('[data-cfopen="b"]')];
+  if (!toolbar.length) return;
+  // 기존 테두리/채우기 기능과의 호환을 위해 기존 버튼은 숨겨 두고 새 셀 서식 창에서 호출해요.
+  const oldBorder = toolbar[0], oldFill = [...document.querySelectorAll('[data-cfopen="f"]')][0];
+  [ ...toolbar, ...document.querySelectorAll('[data-cfopen="f"]') ].forEach(b => b.hidden = true);
+  const all = [...document.querySelectorAll('.tbar .tbr')];
+  all.forEach(row => {
+    if (!row.querySelector('[data-table-sort]')) return;
+    const b = document.createElement('button');
+    b.type='button'; b.dataset.cellFormatOpen='1'; b.textContent='셀 서식';
+    b.title='선택한 셀의 셀맞춤, 채우기, 테두리를 설정해요';
+    row.insertBefore(b, row.querySelector('[data-table-sort]'));
+    const sep = row.querySelector('.tbsep');
+    if (sep) sep.remove();
+  });
+  const modal=document.createElement('div');
+  modal.id='cellFormatModal'; modal.hidden=true;
+  modal.innerHTML=`<div class="cfm-box" role="dialog" aria-modal="true" aria-label="셀 서식">
+    <div class="cfm-tabs" role="tablist">
+      <button type="button" class="cfm-tab" data-tab="fit" aria-selected="true">셀맞춤</button>
+      <button type="button" class="cfm-tab" data-tab="fill" aria-selected="false">채우기</button>
+      <button type="button" class="cfm-tab" data-tab="border" aria-selected="false">테두리</button>
+    </div>
+    <section class="cfm-pane" data-pane="fit">
+      <div class="cfm-row"><label><input type="checkbox" id="cfmFitToggle"> 셀맞춤 사용</label></div>
+      <div class="cfm-row"><label for="cfmMin">글자 크기 하한선</label><input id="cfmMin" type="number" min="1" max="200" step="1" value="10"><span>px</span></div>
+      <p style="font-size:12px;opacity:.8;line-height:1.5">선택한 셀의 열 너비에 맞춰 글자 크기를 줄입니다. 하한선보다 더 줄어들어야 하는 글자는 줄바꿈하지 않고 셀 안에서 잘립니다. 셀맞춤을 해제하면 원래 글자 크기로 돌아가며 기본 줄바꿈 방식이 적용됩니다.</p>
+      <div class="cfm-actions"><button type="button" class="cfm-secondary" data-cfm-close>닫기</button><button type="button" class="cfm-primary" id="cfmApply">선택 셀에 적용</button></div>
+    </section>
+    <section class="cfm-pane" data-pane="fill" hidden><p>채우기 서식을 설정합니다.</p><div class="cfm-actions"><button type="button" class="cfm-secondary" data-cfm-close>닫기</button><button type="button" class="cfm-primary" id="cfmGoFill">채우기 설정 열기</button></div></section>
+    <section class="cfm-pane" data-pane="border" hidden><p>테두리 서식을 설정합니다.</p><div class="cfm-actions"><button type="button" class="cfm-secondary" data-cfm-close>닫기</button><button type="button" class="cfm-primary" id="cfmGoBorder">테두리 설정 열기</button></div></section>
+  </div>`;
+  document.body.appendChild(modal);
+  const minInput=$('#cfmMin',modal), toggle=$('#cfmFitToggle',modal);
+  let currentCells=[];
+  function selectedCells(){
+    const got=window.cfSel && window.cfSel();
+    return got && got.length ? got.filter(c=>c && c.matches('td,th')) : [];
+  }
+  function setTab(name){
+    $$('.cfm-tab',modal).forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===name)));
+    $$('.cfm-pane',modal).forEach(p=>p.hidden=p.dataset.pane!==name);
+  }
+  function fitCell(cell){
+    if(!cell || !cell.isConnected || cell.dataset.cfFit!=='1') return;
+    const min=Math.max(1,Math.min(200,Number(cell.dataset.cfFitMin)||10));
+    const cs=getComputedStyle(cell);
+    const pad=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);
+    const available=Math.max(1,cell.clientWidth-pad-1);
+    const base=Math.max(1,Number(cell.dataset.cfFitBase)||parseFloat(cs.fontSize)||16);
+    const text=(cell.innerText||cell.textContent||'').replace(/\s+/g,' ').trim();
+    const canvas=fitCell.canvas||(fitCell.canvas=document.createElement('canvas'));
+    const ctx=canvas.getContext('2d');
+    ctx.font=[cs.fontStyle,cs.fontVariant,cs.fontWeight,base+'px',cs.fontFamily].filter(Boolean).join(' ');
+    const measured=Math.max(1,ctx.measureText(text).width);
+    const next=Math.max(min,Math.min(base,base*available/measured));
+    cell.style.fontSize=next.toFixed(2)+'px';
+    cell.style.whiteSpace='nowrap'; cell.style.overflow='hidden'; cell.style.textOverflow='clip';
+    cell.style.overflowWrap='normal'; cell.style.wordBreak='normal';
+  }
+  function fitTable(table){ if(table) $$('td[data-cf-fit="1"],th[data-cf-fit="1"]',table).forEach(fitCell); }
+  function apply(){
+    const cells=currentCells.length?currentCells:selectedCells();
+    if(!cells.length){ alert('셀맞춤을 적용할 셀 또는 열 범위를 먼저 선택해 주세요.'); return; }
+    const min=Math.max(1,Math.min(200,Number(minInput.value)||10));
+    cells.forEach(cell=>{
+      if(toggle.checked){
+        if(cell.dataset.cfFit!=='1'){
+          cell.dataset.cfFitBase=String(parseFloat(getComputedStyle(cell).fontSize)||16);
+          cell.dataset.cfFitInline=cell.style.fontSize||'';
+        }
+        cell.dataset.cfFit='1'; cell.dataset.cfFitMin=String(min);
+        fitCell(cell);
+      }else{
+        if(cell.dataset.cfFit==='1'){
+          cell.style.fontSize=cell.dataset.cfFitInline||'';
+          cell.style.whiteSpace=''; cell.style.overflow=''; cell.style.textOverflow='';
+          cell.style.overflowWrap=''; cell.style.wordBreak='';
+          delete cell.dataset.cfFit; delete cell.dataset.cfFitMin;
+          delete cell.dataset.cfFitBase; delete cell.dataset.cfFitInline;
+        }
+      }
+    });
+    cells[0].closest('table')?.dispatchEvent(new Event('input',{bubbles:true}));
+    modal.hidden=true;
+    if(window.toast) window.toast(toggle.checked?'선택한 셀에 셀맞춤을 적용했어요':'선택한 셀의 셀맞춤을 해제했어요');
+  }
+  document.addEventListener('click',e=>{
+    const open=e.target.closest('[data-cell-format-open]');
+    if(open){
+      e.preventDefault(); currentCells=selectedCells();
+      if(!currentCells.length){ alert('셀맞춤을 설정할 열 또는 셀 범위를 먼저 선택해 주세요.'); return; }
+      const fitted=currentCells.filter(c=>c.dataset.cfFit==='1');
+      toggle.checked=fitted.length>0;
+      minInput.value=fitted.length?(fitted[0].dataset.cfFitMin||10):10;
+      setTab('fit'); modal.hidden=false; return;
+    }
+    const tab=e.target.closest('.cfm-tab');
+    if(tab){setTab(tab.dataset.tab);return;}
+    if(e.target.closest('[data-cfm-close]')){modal.hidden=true;return;}
+    if(e.target.id==='cfmApply'){apply();return;}
+    if(e.target.id==='cfmGoFill'){modal.hidden=true;oldFill?.click();return;}
+    if(e.target.id==='cfmGoBorder'){modal.hidden=true;oldBorder?.click();return;}
+    if(e.target===modal) modal.hidden=true;
+  });
+  // 표 너비/열 너비가 바뀔 때마다 글자 크기를 다시 계산해요.
+  if(window.ResizeObserver){
+    const ro=new ResizeObserver(entries=>{
+      const tables=new Set();
+      entries.forEach(en=>{const t=en.target.closest?.('table');if(t)tables.add(t);});
+      tables.forEach(fitTable);
+    });
+    const watch=()=>$$('table').forEach(t=>{ro.observe(t);$$('td,th',t).forEach(c=>ro.observe(c));});
+    watch();
+    new MutationObserver(()=>watch()).observe(document.body,{childList:true,subtree:true});
+  }
+  window.addEventListener('resize',()=>$$('table').forEach(fitTable));
+  // 저장/불러오기된 HTML의 셀맞춤 속성을 초기화 시 복구해요.
+  document.addEventListener('DOMContentLoaded',()=>$$('table').forEach(fitTable));
+  $$('table').forEach(fitTable);
+})();
+</script>
+
+</body>\n</html>\n';
 
   /* ---------- 저장 ---------- */
   function openSave() {
