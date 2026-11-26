@@ -1976,9 +1976,20 @@ function szApply(raw) {
   document.dispatchEvent(ev);   // 이미지 '글자 넣기' 중이면 그쪽(선택한 글자 요소 / 이어서 넣을 기본 크기)에 적용
   if (ev.detail.handled) return;
   const cells = window.cfSel && window.cfSel();
-  if (!(cells && cells.length) && szRange && szRangeEd && szRangeEd.isConnected) {
-    ta = szRangeEd; ta.focus();
-    const s = getSelection(); s.removeAllRanges(); s.addRange(szRange);
+  // 글자 크기 목록의 미리보기를 확정할 때는 미리보기 래퍼를 제거한 직후의
+  // 현재 Selection이 가장 정확합니다. selectionchange가 비동기로 오기 전에
+  // 오래된 szRange(이미 분리·병합된 텍스트 노드를 가리킬 수 있음)를 쓰지 않도록
+  // 현재 범위를 먼저 복사해 둡니다.
+  const liveSel = getSelection();
+  const liveRange = liveSel && liveSel.rangeCount && liveSel.anchorNode && ta.contains(liveSel.anchorNode)
+    ? liveSel.getRangeAt(0).cloneRange() : null;
+  if (!(cells && cells.length)) {
+    const targetEd = liveRange ? ta : (szRange && szRangeEd && szRangeEd.isConnected ? szRangeEd : null);
+    const targetRange = liveRange || (targetEd === szRangeEd ? szRange : null);
+    if (targetEd && targetRange) {
+      ta = targetEd; ta.focus();
+      const s = getSelection(); s.removeAllRanges(); s.addRange(targetRange);
+    }
   }
   setSize(String(v));
 }
