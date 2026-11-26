@@ -633,6 +633,32 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .calcell .caltt{flex:none;display:block;width:100%;margin:0;padding:3px 6px;border:0;border-bottom:1px dashed var(--line);border-radius:0;background:transparent;color:var(--mfg);font:inherit;font-size:12px;font-weight:600;line-height:1.35;height:calc(1.35em + 6px);resize:none;overflow:hidden;outline:none}
 .calcell .caltt::placeholder{color:var(--mute);font-weight:400;opacity:.65}
 .calcell .caltt:focus{background:rgba(51,154,240,.08)}
+/* 월간 메모: 달력 6행의 오른쪽 마지막 5칸(항상 날짜가 들어오지 않는 영역)을 하나로 사용 */
+#monthMemo{grid-column:3 / 8;grid-row:6;position:relative;z-index:2;display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden;border:1.5px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+#monthMemo .mm-head{flex:none;display:flex;align-items:center;gap:6px;min-width:0;padding:3px 6px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700}
+#monthMemo .mm-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#monthMemo .mm-zoom{flex:none;width:22px;height:22px;padding:0;border:0;border-radius:5px;background:transparent;color:var(--mute);font:inherit;font-size:14px;cursor:pointer}
+#monthMemo .mm-zoom:hover,#monthMemo .mm-zoom:focus-visible{background:var(--line);color:var(--ink)}
+#monthMemo .mm-title{flex:none;box-sizing:border-box;width:100%;height:calc(1.4em + 10px);padding:4px 7px;border:0;border-bottom:1px dashed var(--line);border-radius:0;background:transparent;color:var(--mfg);font:inherit;font-size:12px;font-weight:600;outline:none}
+#monthMemo .mm-title:focus{background:rgba(51,154,240,.08)}
+#monthMemo .mm-title::placeholder{color:var(--mute);font-weight:400;opacity:.65}
+#monthMemo .mm-body{flex:1;min-height:0;width:auto;padding:5px 7px;border:0;border-radius:0;background:transparent;font-size:11px;line-height:1.4}
+#monthMemo.zoom{position:absolute;inset:0;z-index:7;grid-column:1 / 8;grid-row:1 / 7;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+#monthMemo.zoom .mm-head{padding:7px 10px;font-size:15px}
+#monthMemo.zoom .mm-zoom{width:30px;height:30px;font-size:17px}
+#monthMemo.zoom .mm-title{height:calc(1.45em + 16px);padding:8px 12px;font-size:15px}
+#monthMemo.zoom .mm-body{padding:12px 14px;font-size:15px;line-height:1.6}
+@media(max-width:720px){
+#monthMemo{border-width:1px;border-radius:5px}
+#monthMemo .mm-head{padding:1px 3px;gap:2px;font-size:9px;letter-spacing:-.03em}
+#monthMemo .mm-zoom{width:16px;height:16px;font-size:11px}
+#monthMemo .mm-title{height:calc(1.25em + 4px);padding:2px 3px;font-size:9px}
+#monthMemo .mm-body{padding:2px 3px;font-size:9px;line-height:1.25}
+#monthMemo.zoom .mm-head{padding:6px 8px;font-size:14px}
+#monthMemo.zoom .mm-zoom{width:26px;height:26px;font-size:15px}
+#monthMemo.zoom .mm-title{height:calc(1.4em + 14px);padding:7px 10px;font-size:14px}
+#monthMemo.zoom .mm-body{padding:10px 12px;font-size:14px;line-height:1.5}
+}
 /* 날짜 칸 확대: 7x6 달력 공간(#calgrid) 전체를 이 칸이 덮어요. CSS 만 바꾸므로 입력 중인 내용·커서·저장 상태는 그대로예요 */
 .calcell.zoom{position:absolute;inset:0;z-index:5;grid-column:auto!important;grid-row:auto!important;align-self:stretch;justify-self:stretch;min-height:0;box-shadow:0 2px 10px rgba(0,0,0,.18)}
 .calcell.zoom .calhd{padding:6px 8px 6px 12px;font-size:14px}
@@ -667,7 +693,8 @@ body{padding:8px 6px;gap:6px}
 #calgrid.zooming{overflow:hidden}
 }
 </style>
-<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000038c88206bb7a5b300d4282a7%26fn%3Dcal_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498806%26p%3Dfs%26cid%3D1%26sig%3D826141b5529cf2ee446c1d123f793b722d971a70bf57193487b45900738a167d%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795704386159&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001870820683c03ccda4a8b7ca%26fn%3Dcal_parksoodong_github_io__dev_fixed%25282%2529.html%26cd%3Dattachment%26ts%3D498807%26p%3Dfs%26cid%3D1%26sig%3D6cb728deaf7c0cc78e78c741728c3a5467ff2fd98d6081713b56086484a31754%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795704386159&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000038c88206bb7a5b300d4282a7%26fn%3Dcal_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498806%26p%3Dfs%26cid%3D1%26sig%3D826141b5529cf2ee446c1d123f793b722d971a70bf57193487b45900738a167d%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
 <header><h1>달력 메모</h1><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span><span id="st" role="status"></span><span id="cnt"></span><span id="calNav"><button type="button" id="calLeg" hidden title="예전 가·나·다 메모를 커서가 있는 날짜 칸으로 가져와요">예전 메모 가져오기</button><button type="button" id="calToday" title="오늘이 있는 달로 이동">오늘</button><button type="button" id="calPrev" aria-label="이전 달" title="이전 달">◀</button><span id="calTitle" role="status" aria-live="polite"></span><button type="button" id="calNext" aria-label="다음 달" title="다음 달">▶</button></span><div class="tr"><div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div><button type="button" id="resetAll" class="fbbtn" title="Firebase 사용 여부, 타이머 시각, 메모를 기본값으로 되돌려요">기본값으로 초기화</button></div></header>
@@ -1471,13 +1498,55 @@ for (let i = 0; i < 42; i++) {
     });
   });
 }
+// 마지막 행의 오른쪽 5칸은 어떤 달에도 날짜가 들어오지 않으므로 월간 메모 전용으로 합쳐요.
+const monthMemo = document.createElement("section"); monthMemo.id = "monthMemo"; monthMemo.setAttribute("aria-label", "월간 메모");
+monthMemo.innerHTML = '<div class="mm-head"><span class="mm-label" id="monthMemoLabel"></span><button type="button" class="mm-zoom" id="monthMemoZoom" aria-label="월간 메모 확대" title="월간 메모를 달력 전체 크기로 확대">⤢</button></div><input class="mm-title" id="monthMemoTitle" type="text" placeholder="월간 메모 제목 (한글 30자 기준)" aria-label="월간 메모 제목 (한글 30자 기준)"><div class="rich mm-body" id="monthMemoBody" contenteditable="true" data-ph="월간 메모를 입력하세요" role="textbox" aria-multiline="true"></div>';
+calGrid.appendChild(monthMemo);
+const monthMemoLabel = monthMemo.querySelector("#monthMemoLabel"), monthMemoTitle = monthMemo.querySelector("#monthMemoTitle"), monthMemoBody = monthMemo.querySelector("#monthMemoBody"), monthMemoZoom = monthMemo.querySelector("#monthMemoZoom");
+makeRich(monthMemoBody);
+let monthZoom = false;
+monthMemoZoom.addEventListener("mousedown", ev => ev.preventDefault());
+monthMemoZoom.addEventListener("click", () => {
+  if (window.cfSelClear) window.cfSelClear();
+  if (zoomI >= 0) calZoom(-1);
+  monthZoom = !monthZoom; monthMemo.classList.toggle("zoom", monthZoom); calGrid.classList.toggle("zooming", monthZoom);
+  monthMemoZoom.textContent = monthZoom ? "✕" : "⤢";
+  monthMemoZoom.setAttribute("aria-label", monthZoom ? "월간 메모 축소" : "월간 메모 확대");
+  monthMemoZoom.title = monthZoom ? "축소 (Esc)" : "월간 메모를 달력 전체 크기로 확대";
+  if (monthZoom) ta = monthMemoBody;
+  window.dispatchEvent(new Event("resize"));
+});
+// 월간 제목은 한글 30자 폭을 기준으로 제한해요. 숫자·영문은 한글보다 폭이 좁으므로 실제 글자 수가 더 많아질 수 있어요.
+const MONTH_TITLE_UNITS = 45; // 한글 30자 × 한글/반각 문자 폭 비율 1.5
+const monthTitleW = str => titleW(str);
+const clipMonthTitle = str => { let w = 0, out = ""; for (const c of String(str)) { const cw = wideCh(c) ? 1.5 : 1; if (w + cw > MONTH_TITLE_UNITS) break; w += cw; out += c; } return out; };
+monthMemoTitle.addEventListener("input", () => {
+  ta = monthMemoBody;
+  if (monthTitleW(monthMemoTitle.value) > MONTH_TITLE_UNITS) {
+    const pos = monthMemoTitle.selectionStart;
+    monthMemoTitle.value = clipMonthTitle(monthMemoTitle.value);
+    try { monthMemoTitle.setSelectionRange(Math.min(pos, monthMemoTitle.value.length), Math.min(pos, monthMemoTitle.value.length)); } catch (_) {}
+  }
+  monthMemoBody.dispatchEvent(new Event("input", { bubbles:true }));
+});
 let ta = EDS[0];   // 툴바가 적용되는 메모 칸
 const now0 = new Date(), p2 = n => String(n).padStart(2, "0");
-const store = new Map(), titles = new Map(); let legacy = [], calDis = false;   // titles: 날짜 → 제목
+const store = new Map(), titles = new Map(), monthStore = new Map(); let legacy = [], calDis = false;   // 날짜별 메모·제목, 월별 메모
 let calY = now0.getFullYear(), calM = now0.getMonth();
 const dkey = (y, m, d) => y + "-" + p2(m + 1) + "-" + p2(d);
 function dIdx(k) { return EDS.findIndex(e => e.dataset.date === k); }
-function syncStore() { for (let i = 0; i < EDS.length; i++) { const e = EDS[i], k = e.dataset.date; if (!k) continue; const v = e.value; if (v) store.set(k, v); else store.delete(k); const t = CAL_TT[i].value; if (t) titles.set(k, t); else titles.delete(k); } }
+function monthKey() { return calY + "-" + p2(calM + 1); }
+function syncStore() {
+  for (let i = 0; i < 42; i++) { const e = EDS[i], k = e.dataset.date; if (!k) continue; const v = e.value; if (v) store.set(k, v); else store.delete(k); const t = CAL_TT[i].value; if (t) titles.set(k, t); else titles.delete(k); }
+  const mk = monthKey(), mt = monthMemoTitle.value.trim(), mb = monthMemoBody.value;
+  if (mt || mb) monthStore.set(mk, { title: mt, body: mb }); else monthStore.delete(mk);
+}
+function renderMonthMemo() {
+  const mk = monthKey(), v = monthStore.get(mk) || { title:"", body:"" };
+  monthMemoLabel.textContent = "[" + calY + "년 " + (calM + 1) + "월 월간 메모]";
+  monthMemoTitle.value = v.title || ""; monthMemoBody.value = v.body || "";
+  monthMemoTitle.disabled = calDis; monthMemoBody.disabled = calDis;
+}
 function escH2(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\r?\n/g, "<br>"); }
 function renderCal() {
   const off = new Date(calY, calM, 1).getDay(), dim = new Date(calY, calM + 1, 0).getDate(), td = dkey(now0.getFullYear(), now0.getMonth(), now0.getDate());
@@ -1497,6 +1566,7 @@ function renderCal() {
   }
   if (!ta || !ta.dataset.date) ta = EDS[off];
   calTitle.textContent = calY + "년 " + (calM + 1) + "월";
+  renderMonthMemo();
   calLeg.hidden = !legacy.some(x => x);
   window.dispatchEvent(new Event("resize"));
 }
@@ -1511,8 +1581,9 @@ function calZoom(i) {   // i: 확대할 칸 번호, -1: 축소
   if (i === zoomI) return;
   if (window.cfSelClear) window.cfSelClear();
   const prev = zoomI; zoomI = i;
+  if (i >= 0 && monthZoom) { monthZoom = false; monthMemo.classList.remove("zoom"); monthMemoZoom.textContent = "⤢"; monthMemoZoom.setAttribute("aria-label", "월간 메모 확대"); }
   if (prev >= 0) { CELLS[prev].classList.remove("zoom"); zbSet(prev); }
-  calGrid.classList.toggle("zooming", i >= 0);
+  calGrid.classList.toggle("zooming", i >= 0 || monthZoom);
   if (i < 0 && prev >= 0) calGrid.scrollTop = zoomScroll;
   if (i >= 0) {
     if (prev < 0) zoomScroll = calGrid.scrollTop;
@@ -1522,7 +1593,7 @@ function calZoom(i) {   // i: 확대할 칸 번호, -1: 축소
   }
   window.dispatchEvent(new Event("resize"));
 }
-function calGo(dm) { if (window.cfSelClear) window.cfSelClear(); calZoom(-1); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); calGrid.scrollTop = 0; }
+function calGo(dm) { if (window.cfSelClear) window.cfSelClear(); monthZoom = false; monthMemo.classList.remove("zoom"); monthMemoZoom.textContent = "⤢"; calGrid.classList.remove("zooming"); calZoom(-1); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); calGrid.scrollTop = 0; }
 document.getElementById("calPrev").addEventListener("click", () => calGo(-1));
 document.getElementById("calNext").addEventListener("click", () => calGo(1));
 document.getElementById("calToday").addEventListener("click", () => calGo(0));
@@ -1538,13 +1609,13 @@ const memoAll = {
   get value() {
     syncStore();
     const lg = legacy.some(x => x) ? legacy : null;
-    if (!store.size && !titles.size && !lg) return "";
-    const o = { d: Object.fromEntries(store) }; if (titles.size) o.t = Object.fromEntries(titles); if (lg) o.l = lg;
+    if (!store.size && !titles.size && !monthStore.size && !lg) return "";
+    const o = { d: Object.fromEntries(store) }; if (titles.size) o.t = Object.fromEntries(titles); if (monthStore.size) o.m = Object.fromEntries(monthStore); if (lg) o.l = lg;
     return SC + JSON.stringify(o);
   },
   set value(v) {
-    v = String(v || ""); store.clear(); titles.clear(); legacy = [];
-    if (v.startsWith(SC)) { try { const p = JSON.parse(v.slice(SC.length)); for (const k in (p.d || {})) if (p.d[k]) store.set(k, p.d[k]); for (const k in (p.t || {})) if (p.t[k]) titles.set(k, clipTitle(String(p.t[k]))); legacy = Array.isArray(p.l) ? p.l.map(x => String(x || "")) : []; } catch (e) {} }
+    v = String(v || ""); store.clear(); titles.clear(); monthStore.clear(); legacy = [];
+    if (v.startsWith(SC)) { try { const p = JSON.parse(v.slice(SC.length)); for (const k in (p.d || {})) if (p.d[k]) store.set(k, p.d[k]); for (const k in (p.t || {})) if (p.t[k]) titles.set(k, clipTitle(String(p.t[k]))); for (const k in (p.m || {})) if (p.m[k] && typeof p.m[k] === "object") monthStore.set(k, { title: clipMonthTitle(String(p.m[k].title || "")), body: String(p.m[k].body || "") }); legacy = Array.isArray(p.l) ? p.l.map(x => String(x || "")) : []; } catch (e) {} }
     else {
       let done = false;
       for (const P of [S3, S2]) if (v.startsWith(P)) { try { legacy = JSON.parse(v.slice(P.length)).map(x => String(x || "")); done = true; } catch (e) {} break; }
@@ -1553,14 +1624,15 @@ const memoAll = {
     renderCal();
   },
   get disabled() { return calDis; },
-  set disabled(b) { calDis = !!b; EDS.forEach((e, i) => { e.disabled = calDis || !e.dataset.date; CAL_TT[i].disabled = e.disabled; }); },
-  get textContent() { return EDS.map(e => e.textContent).join("") + Array.from(titles.values()).join("") + legacy.join("") + Array.from(store.entries()).filter(([k]) => !EDS.some(e => e.dataset.date === k)).map(x => x[1]).join(""); }
+  set disabled(b) { calDis = !!b; EDS.forEach((e, i) => { e.disabled = calDis || !e.dataset.date; CAL_TT[i].disabled = e.disabled; }); monthMemoTitle.disabled = calDis; monthMemoBody.disabled = calDis; },
+  get textContent() { return EDS.map(e => e.textContent).join("") + Array.from(titles.values()).join("") + Array.from(monthStore.values()).map(x => (x.title || "") + (x.body || "")).join("") + legacy.join("") + Array.from(store.entries()).filter(([k]) => !EDS.some(e => e.dataset.date === k)).map(x => x[1]).join(""); }
 };
-const onEd = (t, fn) => EDS.forEach(e => e.addEventListener(t, fn));
-const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach(e => mo.observe(e, o)); return mo; };
+const ALL_EDS = EDS.concat([monthMemoBody]);
+const onEd = (t, fn) => ALL_EDS.forEach(e => e.addEventListener(t, fn));
+const observeEds = (cb, o) => { const mo = new MutationObserver(cb); ALL_EDS.forEach(e => mo.observe(e, o)); return mo; };
 window.refreshSplit = () => {}; window.refreshLabels = () => {}; window.clearLayoutPrefs = () => {};
 renderCal();
-document.addEventListener("focusin", e => { if (EDS.includes(e.target)) ta = e.target; });   // 툴바는 마지막으로 선택한 메모 칸에 적용
+document.addEventListener("focusin", e => { if (ALL_EDS.includes(e.target)) ta = e.target; });   // 툴바는 마지막으로 선택한 메모 칸에 적용
    // 메모 칸을 표/이미지 붙여넣기가 되는 편집 영역으로
 const say = (t, c) => { st.textContent = t; st.className = c || ""; st.title = t || ""; };   // 긴 안내는 칸에서 잘리므로 마우스를 올리면 전체가 보이게
 const hhmm = () => new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
@@ -2007,13 +2079,13 @@ function szFromCaret() {
   const a = document.activeElement; if (a === szNum || a === szRng) return;
   const xs = window.imgxTextSz && window.imgxTextSz(); if (xs != null) { szSync(Math.round(xs)); return; }   // 이미지 글자 넣기 중에는 그 글자 크기를 표시
   const s = getSelection(); if (!s.rangeCount) return;
-  const e = szStartEl(s); if (!e || !EDS.some(x => x.contains(e))) return;
+  const e = szStartEl(s); if (!e || !ALL_EDS.some(x => x.contains(e))) return;
   const v = Math.round(parseFloat(getComputedStyle(e).fontSize)); if (!(v > 0)) return;
   szNum.value = v; szRng.value = Math.min(300, Math.max(5, v)); szNum.dataset.done = String(v);
 }
 document.addEventListener("selectionchange", () => {
   const s = getSelection(); if (!s.rangeCount) return;
-  const e = szStartEl(s), ed = e && EDS.find(x => x.contains(e));
+  const e = szStartEl(s), ed = e && ALL_EDS.find(x => x.contains(e));
   if (!ed) return;
   szRange = s.getRangeAt(0).cloneRange(); szRangeEd = ed; szFromCaret();
 });
@@ -3141,7 +3213,7 @@ let imgBack = null;
   try { if (imMq) { const f = () => { imHome(); imSync(); }; if (imMq.addEventListener) imMq.addEventListener("change", f); else if (imMq.addListener) imMq.addListener(f); } } catch (_) {}
   function imVis() {   // 지금 화면에 보이는 이미지 구간(메모 칸 밖으로 스크롤된 부분은 뺌)
     if (!img || !img.isConnected) return null;
-    const r = img.getBoundingClientRect(), ed = EDS.find(e => e.contains(img));
+    const r = img.getBoundingClientRect(), ed = ALL_EDS.find(e => e.contains(img));
     let t = r.top, b = r.bottom;
     if (ed) { const v = ed.getBoundingClientRect(); t = Math.max(t, v.top); b = Math.min(b, v.bottom); }
     return b - t > 1 ? { top: t, bottom: b } : null;
@@ -5747,7 +5819,7 @@ onEd("click", e => {
   let anchor = null, drag = false, multi = null;
   let part = null, pickMode = null;   // part: [행 일부]/[열 일부]로 더한 떨어진 행·열 {tab, rows:Set, cols:Set} / pickMode: 고르는 중인 "row" | "col"
   let lastAdd = null;   // 방향키로 방금 늘이거나 줄인 칸들 (요약 창 머리줄에 보여줘요)   // multi = {a, b} (칸 2개 이상 선택했을 때)
-  const edOf = n => EDS.find(e => e.contains(n));
+  const edOf = n => ALL_EDS.find(e => e.contains(n));
   const cellAt = t => { const c = t && t.closest && t.closest("td,th"); return c && c.closest(".rich") ? c : null; };
   const SIDES = ["top", "right", "bottom", "left"], OPP = { top: "bottom", bottom: "top", left: "right", right: "left" };
 
@@ -5932,7 +6004,7 @@ onEd("click", e => {
     lastAdd = add || null;
     if (!keepPart) { part = null; if (pickMode) endPick(); }   // 새로 고르면 [행 일부]/[열 일부]로 더한 것은 풀려요 (인접 행/열 버튼으로 넓힐 때만 유지)
     multi = a === b && !keep ? null : { a, b };
-    const ed = edOf(a); EDS.forEach(e => e.classList.toggle("cfsel", !!multi && e === ed));
+    const ed = edOf(a); ALL_EDS.forEach(e => e.classList.toggle("cfsel", !!multi && e === ed));
     paint();
   }
   onEd("mousedown", e => {
@@ -6074,7 +6146,7 @@ onEd("click", e => {
   }
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(schedulePaint);
-    EDS.forEach(e => ro.observe(e));
+    ALL_EDS.forEach(e => ro.observe(e));
     const paneForObserve = document.getElementById("pane");
     if (paneForObserve) ro.observe(paneForObserve);
   }
@@ -6419,7 +6491,7 @@ onEd("click", e => {
   /* 모바일: 툴바·표 도구 등을 눌러도 화면 키보드가 올라오지 않게 해요 (커서·선택은 그대로 유지) */
   let noKb = null, kbBack = null;
   const curEd = () => {
-    const a = document.activeElement; if (a && EDS.includes(a)) return a;
+    const a = document.activeElement; if (a && ALL_EDS.includes(a)) return a;
     if (multi && multi.a.isConnected) return edOf(multi.a);
     const sl = getSelection(), n = sl.rangeCount && sl.anchorNode;
     return n ? edOf(n.nodeType === 1 ? n : n.parentElement) : null;
@@ -6436,7 +6508,7 @@ onEd("click", e => {
   document.addEventListener("pointerdown", e => {
     if (e.pointerType === "mouse") return;   // PC(마우스)에서는 아무것도 바꾸지 않아요. 손가락·펜으로 누를 때만 동작
     const t = e.target; if (!t || !t.closest) return;
-    const hostEd = EDS.find(x => x.contains(t));
+    const hostEd = ALL_EDS.find(x => x.contains(t));
     if (hostEd) {
       if (t.tagName === "IMG") { kbOff(hostEd); return; }   // 이미지를 눌러 고르거나 옮길 때는 키보드가 필요 없어요
       if (noKb) { kbBack = noKb; noKb = null; kbBack.removeAttribute("inputmode"); }
@@ -6615,9 +6687,9 @@ onEd("click", e => {
     // 툴바에서 Ctrl+Z를 눌렀을 때 엉뚱한 메모가 되돌려지는 문제가 생깁니다.
   }
   const hFlushAll = () => {
-    const preferred = EDS.includes(document.activeElement) ? document.activeElement : hLastEd;
-    EDS.forEach(hFlush);
-    if (preferred && EDS.includes(preferred)) hLastEd = preferred;
+    const preferred = ALL_EDS.includes(document.activeElement) ? document.activeElement : hLastEd;
+    ALL_EDS.forEach(hFlush);
+    if (preferred && ALL_EDS.includes(preferred)) hLastEd = preferred;
   };
   function hApply(ed, snap) {   // 기록된 모습으로 맞춰요: 달라진 줄만 바꿔서, 그대로인 부분(이미지 등)은 건드리지 않아요
     const cur = hSer(ed), tgt = snap.c, mn = Math.min(cur.length, tgt.length);
@@ -6636,7 +6708,7 @@ onEd("click", e => {
   }
   function hStep(ed, dir) {   // true: 처리했어요 (되돌릴 게 없어도 true) / false: 이 기능이 못 쓰는 상태 (기본 동작에 맡겨요)
     if (!ed || ed.contentEditable !== "true") return false;
-    if (EDS.some(x => x.querySelector(".cmpgap")) && window.closeCmp) window.closeCmp();   // 비교용 빈 칸은 화면 전용이라 먼저 걷어냄
+    if (ALL_EDS.some(x => x.querySelector(".cmpgap")) && window.closeCmp) window.closeCmp();   // 비교용 빈 칸은 화면 전용이라 먼저 걷어냄
     if (ed.querySelector(".cmpgap")) return false;
     const h = hOf(ed);
     if (h.timer) { clearTimeout(h.timer); h.timer = 0; }
@@ -6656,7 +6728,7 @@ onEd("click", e => {
   window.cfHistReset = ed => { const h = hOf(ed); if (h.timer) { clearTimeout(h.timer); h.timer = 0; } h.s = []; h.i = -1; h.size = 0; h.dirty = false; hCap(ed); };   // 다른 메모를 불러오면 기록을 새로 시작해요
   document.addEventListener("input", e => {
     if (hApplying) return;
-    const ed = e.target && e.target.closest && e.target.closest(".rich"); if (!ed || !EDS.includes(ed)) return;
+    const ed = e.target && e.target.closest && e.target.closest(".rich"); if (!ed || !ALL_EDS.includes(ed)) return;
     hLastEd = ed;
     const h = hOf(ed);
     if (e.inputType && H_TYPING.test(e.inputType)) {   // 글자 입력: 잠깐 멈추면 한 단계
@@ -6668,7 +6740,7 @@ onEd("click", e => {
     }
   }, true);
   document.addEventListener("beforeinput", e => {
-    const ed = e.target && e.target.closest && e.target.closest(".rich"); if (!ed || !EDS.includes(ed)) return;
+    const ed = e.target && e.target.closest && e.target.closest(".rich"); if (!ed || !ALL_EDS.includes(ed)) return;
     if (e.inputType === "historyUndo" || e.inputType === "historyRedo") {   // 메뉴 등에서 온 실행 취소도 이 기록으로
       if (!e.isComposing && hStep(ed, e.inputType === "historyUndo" ? "undo" : "redo")) e.preventDefault();
       return;
@@ -6676,17 +6748,17 @@ onEd("click", e => {
     if (!H_TYPING.test(e.inputType)) hFlush(ed);   // 서식·붙여넣기 직전까지의 글자 입력을 먼저 한 단계로
   }, true);
   ["mousedown", "pointerdown", "touchstart"].forEach(t => document.addEventListener(t, hFlushAll, true));
-  document.addEventListener("focusin", e => { const ed = e.target && EDS.includes(e.target) ? e.target : null; if (ed) { hLastEd = ed; if (hOf(ed).i < 0) hCap(ed); } }, true);
+  document.addEventListener("focusin", e => { const ed = e.target && ALL_EDS.includes(e.target) ? e.target : null; if (ed) { hLastEd = ed; if (hOf(ed).i < 0) hCap(ed); } }, true);
   document.addEventListener("keydown", e => {
     if (e.ctrlKey || e.metaKey || e.altKey || /^(Tab|Arrow(Up|Down|Left|Right)|Home|End|PageUp|PageDown|Escape)$/.test(e.key)) hFlushAll();
     if (e.defaultPrevented || !(e.ctrlKey || e.metaKey) || e.altKey || e.isComposing) return;   // 이미지 편집 등이 먼저 처리했으면 양보
     const k = (e.key || "").toLowerCase(); if (k !== "z" && k !== "y") return;
     if (e.target && ((/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.nodeName)) || (e.target.closest && e.target.closest(".cfov,.pwb")))) return;
     const ed = (e.target && e.target.closest && e.target.closest(".rich")) || hLastEd || ta;
-    if (!ed || !EDS.includes(ed)) return;
+    if (!ed || !ALL_EDS.includes(ed)) return;
     if (hStep(ed, k === "y" || (k === "z" && e.shiftKey) ? "redo" : "undo")) { e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }
   }, true);
-  EDS.forEach(ed => { if (ed.isConnected && hOf(ed).i < 0) hCap(ed); });
+  ALL_EDS.forEach(ed => { if (ed.isConnected && hOf(ed).i < 0) hCap(ed); });
   /* 고른 칸이 걸친 모든 열(행)을 같은 크기로. 표 전체 크기는 바뀐 만큼 따라가요 */
   function doSize(kind) {
     const s = curRect(); if (!s) { toast("표 안의 칸을 먼저 클릭해 주세요"); return; }
@@ -7487,7 +7559,7 @@ onEd("click", e => {
     const sl = getSelection();
     if (!sl.rangeCount) { toast("표로 바꿀 본문을 먼저 선택해 주세요"); return; }
     const range = sl.getRangeAt(0), root = elOf(range.commonAncestorContainer)?.closest(".rich");
-    if (!root || !EDS.includes(root) || closestIn(range.commonAncestorContainer, "td,th")) {
+    if (!root || !ALL_EDS.includes(root) || closestIn(range.commonAncestorContainer, "td,th")) {
       toast("표 밖의 본문 내용을 선택해 주세요"); return;
     }
     const lines = [""];
@@ -7955,7 +8027,8 @@ document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (tb.querySelector(".pop:not([hidden])")) { closePop(); return; }
   if (!fbar.hidden) { closeFind(); return; }
-  if (zoomI >= 0) { calZoom(-1); return; }   // 확대한 날짜 칸 먼저 축소, 그다음 전체 화면 확대 해제
+  if (zoomI >= 0) { calZoom(-1); return; }   // 확대한 날짜 칸 먼저 축소
+  if (monthZoom) { monthZoom = false; monthMemo.classList.remove("zoom"); monthMemoZoom.textContent = "⤢"; monthMemoZoom.setAttribute("aria-label", "월간 메모 확대"); calGrid.classList.remove("zooming"); window.dispatchEvent(new Event("resize")); return; }
   if (pane.classList.contains("max")) setMax(false);
 });
 document.addEventListener("visibilitychange", () => {
@@ -8046,7 +8119,7 @@ document.getElementById("resetAll").addEventListener("click",()=>{
 let attBack = null;
 const attFile = document.getElementById("attFile"), attPop = document.getElementById("attPop"), attMv = document.getElementById("attMv"), attLv = document.getElementById("attLv"), attGo = document.getElementById("attListGo");
 const attFmt = n => n >= 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
-const attNodes = () => EDS.flatMap(e => Array.from(e.querySelectorAll(".att")));
+const attNodes = () => ALL_EDS.flatMap(e => Array.from(e.querySelectorAll(".att")));
 function pickAttach() {
   if (ta.disabled) return;
   attBack = saveRange(); attFile.value = ""; attFile.click();
