@@ -614,11 +614,16 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .calcell.today .calhd{background:var(--line)}
 .calcell .rich{flex:1;min-height:0;padding:4px 6px;border:0;border-radius:0;font-size:12px;line-height:1.45;background:transparent}
 .calcell.off{visibility:hidden}
+/* 제목(10자) 칸: 날짜 머리글 바로 아래 한 줄, 그 아래가 메모 본문 */
+.calcell .caltt{flex:none;display:block;width:100%;margin:0;padding:3px 6px;border:0;border-bottom:1px dashed var(--line);border-radius:0;background:transparent;color:var(--mfg);font:inherit;font-size:12px;font-weight:600;line-height:1.35;height:calc(1.35em + 6px);resize:none;overflow:hidden;outline:none}
+.calcell .caltt::placeholder{color:var(--mute);font-weight:400;opacity:.65}
+.calcell .caltt:focus{background:rgba(51,154,240,.08)}
 /* 날짜 칸 확대: 7x6 달력 공간(#calgrid) 전체를 이 칸이 덮어요. CSS 만 바꾸므로 입력 중인 내용·커서·저장 상태는 그대로예요 */
 .calcell.zoom{position:absolute;inset:0;z-index:5;grid-column:auto!important;grid-row:auto!important;align-self:stretch;justify-self:stretch;min-height:0;box-shadow:0 2px 10px rgba(0,0,0,.18)}
 .calcell.zoom .calhd{padding:6px 8px 6px 12px;font-size:14px}
 .calcell.zoom .calhdt .s{display:none}.calcell.zoom .calhdt .l{display:inline}
 .calcell.zoom .calzoom{width:26px;height:26px;font-size:15px;opacity:1}
+.calcell.zoom .caltt{padding:8px 14px;font-size:15px;height:calc(1.35em + 16px)}
 .calcell.zoom .rich{padding:12px 14px;font-size:15px;line-height:1.6}
 #calNav{display:inline-flex;align-items:center;gap:8px;margin-left:auto;margin-right:auto}
 #calNav button{cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:2px 10px;font:inherit;font-weight:700}
@@ -629,9 +634,14 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 body{padding:8px 6px;gap:6px}
 #calgrid{gap:2px;overflow:hidden}
 .calcell{position:relative;min-height:0;border-width:1px;border-radius:5px}
-.calcell:not(.zoom) .calhd{position:relative;padding:1px 2px;gap:0;font-size:9px;letter-spacing:-.04em}
-.calcell:not(.zoom) .calzoom{position:absolute;top:100%;right:1px;margin-top:2px;z-index:1;width:14px;height:14px;font-size:10px;background:var(--card);border:1px solid var(--line);opacity:.9}
+.calcell:not(.zoom) .calhd{padding:1px 2px;gap:1px;font-size:9px;letter-spacing:-.04em}
+.calcell:not(.zoom) .calhdt{flex:0 1 auto}
+.calcell:not(.zoom) .calzoom{margin-left:auto;width:13px;height:13px;font-size:10px;opacity:.9}   /* 요일 오른쪽 빈 자리에 */
 .calcell:not(.zoom) .calzoom::after{content:"";position:absolute;inset:-3px}
+/* 모바일 작은 칸: 제목이 있으면 제목이 칸을 채우고(본문은 확대해서 봐요), 제목이 없으면 한 줄 제목칸 + 본문 미리보기 */
+.calcell:not(.zoom) .caltt{padding:2px 3px;font-size:9px;line-height:1.25;height:calc(1.25em + 4px);letter-spacing:-.03em}
+.calcell:not(.zoom).has-t .caltt{flex:1;min-height:0;height:auto;white-space:normal;border-bottom:0}
+.calcell:not(.zoom).has-t .rich{display:none}
 .calcell:not(.zoom) .rich{padding:2px 3px;font-size:10px;line-height:1.3;overflow:hidden;touch-action:manipulation}
 }
 </style>
@@ -1391,7 +1401,8 @@ const st = document.getElementById("st"), fbBtn = document.getElementById("fbBtn
 const CAL_WD = ["일","월","화","수","목","금","토"];
 const S2 = "<!--s2-->", S3 = "<!--s3-->", SC = "<!--c1-->";
 const calGrid = document.getElementById("calgrid"), calTitle = document.getElementById("calTitle"), calLeg = document.getElementById("calLeg");
-const EDS = [], CELLS = [], CAL_LBL = [], CAL_HS = [], CAL_HL = [], CAL_ZB = [];
+const EDS = [], CELLS = [], CAL_LBL = [], CAL_HS = [], CAL_HL = [], CAL_ZB = [], CAL_TT = [];
+const TITLE_MAX = 10;   // 날짜 칸 제목(요약) 최대 글자 수
 let zoomI = -1;   // 확대된 날짜 칸의 번호 (-1: 없음)
 for (let i = 0; i < 42; i++) {
   const c = document.createElement("div"), h = document.createElement("div"), e = document.createElement("div");
@@ -1401,26 +1412,36 @@ for (let i = 0; i < 42; i++) {
   z.type = "button"; z.className = "calzoom"; z.textContent = "\u2922"; z.setAttribute("aria-label", "확대"); z.title = "이 날짜 메모를 달력 전체 크기로 확대 (메모 더블클릭도 같아요)";
   h.appendChild(t); h.appendChild(z);
   c.style.gridColumn = String(i % 7 + 1); c.style.gridRow = String(Math.floor(i / 7) + 1);   // 확대된 칸이 격자에서 빠져도 다른 칸이 밀리지 않게 자리를 고정
-  c.appendChild(h); c.appendChild(e); calGrid.appendChild(c); makeRich(e); EDS.push(e); CELLS.push(c); CAL_LBL.push(""); CAL_HS.push(hs); CAL_HL.push(hl); CAL_ZB.push(z);
+  const tt = document.createElement("textarea");   // 한 줄 제목 (줄바꿈 불가, 최대 TITLE_MAX 글자)
+  tt.className = "caltt"; tt.rows = 1; tt.maxLength = TITLE_MAX; tt.placeholder = "제목"; tt.spellcheck = false; tt.autocomplete = "off"; tt.setAttribute("aria-label", "제목 (" + TITLE_MAX + "자 이내)");
+  tt.addEventListener("keydown", ev => { if (ev.key === "Enter" && !ev.isComposing) { ev.preventDefault(); e.focus(); } });   // Enter → 본문으로
+  tt.addEventListener("input", () => {
+    if (/[\r\n]/.test(tt.value)) tt.value = tt.value.replace(/[\r\n]+/g, " ");
+    c.classList.toggle("has-t", tt.value !== "");
+    e.dispatchEvent(new Event("input", { bubbles: true }));   // 본문과 같은 저장 흐름(자동 저장·DB 동기화)을 탐
+  });
+  c.appendChild(h); c.appendChild(tt); c.appendChild(e); calGrid.appendChild(c); makeRich(e); EDS.push(e); CELLS.push(c); CAL_LBL.push(""); CAL_TT.push(tt); CAL_HS.push(hs); CAL_HL.push(hl); CAL_ZB.push(z);
   z.addEventListener("mousedown", ev => ev.preventDefault());   // 버튼을 눌러도 메모의 커서·선택 유지
   z.addEventListener("click", () => calZoom(zoomI === i ? -1 : i));
   const canZoomAt = ev => e.dataset.date && zoomI !== i && !(ev.target && ev.target.closest && ev.target.closest(".att"));
-  e.addEventListener("dblclick", ev => { if (canZoomAt(ev)) calZoom(i); });   // 이미 확대된 칸에서는 더블클릭이 낱말 선택 그대로
-  let tapT = 0, tapX = 0, tapY = 0;   // 터치 더블 탭 (기기에 따라 dblclick 이 오지 않아요)
-  e.addEventListener("pointerup", ev => {
-    if (ev.pointerType === "mouse") return;
-    const nowT = performance.now();
-    if (nowT - tapT < 350 && Math.hypot(ev.clientX - tapX, ev.clientY - tapY) < 30) { tapT = 0; if (canZoomAt(ev)) calZoom(i); }
-    else { tapT = nowT; tapX = ev.clientX; tapY = ev.clientY; }
+  [e, tt].forEach(nd => {   // 본문·제목 모두 더블클릭 / 더블 탭으로 확대
+    nd.addEventListener("dblclick", ev => { if (canZoomAt(ev)) calZoom(i); });   // 이미 확대된 칸에서는 더블클릭이 낱말 선택 그대로
+    let tapT = 0, tapX = 0, tapY = 0;   // 터치 더블 탭 (기기에 따라 dblclick 이 오지 않아요)
+    nd.addEventListener("pointerup", ev => {
+      if (ev.pointerType === "mouse") return;
+      const nowT = performance.now();
+      if (nowT - tapT < 350 && Math.hypot(ev.clientX - tapX, ev.clientY - tapY) < 30) { tapT = 0; if (canZoomAt(ev)) calZoom(i); }
+      else { tapT = nowT; tapX = ev.clientX; tapY = ev.clientY; }
+    });
   });
 }
 let ta = EDS[0];   // 툴바가 적용되는 메모 칸
 const now0 = new Date(), p2 = n => String(n).padStart(2, "0");
-const store = new Map(); let legacy = [], calDis = false;
+const store = new Map(), titles = new Map(); let legacy = [], calDis = false;   // titles: 날짜 → 제목
 let calY = now0.getFullYear(), calM = now0.getMonth();
 const dkey = (y, m, d) => y + "-" + p2(m + 1) + "-" + p2(d);
 function dIdx(k) { return EDS.findIndex(e => e.dataset.date === k); }
-function syncStore() { for (const e of EDS) { const k = e.dataset.date; if (!k) continue; const v = e.value; if (v) store.set(k, v); else store.delete(k); } }
+function syncStore() { for (let i = 0; i < EDS.length; i++) { const e = EDS[i], k = e.dataset.date; if (!k) continue; const v = e.value; if (v) store.set(k, v); else store.delete(k); const t = CAL_TT[i].value; if (t) titles.set(k, t); else titles.delete(k); } }
 function escH2(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\r?\n/g, "<br>"); }
 function renderCal() {
   const off = new Date(calY, calM, 1).getDay(), dim = new Date(calY, calM + 1, 0).getDate(), td = dkey(now0.getFullYear(), now0.getMonth(), now0.getDate());
@@ -1431,10 +1452,10 @@ function renderCal() {
       const k = dkey(calY, calM, d), wd = (off + d - 1) % 7;
       e.dataset.date = k; CAL_LBL[i] = calY + "년 " + (calM + 1) + "월 " + d + "일 " + CAL_WD[wd] + "요일";
       CAL_HS[i].textContent = (calM + 1) + "." + d + "." + CAL_WD[wd]; CAL_HL[i].textContent = CAL_LBL[i]; c.firstChild.title = CAL_LBL[i];   // 칸 위 표시는 [11.26.목], 확대하면 긴 형태
-      c.className = "calcell" + (wd === 0 ? " sun" : wd === 6 ? " sat" : "") + (k === td ? " today" : "") + (i === zoomI ? " zoom" : "");
-      e.value = store.get(k) || ""; e.disabled = calDis;
+      c.className = "calcell" + (wd === 0 ? " sun" : wd === 6 ? " sat" : "") + (k === td ? " today" : "") + (i === zoomI ? " zoom" : "") + (titles.get(k) ? " has-t" : "");
+      e.value = store.get(k) || ""; e.disabled = calDis; CAL_TT[i].value = titles.get(k) || ""; CAL_TT[i].disabled = calDis;
     } else {
-      delete e.dataset.date; CAL_LBL[i] = ""; CAL_HS[i].textContent = ""; CAL_HL[i].textContent = ""; c.firstChild.title = ""; c.className = "calcell off"; e.value = ""; e.disabled = true;
+      delete e.dataset.date; CAL_LBL[i] = ""; CAL_HS[i].textContent = ""; CAL_HL[i].textContent = ""; c.firstChild.title = ""; c.className = "calcell off"; e.value = ""; e.disabled = true; CAL_TT[i].value = ""; CAL_TT[i].disabled = true;
     }
     zbSet(i);
   }
@@ -1445,7 +1466,7 @@ function renderCal() {
 }
 function zbSet(i) {
   const on = i === zoomI, b = CAL_ZB[i];
-  b.textContent = on ? "\u2715" : "\u2922"; b.setAttribute("aria-label", on ? "축소" : "확대");
+  b.textContent = on ? "\u2715" : "\u2922"; b.setAttribute("aria-label", on ? "축소" : "확대"); CAL_TT[i].placeholder = on ? "제목 (" + TITLE_MAX + "자 이내)" : "제목";
   b.title = on ? "축소 (Esc)" : "이 날짜 메모를 달력 전체 크기로 확대 (메모 더블클릭도 같아요)";
 }
 function calZoom(i) {   // i: 확대할 칸 번호, -1: 축소
@@ -1478,12 +1499,13 @@ const memoAll = {
   get value() {
     syncStore();
     const lg = legacy.some(x => x) ? legacy : null;
-    if (!store.size && !lg) return "";
-    return SC + JSON.stringify(lg ? { d: Object.fromEntries(store), l: lg } : { d: Object.fromEntries(store) });
+    if (!store.size && !titles.size && !lg) return "";
+    const o = { d: Object.fromEntries(store) }; if (titles.size) o.t = Object.fromEntries(titles); if (lg) o.l = lg;
+    return SC + JSON.stringify(o);
   },
   set value(v) {
-    v = String(v || ""); store.clear(); legacy = [];
-    if (v.startsWith(SC)) { try { const p = JSON.parse(v.slice(SC.length)); for (const k in (p.d || {})) if (p.d[k]) store.set(k, p.d[k]); legacy = Array.isArray(p.l) ? p.l.map(x => String(x || "")) : []; } catch (e) {} }
+    v = String(v || ""); store.clear(); titles.clear(); legacy = [];
+    if (v.startsWith(SC)) { try { const p = JSON.parse(v.slice(SC.length)); for (const k in (p.d || {})) if (p.d[k]) store.set(k, p.d[k]); for (const k in (p.t || {})) if (p.t[k]) titles.set(k, String(p.t[k]).slice(0, TITLE_MAX)); legacy = Array.isArray(p.l) ? p.l.map(x => String(x || "")) : []; } catch (e) {} }
     else {
       let done = false;
       for (const P of [S3, S2]) if (v.startsWith(P)) { try { legacy = JSON.parse(v.slice(P.length)).map(x => String(x || "")); done = true; } catch (e) {} break; }
@@ -1492,8 +1514,8 @@ const memoAll = {
     renderCal();
   },
   get disabled() { return calDis; },
-  set disabled(b) { calDis = !!b; for (const e of EDS) e.disabled = calDis || !e.dataset.date; },
-  get textContent() { return EDS.map(e => e.textContent).join("") + legacy.join("") + Array.from(store.entries()).filter(([k]) => !EDS.some(e => e.dataset.date === k)).map(x => x[1]).join(""); }
+  set disabled(b) { calDis = !!b; EDS.forEach((e, i) => { e.disabled = calDis || !e.dataset.date; CAL_TT[i].disabled = e.disabled; }); },
+  get textContent() { return EDS.map(e => e.textContent).join("") + Array.from(titles.values()).join("") + legacy.join("") + Array.from(store.entries()).filter(([k]) => !EDS.some(e => e.dataset.date === k)).map(x => x[1]).join(""); }
 };
 const onEd = (t, fn) => EDS.forEach(e => e.addEventListener(t, fn));
 const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach(e => mo.observe(e, o)); return mo; };
@@ -7720,16 +7742,17 @@ const AREA_NM = CAL_LBL;
     if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(); }
     else if (e.key === "Enter" && e.target.matches && e.target.matches("input[type=text]")) { e.preventDefault(); const ok = q("[data-ok]"); if (ok && !ok.disabled) ok.click(); }
   });
+  const cellHas = i => EDS[i].value !== "" || CAL_TT[i].value !== "";   // 본문이나 제목이 있으면 내용이 있는 칸
   const stamp = () => { const n = new Date(), p = x => String(x).padStart(2, "0"); return n.getFullYear() + p(n.getMonth() + 1) + p(n.getDate()) + "-" + p(n.getHours()) + p(n.getMinutes()); };
   const EXP_TAIL = '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
 
   /* ---------- 저장 ---------- */
   function openSave() {
-    if (EDS.every(e => e.value === "")) { say("저장할 메모가 없어요", "err"); return; }
+    if (EDS.every((e, i) => !cellHas(i))) { const m = (calM + 1) + "월 달력에 저장할 메모가 없어요. 메모가 있는 달로 이동한 뒤 눌러 주세요"; say(m, "err"); toast(m); return; }   // 상태줄은 눈에 잘 안 띄어서 안내 창도 함께
     const cur = Math.max(0, EDS.indexOf(ta));
     show('<h3>저장</h3>' +
       '<fieldset><legend>저장할 영역 (여러 개 선택 가능)</legend><label><input type="checkbox" data-all>전체</label>' +
-      AREA_NM.map((nm, i) => !EDS[i].dataset.date ? "" : '<label><input type="checkbox" data-ar="' + i + '">' + nm + (EDS[i].value === "" ? " (비어 있음)" : "") + "</label>").join("") + "</fieldset>" +
+      AREA_NM.map((nm, i) => !EDS[i].dataset.date ? "" : '<label><input type="checkbox" data-ar="' + i + '">' + nm + (!cellHas(i) ? " (비어 있음)" : "") + "</label>").join("") + "</fieldset>" +
       '<fieldset><legend>파일 형식</legend><label><input type="radio" name="fdFmt" value="html" checked>HTML (.html)</label><label><input type="radio" name="fdFmt" value="txt">텍스트 (.txt)</label></fieldset>' +
       '<fieldset><legend>파일 이름</legend><div class="nm"><input type="text" data-nm maxlength="120" autocomplete="off" spellcheck="false" aria-label="파일 이름"><span data-ext>.html</span></div>' +
       '<p class="hint">[저장]을 누르면 저장 위치만 정하면 바로 저장돼요 (브라우저에 따라 바로 다운로드될 수도 있어요)</p></fieldset>' +
@@ -7737,7 +7760,7 @@ const AREA_NM = CAL_LBL;
     const boxes = qa("[data-ar]"), all = q("[data-all]"), nm = q("[data-nm]"), ext = q("[data-ext]"), okB = q("[data-ok]");
     const fmt = () => (qa('[name="fdFmt"]').find(r => r.checked) || {}).value || "html";
     const sync = () => { all.checked = boxes.every(b => b.checked); okB.disabled = !boxes.some(b => b.checked); };
-    if (EDS[cur].value === "") boxes.forEach(b => { b.checked = EDS[+b.dataset.ar].value !== ""; }); else (boxes.find(b => +b.dataset.ar === cur) || boxes[0]).checked = true;   // 커서 영역이 비어 있으면 전체
+    if (!cellHas(cur)) boxes.forEach(b => { b.checked = cellHas(+b.dataset.ar); }); else (boxes.find(b => +b.dataset.ar === cur) || boxes[0]).checked = true;   // 커서 영역이 비어 있으면 전체
     sync(); nm.value = "메모_" + stamp();
     all.addEventListener("change", () => { boxes.forEach(b => { b.checked = all.checked; }); sync(); });
     boxes.forEach(b => b.addEventListener("change", sync));
@@ -7747,7 +7770,7 @@ const AREA_NM = CAL_LBL;
     nm.focus(); nm.select();
   }
   async function doSave(idx, kind, base) {
-    const parts = idx.filter(i => EDS[i].value !== "");
+    const parts = idx.filter(cellHas);
     if (!parts.length) { say("선택한 영역이 모두 비어 있어요", "err"); return; }
     base = String(base || "").replace(/[\\\/:*?"<>|\u0000-\u001f]/g, "").replace(/\.(html?|txt)$/i, "").trim() || ("메모_" + stamp());
     const html = kind === "html", name = base + (html ? ".html" : ".txt"), mime = html ? "text/html" : "text/plain";
@@ -7765,9 +7788,9 @@ const AREA_NM = CAL_LBL;
       '[data-att]{display:inline-block;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid #d9d5cb;border-radius:999px;cursor:pointer}\n' +
       'section[data-memo-area]{margin:0 0 24px}body.multi section[data-memo-area]::before{content:attr(data-label);display:block;font:700 12px sans-serif;color:#868e96;margin:0 0 6px;padding-bottom:3px;border-bottom:1px solid #d9d5cb}\n' +
       '</style>\n</head>\n<body' + (multi ? ' class="multi"' : '') + '>\n' +
-        parts.map(i => '<section data-memo-date="' + EDS[i].dataset.date + '" data-memo-area="' + (i + 1) + '" data-label="' + AREA_NM[i] + '">\n' + EDS[i].cleanHtml() + "\n</section>").join("\n") + EXP_TAIL;
+        parts.map(i => '<section data-memo-date="' + EDS[i].dataset.date + '" data-memo-area="' + (i + 1) + '" data-label="' + AREA_NM[i] + '">\n' + (CAL_TT[i].value ? '<div data-memo-title style="font-weight:700">' + escH2(CAL_TT[i].value) + "</div>\n" : "") + EDS[i].cleanHtml() + "\n</section>").join("\n") + EXP_TAIL;
     } else {
-      const tx = i => EDS[i].innerText.replace(/\u00a0/g, " ").replace(/\u200b/g, "");
+      const tx = i => (CAL_TT[i].value ? CAL_TT[i].value + "\n" : "") + EDS[i].innerText.replace(/\u00a0/g, " ").replace(/\u200b/g, "");
       body = "\ufeff" + (parts.length > 1 ? parts.map(i => "=====[" + EDS[i].dataset.date + "]=====\n" + tx(i).replace(/\s+$/, "")).join("\n\n") + "\n" : tx(parts[0]));   // BOM: 윈도우 앱에서도 한글이 깨지지 않게
     }
     const blob = new Blob([body], { type: mime + ";charset=utf-8" });
@@ -7784,14 +7807,17 @@ const AREA_NM = CAL_LBL;
   }
 
   /* ---------- 열기 ---------- */
-  const add = (out, i, html) => { const o = out.find(x => x.i === i); if (o) o.html += "<br>" + html; else out.push({ i, html }); };
+  const add = (out, i, html, title) => { const o = out.find(x => x.i === i); if (o) { o.html += "<br>" + html; if (title && !o.title) o.title = title; } else out.push({ i, html, title: title || "" }); };
+  const hasBody = h => { const pr = document.createElement("div"); pr.innerHTML = h; return !!(pr.textContent.trim() || pr.querySelector("img,table")); };
+  const setTitleFrom = (i, t, replace) => { if (!t) return; const tt = CAL_TT[i]; if (replace || tt.value === "") { tt.value = t.slice(0, TITLE_MAX); tt.dispatchEvent(new Event("input", { bubbles: true })); } };
   function parseFile(f, txt) {
     const out = [];
     if (/\.html?$/i.test(f.name) || f.type === "text/html") {
       const doc = new DOMParser().parseFromString(txt, "text/html");
       doc.querySelectorAll("section[data-memo-area]").forEach(s => {
         const dk = s.getAttribute("data-memo-date");
-        add(out, dk ? dIdx(dk) : -1, ta.sanitize(s.innerHTML));
+        const te = s.querySelector("[data-memo-title]"), ttl = te ? te.textContent.trim().slice(0, TITLE_MAX) : ""; if (te) te.remove();
+        add(out, dk ? dIdx(dk) : -1, ta.sanitize(s.innerHTML), ttl);
       });
       if (!out.length) add(out, -1, ta.sanitize(txt));   // 영역 표시가 없는 html: 내용 전체
     } else {
@@ -7799,7 +7825,7 @@ const AREA_NM = CAL_LBL;
       if (seg.length > 1) { for (let k = 1; k < seg.length; k += 2) add(out, dIdx(seg[k]), escH(seg[k + 1].replace(/^\r?\n/, "").replace(/\s+$/, "")).replace(/\r?\n/g, "<br>")); }
       else add(out, -1, escH(txt).replace(/\r?\n/g, "<br>"));
     }
-    return out.filter(o => { const pr = document.createElement("div"); pr.innerHTML = o.html; return pr.textContent.trim() || pr.querySelector("img,table"); })
+    return out.filter(o => hasBody(o.html) || o.title)
       .sort((a, b) => a.i - b.i);
   }
   function put(ed, html, replace) {   // 비어 있으면 그대로 넣고, 내용이 있으면 끝에 이어 붙이거나 바꿔요
@@ -7837,7 +7863,7 @@ const AREA_NM = CAL_LBL;
     okB.addEventListener("click", () => {
       if (tgt.disabled) { say("지금은 열 수 없어요. 잠시 후 다시 시도해 주세요", "err"); return; }
       const s = sel(), rep = (qa('[name="fdEx"]').find(r => r.checked) || {}).value === "rep";
-      if (own()) { s.forEach(p => put(EDS[p.i], p.html, rep)); close(); say("열었어요: " + fname + " → " + s.map(p => AREA_NM[p.i]).join("·") + " 영역", "ok"); }
+      if (own()) { s.forEach(p => { if (hasBody(p.html)) put(EDS[p.i], p.html, rep); setTitleFrom(p.i, p.title, rep); }); close(); say("열었어요: " + fname + " → " + s.map(p => AREA_NM[p.i]).join("·") + " 영역", "ok"); }
       else { put(tgt, s.map(p => p.html).join("<br>"), rep); close(); say("열었어요: " + fname + " → " + AREA_NM[cur] + " 영역", "ok"); }
     });
   }
