@@ -7028,18 +7028,52 @@ onEd("click", e => {
     if (!tab) return;
     tab.querySelectorAll('td[data-cf-fit="1"],th[data-cf-fit="1"]').forEach(fitCellText);
   }
-  // 표 또는 열 너비가 바뀌면 셀맞춤 글자 크기도 다시 계산해요.
+  // 표/열 너비 변경 시 바뀐 셀만 프레임당 한 번 계산합니다.
+  // 전체 문서의 모든 표를 매번 다시 관찰하거나, 셀 하나의 변화에 표 전체를 재계산하지 않습니다.
   if (window.ResizeObserver) {
+    const fitObserved = new WeakSet(), fitLastRect = new WeakMap();
+    const fitPendingCells = new Set(), fitPendingTables = new Set();
+    let fitRaf = 0;
+    const flushFit = () => {
+      fitRaf = 0;
+      const tables = Array.from(fitPendingTables); fitPendingTables.clear();
+      const cells = Array.from(fitPendingCells); fitPendingCells.clear();
+      const done = new Set();
+      tables.forEach(tab => { if (tab.isConnected) { fitTableCells(tab); done.add(tab); } });
+      cells.forEach(cell => { const tab = cell.closest("table"); if (cell.isConnected && !done.has(tab)) fitCellText(cell); });
+    };
+    const queueFit = () => { if (!fitRaf) fitRaf = requestAnimationFrame(flushFit); };
     const fitRO = new ResizeObserver(entries => {
-      const tabs = new Set(); entries.forEach(en => { const tab = en.target.closest && en.target.closest("table"); if (tab) tabs.add(tab); });
-      tabs.forEach(fitTableCells);
+      for (const en of entries) {
+        const el = en.target, r = en.contentRect, prev = fitLastRect.get(el);
+        if (prev && Math.abs(prev.w - r.width) < 0.5 && Math.abs(prev.h - r.height) < 0.5) continue;
+        fitLastRect.set(el, { w: r.width, h: r.height });
+        if (el.matches && el.matches("table")) fitPendingTables.add(el);
+        else if (el.matches && el.matches('td[data-cf-fit="1"],th[data-cf-fit="1"]')) fitPendingCells.add(el);
+      }
+      if (fitPendingTables.size || fitPendingCells.size) queueFit();
     });
-    const observeFitTables = root => root.querySelectorAll("table").forEach(tab => {
-      fitRO.observe(tab); tab.querySelectorAll("td,th").forEach(cell => fitRO.observe(cell));
+    const observeFitElement = el => {
+      if (!el || fitObserved.has(el)) return;
+      if (el.matches && (el.matches("table") || el.matches("td,th"))) {
+        fitObserved.add(el); fitRO.observe(el);
+      }
+    };
+    const observeFitSubtree = root => {
+      if (!root || root.nodeType !== 1) return;
+      observeFitElement(root);
+      root.querySelectorAll("table,td,th").forEach(observeFitElement);
+      const table = root.closest && root.closest("table");
+      if (table) observeFitElement(table);
+    };
+    document.querySelectorAll("table,td,th").forEach(observeFitElement);
+    new MutationObserver(records => {
+      for (const rec of records) for (const node of rec.addedNodes) observeFitSubtree(node);
+    }).observe(document.body, { childList: true, subtree: true });
+    window.addEventListener("resize", () => {
+      document.querySelectorAll(".rich table").forEach(tab => fitPendingTables.add(tab));
+      queueFit();
     });
-    observeFitTables(document);
-    new MutationObserver(() => observeFitTables(document)).observe(document.body, { childList: true, subtree: true });
-    window.addEventListener("resize", () => document.querySelectorAll(".rich table").forEach(fitTableCells));
   }
   function apply() {
     const s = rectOf(st.a, st.b); if (!s) { close(); return; }
@@ -7121,7 +7155,9 @@ onEd("click", e => {
       }
     }
     const pad = Math.ceil(maxW / 2) + 1, W = tr.width + pad * 2, H = tr.height + pad * 2;
-    const S = Math.max(0.5, Math.min(2, 8000 / W, 8000 / H)), cv = document.createElement("canvas");
+    // 화면 표시 크기(W×H)와 독립적으로 고해상도 PNG를 만듭니다.
+    // 큰 표에서는 최대 픽셀 수와 한 변 제한을 함께 적용해 캔버스 메모리 폭증을 막습니다.
+    const S = Math.max(0.5, Math.min(4, 16000 / W, 16000 / H, Math.sqrt(64000000 / Math.max(1, W * H)))), cv = document.createElement("canvas");
     cv.width = Math.ceil(W * S); cv.height = Math.ceil(H * S);
     const ctx = cv.getContext("2d"); ctx.scale(S, S);
     let bg = "#ffffff";   // 지금 화면의 바탕색을 그대로 (다크 모드면 어두운 바탕)
