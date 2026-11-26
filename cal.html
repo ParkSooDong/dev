@@ -601,19 +601,39 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #tm:not(.pink) { background:transparent !important; border-color:transparent !important; padding:0 !important; }
 </style>
 <style id="cal-css">
-#calgrid{flex:1;min-width:0;min-height:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:4px;overflow:auto}
+#calgrid{position:relative;flex:1;min-width:0;min-height:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:4px;overflow:auto}
+#calgrid.zooming{overflow:hidden}
 .calcell{display:flex;flex-direction:column;min-width:0;min-height:90px;border:1.5px solid var(--line);border-radius:8px;background:var(--card);overflow:hidden}
-.calcell .calhd{flex:none;padding:2px 6px;font-size:11px;font-weight:700;color:var(--mute);border-bottom:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calcell .calhd{flex:none;display:flex;align-items:center;gap:4px;padding:2px 4px 2px 6px;font-size:11px;font-weight:700;color:var(--mute);border-bottom:1px solid var(--line);white-space:nowrap}
+.calhdt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.calhdt .l{display:none}
+.calzoom{flex:none;position:relative;width:18px;height:18px;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;font:inherit;font-size:12px;font-weight:400;line-height:1;color:var(--mute);background:transparent;border:0;border-radius:4px;cursor:pointer;opacity:.8;touch-action:manipulation}
+.calzoom:hover,.calzoom:focus-visible{opacity:1;background:var(--line);color:var(--ink)}
 .calcell.sun .calhd{color:#e03131}.calcell.sat .calhd{color:#1c7ed6}
 .calcell.today{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
 .calcell.today .calhd{background:var(--line)}
 .calcell .rich{flex:1;min-height:0;padding:4px 6px;border:0;border-radius:0;font-size:12px;line-height:1.45;background:transparent}
 .calcell.off{visibility:hidden}
+/* 날짜 칸 확대: 7x6 달력 공간(#calgrid) 전체를 이 칸이 덮어요. CSS 만 바꾸므로 입력 중인 내용·커서·저장 상태는 그대로예요 */
+.calcell.zoom{position:absolute;inset:0;z-index:5;grid-column:auto!important;grid-row:auto!important;align-self:stretch;justify-self:stretch;min-height:0;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.calcell.zoom .calhd{padding:6px 8px 6px 12px;font-size:14px}
+.calcell.zoom .calhdt .s{display:none}.calcell.zoom .calhdt .l{display:inline}
+.calcell.zoom .calzoom{width:26px;height:26px;font-size:15px;opacity:1}
+.calcell.zoom .rich{padding:12px 14px;font-size:15px;line-height:1.6}
 #calNav{display:inline-flex;align-items:center;gap:8px;margin-left:auto;margin-right:auto}
 #calNav button{cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:2px 10px;font:inherit;font-weight:700}
 #calTitle{font-weight:700;min-width:8.5em;text-align:center}
 #calLeg[hidden]{display:none}
-@media(max-width:720px){#calgrid{grid-template-columns:repeat(7,minmax(110px,1fr))}}
+/* 모바일: 가로 스크롤 없이 7열 x 6행이 한 화면에 모두 보이게 (자세히 보려면 확대 버튼 / 더블 탭) */
+@media(max-width:720px){
+body{padding:8px 6px;gap:6px}
+#calgrid{gap:2px;overflow:hidden}
+.calcell{position:relative;min-height:0;border-width:1px;border-radius:5px}
+.calcell:not(.zoom) .calhd{position:relative;padding:1px 2px;gap:0;font-size:9px;letter-spacing:-.04em}
+.calcell:not(.zoom) .calzoom{position:absolute;top:100%;right:1px;margin-top:2px;z-index:1;width:14px;height:14px;font-size:10px;background:var(--card);border:1px solid var(--line);opacity:.9}
+.calcell:not(.zoom) .calzoom::after{content:"";position:absolute;inset:-3px}
+.calcell:not(.zoom) .rich{padding:2px 3px;font-size:10px;line-height:1.3;overflow:hidden;touch-action:manipulation}
+}
 </style>
 </head>
 <body>
@@ -1371,11 +1391,28 @@ const st = document.getElementById("st"), fbBtn = document.getElementById("fbBtn
 const CAL_WD = ["일","월","화","수","목","금","토"];
 const S2 = "<!--s2-->", S3 = "<!--s3-->", SC = "<!--c1-->";
 const calGrid = document.getElementById("calgrid"), calTitle = document.getElementById("calTitle"), calLeg = document.getElementById("calLeg");
-const EDS = [], CELLS = [], CAL_LBL = [];
+const EDS = [], CELLS = [], CAL_LBL = [], CAL_HS = [], CAL_HL = [], CAL_ZB = [];
+let zoomI = -1;   // 확대된 날짜 칸의 번호 (-1: 없음)
 for (let i = 0; i < 42; i++) {
   const c = document.createElement("div"), h = document.createElement("div"), e = document.createElement("div");
   c.className = "calcell"; h.className = "calhd"; e.className = "rich"; e.contentEditable = "true"; e.setAttribute("role", "textbox"); e.setAttribute("aria-multiline", "true");
-  c.appendChild(h); c.appendChild(e); calGrid.appendChild(c); makeRich(e); EDS.push(e); CELLS.push(c); CAL_LBL.push("");
+  const t = document.createElement("span"), hs = document.createElement("span"), hl = document.createElement("span"), z = document.createElement("button");
+  t.className = "calhdt"; hs.className = "s"; hl.className = "l"; t.appendChild(hs); t.appendChild(hl);
+  z.type = "button"; z.className = "calzoom"; z.textContent = "\u2922"; z.setAttribute("aria-label", "확대"); z.title = "이 날짜 메모를 달력 전체 크기로 확대 (메모 더블클릭도 같아요)";
+  h.appendChild(t); h.appendChild(z);
+  c.style.gridColumn = String(i % 7 + 1); c.style.gridRow = String(Math.floor(i / 7) + 1);   // 확대된 칸이 격자에서 빠져도 다른 칸이 밀리지 않게 자리를 고정
+  c.appendChild(h); c.appendChild(e); calGrid.appendChild(c); makeRich(e); EDS.push(e); CELLS.push(c); CAL_LBL.push(""); CAL_HS.push(hs); CAL_HL.push(hl); CAL_ZB.push(z);
+  z.addEventListener("mousedown", ev => ev.preventDefault());   // 버튼을 눌러도 메모의 커서·선택 유지
+  z.addEventListener("click", () => calZoom(zoomI === i ? -1 : i));
+  const canZoomAt = ev => e.dataset.date && zoomI !== i && !(ev.target && ev.target.closest && ev.target.closest(".att"));
+  e.addEventListener("dblclick", ev => { if (canZoomAt(ev)) calZoom(i); });   // 이미 확대된 칸에서는 더블클릭이 낱말 선택 그대로
+  let tapT = 0, tapX = 0, tapY = 0;   // 터치 더블 탭 (기기에 따라 dblclick 이 오지 않아요)
+  e.addEventListener("pointerup", ev => {
+    if (ev.pointerType === "mouse") return;
+    const nowT = performance.now();
+    if (nowT - tapT < 350 && Math.hypot(ev.clientX - tapX, ev.clientY - tapY) < 30) { tapT = 0; if (canZoomAt(ev)) calZoom(i); }
+    else { tapT = nowT; tapX = ev.clientX; tapY = ev.clientY; }
+  });
 }
 let ta = EDS[0];   // 툴바가 적용되는 메모 칸
 const now0 = new Date(), p2 = n => String(n).padStart(2, "0");
@@ -1387,24 +1424,45 @@ function syncStore() { for (const e of EDS) { const k = e.dataset.date; if (!k) 
 function escH2(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\r?\n/g, "<br>"); }
 function renderCal() {
   const off = new Date(calY, calM, 1).getDay(), dim = new Date(calY, calM + 1, 0).getDate(), td = dkey(now0.getFullYear(), now0.getMonth(), now0.getDate());
+  if (zoomI >= 0 && (zoomI - off + 1 < 1 || zoomI - off + 1 > dim)) { zoomI = -1; calGrid.classList.remove("zooming"); }   // 확대하던 날짜가 이 달에 없으면 해제
   for (let i = 0; i < 42; i++) {
     const e = EDS[i], c = CELLS[i], d = i - off + 1;
     if (d >= 1 && d <= dim) {
       const k = dkey(calY, calM, d), wd = (off + d - 1) % 7;
       e.dataset.date = k; CAL_LBL[i] = calY + "년 " + (calM + 1) + "월 " + d + "일 " + CAL_WD[wd] + "요일";
-      c.firstChild.textContent = CAL_LBL[i];
-      c.className = "calcell" + (wd === 0 ? " sun" : wd === 6 ? " sat" : "") + (k === td ? " today" : "");
+      CAL_HS[i].textContent = (calM + 1) + "." + d + "." + CAL_WD[wd]; CAL_HL[i].textContent = CAL_LBL[i]; c.firstChild.title = CAL_LBL[i];   // 칸 위 표시는 [11.26.목], 확대하면 긴 형태
+      c.className = "calcell" + (wd === 0 ? " sun" : wd === 6 ? " sat" : "") + (k === td ? " today" : "") + (i === zoomI ? " zoom" : "");
       e.value = store.get(k) || ""; e.disabled = calDis;
     } else {
-      delete e.dataset.date; CAL_LBL[i] = ""; c.firstChild.textContent = ""; c.className = "calcell off"; e.value = ""; e.disabled = true;
+      delete e.dataset.date; CAL_LBL[i] = ""; CAL_HS[i].textContent = ""; CAL_HL[i].textContent = ""; c.firstChild.title = ""; c.className = "calcell off"; e.value = ""; e.disabled = true;
     }
+    zbSet(i);
   }
   if (!ta || !ta.dataset.date) ta = EDS[off];
   calTitle.textContent = calY + "년 " + (calM + 1) + "월";
   calLeg.hidden = !legacy.some(x => x);
   window.dispatchEvent(new Event("resize"));
 }
-function calGo(dm) { if (window.cfSelClear) window.cfSelClear(); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); }
+function zbSet(i) {
+  const on = i === zoomI, b = CAL_ZB[i];
+  b.textContent = on ? "\u2715" : "\u2922"; b.setAttribute("aria-label", on ? "축소" : "확대");
+  b.title = on ? "축소 (Esc)" : "이 날짜 메모를 달력 전체 크기로 확대 (메모 더블클릭도 같아요)";
+}
+function calZoom(i) {   // i: 확대할 칸 번호, -1: 축소
+  if (i >= 0 && !EDS[i].dataset.date) i = -1;
+  if (i === zoomI) return;
+  if (window.cfSelClear) window.cfSelClear();
+  const prev = zoomI; zoomI = i;
+  if (prev >= 0) { CELLS[prev].classList.remove("zoom"); zbSet(prev); }
+  calGrid.classList.toggle("zooming", i >= 0);
+  if (i >= 0) {
+    calGrid.scrollTop = 0; calGrid.scrollLeft = 0;
+    CELLS[i].classList.add("zoom"); zbSet(i); ta = EDS[i];
+    if (window.matchMedia && matchMedia("(pointer:fine)").matches) { try { EDS[i].focus({ preventScroll: true }); } catch (e) {} }   // 터치에서는 키보드가 갑자기 올라오지 않게
+  }
+  window.dispatchEvent(new Event("resize"));
+}
+function calGo(dm) { if (window.cfSelClear) window.cfSelClear(); calZoom(-1); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); }
 document.getElementById("calPrev").addEventListener("click", () => calGo(-1));
 document.getElementById("calNext").addEventListener("click", () => calGo(1));
 document.getElementById("calToday").addEventListener("click", () => calGo(0));
@@ -7812,6 +7870,7 @@ document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (tb.querySelector(".pop:not([hidden])")) { closePop(); return; }
   if (!fbar.hidden) { closeFind(); return; }
+  if (zoomI >= 0) { calZoom(-1); return; }   // 확대한 날짜 칸 먼저 축소, 그다음 전체 화면 확대 해제
   if (pane.classList.contains("max")) setMax(false);
 });
 document.addEventListener("visibilitychange", () => {
