@@ -6193,13 +6193,32 @@ onEd("click", e => {
     // 표 너비를 줄일 때 셀 내용의 최소 콘텐츠 너비가 표 전체 너비를 막지 않도록 고정 레이아웃을 사용합니다.
     // 일반 셀은 자연스럽게 줄바꿈되고, 셀맞춤 셀은 새 셀 너비에 맞춰 글자 크기를 다시 계산합니다.
     rzTab.dataset.cfRzFixed = "1";
-    rzDrag = { x: e.clientX, w: rzTab.getBoundingClientRect().width, id: e.pointerId };
+    // 표 전체 너비를 줄이거나 늘릴 때 열 너비도 같은 비율로 함께 조정합니다.
+    // 개별 열 경계 드래그로 저장된 셀별 width가 표 전체 축소를 막지 않도록
+    // 드래그 시작 시 실제 열 너비를 기록하고, 매 이동마다 그 비율을 적용합니다.
+    const rzG = gridOf(rzTab);
+    const rzN = rzG.g.reduce((m, row) => Math.max(m, row ? row.length : 0), 0);
+    const rzCols = [];
+    for (let j = 0; j < rzN; j++) {
+      const cell = repCol(rzG, j);
+      rzCols[j] = cell ? cell.getBoundingClientRect().width : 0;
+    }
+    const rzKnown = rzCols.filter(v => v > 0);
+    const rzAvg = rzKnown.length ? rzKnown.reduce((a,b) => a+b, 0) / rzKnown.length : 60;
+    for (let j = 0; j < rzN; j++) if (!(rzCols[j] > 0)) rzCols[j] = rzAvg;
+    for (let j = 0; j < rzN; j++) setCol(rzG, j, rzCols[j]);
+    rzDrag = { x: e.clientX, w: rzTab.getBoundingClientRect().width, cols: rzCols, G: rzG, id: e.pointerId };
     try { RZ.setPointerCapture(e.pointerId); } catch (x) {}
     RZ.classList.add("on");
   });
   RZ.addEventListener("pointermove", e => {
     if (!rzDrag || e.pointerId !== rzDrag.id || !rzTab) return;
-    rzTab.style.width = Math.round(Math.min(4000, Math.max(60, rzDrag.w + e.clientX - rzDrag.x))) + "px"; rzPlace(); schedulePaint();
+    const nextW = Math.round(Math.min(4000, Math.max(60, rzDrag.w + e.clientX - rzDrag.x)));
+    const factor = nextW / Math.max(1, rzDrag.w);
+    // 모든 열의 너비를 원래 비율대로 같이 변경해 열 내부의 긴 글자나
+    // 이전에 지정한 개별 열 너비가 표 전체의 축소를 막지 않게 합니다.
+    for (let j = 0; j < rzDrag.cols.length; j++) setCol(rzDrag.G, j, Math.max(1, rzDrag.cols[j] * factor));
+    rzTab.style.width = nextW + "px"; rzPlace(); schedulePaint();
   });
   const rzEnd = e => { if (!rzDrag || e.pointerId !== rzDrag.id) return; rzDrag = null; RZ.classList.remove("on"); rzSave(); rzPlace(); };
   RZ.addEventListener("pointerup", rzEnd); RZ.addEventListener("pointercancel", rzEnd);
