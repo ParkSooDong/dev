@@ -1417,7 +1417,12 @@ const CAL_WD = ["일","월","화","수","목","금","토"];
 const S2 = "<!--s2-->", S3 = "<!--s3-->", SC = "<!--c1-->";
 const calGrid = document.getElementById("calgrid"), calTitle = document.getElementById("calTitle"), calLeg = document.getElementById("calLeg");
 const EDS = [], CELLS = [], CAL_LBL = [], CAL_HS = [], CAL_HL = [], CAL_ZB = [], CAL_TT = [];
-const TITLE_MAX = 12;   // 날짜 칸 제목(요약) 최대 글자 수
+// 날짜 칸 제목(요약) 길이 제한: 글자 수가 아니라 '폭'으로 셈. 한글(전각) 1자 = 1.5칸, 숫자·영문·기호 = 1칸, 최대 27칸
+//  → 모바일 작은 칸(제목이 3줄까지 보임, 한 줄에 한글 6자·숫자 9자)에 맞춰 한글 18자 / 숫자 27자
+const TITLE_UNITS = 27, TITLE_LABEL = "한글 18자·숫자 27자 이내";
+const wideCh = c => /[\u1100-\u11FF\u2E80-\u303F\u3040-\u30FF\u3130-\u318F\u3400-\u4DBF\u4E00-\u9FFF\uA960-\uA97F\uAC00-\uD7FF\uF900-\uFAFF\uFF00-\uFF60\uFFE0-\uFFE6]/.test(c);
+const titleW = str => { let w = 0; for (const c of String(str)) w += wideCh(c) ? 1.5 : 1; return w; };
+const clipTitle = str => { let w = 0, out = ""; for (const c of String(str)) { w += wideCh(c) ? 1.5 : 1; if (w > TITLE_UNITS) break; out += c; } return out; };
 let zoomI = -1;   // 확대된 날짜 칸의 번호 (-1: 없음)
 for (let i = 0; i < 42; i++) {
   const c = document.createElement("div"), h = document.createElement("div"), e = document.createElement("div");
@@ -1427,11 +1432,19 @@ for (let i = 0; i < 42; i++) {
   z.type = "button"; z.className = "calzoom"; z.textContent = "\u2922"; z.setAttribute("aria-label", "확대"); z.title = "이 날짜 메모를 달력 전체 크기로 확대 (메모 더블클릭도 같아요)";
   h.appendChild(t); h.appendChild(z);
   c.style.gridColumn = String(i % 7 + 1); c.style.gridRow = String(Math.floor(i / 7) + 1);   // 확대된 칸이 격자에서 빠져도 다른 칸이 밀리지 않게 자리를 고정
-  const tt = document.createElement("textarea");   // 한 줄 제목 (줄바꿈 불가, 최대 TITLE_MAX 글자)
-  tt.className = "caltt"; tt.rows = 1; tt.maxLength = TITLE_MAX; tt.placeholder = "제목"; tt.spellcheck = false; tt.autocomplete = "off"; tt.setAttribute("aria-label", "제목 (" + TITLE_MAX + "자 이내)");
+  const tt = document.createElement("textarea");   // 한 줄 제목 (줄바꿈 불가, 폭 기준 TITLE_UNITS 칸)
+  tt.className = "caltt"; tt.rows = 1; tt.placeholder = "제목"; tt.spellcheck = false; tt.autocomplete = "off"; tt.setAttribute("aria-label", "제목 (" + TITLE_LABEL + ")");
   tt.addEventListener("keydown", ev => { if (ev.key === "Enter" && !ev.isComposing) { ev.preventDefault(); e.focus(); } });   // Enter → 본문으로
-  tt.addEventListener("input", () => {
+  const fitTitle = () => {   // 폭 제한(한글 18자·숫자 27자)을 넘으면 뒤를 잘라냄 (maxlength 는 글자 수만 세므로 직접 처리)
+    if (titleW(tt.value) <= TITLE_UNITS) return false;
+    const pos = tt.selectionStart; tt.value = clipTitle(tt.value);
+    try { tt.setSelectionRange(Math.min(pos, tt.value.length), Math.min(pos, tt.value.length)); } catch (_) {}
+    return true;
+  };
+  tt.addEventListener("compositionend", () => { if (fitTitle()) tt.dispatchEvent(new Event("input", { bubbles: true })); });   // 한글 조합이 끝난 뒤에 자름
+  tt.addEventListener("input", ev => {
     if (/[\r\n]/.test(tt.value)) tt.value = tt.value.replace(/[\r\n]+/g, " ");
+    if (!ev.isComposing) fitTitle();
     c.classList.toggle("has-t", tt.value !== "");
     e.dispatchEvent(new Event("input", { bubbles: true }));   // 본문과 같은 저장 흐름(자동 저장·DB 동기화)을 탐
   });
@@ -1481,7 +1494,7 @@ function renderCal() {
 }
 function zbSet(i) {
   const on = i === zoomI, b = CAL_ZB[i];
-  b.textContent = on ? "\u2715" : "\u2922"; b.setAttribute("aria-label", on ? "축소" : "확대"); CAL_TT[i].placeholder = on ? "제목 (" + TITLE_MAX + "자 이내)" : "제목";
+  b.textContent = on ? "\u2715" : "\u2922"; b.setAttribute("aria-label", on ? "축소" : "확대"); CAL_TT[i].placeholder = on ? "제목 (" + TITLE_LABEL + ")" : "제목";
   b.title = on ? "축소 (Esc)" : "이 날짜 메모를 달력 전체 크기로 확대 (메모 더블클릭도 같아요)";
 }
 function calZoom(i) {   // i: 확대할 칸 번호, -1: 축소
@@ -1520,7 +1533,7 @@ const memoAll = {
   },
   set value(v) {
     v = String(v || ""); store.clear(); titles.clear(); legacy = [];
-    if (v.startsWith(SC)) { try { const p = JSON.parse(v.slice(SC.length)); for (const k in (p.d || {})) if (p.d[k]) store.set(k, p.d[k]); for (const k in (p.t || {})) if (p.t[k]) titles.set(k, String(p.t[k]).slice(0, TITLE_MAX)); legacy = Array.isArray(p.l) ? p.l.map(x => String(x || "")) : []; } catch (e) {} }
+    if (v.startsWith(SC)) { try { const p = JSON.parse(v.slice(SC.length)); for (const k in (p.d || {})) if (p.d[k]) store.set(k, p.d[k]); for (const k in (p.t || {})) if (p.t[k]) titles.set(k, clipTitle(String(p.t[k]))); legacy = Array.isArray(p.l) ? p.l.map(x => String(x || "")) : []; } catch (e) {} }
     else {
       let done = false;
       for (const P of [S3, S2]) if (v.startsWith(P)) { try { legacy = JSON.parse(v.slice(P.length)).map(x => String(x || "")); done = true; } catch (e) {} break; }
@@ -7824,14 +7837,14 @@ const AREA_NM = CAL_LBL;
   /* ---------- 열기 ---------- */
   const add = (out, i, html, title) => { const o = out.find(x => x.i === i); if (o) { o.html += "<br>" + html; if (title && !o.title) o.title = title; } else out.push({ i, html, title: title || "" }); };
   const hasBody = h => { const pr = document.createElement("div"); pr.innerHTML = h; return !!(pr.textContent.trim() || pr.querySelector("img,table")); };
-  const setTitleFrom = (i, t, replace) => { if (!t) return; const tt = CAL_TT[i]; if (replace || tt.value === "") { tt.value = t.slice(0, TITLE_MAX); tt.dispatchEvent(new Event("input", { bubbles: true })); } };
+  const setTitleFrom = (i, t, replace) => { if (!t) return; const tt = CAL_TT[i]; if (replace || tt.value === "") { tt.value = clipTitle(t); tt.dispatchEvent(new Event("input", { bubbles: true })); } };
   function parseFile(f, txt) {
     const out = [];
     if (/\.html?$/i.test(f.name) || f.type === "text/html") {
       const doc = new DOMParser().parseFromString(txt, "text/html");
       doc.querySelectorAll("section[data-memo-area]").forEach(s => {
         const dk = s.getAttribute("data-memo-date");
-        const te = s.querySelector("[data-memo-title]"), ttl = te ? te.textContent.trim().slice(0, TITLE_MAX) : ""; if (te) te.remove();
+        const te = s.querySelector("[data-memo-title]"), ttl = te ? clipTitle(te.textContent.trim()) : ""; if (te) te.remove();
         add(out, dk ? dIdx(dk) : -1, ta.sanitize(s.innerHTML), ttl);
       });
       if (!out.length) add(out, -1, ta.sanitize(txt));   // 영역 표시가 없는 html: 내용 전체
