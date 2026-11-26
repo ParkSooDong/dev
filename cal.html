@@ -659,6 +659,13 @@ body{padding:8px 6px;gap:6px}
 .calcell:not(.zoom).has-t .rich{display:none}
 .calcell:not(.zoom) .rich{padding:2px 3px;font-size:10px;line-height:1.3;overflow:hidden;touch-action:manipulation}
 }
+/* 모바일 세로: 7x6 을 한 화면에 억지로 욱여넣으면 칸이 너무 낮아 윗줄 제목과 아랫줄 날짜가 겹쳐요
+   → 한 칸의 최소 높이(76px: 날짜줄 + 제목 3줄이 들어가는 높이)를 보장하고, 모자라면 달력 영역(#calgrid)만 세로로 스크롤해요.
+   (화면이 충분히 높으면 예전처럼 6행이 화면을 꽉 채워요. 가로 모드는 그대로) */
+@media(max-width:720px) and (orientation:portrait){
+#calgrid{grid-template-rows:repeat(6,minmax(76px,1fr));overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#calgrid.zooming{overflow:hidden}
+}
 </style>
 </head>
 <body>
@@ -1395,7 +1402,7 @@ function makeRich(el) {
 
 /* ▼▼ DB 를 쓰려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요 ▼▼ */
 const DB_URLS = [
-  "https://pesdee00-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
+  "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB1 (처음 기본값)
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
 ];
@@ -1497,6 +1504,7 @@ function zbSet(i) {
   b.textContent = on ? "\u2715" : "\u2922"; b.setAttribute("aria-label", on ? "축소" : "확대"); CAL_TT[i].placeholder = on ? "제목 (" + TITLE_LABEL + ")" : "제목";
   b.title = on ? "축소 (Esc)" : "이 날짜 메모를 달력 전체 크기로 확대 (메모 더블클릭도 같아요)";
 }
+let zoomScroll = 0;   // 확대하기 직전 달력 스크롤 위치 (축소하면 그 자리로 돌아와요)
 function calZoom(i) {   // i: 확대할 칸 번호, -1: 축소
   if (i >= 0 && !EDS[i].dataset.date) i = -1;
   if (i === zoomI) return;
@@ -1504,14 +1512,16 @@ function calZoom(i) {   // i: 확대할 칸 번호, -1: 축소
   const prev = zoomI; zoomI = i;
   if (prev >= 0) { CELLS[prev].classList.remove("zoom"); zbSet(prev); }
   calGrid.classList.toggle("zooming", i >= 0);
+  if (i < 0 && prev >= 0) calGrid.scrollTop = zoomScroll;
   if (i >= 0) {
+    if (prev < 0) zoomScroll = calGrid.scrollTop;
     calGrid.scrollTop = 0; calGrid.scrollLeft = 0;
     CELLS[i].classList.add("zoom"); zbSet(i); ta = EDS[i];
     if (window.matchMedia && matchMedia("(pointer:fine)").matches) { try { EDS[i].focus({ preventScroll: true }); } catch (e) {} }   // 터치에서는 키보드가 갑자기 올라오지 않게
   }
   window.dispatchEvent(new Event("resize"));
 }
-function calGo(dm) { if (window.cfSelClear) window.cfSelClear(); calZoom(-1); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); }
+function calGo(dm) { if (window.cfSelClear) window.cfSelClear(); calZoom(-1); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); calGrid.scrollTop = 0; }
 document.getElementById("calPrev").addEventListener("click", () => calGo(-1));
 document.getElementById("calNext").addEventListener("click", () => calGo(1));
 document.getElementById("calToday").addEventListener("click", () => calGo(0));
