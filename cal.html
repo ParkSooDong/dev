@@ -616,7 +616,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #tm:not(.pink) { background:transparent !important; border-color:transparent !important; padding:0 !important; }
 </style>
 <style id="cal-css">
-#calgrid{position:relative;flex:1;min-width:0;min-height:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:4px;overflow:auto}
+#calgrid{position:relative;flex:1;min-width:0;min-height:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(6,minmax(90px,1fr));gap:4px;overflow:auto}   /* 행 최소 높이 = 칸(.calcell)의 min-height(90px): 행이 칸보다 낮으면 칸이 아래 행을 덮어요 */
 #calgrid.zooming{overflow:hidden}
 .calcell{display:flex;flex-direction:column;min-width:0;min-height:90px;border:1.5px solid var(--line);border-radius:8px;background:var(--card);overflow:hidden}
 .calcell .calhd{flex:none;display:flex;align-items:center;gap:4px;padding:2px 4px 2px 6px;font-size:11px;font-weight:700;color:var(--mute);border-bottom:1px solid var(--line);white-space:nowrap}
@@ -1402,7 +1402,7 @@ function makeRich(el) {
 
 /* ▼▼ DB 를 쓰려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요 ▼▼ */
 const DB_URLS = [
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB1 (처음 기본값)
+  "https://pesdee00-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
   "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
 ];
