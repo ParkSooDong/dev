@@ -1516,8 +1516,8 @@ monthMemoZoom.addEventListener("click", () => {
   if (monthZoom) ta = monthMemoBody;
   window.dispatchEvent(new Event("resize"));
 });
-// 월간 제목은 한글 30자 폭을 기준으로 제한해요. 숫자·영문은 한글보다 폭이 좁으므로 실제 글자 수가 더 많아질 수 있어요.
-const MONTH_TITLE_UNITS = 45; // 한글 30자 × 한글/반각 문자 폭 비율 1.5
+// 월간 제목은 한글 34자 폭을 기준으로 제한해요. 숫자·영문은 한글보다 폭이 좁으므로 실제 글자 수가 더 많아질 수 있어요.
+const MONTH_TITLE_UNITS = 51; // 한글 34자 × 한글/반각 문자 폭 비율 1.5
 const monthTitleW = str => titleW(str);
 const clipMonthTitle = str => { let w = 0, out = ""; for (const c of String(str)) { const cw = wideCh(c) ? 1.5 : 1; if (w + cw > MONTH_TITLE_UNITS) break; w += cw; out += c; } return out; };
 monthMemoTitle.addEventListener("input", () => {
