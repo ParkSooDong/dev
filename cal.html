@@ -693,6 +693,55 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #monthMemo.zoom .mm-title{height:calc(1.4em + 14px);padding:7px 10px;font-size:14px}
 #monthMemo.zoom .mm-body{padding:10px 12px;font-size:14px;line-height:1.5}
 }
+/* 월간 메모와 상시 메모도 일간 메모(.calcell.zoom)와 동일하게 달력 전체 영역을 덮도록 통일 */
+#monthMemo.zoom,
+#memoDelete.zoom {
+  position:absolute !important;
+  inset:0 !important;
+  grid-column:1 / -1 !important;
+  grid-row:1 / -1 !important;
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  z-index:30 !important;
+  box-sizing:border-box !important;
+  border-radius:8px !important;
+  box-shadow:0 2px 10px rgba(0,0,0,.2) !important;
+}
+#memoDelete.zoom {
+  display:block !important;
+  overflow:hidden !important;
+  background:var(--card) !important;
+}
+#memoDelete.zoom .md-actions { display:none !important; }
+#memoDelete.zoom .md-always {
+  position:relative !important;
+  inset:auto !important;
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  box-sizing:border-box !important;
+  border:0 !important;
+  border-radius:8px !important;
+  overflow:hidden !important;
+}
+#memoDelete.zoom .am-head { padding:6px 8px !important; font-size:14px !important; }
+#memoDelete.zoom .am-zoom { width:26px !important; height:26px !important; font-size:15px !important; }
+#memoDelete.zoom .am-title { height:calc(1.4em + 14px) !important; padding:7px 10px !important; font-size:14px !important; }
+#memoDelete.zoom .am-body { padding:10px 12px !important; font-size:14px !important; line-height:1.5 !important; }
+#monthMemo.zoom .mm-head { padding:6px 8px !important; font-size:14px !important; }
+#monthMemo.zoom .mm-zoom { width:26px !important; height:26px !important; font-size:15px !important; }
+#monthMemo.zoom .mm-title { height:calc(1.4em + 14px) !important; padding:7px 10px !important; font-size:14px !important; }
+#monthMemo.zoom .mm-body { padding:10px 12px !important; font-size:14px !important; line-height:1.5 !important; }
+@media(max-width:720px) {
+  #monthMemo.zoom .mm-head,
+  #memoDelete.zoom .am-head { padding:6px 8px !important; font-size:14px !important; }
+  #monthMemo.zoom .mm-title,
+  #memoDelete.zoom .am-title { height:calc(1.4em + 14px) !important; padding:7px 10px !important; font-size:14px !important; }
+  #monthMemo.zoom .mm-body,
+  #memoDelete.zoom .am-body { padding:10px 12px !important; font-size:14px !important; line-height:1.5 !important; }
+}
 /* 날짜 칸 확대: 7x6 달력 공간(#calgrid) 전체를 이 칸이 덮어요. CSS 만 바꾸므로 입력 중인 내용·커서·저장 상태는 그대로예요 */
 .calcell.zoom{position:absolute;inset:0;z-index:5;grid-column:auto!important;grid-row:auto!important;align-self:stretch;justify-self:stretch;min-height:0;box-shadow:0 2px 10px rgba(0,0,0,.18)}
 .calcell.zoom .calhd{padding:6px 8px 6px 12px;font-size:14px}
@@ -727,7 +776,7 @@ body{padding:8px 6px;gap:6px}
 #calgrid.zooming{overflow:hidden}
 }
 </style>
-<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795727552916&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000069b48206abca57161be5e7dd%26fn%3Dcal_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498815%26p%3Dfs%26cid%3D1%26sig%3D7864a65f538dbfdc62164cf204c08a29bcca1cf0a33b5778cf652d9ab9f9fee4%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795727552916&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000002fb482069206ccde546f44eb%26fn%3Dcal_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498815%26p%3Dfs%26cid%3D1%26sig%3Dcd9067b074393dcb473c2262802d6a48eb43a697e84e3f5740e962d6acb40433%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795727552916&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000038c88206bb7a5b300d4282a7%26fn%3Dcal_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498806%26p%3Dfs%26cid%3D1%26sig%3D826141b5529cf2ee446c1d123f793b722d971a70bf57193487b45900738a167d%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="3482cefb014a41a79c882feb6a4" src="//local.adguard.org?ts=1795693343096&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
@@ -1546,33 +1595,50 @@ makeRich(alwaysMemoBody);
 const monthMemoLabel = monthMemo.querySelector("#monthMemoLabel"), monthMemoTitle = monthMemo.querySelector("#monthMemoTitle"), monthMemoBody = monthMemo.querySelector("#monthMemoBody"), monthMemoZoom = monthMemo.querySelector("#monthMemoZoom");
 makeRich(monthMemoBody);
 let monthZoom = false, alwaysZoom = false;
-const setAlwaysZoom = on => {
-  alwaysZoom = !!on; alwaysMemoPane.classList.toggle("zoom", alwaysZoom);
-  alwaysMemoZoom.textContent = alwaysZoom ? "✕" : "⤢";
-  alwaysMemoZoom.setAttribute("aria-label", alwaysZoom ? "상시 메모 축소" : "상시 메모 확대");
-  alwaysMemoZoom.title = alwaysZoom ? "축소 (Esc)" : "상시 메모를 달력 전체 크기로 확대";
-  calGrid.classList.toggle("zooming", alwaysZoom || monthZoom || zoomI >= 0);
-  if (alwaysZoom) ta = alwaysMemoBody;
+function syncMemoZoomState() {
+  calGrid.classList.toggle("zooming", monthZoom || alwaysZoom || zoomI >= 0);
   window.dispatchEvent(new Event("resize"));
-};
+}
+function setMonthZoom(on, restoreScroll = true, keepScroll = false) {
+  on = !!on;
+  if (on && !keepScroll && !monthZoom && !alwaysZoom && zoomI < 0) zoomScroll = calGrid.scrollTop;
+  monthZoom = on;
+  monthMemo.classList.toggle("zoom", on);
+  monthMemoZoom.textContent = on ? "✕" : "⤢";
+  monthMemoZoom.setAttribute("aria-label", on ? "월간 메모 축소" : "월간 메모 확대");
+  monthMemoZoom.title = on ? "축소 (Esc)" : "월간 메모를 달력 전체 크기로 확대";
+  if (on) { calGrid.scrollTop = 0; calGrid.scrollLeft = 0; ta = monthMemoBody; }
+  else if (restoreScroll && zoomI < 0 && !alwaysZoom) calGrid.scrollTop = zoomScroll;
+  syncMemoZoomState();
+}
+function setAlwaysZoom(on, restoreScroll = true, keepScroll = false) {
+  on = !!on;
+  if (on && !keepScroll && !alwaysZoom && !monthZoom && zoomI < 0) zoomScroll = calGrid.scrollTop;
+  alwaysZoom = on;
+  // 상시 메모만이 아니라 바깥 패널 전체를 날짜 메모와 같은 방식으로 달력 전체에 펼칩니다.
+  deletePanel.classList.toggle("zoom", on);
+  alwaysMemoZoom.textContent = on ? "✕" : "⤢";
+  alwaysMemoZoom.setAttribute("aria-label", on ? "메모 축소" : "메모 확대");
+  alwaysMemoZoom.title = on ? "축소 (Esc)" : "메모를 달력 전체 크기로 확대";
+  if (on) { calGrid.scrollTop = 0; calGrid.scrollLeft = 0; ta = alwaysMemoBody; }
+  else if (restoreScroll && zoomI < 0 && !monthZoom) calGrid.scrollTop = zoomScroll;
+  syncMemoZoomState();
+}
 alwaysMemoZoom.addEventListener("mousedown", ev => ev.preventDefault());
 alwaysMemoZoom.addEventListener("click", () => {
   if (window.cfSelClear) window.cfSelClear();
+  if (alwaysZoom) { setAlwaysZoom(false); return; }
   if (zoomI >= 0) calZoom(-1);
-  if (monthZoom) { monthZoom = false; monthMemo.classList.remove("zoom"); monthMemoZoom.textContent = "⤢"; monthMemoZoom.setAttribute("aria-label", "월간 메모 확대"); }
-  setAlwaysZoom(!alwaysZoom);
+  if (monthZoom) setMonthZoom(false, false);
+  setAlwaysZoom(true, true, true);
 });
 monthMemoZoom.addEventListener("mousedown", ev => ev.preventDefault());
 monthMemoZoom.addEventListener("click", () => {
   if (window.cfSelClear) window.cfSelClear();
+  if (monthZoom) { setMonthZoom(false); return; }
   if (zoomI >= 0) calZoom(-1);
-  if (alwaysZoom) setAlwaysZoom(false);
-  monthZoom = !monthZoom; monthMemo.classList.toggle("zoom", monthZoom); calGrid.classList.toggle("zooming", monthZoom);
-  monthMemoZoom.textContent = monthZoom ? "✕" : "⤢";
-  monthMemoZoom.setAttribute("aria-label", monthZoom ? "월간 메모 축소" : "월간 메모 확대");
-  monthMemoZoom.title = monthZoom ? "축소 (Esc)" : "월간 메모를 달력 전체 크기로 확대";
-  if (monthZoom) ta = monthMemoBody;
-  window.dispatchEvent(new Event("resize"));
+  if (alwaysZoom) setAlwaysZoom(false, false);
+  setMonthZoom(true, true, true);
 });
 // 월간 제목은 한글 30자 폭을 기준으로 제한해요. 숫자·영문은 한글보다 폭이 좁으므로 실제 글자 수가 더 많아질 수 있어요.
 const MONTH_TITLE_UNITS = 51; // 한글 34자 × 한글/반각 문자 폭 비율 1.5
@@ -1677,20 +1743,21 @@ function calZoom(i) {   // i: 확대할 칸 번호, -1: 축소
   if (i === zoomI) return;
   if (window.cfSelClear) window.cfSelClear();
   const prev = zoomI; zoomI = i;
-  if (i >= 0 && monthZoom) { monthZoom = false; monthMemo.classList.remove("zoom"); monthMemoZoom.textContent = "⤢"; monthMemoZoom.setAttribute("aria-label", "월간 메모 확대"); }
-  if (i >= 0 && alwaysZoom) { alwaysZoom = false; alwaysMemoPane.classList.remove("zoom"); alwaysMemoZoom.textContent = "⤢"; alwaysMemoZoom.setAttribute("aria-label", "상시 메모 확대"); }
+  const wasPanelZoomed = monthZoom || alwaysZoom;
+  if (i >= 0 && monthZoom) setMonthZoom(false, false);
+  if (i >= 0 && alwaysZoom) setAlwaysZoom(false, false);
   if (prev >= 0) { CELLS[prev].classList.remove("zoom"); zbSet(prev); }
   calGrid.classList.toggle("zooming", i >= 0 || monthZoom);
   if (i < 0 && prev >= 0) calGrid.scrollTop = zoomScroll;
   if (i >= 0) {
-    if (prev < 0) zoomScroll = calGrid.scrollTop;
+    if (prev < 0 && !wasPanelZoomed) zoomScroll = calGrid.scrollTop;
     calGrid.scrollTop = 0; calGrid.scrollLeft = 0;
     CELLS[i].classList.add("zoom"); zbSet(i); ta = EDS[i];
     if (window.matchMedia && matchMedia("(pointer:fine)").matches) { try { EDS[i].focus({ preventScroll: true }); } catch (e) {} }   // 터치에서는 키보드가 갑자기 올라오지 않게
   }
   window.dispatchEvent(new Event("resize"));
 }
-function calGo(dm) { if (window.cfSelClear) window.cfSelClear(); monthZoom = false; monthMemo.classList.remove("zoom"); monthMemoZoom.textContent = "⤢"; if (alwaysZoom) setAlwaysZoom(false); calGrid.classList.remove("zooming"); calZoom(-1); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); calGrid.scrollTop = 0; }
+function calGo(dm) { if (window.cfSelClear) window.cfSelClear(); if (monthZoom) setMonthZoom(false, false); if (alwaysZoom) setAlwaysZoom(false, false); calGrid.classList.remove("zooming"); calZoom(-1); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); calGrid.scrollTop = 0; }
 document.getElementById("calPrev").addEventListener("click", () => calGo(-1));
 document.getElementById("calNext").addEventListener("click", () => calGo(1));
 document.getElementById("calToday").addEventListener("click", () => calGo(0));
@@ -8125,7 +8192,7 @@ document.addEventListener("keydown", e => {
   if (tb.querySelector(".pop:not([hidden])")) { closePop(); return; }
   if (!fbar.hidden) { closeFind(); return; }
   if (zoomI >= 0) { calZoom(-1); return; }   // 확대한 날짜 칸 먼저 축소
-  if (monthZoom) { monthZoom = false; monthMemo.classList.remove("zoom"); monthMemoZoom.textContent = "⤢"; monthMemoZoom.setAttribute("aria-label", "월간 메모 확대"); calGrid.classList.remove("zooming"); window.dispatchEvent(new Event("resize")); return; }
+  if (monthZoom) { setMonthZoom(false); return; }
   if (alwaysZoom) { setAlwaysZoom(false); return; }
   if (pane.classList.contains("max")) setMax(false);
 });
