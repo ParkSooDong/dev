@@ -867,14 +867,10 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
   <div class="menu" id="layMenu"><button type="button" data-pal id="layBtn" title="분할: 가로 또는 세로로 가·나·다 영역을 나눠 보여요 (마우스를 올리면 미리 보이고, 클릭하면 적용됩니다)" aria-label="분할" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M12 5v14M3.5 12h17"/></svg><span>분할</span></button><div class="pop" hidden><button type="button" id="layH" title="가로 분할: 가·나·다를 왼쪽부터 균등하게 으로 나란히 보여요" aria-label="가로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M9.5 5v14M15.5 5v14"/></svg><span>가로 분할</span></button><button type="button" id="layV" title="세로 분할: 가·나·다를 위에서부터 6 : 2 : 2 으로 쌓아 보여요" aria-label="세로 분할" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17"/></svg><span>세로 분할</span></button></div></div>
   <button type="button" id="cmpBtn" title="비교: 가(원본)를 기준으로 나(변경본)가 일치하는지 확인하고, 비교 내역은 다 영역에 표시" aria-label="비교"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16M4 8h5M15 16h5M4 16l3-3M20 8l-3 3"/></svg><span>비교</span></button>
   <i class="sep"></i>
-  <button type="button" id="impBtn" title="열기 (.html / .txt)" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
+  <button type="button" id="impBtn" title="열기 (.html / .txt) — 파일에 저장된 영역을 골라 가·나·다에 넣어요" aria-label="열기"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 19.5h14"/></svg><span>열기</span></button>
   <input type="file" id="impFile" accept=".html,.htm,.txt,text/html,text/plain" hidden>
   <div class="menu">
-    <button type="button" id="expBtn" title="저장" aria-label="저장" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span>저장</span></button>
-    <div class="pop" id="pop" hidden>
-      <button type="button" data-exp="html">HTML (.html)</button>
-      <button type="button" data-exp="txt">텍스트 (.txt)</button>
-    </div>
+    <button type="button" id="expBtn" title="저장 (영역·형식·파일 이름 선택)" aria-label="저장" aria-haspopup="dialog"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg><span>저장</span></button>
   </div>
   <button class="expand" id="mex" type="button" title="메모 확대 / 축소 (Esc)" aria-label="메모 확대">⤢</button>
 </div>
@@ -5690,7 +5686,7 @@ tb.addEventListener("click", e => {
   if ("bgx" in b.dataset) { closePop(); return; }   // [취소]
   if ("bgreset" in b.dataset) { bgDefaults(); return; }
   if (b.dataset.cmd) { closePop(); CMDS[b.dataset.cmd](); }
-  else if (b.dataset.exp) { closePop(); exportMemo(b.dataset.exp); }
+  
 });
 
 /* 표 안에서 Tab / Shift+Tab 으로 칸 이동 (마지막 칸에서 Tab 이면 새 행 추가) */
@@ -7673,65 +7669,175 @@ function openPop(btn, p) {
   positionMenuPop(btn, p);
 }
 document.addEventListener("click", e => { if (!e.target.closest(".menu") && !e.target.closest(".cfov")) closePop(); });
-const pop = document.getElementById("pop"), expBtn = document.getElementById("expBtn");
-expBtn.addEventListener("click", () => {
-  if (!pop.hidden) { closePop(); return; }
-  openPop(expBtn, pop);
-});
+const expBtn = document.getElementById("expBtn");
+/* ===== 저장 / 열기: 가·나·다 영역을 골라서 저장하고, 불러올 때도 영역을 골라요 =====
+   - [저장]: 영역([전체]·가·나·다 중 원하는 것만 체크)·형식(.html/.txt)·파일 이름을 고르면, 저장 위치만 정하고 바로 저장돼요
+   - [열기]: 파일에 저장된 영역을 가·나·다 제자리로 넣거나, 고른 영역만 커서가 있는 영역으로 가져와요
+   - .html 은 영역마다 <section data-memo-area="1~3"> 로, .txt 는 영역이 둘 이상일 때 =====[가]===== 줄로 나눠 저장해요 (영역 표시가 없는 파일은 내용 전체를 한 덩어리로 열어요) */
+const AREA_NM = ["가", "나", "다"];
+(function () {
+  const css = document.createElement("style");
+  css.textContent = "#fileDlg{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);padding:12px}" +
+    "#fileDlg[hidden],#fileDlg [hidden]{display:none!important}" +
+    "#fileDlg section{width:min(440px,96vw);max-height:92vh;overflow:auto;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:0 8px 28px rgba(0,0,0,.3);font-size:14px}" +
+    "#fileDlg h3{margin:0 0 10px;font-size:16px;word-break:break-all}" +
+    "#fileDlg fieldset{border:1px solid var(--line);border-radius:8px;margin:0 0 10px;padding:4px 10px 8px;min-width:0}" +
+    "#fileDlg legend{font-size:12px;font-weight:700;color:var(--mute);padding:0 4px}" +
+    "#fileDlg label{display:inline-flex;align-items:center;gap:5px;margin:3px 12px 3px 0;cursor:pointer}" +
+    "#fileDlg label.blk{display:flex;margin-right:0}#fileDlg label.off{opacity:.45;cursor:not-allowed}" +
+    "#fileDlg input[type=text]{flex:1;min-width:0;box-sizing:border-box;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink)}" +
+    "#fileDlg .nm{display:flex;gap:6px;align-items:center}#fileDlg .nm span{white-space:nowrap;color:var(--mute)}" +
+    "#fileDlg .hint{font-size:12px;color:var(--mute);margin:4px 0 0}" +
+    "#fileDlg .acts{display:flex;justify-content:flex-end;gap:7px;margin-top:12px}" +
+    "#fileDlg .acts button{font:inherit;padding:7px 16px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}" +
+    "#fileDlg .acts button.ok{background:#339af0;border-color:#339af0;color:#fff;font-weight:700}#fileDlg .acts button:disabled{opacity:.4;cursor:not-allowed}";
+  document.head.appendChild(css);
+  const dlg = document.createElement("div"); dlg.id = "fileDlg"; dlg.hidden = true; document.body.appendChild(dlg);
+  const q = s => dlg.querySelector(s), qa = s => Array.from(dlg.querySelectorAll(s));
+  const close = () => { dlg.hidden = true; dlg.innerHTML = ""; };
+  const show = html => { dlg.innerHTML = '<section role="dialog" aria-modal="true">' + html + "</section>"; dlg.hidden = false; };
+  let dn = null;
+  dlg.addEventListener("mousedown", e => { dn = e.target; });
+  dlg.addEventListener("click", e => { if (e.target === dlg && dn === dlg) close(); });   // 창 바깥을 누르면 닫혀요
+  dlg.addEventListener("keydown", e => {
+    if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(); }
+    else if (e.key === "Enter" && e.target.matches && e.target.matches("input[type=text]")) { e.preventDefault(); const ok = q("[data-ok]"); if (ok && !ok.disabled) ok.click(); }
+  });
+  const stamp = () => { const n = new Date(), p = x => String(x).padStart(2, "0"); return n.getFullYear() + p(n.getMonth() + 1) + p(n.getDate()) + "-" + p(n.getHours()) + p(n.getMinutes()); };
+  const EXP_TAIL = '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
 
-function exportMemo(kind) {
-  if (ta.value === "") { say("저장할 메모가 없어요", "err"); return; }
-  const n = new Date(), p = x => String(x).padStart(2, "0");
-  const stamp = n.getFullYear() + p(n.getMonth() + 1) + p(n.getDate()) + "-" + p(n.getHours()) + p(n.getMinutes());
-  let body, type, name;
-  if (kind === "html") {
-    body = '<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>메모</title>\n<style>\n' +
+  /* ---------- 저장 ---------- */
+  function openSave() {
+    if (EDS.every(e => e.value === "")) { say("저장할 메모가 없어요", "err"); return; }
+    const cur = Math.max(0, EDS.indexOf(ta));
+    show('<h3>저장</h3>' +
+      '<fieldset><legend>저장할 영역 (여러 개 선택 가능)</legend><label><input type="checkbox" data-all>전체</label>' +
+      AREA_NM.map((nm, i) => '<label><input type="checkbox" data-ar="' + i + '">' + nm + (EDS[i].value === "" ? " (비어 있음)" : "") + "</label>").join("") + "</fieldset>" +
+      '<fieldset><legend>파일 형식</legend><label><input type="radio" name="fdFmt" value="html" checked>HTML (.html)</label><label><input type="radio" name="fdFmt" value="txt">텍스트 (.txt)</label></fieldset>' +
+      '<fieldset><legend>파일 이름</legend><div class="nm"><input type="text" data-nm maxlength="120" autocomplete="off" spellcheck="false" aria-label="파일 이름"><span data-ext>.html</span></div>' +
+      '<p class="hint">[저장]을 누르면 저장 위치만 정하면 바로 저장돼요 (브라우저에 따라 바로 다운로드될 수도 있어요)</p></fieldset>' +
+      '<div class="acts"><button type="button" data-x>취소</button><button type="button" class="ok" data-ok>저장</button></div>');
+    const boxes = qa("[data-ar]"), all = q("[data-all]"), nm = q("[data-nm]"), ext = q("[data-ext]"), okB = q("[data-ok]");
+    const fmt = () => (qa('[name="fdFmt"]').find(r => r.checked) || {}).value || "html";
+    const sync = () => { all.checked = boxes.every(b => b.checked); okB.disabled = !boxes.some(b => b.checked); };
+    if (EDS[cur].value === "") boxes.forEach(b => { b.checked = true; }); else boxes[cur].checked = true;   // 커서 영역이 비어 있으면 전체
+    sync(); nm.value = "메모_" + stamp();
+    all.addEventListener("change", () => { boxes.forEach(b => { b.checked = all.checked; }); sync(); });
+    boxes.forEach(b => b.addEventListener("change", sync));
+    qa('[name="fdFmt"]').forEach(r => r.addEventListener("change", () => { ext.textContent = "." + fmt(); }));
+    q("[data-x]").addEventListener("click", close);
+    okB.addEventListener("click", () => doSave(boxes.map((b, i) => b.checked ? i : -1).filter(i => i >= 0), fmt(), nm.value));
+    nm.focus(); nm.select();
+  }
+  async function doSave(idx, kind, base) {
+    const parts = idx.filter(i => EDS[i].value !== "");
+    if (!parts.length) { say("선택한 영역이 모두 비어 있어요", "err"); return; }
+    base = String(base || "").replace(/[\\\/:*?"<>|\u0000-\u001f]/g, "").replace(/\.(html?|txt)$/i, "").trim() || ("메모_" + stamp());
+    const html = kind === "html", name = base + (html ? ".html" : ".txt"), mime = html ? "text/html" : "text/plain";
+    let handle = null;
+    if (window.showSaveFilePicker) {   // 저장 위치만 정하면 바로 저장 (지원하지 않는 브라우저는 일반 다운로드)
+      try { handle = await window.showSaveFilePicker({ suggestedName: name, types: [{ description: html ? "HTML 문서" : "텍스트 문서", accept: { [mime]: [html ? ".html" : ".txt"] } }] }); }
+      catch (e) { if (e && e.name === "AbortError") { say("저장을 취소했어요"); return; } handle = null; }
+    }
+    let body;
+    if (html) {
+      const multi = parts.length > 1;
+      body = '<!DOCTYPE html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>메모</title>\n<style>\n' +
       'body{font:16px/1.6 ' + "'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif" + ';max-width:800px;margin:24px auto;padding:0 16px;color:#2b8a3e;word-break:break-word}\n' +
       'img{max-width:100%}img:not([height]){height:auto}table{border-collapse:collapse}td,th{border:1px solid #d9d5cb;padding:2px 6px;vertical-align:top}\n' +
       '[data-att]{display:inline-block;padding:2px 10px;margin:2px 4px 2px 0;border:1.5px solid #d9d5cb;border-radius:999px;cursor:pointer}\n' +
-      '</style>\n</head>\n<body>\n' + ta.cleanHtml() + '\n<script>document.addEventListener("click",function(e){var s=e.target.closest&&e.target.closest("[data-att]");if(!s)return;var b=atob(s.getAttribute("data-b64")),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([u],{type:s.getAttribute("data-mime")}));a.download=s.getAttribute("data-name");document.body.appendChild(a);a.click();a.remove()});<\/script>\n</body>\n</html>\n';
-    type = "text/html"; name = "메모_" + stamp + ".html";
-  } else {
-    body = "\ufeff" + ta.innerText.replace(/\u00a0/g, " ").replace(/\u200b/g, "");   // BOM: 윈도우 앱에서도 한글이 깨지지 않게
-    type = "text/plain"; name = "메모_" + stamp + ".txt";
+      'section[data-memo-area]{margin:0 0 24px}body.multi section[data-memo-area]::before{content:attr(data-label) " 영역";display:block;font:700 12px sans-serif;color:#868e96;margin:0 0 6px;padding-bottom:3px;border-bottom:1px solid #d9d5cb}\n' +
+      '</style>\n</head>\n<body' + (multi ? ' class="multi"' : '') + '>\n' +
+        parts.map(i => '<section data-memo-area="' + (i + 1) + '" data-label="' + AREA_NM[i] + '">\n' + EDS[i].cleanHtml() + "\n</section>").join("\n") + EXP_TAIL;
+    } else {
+      const tx = i => EDS[i].innerText.replace(/\u00a0/g, " ").replace(/\u200b/g, "");
+      body = "\ufeff" + (parts.length > 1 ? parts.map(i => "=====[" + AREA_NM[i] + "]=====\n" + tx(i).replace(/\s+$/, "")).join("\n\n") + "\n" : tx(parts[0]));   // BOM: 윈도우 앱에서도 한글이 깨지지 않게
+    }
+    const blob = new Blob([body], { type: mime + ";charset=utf-8" });
+    let saved = name;
+    try {
+      if (handle) { const w = await handle.createWritable(); await w.write(blob); await w.close(); saved = handle.name || name; }
+      else {
+        const url = URL.createObjectURL(blob), a = document.createElement("a"); a.href = url; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+      }
+    } catch (e) { say("저장하지 못했어요", "err"); return; }
+    close();
+    say("저장했어요: " + saved + " (" + parts.map(i => AREA_NM[i]).join("·") + (parts.length < idx.length ? " · 비어 있는 영역은 건너뛰었어요" : "") + ")", "ok");
   }
-  const url = URL.createObjectURL(new Blob([body], { type: type + ";charset=utf-8" }));
-  const a = document.createElement("a"); a.href = url; a.download = name;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-  say("저장했어요: " + name, "ok");
-}
 
-/* ===== 불러오기 (.html / .txt): 내보낸 파일이나 다른 메모를 가져와요 ===== */
-const impBtn = document.getElementById("impBtn"), impFile = document.getElementById("impFile");
-impBtn.addEventListener("click", () => { closePop(); impFile.value = ""; impFile.click(); });
-impFile.addEventListener("change", async () => {
-  const f = impFile.files && impFile.files[0]; if (!f) return;
-  if (ta.disabled) { say("지금은 열 수 없어요. 잠시 후 다시 시도해 주세요", "err"); return; }
-  if (f.size > 8e6) { say("파일이 너무 커요 (8MB 이하만 가능)", "err"); return; }
-  let html = "";
-  try {
-    const txt = (await f.text()).replace(/^\ufeff/, "");
-    html = (/\.html?$/i.test(f.name) || f.type === "text/html") ? ta.sanitize(txt) : escH(txt).replace(/\r?\n/g, "<br>");
-  } catch (e) { say("파일을 읽지 못했어요", "err"); return; }
-  const probe = document.createElement("div"); probe.innerHTML = html;
-  if (!probe.textContent.trim() && !probe.querySelector("img,table")) { say("열 내용이 없어요", "err"); return; }
-  let append = false;
-  if (ta.value !== "") {
-    if (confirm("현재 메모 끝에 '" + f.name + "' 내용을 이어 붙일까요?\n\n[확인] 이어 붙이기\n[취소] 다른 방법 선택")) append = true;
-    else if (!confirm("현재 메모를 지우고 '" + f.name + "' 내용으로 바꿀까요?\n(되돌릴 수 없어요)\n\n[확인] 바꾸기\n[취소] 열기 취소")) { say("열기를 취소했어요"); return; }
+  /* ---------- 열기 ---------- */
+  const add = (out, i, html) => { const o = out.find(x => x.i === i); if (o) o.html += "<br>" + html; else out.push({ i, html }); };
+  function parseFile(f, txt) {
+    const out = [];
+    if (/\.html?$/i.test(f.name) || f.type === "text/html") {
+      const doc = new DOMParser().parseFromString(txt, "text/html");
+      doc.querySelectorAll("section[data-memo-area]").forEach(s => {
+        const i = parseInt(s.getAttribute("data-memo-area"), 10) - 1;
+        if (i >= 0 && i < 3) add(out, i, ta.sanitize(s.innerHTML));
+      });
+      if (!out.length) add(out, -1, ta.sanitize(txt));   // 영역 표시가 없는 html: 내용 전체
+    } else {
+      const seg = txt.split(/^=====\[(가|나|다)\]=====[ \t]*\r?$/m);
+      if (seg.length > 1) { for (let k = 1; k < seg.length; k += 2) add(out, AREA_NM.indexOf(seg[k]), escH(seg[k + 1].replace(/^\r?\n/, "").replace(/\s+$/, "")).replace(/\r?\n/g, "<br>")); }
+      else add(out, -1, escH(txt).replace(/\r?\n/g, "<br>"));
+    }
+    return out.filter(o => { const pr = document.createElement("div"); pr.innerHTML = o.html; return pr.textContent.trim() || pr.querySelector("img,table"); })
+      .sort((a, b) => a.i - b.i);
   }
-  if (append) {
-    ta.focus();
+  function put(ed, html, replace) {   // 비어 있으면 그대로 넣고, 내용이 있으면 끝에 이어 붙이거나 바꿔요
+    if (ed.value === "" || replace) { ed.value = RICH_PREFIX + html; ed.dispatchEvent(new Event("input", { bubbles: true })); return; }   // 자동 저장 / DB 동기화가 이어서 동작
+    ed.focus();
     const s = getSelection(), r = document.createRange();
-    r.selectNodeContents(ta); r.collapse(false); s.removeAllRanges(); s.addRange(r);   // 맨 끝으로 이동
-    if (!document.execCommand("insertHTML", false, "<br>" + html)) { ta.insertAdjacentHTML("beforeend", "<br>" + html); ta.dispatchEvent(new Event("input", { bubbles: true })); }
-  } else {
-    ta.value = RICH_PREFIX + html;
-    ta.dispatchEvent(new Event("input", { bubbles: true }));   // 자동 저장 / DB 동기화가 이어서 동작
+    r.selectNodeContents(ed); r.collapse(false); s.removeAllRanges(); s.addRange(r);   // 맨 끝으로 이동
+    if (!document.execCommand("insertHTML", false, "<br>" + html)) { ed.insertAdjacentHTML("beforeend", "<br>" + html); ed.dispatchEvent(new Event("input", { bubbles: true })); }
   }
-  say("열었어요: " + f.name, "ok");
-});
+  function openOpen(fname, parts) {
+    const tgt = ta, cur = Math.max(0, EDS.indexOf(tgt)), labeled = parts.every(p => p.i >= 0);
+    const esc = s => escH(s);
+    show('<h3>열기: ' + esc(fname) + "</h3>" +
+      "<fieldset><legend>파일에서 가져올 영역</legend>" +
+      (labeled ? (parts.length > 1 ? '<label><input type="checkbox" data-all>전체</label>' : "") + parts.map((p, k) => '<label><input type="checkbox" data-ar="' + k + '" checked>' + AREA_NM[p.i] + "</label>").join("")
+               : '<label><input type="checkbox" data-ar="0" checked disabled>파일 내용 전체 (영역 표시가 없는 파일)</label>') + "</fieldset>" +
+      "<fieldset><legend>넣을 위치</legend>" +
+      '<label class="blk' + (labeled ? "" : " off") + '"><input type="radio" name="fdDst" value="own"' + (labeled ? " checked" : " disabled") + '>저장된 영역 그대로 (가는 가에, 나는 나에, 다는 다에)</label>' +
+      '<label class="blk"><input type="radio" name="fdDst" value="cur"' + (labeled ? "" : " checked") + '>커서가 있는 [' + AREA_NM[cur] + '] 영역으로 (고른 영역을 모두 여기에)</label></fieldset>' +
+      '<fieldset data-ex><legend>이미 내용이 있는 영역은</legend><label><input type="radio" name="fdEx" value="add" checked>끝에 이어 붙이기</label><label><input type="radio" name="fdEx" value="rep">지우고 바꾸기 (되돌릴 수 없어요)</label></fieldset>' +
+      '<div class="acts"><button type="button" data-x>취소</button><button type="button" class="ok" data-ok>열기</button></div>');
+    const boxes = qa("[data-ar]"), all = q("[data-all]"), okB = q("[data-ok]");
+    const own = () => (qa('[name="fdDst"]').find(r => r.checked) || {}).value === "own";
+    const sel = () => parts.filter((p, k) => boxes[k].checked);
+    const refresh = () => {
+      if (all) all.checked = boxes.every(b => b.checked);
+      const s = sel(), eds = own() ? s.map(p => EDS[p.i]) : (s.length ? [tgt] : []);
+      q("[data-ex]").hidden = !eds.some(e => e.value !== ""); okB.disabled = !s.length;
+    };
+    if (all) all.addEventListener("change", () => { boxes.forEach(b => { b.checked = all.checked; }); refresh(); });
+    boxes.forEach(b => b.addEventListener("change", refresh));
+    qa('[name="fdDst"]').forEach(r => r.addEventListener("change", refresh));
+    refresh();
+    q("[data-x]").addEventListener("click", () => { close(); say("열기를 취소했어요"); });
+    okB.addEventListener("click", () => {
+      if (tgt.disabled) { say("지금은 열 수 없어요. 잠시 후 다시 시도해 주세요", "err"); return; }
+      const s = sel(), rep = (qa('[name="fdEx"]').find(r => r.checked) || {}).value === "rep";
+      if (own()) { s.forEach(p => put(EDS[p.i], p.html, rep)); close(); say("열었어요: " + fname + " → " + s.map(p => AREA_NM[p.i]).join("·") + " 영역", "ok"); }
+      else { put(tgt, s.map(p => p.html).join("<br>"), rep); close(); say("열었어요: " + fname + " → " + AREA_NM[cur] + " 영역", "ok"); }
+    });
+  }
+  expBtn.addEventListener("click", () => { closePop(); openSave(); });
+  const impBtn = document.getElementById("impBtn"), impFile = document.getElementById("impFile");
+  impBtn.addEventListener("click", () => { closePop(); impFile.value = ""; impFile.click(); });
+  impFile.addEventListener("change", async () => {
+    const f = impFile.files && impFile.files[0]; if (!f) return;
+    if (ta.disabled) { say("지금은 열 수 없어요. 잠시 후 다시 시도해 주세요", "err"); return; }
+    if (f.size > 8e6) { say("파일이 너무 커요 (8MB 이하만 가능)", "err"); return; }
+    let parts;
+    try { parts = parseFile(f, (await f.text()).replace(/^\ufeff/, "")); } catch (e) { say("파일을 읽지 못했어요", "err"); return; }
+    if (!parts.length) { say("열 내용이 없어요", "err"); return; }
+    openOpen(f.name, parts);
+  });
+})();
+
 
 /* Esc: 열린 팝업 → 찾기 창 순서로 닫음 (메모 확대 해제는 팝업/찾기 창이 없을 때만) */
 document.addEventListener("keydown", e => {
