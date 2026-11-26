@@ -614,7 +614,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .calcell.today .calhd{background:var(--line)}
 .calcell .rich{flex:1;min-height:0;padding:4px 6px;border:0;border-radius:0;font-size:12px;line-height:1.45;background:transparent}
 .calcell.off{visibility:hidden}
-/* 제목(10자) 칸: 날짜 머리글 바로 아래 한 줄, 그 아래가 메모 본문 */
+/* 제목(12자) 칸: 날짜 머리글 바로 아래 한 줄, 그 아래가 메모 본문 */
 .calcell .caltt{flex:none;display:block;width:100%;margin:0;padding:3px 6px;border:0;border-bottom:1px dashed var(--line);border-radius:0;background:transparent;color:var(--mfg);font:inherit;font-size:12px;font-weight:600;line-height:1.35;height:calc(1.35em + 6px);resize:none;overflow:hidden;outline:none}
 .calcell .caltt::placeholder{color:var(--mute);font-weight:400;opacity:.65}
 .calcell .caltt:focus{background:rgba(51,154,240,.08)}
@@ -1402,7 +1402,7 @@ const CAL_WD = ["일","월","화","수","목","금","토"];
 const S2 = "<!--s2-->", S3 = "<!--s3-->", SC = "<!--c1-->";
 const calGrid = document.getElementById("calgrid"), calTitle = document.getElementById("calTitle"), calLeg = document.getElementById("calLeg");
 const EDS = [], CELLS = [], CAL_LBL = [], CAL_HS = [], CAL_HL = [], CAL_ZB = [], CAL_TT = [];
-const TITLE_MAX = 10;   // 날짜 칸 제목(요약) 최대 글자 수
+const TITLE_MAX = 12;   // 날짜 칸 제목(요약) 최대 글자 수
 let zoomI = -1;   // 확대된 날짜 칸의 번호 (-1: 없음)
 for (let i = 0; i < 42; i++) {
   const c = document.createElement("div"), h = document.createElement("div"), e = document.createElement("div");
