@@ -825,7 +825,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 <div class="hd">
 <h1>미니 <span id="kind" role="button" tabindex="0" title="클릭하면 바코드/QR 전환">바코드</span> 3×3</h1>
 <div class="tr">
-<div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="17:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div>
+<div class="tm pink" id="tm" role="timer" aria-live="off"><button type="button" id="tmBtn" class="fbbtn tmbtn" aria-expanded="true" title="클릭하면 목표 시각·남은 시간을 펼치거나 숨겨요">타이머</button><div class="tmwrap" id="tmw"><div class="tmin" id="tmin"><input id="tt" value="18:00" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="HH:MM" aria-label="목표 시각 (시:분)"><span class="rm">남은 시간 <span id="rem">--:--:--</span></span></div></div></div>
 </div>
 </div>
 <div class="top">
@@ -8181,7 +8181,7 @@ document.addEventListener("keydown", e => {
 
 /* ===== 목표 시각까지 남은 시간 타이머 ===== */
 const TIMER_ON=true;                   /* [타이머] 버튼의 처음 상태 (true: 켜짐 / false: 꺼짐) */
-const TIMER_DEFAULT="17:00";           /* 목표 시각 기본값 (시:분) */
+const TIMER_DEFAULT="18:00";           /* 목표 시각 기본값 (시:분) */
 const TKEY="bc9-target";
 (function(){
   const tt=$("tt"),rem=$("rem");
