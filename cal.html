@@ -1500,7 +1500,7 @@ for (let i = 0; i < 42; i++) {
 }
 // 마지막 행의 오른쪽 5칸은 어떤 달에도 날짜가 들어오지 않으므로 월간 메모 전용으로 합쳐요.
 const monthMemo = document.createElement("section"); monthMemo.id = "monthMemo"; monthMemo.setAttribute("aria-label", "월간 메모");
-monthMemo.innerHTML = '<div class="mm-head"><span class="mm-label" id="monthMemoLabel"></span><button type="button" class="mm-zoom" id="monthMemoZoom" aria-label="월간 메모 확대" title="월간 메모를 달력 전체 크기로 확대">⤢</button></div><input class="mm-title" id="monthMemoTitle" type="text" placeholder="월간 메모 제목 (한글 30자 기준)" aria-label="월간 메모 제목 (한글 30자 기준)"><div class="rich mm-body" id="monthMemoBody" contenteditable="true" data-ph="월간 메모를 입력하세요" role="textbox" aria-multiline="true"></div>';
+monthMemo.innerHTML = '<div class="mm-head"><span class="mm-label" id="monthMemoLabel"></span><button type="button" class="mm-zoom" id="monthMemoZoom" aria-label="월간 메모 확대" title="월간 메모를 달력 전체 크기로 확대">⤢</button></div><input class="mm-title" id="monthMemoTitle" type="text" placeholder="월간 메모 제목 (한글 34자 기준)" aria-label="월간 메모 제목 (한글 34자 기준)"><div class="rich mm-body" id="monthMemoBody" contenteditable="true" data-ph="월간 메모를 입력하세요" role="textbox" aria-multiline="true"></div>';
 calGrid.appendChild(monthMemo);
 const monthMemoLabel = monthMemo.querySelector("#monthMemoLabel"), monthMemoTitle = monthMemo.querySelector("#monthMemoTitle"), monthMemoBody = monthMemo.querySelector("#monthMemoBody"), monthMemoZoom = monthMemo.querySelector("#monthMemoZoom");
 makeRich(monthMemoBody);
