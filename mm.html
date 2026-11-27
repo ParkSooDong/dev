@@ -39,7 +39,7 @@
     z-index: 10;
   }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000e820821184b8ddc5e4c1d858%26fn%3Dmm_parksoodong_github_io__dev_fixed3.html%26cd%3Dattachment%26ts%3D498831%26p%3Dfs%26cid%3D1%26sig%3Da280d5c513572de114d3e5536e441c7f3cd36dddc09e55d3fb80d90f6220915f%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000061748206b160492f3085c522%26fn%3Dmm_parksoodong_github_io__dev_fixed4.html%26cd%3Dattachment%26ts%3D498831%26p%3Dfs%26cid%3D1%26sig%3Dafc355656095b93caabfadf17c240cdc05e382d73469eddabf9b5dc7d58dd04e%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001b348206a6dabe74589ce51c%26fn%3Dmm_parksoodong_github_io__dev_step17.html%26cd%3Dattachment%26ts%3D498830%26p%3Dfs%26cid%3D1%26sig%3D6425ababba6a357a3844bcf3911a8a296d4c70a946df12a786368c565c8aa291%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
@@ -2582,6 +2582,10 @@ dbSlotUrls.forEach((url, index) => {
                 doc.body.classList.add("dbslot-mini");
                 const editorWrap = doc.getElementById("edwrap");
                 if (editorWrap) editorWrap.classList.remove("c1", "c2", "c3");
+                ["edwrap", "edsplit", "memo", "memo2"].forEach(id => {
+                    const node = doc.getElementById(id);
+                    if (node) { node.style.visibility = "visible"; node.style.opacity = "1"; }
+                });
             } else doc.body.classList.remove("dbslot-mini");
             // 작은 7×6 칸에서만 가·나 제목을 별도 표시합니다.
             // 편집기 자체는 원래 edsplit 안의 DOM 위치에 그대로 두어 확대 시
@@ -12729,109 +12733,21 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
             html = html.replace('const stateKey = () => dbIdx === 0 ? KEY : KEY + "-" + (dbIdx + 1);', 'const stateKey = () => KEY;');
             const slotCss = `
         #dbGrp .dbloc, #dbGrp .dbbtn:not(.dbloc) { display:none !important; }
-        body.dbslot-mini { display:block !important; padding:0 !important; gap:0 !important; overflow:hidden !important; }
+        body.dbslot-mini { display:block !important; position:relative !important; padding:0 !important; margin:0 !important; gap:0 !important; overflow:hidden !important; }
         body.dbslot-mini > header, body.dbslot-mini .tb, body.dbslot-mini #tbar, body.dbslot-mini #fbar,
         body.dbslot-mini #toast, body.dbslot-mini #pwBox, body.dbslot-mini .imgx-bar,
-        body.dbslot-mini .imgx-box, body.dbslot-mini .imgx-hint { display:none !important; }
-        body.dbslot-mini #edwrap { position:absolute !important; inset:0 !important; display:block !important; min-width:0 !important; min-height:0 !important; }
-        body.dbslot-mini #edgut { display:none !important; }
-        body.dbslot-mini #edwrap .edsplit { position:absolute !important; inset:0 !important; display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; grid-template-rows:minmax(0,1fr) 18px !important; gap:2px !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important; }
-        .dbslot-pane-title { display:none !important; }
-        body.dbslot-mini .dbslot-pane-title { display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; white-space:pre-line !important; overflow:hidden !important; min-width:0 !important; min-height:0 !important; padding:0 1px !important; border:1px solid rgba(118,85,201,.42) !important; border-top:0 !important; border-radius:0 0 4px 4px !important; background:rgba(118,85,201,.10) !important; color:var(--ink) !important; font-size:7px !important; font-weight:700 !important; line-height:7px !important; }
-        body.dbslot-mini .dbslot-pane-a { grid-column:1 !important; grid-row:2 !important; }
-        body.dbslot-mini .dbslot-pane-b { grid-column:2 !important; grid-row:2 !important; }
-        body.dbslot-mini #memo { grid-column:1 !important; grid-row:1 !important; }
-        body.dbslot-mini #memo2 { grid-column:2 !important; grid-row:1 !important; }
-        body.dbslot-mini #edwrap .edsplit > :not(#memo):not(#memo2):not(.dbslot-pane-title) { display:none !important; }
-        /* 작은 달력 슬롯에서는 편집기 상태(c1/c2/c3, visibility:hidden 등)에 관계없이
-           가·나 두 메모의 실제 내용이 항상 표시되도록 우선순위를 확실히 고정합니다. */
-        /* mini 모드에서 일반 편집기의 활성 영역 숨김 상태(c1/c2/c3)가 작은 슬롯에 영향을 주지 않도록 제거 */
-        body.dbslot-mini #edwrap.c1, body.dbslot-mini #edwrap.c2, body.dbslot-mini #edwrap.c3 { visibility:visible !important; }
-        body.dbslot-mini #edwrap #edsplit { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; grid-template-rows:minmax(0,1fr) 18px !important; gap:2px !important; position:absolute !important; inset:0 !important; }
-        body.dbslot-mini #edwrap #memo, body.dbslot-mini #edwrap #memo2 { display:block !important; visibility:visible !important; opacity:1 !important; position:relative !important; inset:auto !important; align-self:stretch !important; justify-self:stretch !important; box-sizing:border-box !important; min-width:0 !important; min-height:0 !important; width:auto !important; height:auto !important; max-height:none !important; overflow:auto !important; padding:3px 4px !important; border:1px solid rgba(118,85,201,.42) !important; border-bottom:0 !important; border-radius:4px 4px 0 0 !important; background:var(--card) !important; color:var(--mfg) !important; -webkit-text-fill-color:var(--mfg) !important; font-size:10px !important; line-height:1.25 !important; }
+        body.dbslot-mini .imgx-box, body.dbslot-mini .imgx-hint, body.dbslot-mini #edgut { display:none !important; }
+        body.dbslot-mini #edwrap { display:block !important; position:absolute !important; visibility:visible !important; inset:0 !important; width:100% !important; height:100% !important; min-width:0 !important; min-height:0 !important; margin:0 !important; padding:0 !important; overflow:hidden !important; }
+        body.dbslot-mini #edsplit { display:block !important; position:absolute !important; visibility:visible !important; inset:0 !important; width:100% !important; height:100% !important; min-width:0 !important; min-height:0 !important; margin:0 !important; padding:0 !important; overflow:hidden !important; }
+        body.dbslot-mini #memo, body.dbslot-mini #memo2 { display:block !important; visibility:visible !important; opacity:1 !important; position:absolute !important; top:0 !important; bottom:20px !important; left:auto !important; right:auto !important; width:50% !important; height:auto !important; min-width:0 !important; min-height:0 !important; max-width:none !important; max-height:none !important; margin:0 !important; padding:3px 4px !important; overflow:auto !important; box-sizing:border-box !important; border:1px solid rgba(118,85,201,.42) !important; border-bottom:0 !important; border-radius:4px 4px 0 0 !important; background:var(--card) !important; color:var(--mfg) !important; -webkit-text-fill-color:var(--mfg) !important; font-size:10px !important; line-height:1.25 !important; transform:none !important; clip:auto !important; clip-path:none !important; }
+        body.dbslot-mini #memo { left:0 !important; }
+        body.dbslot-mini #memo2 { left:50% !important; }
         body.dbslot-mini #memo::before, body.dbslot-mini #memo2::before { content:none !important; display:none !important; }
-        /* 최종 강제 보정: 일반 편집기의 0% 접힘(c1/c2/c3)과 apply()의 inline 분할값이
-           작은 달력 슬롯의 가·나 영역에 영향을 주지 못하게 mini 전용 규칙을 더 높은 우선순위로 고정 */
-        body.dbslot-mini #edwrap.c1 #memo, body.dbslot-mini #edwrap.c2 #memo2,
-        body.dbslot-mini #edwrap.c3 #memo3,
-        body.dbslot-mini #edwrap #memo, body.dbslot-mini #edwrap #memo2 {
-          display:block !important; visibility:visible !important; opacity:1 !important;
-          width:auto !important; height:auto !important; min-width:0 !important; min-height:0 !important;
-          max-width:none !important; max-height:none !important; overflow:auto !important;
-          flex:initial !important; grid-area:auto !important; transform:none !important;
-          clip:auto !important; clip-path:none !important; position:relative !important;
-          color:var(--mfg) !important; -webkit-text-fill-color:var(--mfg) !important;
-        }
-        body.dbslot-mini #edwrap #edsplit { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; grid-template-rows:minmax(0,1fr) 18px !important; }
-        body.dbslot-mini #edwrap #memo { grid-column:1 !important; grid-row:1 !important; }
-        body.dbslot-mini #edwrap #memo2 { grid-column:2 !important; grid-row:1 !important; }
-        body.dbslot-mini #edwrap .edsplit {
-          grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-          grid-template-rows:minmax(0,1fr) 18px !important;
-          grid-template-areas:"memoA memoB" "titleA titleB" !important;
-        }
-        body.dbslot-mini #edwrap .edsplit > #memo { grid-area:memoA !important; }
-        body.dbslot-mini #edwrap .edsplit > #memo2 { grid-area:memoB !important; }
-        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-a { grid-area:titleA !important; }
-        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-b { grid-area:titleB !important; }
-        body.dbslot-mini #edwrap .edsplit > #memo,
-        body.dbslot-mini #edwrap .edsplit > #memo2 {
-          display:block !important; visibility:visible !important; opacity:1 !important;
-          position:static !important; float:none !important; transform:none !important;
-          align-self:stretch !important; justify-self:stretch !important;
-          width:auto !important; height:auto !important; min-width:0 !important; min-height:0 !important;
-          max-width:none !important; max-height:none !important; overflow:auto !important;
-          flex:none !important; clip:auto !important; clip-path:none !important;
-        }
-        /* 최종 mini 배치: 가·나 메모는 윗행 전체를 채우고, 제목은 아래 18px 행에 배치합니다.
-           이전 보정에서 grid-area:auto !important 가 이 명시 배치보다 우선하여 제목이 윗줄로 올라가는 충돌을 제거합니다. */
-        body.dbslot-mini #edwrap .edsplit {
-          display:grid !important; position:absolute !important; inset:0 !important;
-          grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-          grid-template-rows:minmax(0,1fr) 18px !important;
-          grid-template-areas:"memoA memoB" "titleA titleB" !important;
-          gap:2px !important; overflow:hidden !important;
-        }
-        body.dbslot-mini #edwrap .edsplit > #memo { grid-area:memoA !important; }
-        body.dbslot-mini #edwrap .edsplit > #memo2 { grid-area:memoB !important; }
-        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-a { grid-area:titleA !important; }
-        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-b { grid-area:titleB !important; }
-        body.dbslot-mini #edwrap .edsplit > .splitter { display:none !important; }
-        /* DB 미니창 최종 배치: Grid의 기존 행/열 및 접힘 상태 충돌을 우회하고
-           가·나 편집 영역과 제목을 absolute 위치로 직접 고정합니다. */
-        body.dbslot-mini #edwrap, body.dbslot-mini #edwrap .edsplit {
-          position:absolute !important; inset:0 !important; width:auto !important; height:auto !important;
-          display:block !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important;
-        }
-        body.dbslot-mini #edwrap .edsplit > #memo,
-        body.dbslot-mini #edwrap .edsplit > #memo2 {
-          display:block !important; visibility:visible !important; opacity:1 !important;
-          position:absolute !important; top:0 !important; bottom:20px !important;
-          width:50% !important; height:auto !important; min-width:0 !important; min-height:0 !important;
-          max-width:none !important; max-height:none !important; margin:0 !important;
-          overflow:auto !important; transform:none !important; clip:auto !important; clip-path:none !important;
-          box-sizing:border-box !important; padding:3px 4px !important;
-          border:1px solid rgba(118,85,201,.42) !important; border-bottom:0 !important;
-          border-radius:4px 4px 0 0 !important; background:var(--card) !important;
-          color:var(--mfg) !important; -webkit-text-fill-color:var(--mfg) !important;
-          font-size:10px !important; line-height:1.25 !important; flex:none !important;
-        }
-        body.dbslot-mini #edwrap .edsplit > #memo { left:0 !important; right:auto !important; }
-        body.dbslot-mini #edwrap .edsplit > #memo2 { left:50% !important; right:0 !important; }
-        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-a,
-        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-b {
-          display:flex !important; visibility:visible !important; opacity:1 !important;
-          position:absolute !important; top:auto !important; bottom:0 !important;
-          width:50% !important; height:18px !important; min-width:0 !important; min-height:0 !important;
-          max-width:none !important; max-height:18px !important; margin:0 !important;
-          overflow:hidden !important; box-sizing:border-box !important;
-          align-items:center !important; justify-content:center !important;
-          border:1px solid rgba(118,85,201,.42) !important; border-top:0 !important;
-          border-radius:0 0 4px 4px !important; background:rgba(118,85,201,.10) !important;
-          color:var(--ink) !important; font-size:7px !important; font-weight:700 !important; line-height:7px !important;
-        }
-        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-a { left:0 !important; right:auto !important; }
-        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-b { left:50% !important; right:0 !important; }
+        body.dbslot-mini .dbslot-pane-title { display:flex !important; visibility:visible !important; opacity:1 !important; position:absolute !important; bottom:0 !important; top:auto !important; width:50% !important; height:18px !important; min-width:0 !important; min-height:0 !important; max-width:none !important; max-height:18px !important; margin:0 !important; padding:0 1px !important; overflow:hidden !important; box-sizing:border-box !important; align-items:center !important; justify-content:center !important; text-align:center !important; border:1px solid rgba(118,85,201,.42) !important; border-top:0 !important; border-radius:0 0 4px 4px !important; background:rgba(118,85,201,.10) !important; color:var(--ink) !important; font-size:7px !important; font-weight:700 !important; line-height:7px !important; }
+        body.dbslot-mini .dbslot-pane-a { left:0 !important; right:auto !important; }
+        body.dbslot-mini .dbslot-pane-b { left:50% !important; right:0 !important; }
+        body.dbslot-mini #edsplit > :not(#memo):not(#memo2):not(.dbslot-pane-title) { display:none !important; }
+        body.dbslot-mini #edwrap.c1, body.dbslot-mini #edwrap.c2, body.dbslot-mini #edwrap.c3 { visibility:visible !important; }
       `;
             html = html.replace('</head>', `<style id="newmm-db-slot-css">${slotCss}</style></head>`);
         }
