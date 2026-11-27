@@ -39,7 +39,7 @@
     z-index: 10;
   }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001e148211aa0dffd75cfcfcd8%26fn%3Dmm_parksoodong_github_io__dev%25284%2529.html%26cd%3Dattachment%26ts%3D498831%26p%3Dfs%26cid%3D1%26sig%3D543587f09d8ddbe5e11857f12dedf109091f38ad88bbdf3e05f2233023f35c3a%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000059208211a633785b496192e7%26fn%3Dmm_parksoodong_github_io__dev_fixed.html%26cd%3Dattachment%26ts%3D498831%26p%3Dfs%26cid%3D1%26sig%3D1cc24096925440472a48eaf24968f779c5c1cd1044f7e583b7afa77e0198ae06%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001b348206a6dabe74589ce51c%26fn%3Dmm_parksoodong_github_io__dev_step17.html%26cd%3Dattachment%26ts%3D498830%26p%3Dfs%26cid%3D1%26sig%3D6425ababba6a357a3844bcf3911a8a296d4c70a946df12a786368c565c8aa291%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
@@ -12765,6 +12765,24 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
         body.dbslot-mini #edwrap #edsplit { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; grid-template-rows:minmax(0,1fr) 18px !important; }
         body.dbslot-mini #edwrap #memo { grid-column:1 !important; grid-row:1 !important; }
         body.dbslot-mini #edwrap #memo2 { grid-column:2 !important; grid-row:1 !important; }
+        body.dbslot-mini #edwrap .edsplit {
+          grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+          grid-template-rows:minmax(0,1fr) 18px !important;
+          grid-template-areas:"memoA memoB" "titleA titleB" !important;
+        }
+        body.dbslot-mini #edwrap .edsplit > #memo { grid-area:memoA !important; }
+        body.dbslot-mini #edwrap .edsplit > #memo2 { grid-area:memoB !important; }
+        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-a { grid-area:titleA !important; }
+        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-b { grid-area:titleB !important; }
+        body.dbslot-mini #edwrap .edsplit > #memo,
+        body.dbslot-mini #edwrap .edsplit > #memo2 {
+          display:block !important; visibility:visible !important; opacity:1 !important;
+          position:static !important; float:none !important; transform:none !important;
+          align-self:stretch !important; justify-self:stretch !important;
+          width:100% !important; height:100% !important; min-width:0 !important; min-height:0 !important;
+          max-width:none !important; max-height:none !important; overflow:auto !important;
+          flex:none !important; clip:auto !important; clip-path:none !important;
+        }
       `;
             html = html.replace('</head>', `<style id="newmm-db-slot-css">${slotCss}</style></head>`);
         }
