@@ -39,7 +39,7 @@
     z-index: 10;
   }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000039c82068bea9269052acefd%26fn%3Dmm_parksoodong_github_io__dev_step15.html%26cd%3Dattachment%26ts%3D498830%26p%3Dfs%26cid%3D1%26sig%3D1b6faedd9b12a3978c2f4776749141b6b163633599d631ffad12593f7d6c614e%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001b348206a6dabe74589ce51c%26fn%3Dmm_parksoodong_github_io__dev_step17.html%26cd%3Dattachment%26ts%3D498830%26p%3Dfs%26cid%3D1%26sig%3D6425ababba6a357a3844bcf3911a8a296d4c70a946df12a786368c565c8aa291%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <div id="host"><div id="stage"></div></div>
@@ -2517,7 +2517,7 @@ function openDbSlotZoom(item) {
     item.expand.title = "DB" + (item.index + 1) + " 메모 축소";
     item.expand.setAttribute("aria-label", "DB" + (item.index + 1) + " 메모 축소");
     try {
-        item.frame.contentDocument.body.classList.remove("dbslot-mini");
+        item.frame.contentDocument.body.classList.remove("dbslot-mini");item.frame.contentDocument.documentElement.style.height = "100%";item.frame.contentDocument.body.style.height = "100%";
     }
     catch (_) { }
     dbSlotZoomed = item;
@@ -2577,13 +2577,13 @@ dbSlotUrls.forEach((url, index) => {
     frame.addEventListener("load", () => {
         try {
             const doc = frame.contentDocument;
-            doc.body.classList.add("dbslot-mini");
+            if (!el.classList.contains("zoom")) doc.body.classList.add("dbslot-mini"); else doc.body.classList.remove("dbslot-mini");
             // 작은 7×6 칸에서만 가·나 제목을 별도 표시합니다.
             // 편집기 자체는 원래 edsplit 안의 DOM 위치에 그대로 두어 확대 시
             // 기존 메모장 레이아웃(툴바와 가·나·다)을 온전히 복원합니다.
             const split = doc.getElementById("edsplit");
             if (split) {
-                [["가\\n영역", "a"], ["나\\n영역", "b"]].forEach(([caption, pane]) => {
+                [["가", "a"], ["나", "b"]].forEach(([caption, pane]) => {
                     if (split.querySelector(".dbslot-pane-title.dbslot-pane-" + pane)) return;
                     const heading = doc.createElement("div");
                     heading.className = "dbslot-pane-title dbslot-pane-" + pane;
@@ -12730,7 +12730,7 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
         body.dbslot-mini .imgx-box, body.dbslot-mini .imgx-hint { display:none !important; }
         body.dbslot-mini #edwrap { position:absolute !important; inset:0 !important; display:block !important; min-width:0 !important; min-height:0 !important; }
         body.dbslot-mini #edgut { display:none !important; }
-        body.dbslot-mini #edwrap .edsplit { position:absolute !important; inset:0 !important; display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; grid-template-rows:16px minmax(0,1fr) !important; gap:2px !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important; }
+        body.dbslot-mini #edwrap .edsplit { position:absolute !important; inset:0 !important; display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; grid-template-rows:18px minmax(0,1fr) !important; gap:2px !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important; }
         .dbslot-pane-title { display:none !important; }
         body.dbslot-mini .dbslot-pane-title { display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; white-space:pre-line !important; overflow:hidden !important; min-width:0 !important; min-height:0 !important; padding:0 1px !important; border:1px solid rgba(118,85,201,.42) !important; border-bottom:0 !important; border-radius:4px 4px 0 0 !important; background:rgba(118,85,201,.10) !important; color:var(--ink) !important; font-size:7px !important; font-weight:700 !important; line-height:7px !important; }
         body.dbslot-mini .dbslot-pane-a { grid-column:1 !important; grid-row:1 !important; }
@@ -12738,7 +12738,7 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
         body.dbslot-mini #memo { grid-column:1 !important; grid-row:2 !important; }
         body.dbslot-mini #memo2 { grid-column:2 !important; grid-row:2 !important; }
         body.dbslot-mini #edwrap .edsplit > :not(#memo):not(#memo2):not(.dbslot-pane-title) { display:none !important; }
-        body.dbslot-mini #memo, body.dbslot-mini #memo2 { display:block !important; position:relative !important; min-width:0 !important; min-height:0 !important; width:100% !important; height:100% !important; max-height:100% !important; overflow:hidden !important; padding:3px 4px !important; border:1px solid rgba(118,85,201,.42) !important; border-top:0 !important; border-radius:0 0 4px 4px !important; background:var(--card) !important; font-size:10px !important; line-height:1.25 !important; }
+        body.dbslot-mini #memo, body.dbslot-mini #memo2 { display:block !important; visibility:visible !important; opacity:1 !important; position:relative !important; inset:auto !important; align-self:stretch !important; justify-self:stretch !important; box-sizing:border-box !important; min-width:0 !important; min-height:0 !important; width:100% !important; height:100% !important; max-height:100% !important; overflow:auto !important; padding:3px 4px !important; border:1px solid rgba(118,85,201,.42) !important; border-top:0 !important; border-radius:0 0 4px 4px !important; background:var(--card) !important; font-size:10px !important; line-height:1.25 !important; }
         body.dbslot-mini #memo::before, body.dbslot-mini #memo2::before { content:none !important; display:none !important; }
       `;
             html = html.replace('</head>', `<style id="newmm-db-slot-css">${slotCss}</style></head>`);
