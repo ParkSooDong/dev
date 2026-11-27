@@ -39,7 +39,7 @@
     z-index: 10;
   }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000da9c820ba783adae0ad5b9ef%26fn%3Dmm_parksoodong_github_io__dev_step10.html%26cd%3Dattachment%26ts%3D498829%26p%3Dfs%26cid%3D1%26sig%3D2ade1273a4896e250f833a29c707f38ca33a25f38e274c76db3e8f876ffdb5fd%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001584820ba3c4ff29e2dc9c95%26fn%3Dmm_parksoodong_github_io__dev_step12.html%26cd%3Dattachment%26ts%3D498830%26p%3Dfs%26cid%3D1%26sig%3D43953056e31eb8f746028d7299d6a09636de192f59175aa0f7b6dc9666cd8fc8%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <div id="host"><div id="stage"></div></div>
@@ -2391,9 +2391,11 @@ dbSlotStyle.textContent = [
     ".dbslot-head button[aria-pressed=true] { background:var(--ink); color:var(--bg); border-color:var(--ink); }",
     ".dbslot-head button:disabled { opacity:.4; cursor:default; }",
     ".dbslot-frame { display:block; flex:1; width:100%; min-width:0; min-height:0; border:0; background:var(--bg); }",
-    ".dbslot.zoom { position:absolute !important; inset:0 !important; z-index:20 !important; grid-column:1 / -1 !important; grid-row:1 / -1 !important; display:flex !important; width:auto !important; height:auto !important; min-width:0 !important; min-height:0 !important; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.2); }",
-    ".dbslot.zoom .dbslot-head { min-height:38px; padding:5px 8px; font-size:13px; }",
-    ".dbslot.zoom .dbslot-head button.dbslot-expand { display:inline-flex !important; visibility:visible !important; opacity:1 !important; flex-basis:34px; width:34px; min-width:34px; height:32px; font-size:23px !important; }",
+    "body.dbslot-zoom-open { overflow:hidden !important; }",
+    ".dbslot.zoom { position:fixed !important; inset:0 !important; z-index:2147483000 !important; display:flex !important; flex-direction:column !important; width:100% !important; height:100% !important; min-width:0 !important; min-height:0 !important; margin:0 !important; border:0 !important; border-radius:0 !important; background:var(--card); box-shadow:none !important; }",
+    ".dbslot.zoom .dbslot-frame { display:block !important; flex:1 1 auto !important; width:100% !important; height:0 !important; min-width:0 !important; min-height:0 !important; border:0 !important; }",
+    ".dbslot.zoom .dbslot-head { position:sticky !important; top:0 !important; z-index:2147483001 !important; display:flex !important; flex:none !important; min-height:42px; padding:5px 8px; font-size:13px; background:var(--card) !important; }",
+    ".dbslot.zoom .dbslot-head button.dbslot-expand { display:inline-flex !important; visibility:visible !important; opacity:1 !important; flex:0 0 42px !important; width:42px !important; min-width:42px !important; height:36px !important; font-size:25px !important; touch-action:manipulation; }",
     "@media (max-width:700px) { .dbslot.zoom .dbslot-head { min-height:42px; } .dbslot.zoom .dbslot-head b { display:block !important; visibility:visible !important; } .dbslot.zoom .dbslot-head button.dbslot-expand { display:inline-flex !important; visibility:visible !important; opacity:1 !important; } }",
     ".dbslot.zoom .dbslot-head button { padding:3px 10px; font-size:12px; }"
 ].join("\\n");
@@ -2473,6 +2475,14 @@ function closeDbSlotZoom(item) {
     if (!item || !item.el.classList.contains("zoom"))
         return;
     item.el.classList.remove("zoom");
+    // 확대 중에는 달력의 제목/툴바까지 덮도록 body 바로 아래로 옮겼다가,
+    // 축소할 때 원래 달력 그리드의 정확한 위치로 되돌립니다.
+    if (item.zoomPlaceholder && item.zoomPlaceholder.parentNode) {
+        item.zoomPlaceholder.parentNode.insertBefore(item.el, item.zoomPlaceholder);
+        item.zoomPlaceholder.remove();
+        item.zoomPlaceholder = null;
+    }
+    document.body.classList.remove("dbslot-zoom-open");
     item.label.textContent = String(item.index + 1);
     item.expand.textContent = "⤢";
     item.expand.title = "DB" + (item.index + 1) + " 메모 확대";
@@ -2493,6 +2503,14 @@ function openDbSlotZoom(item) {
         setMonthZoom(false, false);
     if (alwaysZoom)
         setAlwaysZoom(false, false);
+    // 달력 메모의 제목/툴바가 있는 화면 최상단 레이어에서 DB만 전체 화면으로 표시합니다.
+    // 그리드 안의 조상 요소(transform/overflow)에 확대가 제한되지 않도록 body로 이동합니다.
+    if (!item.zoomPlaceholder && item.el.parentNode) {
+        item.zoomPlaceholder = document.createComment("DB" + (item.index + 1) + " slot position");
+        item.el.parentNode.insertBefore(item.zoomPlaceholder, item.el);
+    }
+    document.body.appendChild(item.el);
+    document.body.classList.add("dbslot-zoom-open");
     item.el.classList.add("zoom");
     item.label.textContent = "DB" + (item.index + 1) + " 메모장";
     item.expand.textContent = "×";
@@ -2560,6 +2578,19 @@ dbSlotUrls.forEach((url, index) => {
         try {
             const doc = frame.contentDocument;
             doc.body.classList.add("dbslot-mini");
+            // 가·나 편집기를 각각 '제목줄 + 입력 영역' 구조로 감쌉니다.
+            const split = doc.getElementById("edsplit");
+            [ ["memo", "가 영역"], ["memo2", "나 영역"] ].forEach(([id, caption], paneIndex) => {
+                const editor = doc.getElementById(id);
+                if (!split || !editor || editor.parentElement?.classList.contains("dbslot-pane-wrap")) return;
+                const wrap = doc.createElement("section");
+                wrap.className = "dbslot-pane-wrap";
+                const heading = doc.createElement("div");
+                heading.className = "dbslot-pane-title";
+                heading.textContent = caption;
+                split.appendChild(wrap);
+                wrap.append(heading, editor);
+            });
             const title = doc.querySelector("header h1");
             if (title)
                 title.textContent = "DB" + (index + 1) + " 메모장";
@@ -12700,15 +12731,17 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
         body.dbslot-mini #edwrap { position:absolute !important; inset:0 !important; display:block !important; min-width:0 !important; min-height:0 !important; }
         body.dbslot-mini #edgut { display:none !important; }
         body.dbslot-mini #edwrap .edsplit { position:absolute !important; inset:0 !important; display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; grid-template-rows:minmax(0,1fr) !important; gap:3px !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important; }
-        body.dbslot-mini #memo { grid-column:1 !important; grid-row:1 !important; }
-        body.dbslot-mini #memo2 { grid-column:2 !important; grid-row:1 !important; }
+        .dbslot-pane-wrap { display:contents; }
+        body.dbslot-mini .dbslot-pane-wrap { display:grid !important; grid-template-rows:16px minmax(0,1fr) !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important; border:1px solid rgba(118,85,201,.42) !important; border-radius:4px !important; background:var(--card) !important; }
+        body.dbslot-mini .dbslot-pane-title { display:flex !important; align-items:center !important; min-width:0 !important; padding:0 4px !important; border-bottom:1px solid var(--line) !important; background:rgba(118,85,201,.10) !important; color:var(--ink) !important; font-size:9px !important; font-weight:700 !important; line-height:16px !important; }
+        body.dbslot-mini #memo { grid-column:1 !important; grid-row:2 !important; }
+        body.dbslot-mini #memo2 { grid-column:2 !important; grid-row:2 !important; }
+        .dbslot-pane-wrap:first-of-type { grid-column:1 !important; grid-row:1 !important; }
+        .dbslot-pane-wrap:last-of-type { grid-column:2 !important; grid-row:1 !important; }
         body.dbslot-mini #memo3, body.dbslot-mini .splitter, body.dbslot-mini .cmphd,
         body.dbslot-mini .cmp, body.dbslot-mini .vsp { display:none !important; }
-        body.dbslot-mini #memo, body.dbslot-mini #memo2 { min-width:0 !important; min-height:0 !important; width:auto !important; height:auto !important; overflow:auto !important; padding:4px !important; border-radius:4px !important; font-size:10px !important; line-height:1.25 !important; }
-        body.dbslot-mini #memo::before, body.dbslot-mini #memo2::before { display:block !important; position:sticky !important; top:-4px !important; z-index:2 !important; margin:-4px -4px 4px !important; padding:2px 4px !important; background:var(--bg) !important; border-bottom:1px solid var(--line) !important; color:var(--mute) !important; font-size:9px !important; font-weight:700 !important; line-height:1.35 !important; pointer-events:none !important; }
-        body.dbslot-mini #memo::before { content:"가 영역" !important; }
-        body.dbslot-mini #memo2::before { content:"나 영역" !important; }
-        body.dbslot-mini #memo:empty::before, body.dbslot-mini #memo2:empty::before { font-size:9px !important; }
+        body.dbslot-mini #memo, body.dbslot-mini #memo2 { display:block !important; grid-column:auto !important; grid-row:auto !important; min-width:0 !important; min-height:0 !important; width:100% !important; height:100% !important; max-height:100% !important; overflow:hidden !important; padding:3px 4px !important; border:0 !important; border-radius:0 !important; font-size:10px !important; line-height:1.25 !important; }
+        body.dbslot-mini #memo::before, body.dbslot-mini #memo2::before { content:none !important; display:none !important; }
       `;
             html = html.replace('</head>', `<style id="newmm-db-slot-css">${slotCss}</style></head>`);
         }
