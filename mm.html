@@ -28,7 +28,7 @@
   }
   #stage iframe.on { visibility: visible; }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795740370906&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000006268820b972a505b494c64b1%26fn%3Dnewmm_parksoodong_calendar_switch_fixed.html%26cd%3Dattachment%26ts%3D498818%26p%3Dfs%26cid%3D1%26sig%3D8b2b12125f918e853e3d4f6aa277f7500d2c49ea077a05add8f36b412a501cc3%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795740370906&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001810820ba15aa0171dcc7111%26fn%3Dnewmm_parksoodong_calendar_switch_fixed2.html%26cd%3Dattachment%26ts%3D498819%26p%3Dfs%26cid%3D1%26sig%3D577107f438d7cb658653beb030cd8ad705862b36eb143de38b02f6e867ce7f0d%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795740370906&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <div id="host"><div id="stage"></div></div>
@@ -15694,8 +15694,20 @@ window.NEWMM_SHARED_SCRIPTS = {"picker":"\n/* 색상 팔레트(네이티브 colo
     heading.setAttribute("role", "button");
     heading.tabIndex = 0;
     heading.title = `클릭하면 [${VIEWS[name].other === "cal" ? VIEWS.cal.label : VIEWS.memo.label}]로 전환해요`;
-    const go = () => frame.contentWindow.parent.postMessage({ newmm: "switch" }, "*");
-    heading.addEventListener("click", go);
+    // 같은 출처의 srcdoc iframe에서는 부모의 전환 함수를 직접 호출합니다.
+    // postMessage만 사용하면 임베딩/브라우저 환경에 따라 요청이 전달되어도
+    // 부모 쪽 source 판별에서 누락될 수 있어 직접 호출을 우선합니다.
+    const go = (event) => {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      try {
+        if (typeof frame.contentWindow.parent.__NEWMM_SWITCH__ === "function") {
+          frame.contentWindow.parent.__NEWMM_SWITCH__(name);
+          return;
+        }
+      } catch (error) {}
+      try { frame.contentWindow.parent.postMessage({ newmm: "switch", from: name }, "*"); } catch (error) {}
+    };
+    heading.addEventListener("click", go, true);
     heading.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -15833,9 +15845,19 @@ window.NEWMM_SHARED_SCRIPTS = {"picker":"\n/* 색상 팔레트(네이티브 colo
     });
   }
 
+  // iframe에서 직접 호출하는 전환 진입점
+  window.__NEWMM_SWITCH__ = function (from) {
+    if (!VIEWS[from]) return;
+    switchTo(VIEWS[from].other);
+  };
+
   window.addEventListener("message", function (event) {
     const data = event.data;
     if (!data || data.newmm !== "switch") return;
+    if (data.from && VIEWS[data.from]) {
+      switchTo(VIEWS[data.from].other);
+      return;
+    }
     for (const key in frames) {
       if (frames[key].contentWindow === event.source) {
         switchTo(VIEWS[key].other);
