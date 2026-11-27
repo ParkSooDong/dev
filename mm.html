@@ -39,7 +39,7 @@
     z-index: 10;
   }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000009630820b8693ac358f4f3f04%26fn%3Dmm_parksoodong_github_io__dev_step8.html%26cd%3Dattachment%26ts%3D498829%26p%3Dfs%26cid%3D1%26sig%3Df76b9515f420336acf315cbe3b1603399f34c4101f08e702cd69a2a16a7ceb56%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000d0d8820bb8fa2cc4d3d76c05%26fn%3Dmm_parksoodong_github_io__dev_step9.html%26cd%3Dattachment%26ts%3D498829%26p%3Dfs%26cid%3D1%26sig%3D203c5d6ab40a7ac0daa05d18da42e888b86f69e3100a15aac64b4b7e437edda1%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <div id="host"><div id="stage"></div></div>
@@ -2383,8 +2383,9 @@ let dbSlotZoomed = null;
 const dbSlotStyle = document.createElement("style");
 dbSlotStyle.textContent = [
     ".dbslot { z-index:3; display:flex; flex-direction:column; min-width:0; min-height:0; overflow:hidden; border:2px solid #7655c9; border-radius:8px; background:var(--card); }",
-    ".dbslot-head { flex:none; display:flex; align-items:center; gap:4px; min-width:0; padding:2px 4px 2px 6px; border-bottom:1px solid rgba(118,85,201,.38); background:rgba(118,85,201,.09); font-size:10px; font-weight:700; color:var(--ink); }",
-    ".dbslot-head b { flex:1; min-width:0; }",
+    ".dbslot-head { flex:none; display:flex; align-items:center; gap:2px; min-width:0; padding:2px 4px 2px 6px; border-bottom:1px solid rgba(118,85,201,.38); background:rgba(118,85,201,.09); font-size:10px; font-weight:700; color:var(--ink); }",
+    ".dbslot-head b { flex:none; min-width:0; }",
+    ".dbslot-head button.dbslot-expand { margin-left:auto; }",
     ".dbslot-head button { flex:none; min-width:0; margin:0; padding:1px 6px; border:1px solid var(--line); border-radius:5px; background:transparent; color:var(--ink); font:inherit; font-size:10px; line-height:1.35; cursor:pointer; white-space:nowrap; }",
     ".dbslot-head button[aria-pressed=true] { background:var(--ink); color:var(--bg); border-color:var(--ink); }",
     ".dbslot-head button:disabled { opacity:.4; cursor:default; }",
@@ -2404,7 +2405,7 @@ function dbSlotIsConnected(item) {
 }
 function syncDbSlotButton(item) {
     const connected = dbSlotIsConnected(item);
-    item.connect.textContent = connected ? "연결" : "로컬";
+    item.connect.textContent = connected ? "로컬" : "연결";
     item.connect.setAttribute("aria-pressed", String(connected));
     item.connect.title = connected ? "현재 DB에 연결됨 — 누르면 로컬 작업으로 전환합니다" : "현재 로컬 작업 — 누르면 DB" + (item.index + 1) + "의 memo에 연결합니다";
 }
@@ -2512,13 +2513,14 @@ dbSlotUrls.forEach((url, index) => {
     const head = document.createElement("div");
     head.className = "dbslot-head";
     const label = document.createElement("b");
-    label.textContent = "DB" + (index + 1);
+    label.textContent = String(index + 1);
     const connect = document.createElement("button");
     connect.type = "button";
     connect.textContent = "로컬";
     connect.disabled = true;
     const expand = document.createElement("button");
     expand.type = "button";
+    expand.className = "dbslot-expand";
     expand.textContent = "⤢";
     expand.title = "DB" + (index + 1) + " 메모를 메모장 전체 편집 화면으로 확대";
     expand.setAttribute("aria-label", "DB" + (index + 1) + " 메모 확대");
@@ -12697,6 +12699,9 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
         body.dbslot-mini #memo3, body.dbslot-mini .splitter, body.dbslot-mini .cmphd,
         body.dbslot-mini .cmp, body.dbslot-mini .vsp { display:none !important; }
         body.dbslot-mini #memo, body.dbslot-mini #memo2 { min-width:0 !important; min-height:0 !important; width:auto !important; height:auto !important; overflow:auto !important; padding:4px !important; border-radius:4px !important; font-size:10px !important; line-height:1.25 !important; }
+        body.dbslot-mini #memo::before, body.dbslot-mini #memo2::before { display:block !important; position:sticky !important; top:-4px !important; z-index:2 !important; margin:-4px -4px 4px !important; padding:2px 4px !important; background:var(--bg) !important; border-bottom:1px solid var(--line) !important; color:var(--mute) !important; font-size:9px !important; font-weight:700 !important; line-height:1.35 !important; pointer-events:none !important; }
+        body.dbslot-mini #memo::before { content:"가 영역" !important; }
+        body.dbslot-mini #memo2::before { content:"나 영역" !important; }
         body.dbslot-mini #memo:empty::before, body.dbslot-mini #memo2:empty::before { font-size:9px !important; }
       `;
             html = html.replace('</head>', `<style id="newmm-db-slot-css">${slotCss}</style></head>`);
