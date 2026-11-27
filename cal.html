@@ -1804,7 +1804,7 @@ const memoAll = {
     renderCal();
   },
   get disabled() { return calDis; },
-  set disabled(b) { calDis = !!b; EDS.forEach((e, i) => { e.disabled = calDis || !e.dataset.date; CAL_TT[i].disabled = e.disabled; }); monthMemoTitle.disabled = calDis; monthMemoBody.disabled = calDis; deleteDailyMemo.setAttribute("aria-disabled", String(calDis)); deleteMonthlyMemo.setAttribute("aria-disabled", String(calDis)); },
+  set disabled(b) { calDis = !!b; EDS.forEach((e, i) => { e.disabled = calDis || !e.dataset.date; CAL_TT[i].disabled = e.disabled; }); monthMemoTitle.disabled = calDis; monthMemoBody.disabled = calDis; alwaysMemoTitle.disabled = calDis; alwaysMemoBody.disabled = calDis; deleteDailyMemo.setAttribute("aria-disabled", String(calDis)); deleteMonthlyMemo.setAttribute("aria-disabled", String(calDis)); },
   get textContent() { return EDS.map(e => e.textContent).join("") + Array.from(titles.values()).join("") + Array.from(monthStore.values()).map(x => (x.title || "") + (x.body || "")).join("") + (alwaysMemo.title || "") + (alwaysMemo.body || "") + legacy.join("") + Array.from(store.entries()).filter(([k]) => !EDS.some(e => e.dataset.date === k)).map(x => x[1]).join(""); }
 };
 const ALL_EDS = EDS.concat([monthMemoBody]);
