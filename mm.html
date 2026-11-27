@@ -28,7 +28,7 @@
   }
   #stage iframe.on { visibility: visible; }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795740370906&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000d414820ba1df38b649e3fbf6%26fn%3Dnewmm_parksoodong_github_io__dev_integrated.html%26cd%3Dattachment%26ts%3D498818%26p%3Dfs%26cid%3D1%26sig%3D76366d42f3336d2b98c02c3324cec55b443d8c4cd617cb491081e5e210b9ef10%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795740370906&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000006268820b972a505b494c64b1%26fn%3Dnewmm_parksoodong_calendar_switch_fixed.html%26cd%3Dattachment%26ts%3D498818%26p%3Dfs%26cid%3D1%26sig%3D8b2b12125f918e853e3d4f6aa277f7500d2c49ea077a05add8f36b412a501cc3%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795740370906&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <div id="host"><div id="stage"></div></div>
@@ -15808,15 +15808,29 @@ window.NEWMM_SHARED_SCRIPTS = {"picker":"\n/* 색상 팔레트(네이티브 colo
 
   function switchTo(name) {
     if (!VIEWS[name] || name === cur) return;
-    const frame = frames[name];
-    if (frame && !frame.__ready) return;
+    // 전환 요청이 대상 iframe 로딩 중에 들어와도 버리지 않고,
+    // 로딩이 끝나는 즉시 전환합니다.
     const state = SYNC_DB && cur && frames[cur] ? dbState(frames[cur]) : null;
     const go = (target) => {
       if (state !== null) setDb(target, state);
       show(name);
     };
-    if (frame) go(frame);
-    else create(name, go);
+    const frame = frames[name];
+    if (!frame) {
+      create(name, go);
+      return;
+    }
+    if (frame.__ready) {
+      go(frame);
+      return;
+    }
+    if (frame.__switchWaiters) return;
+    frame.__switchWaiters = true;
+    frame.addEventListener("load", function onSwitchReady() {
+      frame.removeEventListener("load", onSwitchReady);
+      frame.__switchWaiters = false;
+      if (frame.__ready && cur !== name) go(frame);
+    });
   }
 
   window.addEventListener("message", function (event) {
