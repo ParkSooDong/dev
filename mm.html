@@ -28,7 +28,7 @@
   }
   #stage iframe.on { visibility: visible; }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795749297029&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000bc40820b9d219ecdc04d4ef0%26fn%3Dmm_db_buttons_dynamic.html%26cd%3Dattachment%26ts%3D498821%26p%3Dfs%26cid%3D1%26sig%3Ddc6de31c506b3e1eaa5f80bf3c8cd6ad6ba47e1ac2863524f1adc338fc9458ba%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795749297029&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000fd6c820bb448698aee98137d%26fn%3Dmm_optimized_1-3.html%26cd%3Dattachment%26ts%3D498822%26p%3Dfs%26cid%3D1%26sig%3D28f0afb97c4afdd95cd033cf4fa6b90d4df8e12b282d93b8b47a4a1dd84de0a2%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795749297029&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795740370906&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001810820ba15aa0171dcc7111%26fn%3Dnewmm_parksoodong_calendar_switch_fixed2.html%26cd%3Dattachment%26ts%3D498819%26p%3Dfs%26cid%3D1%26sig%3D577107f438d7cb658653beb030cd8ad705862b36eb143de38b02f6e867ce7f0d%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795740370906&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
@@ -523,6 +523,7 @@ try { const v = parseInt(localStorage.getItem(DBSEL), 10); if (v >= 0 && v \u003
 
 const MAX_BYTES = 10000000;   // 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요
 const utf8Len = s => new Blob([s]).size;   // 실제 UTF-8 바이트 수 (한글 3바이트, 영문·숫자·base64 1바이트)
+window.__NEWMM_ACTIVE__ = false;  // 부모 화면에서 현재 활성 iframe에만 true로 설정합니다.
 const POLL_MS = 3000;        // 다른 기기의 변경을 확인하는 간격
 const IDLE_MS = 1500;        // 입력을 멈춘 뒤 DB 저장까지 기다리는 시간
 const MAX_WAIT_MS = 30000;   // 계속 입력해도 이 시간이 지나면 한 번 저장
@@ -734,8 +735,8 @@ function renderFb(){ if (window.refreshSplit) window.refreshSplit();
 function clearTimers() { clearTimeout(idleT); clearTimeout(maxT); idleT = maxT = null; }
 function schedule() {
   if (savePaused) return;
-  clearTimeout(idleT); idleT = setTimeout(save, 400);
-  if (!maxT) maxT = setTimeout(save, 5000);
+  clearTimeout(idleT); idleT = setTimeout(save, IDLE_MS);
+  if (!maxT) maxT = setTimeout(save, MAX_WAIT_MS);
 }
 
 /* ===== 암호화: 비밀번호 → PBKDF2(SHA-256, 250000회) → AES-GCM 256. DB 에는 암호문만 올라가고 비밀번호는 저장하지 않아요 ===== */
@@ -974,8 +975,13 @@ onEd("input", () => {
 });
 window.addEventListener("blur", () => { if (useFb && ready && dirty && !saving && !savePaused) save(); });   // 다른 창·탭으로 옮기면 바로 저장
 document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === "s" || e.key === "S") && useFb) { e.preventDefault(); e.stopImmediatePropagation(); saveOnceFromShortcut(); } }, true);
-setInterval(() => { if (useFb && dbSet) ready ? poll() : connect(); }, POLL_MS);
-if (useFb && dbSet) { firstTry = true; connect(); }   // 페이지를 열면 바로 비밀번호를 물어요
+window.__NEWMM_RESUME_POLL__ = function () {
+  if (!window.__NEWMM_ACTIVE__ || !useFb || !dbSet) return;
+  if (ready) poll();
+  else { firstTry = true; connect(); }
+};
+setInterval(() => { if (window.__NEWMM_ACTIVE__ && useFb && dbSet) ready ? poll() : connect(); }, POLL_MS);
+if (window.__NEWMM_ACTIVE__ && useFb && dbSet) { firstTry = true; connect(); }   // 페이지를 열면 바로 비밀번호를 물어요
 
 /* ===== DB 저장 크기(바이트) 표시 =====
    Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 크기(UTF-8 바이트)를 한도(MAX_BYTES)와 함께 보여줘요.
@@ -8798,6 +8804,7 @@ try { const v = parseInt(localStorage.getItem(DBSEL), 10); if (v >= 0 && v \u003
 
 const MAX_BYTES = 10000000;   // 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요
 const utf8Len = s => new Blob([s]).size;   // 실제 UTF-8 바이트 수 (한글 3바이트, 영문·숫자·base64 1바이트)
+window.__NEWMM_ACTIVE__ = false;  // 부모 화면에서 현재 활성 iframe에만 true로 설정합니다.
 const POLL_MS = 3000;        // 다른 기기의 변경을 확인하는 간격
 const IDLE_MS = 1500;        // 입력을 멈춘 뒤 DB 저장까지 기다리는 시간
 const MAX_WAIT_MS = 30000;   // 계속 입력해도 이 시간이 지나면 한 번 저장
@@ -9130,8 +9137,8 @@ function renderFb(){ if (window.refreshSplit) window.refreshSplit();
 function clearTimers() { clearTimeout(idleT); clearTimeout(maxT); idleT = maxT = null; }
 function schedule() {
   if (savePaused) return;
-  clearTimeout(idleT); idleT = setTimeout(save, 400);
-  if (!maxT) maxT = setTimeout(save, 5000);
+  clearTimeout(idleT); idleT = setTimeout(save, IDLE_MS);
+  if (!maxT) maxT = setTimeout(save, MAX_WAIT_MS);
 }
 
 /* ===== 암호화: 비밀번호 → PBKDF2(SHA-256, 250000회) → AES-GCM 256. DB 에는 암호문만 올라가고 비밀번호는 저장하지 않아요 ===== */
@@ -9370,8 +9377,13 @@ onEd("input", () => {
 });
 window.addEventListener("blur", () => { if (useFb && ready && dirty && !saving && !savePaused) save(); });   // 다른 창·탭으로 옮기면 바로 저장
 document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === "s" || e.key === "S") && useFb) { e.preventDefault(); e.stopImmediatePropagation(); saveOnceFromShortcut(); } }, true);
-setInterval(() => { if (useFb && dbSet) ready ? poll() : connect(); }, POLL_MS);
-if (useFb && dbSet) { firstTry = true; connect(); }   // 페이지를 열면 바로 비밀번호를 물어요
+window.__NEWMM_RESUME_POLL__ = function () {
+  if (!window.__NEWMM_ACTIVE__ || !useFb || !dbSet) return;
+  if (ready) poll();
+  else { firstTry = true; connect(); }
+};
+setInterval(() => { if (window.__NEWMM_ACTIVE__ && useFb && dbSet) ready ? poll() : connect(); }, POLL_MS);
+if (window.__NEWMM_ACTIVE__ && useFb && dbSet) { firstTry = true; connect(); }   // 페이지를 열면 바로 비밀번호를 물어요
 
 /* ===== DB 저장 크기(바이트) 표시 =====
    Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 크기(UTF-8 바이트)를 한도(MAX_BYTES)와 함께 보여줘요.
@@ -15737,12 +15749,12 @@ window.NEWMM_SHARED_SCRIPTS = {"picker":"\n/* 색상 팔레트(네이티브 colo
     for (const [key, code] of Object.entries(SHARED_SCRIPTS)) {
       html = html.replace(`<!-- NEWMM_SHARED_${key.toUpperCase()} -->`, () => `\u003cscript>${code}\u003c/script>`);
     }
-    // 화면에 고정되어 있던 DB1~DB4 버튼을 제거하고 공통 DB URL 개수만큼 생성합니다.
-    html = html.replace(/<button\b(?=[^>]*\bdata-i=["']\d+["'])[^>]*>[\s\S]*?<\/button>/g, "");
+    // DB 버튼 전용 영역(dbGrp) 안에서만 DB1~DBn 버튼을 다시 생성합니다.
     const dbButtons = window.NEWMM_DB_URLS.map((url, index) =>
       `<button type="button" class="fbbtn dbbtn" data-i="${index}">DB${index + 1}</button>`
     ).join("");
-    html = html.replace(/(<button\b[^>]*\bid="fbBtn"[^>]*>[\s\S]*?<\/button>)/, `$1${dbButtons}`);
+    html = html.replace(/(<span\b[^>]*\bid="dbGrp"[^>]*>)([\s\S]*?)(<button\b[^>]*\bid="dbPause"[^>]*>)/,
+      (match, open, inner, pause) => open + inner.replace(/<button\b(?=[^>]*\bdata-i=["']\d+["'])[^>]*>[\s\S]*?<\/button>/g, "") + dbButtons + pause);
     return html;
   }
 
@@ -15818,6 +15830,12 @@ window.NEWMM_SHARED_SCRIPTS = {"picker":"\n/* 색상 팔레트(네이티브 colo
       frame.setAttribute("aria-hidden", isActive ? "false" : "true");
       if (isActive) frame.removeAttribute("inert");
       else frame.setAttribute("inert", "");
+      try {
+        frame.contentWindow.__NEWMM_ACTIVE__ = isActive;
+        if (isActive && typeof frame.contentWindow.__NEWMM_RESUME_POLL__ === "function") {
+          frame.contentWindow.__NEWMM_RESUME_POLL__();
+        }
+      } catch (error) {}
     });
     cur = name;
     document.title = VIEWS[name].label;
