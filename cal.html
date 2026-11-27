@@ -306,7 +306,8 @@ body .imgx-bar textarea{font-family:var(--mf,'Malgun Gothic','Apple SD Gothic Ne
 .tb .imgx-tbg button{height:auto;min-width:0;padding:4px 9px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--ink);font-size:13px;font-weight:400;cursor:pointer}.tb .imgx-tbg button:hover{background:var(--line)}
 .tb .imgx-tbg .imgx-sl{display:inline-flex;align-items:center;gap:5px;font-size:13px;white-space:nowrap}.tb .imgx-tbg .imgx-sl input[type=range]{width:130px;margin:0;padding:0;border:0;background:transparent;height:auto;min-width:0}.tb .imgx-tbg .imgx-sl input[type=number]{width:62px;height:28px;margin:0;padding:0 4px;box-sizing:border-box;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
 .tb .expand{margin-left:auto;font-size:15px;line-height:1;opacity:.7}
-.tb .expand:hover,.tb .expand:focus-visible{opacity:1}
+.tb .expand:focus-visible{opacity:1}
+@media (hover:hover) and (pointer:fine){.tb .expand:hover{opacity:1}}
 /* 모바일(터치): 이미지를 고르면 나오는 편집 패널·버튼 줄이 편집 영역(가·나·다)의 세로 공간을 밀어내지 않게 해요 */
 @media (pointer:coarse), (hover:none){
   /* 이미지 편집 패널(.imgx-bar)은 문서 흐름에서 분리(position:fixed)해 메모(가·나·다)의 세로 크기와 이미지의 크기·위치를 바꾸지 않아요.
@@ -623,7 +624,8 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .calhdt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .calhdt .l{display:none}
 .calzoom{flex:none;position:relative;width:18px;height:18px;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;font:inherit;font-size:12px;font-weight:400;line-height:1;color:var(--mute);background:transparent;border:0;border-radius:4px;cursor:pointer;opacity:.8;touch-action:manipulation}
-.calzoom:hover,.calzoom:focus-visible{opacity:1;background:var(--line);color:var(--ink)}
+.calzoom:focus-visible{opacity:1;background:var(--line);color:var(--ink)}
+@media (hover:hover) and (pointer:fine){.calzoom:hover{opacity:1;background:var(--line);color:var(--ink)}}   /* 터치 화면에서는 손가락을 뗀 뒤에도 :hover 가 남아 흰 네모가 생겨서, 마우스가 있을 때만 적용 */
 .calcell.sun .calhd{color:#e03131}.calcell.sat .calhd{color:#1c7ed6}
 .calcell.today{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
 .calcell.today .calhd{background:var(--line)}
@@ -638,7 +640,8 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 #monthMemo .mm-head{flex:none;display:flex;align-items:center;gap:6px;min-width:0;padding:3px 6px;border-bottom:1px solid var(--line);font-size:11px;font-weight:700}
 #monthMemo .mm-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #monthMemo .mm-zoom{flex:none;width:22px;height:22px;padding:0;border:0;border-radius:5px;background:transparent;color:var(--mute);font:inherit;font-size:14px;cursor:pointer}
-#monthMemo .mm-zoom:hover,#monthMemo .mm-zoom:focus-visible{background:var(--line);color:var(--ink)}
+#monthMemo .mm-zoom:focus-visible{background:var(--line);color:var(--ink)}
+@media (hover:hover) and (pointer:fine){#monthMemo .mm-zoom:hover{background:var(--line);color:var(--ink)}}
 #monthMemo .mm-title{flex:none;box-sizing:border-box;width:100%;height:calc(1.4em + 10px);padding:4px 7px;border:0;border-bottom:1px dashed var(--line);border-radius:0;background:transparent;color:var(--mfg);font:inherit;font-size:12px;font-weight:600;outline:none}
 #monthMemo .mm-title:focus{background:rgba(51,154,240,.08)}
 #monthMemo .mm-title::placeholder{color:var(--mute);font-weight:400;opacity:.65}
@@ -656,7 +659,8 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 .memo-delete .am-title{flex:none;box-sizing:border-box;width:100%;height:calc(1.35em + 6px);padding:3px 5px;border:0;border-bottom:1px dashed var(--line);background:transparent;color:var(--mfg);font:inherit;font-size:11px;font-weight:600;outline:none}
 .memo-delete .am-body{flex:1;min-height:0;width:auto;padding:4px 5px;border:0;border-radius:0;background:transparent;font-size:11px;line-height:1.35;overflow:auto}
 .memo-delete .am-zoom{flex:none;width:20px;height:20px;padding:0;border:0;border-radius:4px;background:transparent;color:var(--mute);font:inherit;font-size:13px;cursor:pointer}
-.memo-delete .am-zoom:hover,.memo-delete .am-zoom:focus-visible{background:var(--line);color:var(--ink)}
+.memo-delete .am-zoom:focus-visible{background:var(--line);color:var(--ink)}
+@media (hover:hover) and (pointer:fine){.memo-delete .am-zoom:hover{background:var(--line);color:var(--ink)}}
 .memo-delete .md-always.zoom{position:absolute;inset:0;z-index:8;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
 .memo-delete .md-always.zoom .am-head{padding:7px 10px;font-size:15px}
 .memo-delete .md-always.zoom .am-zoom{width:30px;height:30px;font-size:17px}
@@ -1566,6 +1570,7 @@ for (let i = 0; i < 42; i++) {
     e.dispatchEvent(new Event("input", { bubbles: true }));   // 본문과 같은 저장 흐름(자동 저장·DB 동기화)을 탐
   });
   c.appendChild(h); c.appendChild(tt); c.appendChild(e); calGrid.appendChild(c); makeRich(e); EDS.push(e); CELLS.push(c); CAL_LBL.push(""); CAL_TT.push(tt); CAL_HS.push(hs); CAL_HL.push(hl); CAL_ZB.push(z);
+  c.addEventListener("scroll", () => { if (c.classList.contains("zoom") && (c.scrollTop || c.scrollLeft)) { c.scrollTop = 0; c.scrollLeft = 0; } }, { passive: true });   // 확대한 칸 자체가 밀려 올라가 머리글이 잘리는 것 방지
   z.addEventListener("mousedown", ev => ev.preventDefault());   // 버튼을 눌러도 메모의 커서·선택 유지
   z.addEventListener("click", () => calZoom(zoomI === i ? -1 : i));
   const canZoomAt = ev => e.dataset.date && zoomI !== i && !(ev.target && ev.target.closest && ev.target.closest(".att"));
@@ -1598,7 +1603,16 @@ let monthZoom = false, alwaysZoom = false;
 function syncMemoZoomState() {
   calGrid.classList.toggle("zooming", monthZoom || alwaysZoom || zoomI >= 0);
   window.dispatchEvent(new Event("resize"));
+  requestAnimationFrame(zoomPin);
 }
+// 확대 중에는 달력 영역이 스크롤돼 있으면 안 돼요: 확대한 칸은 달력 영역의 맨 위(inset:0)에 붙어 있어서,
+// 스크롤된 채로 있으면 칸의 윗부분(날짜·제목)이 잘리고 아래에 다른 칸이 드러나요.
+// (모바일에서 메모를 눌러 키보드가 올라오거나 커서를 보이게 하려고 브라우저가 스크롤하거나, 스크롤 관성이 남아 있을 때 생겨요)
+function zoomPin() {
+  if (calGrid.classList.contains("zooming") && (calGrid.scrollTop || calGrid.scrollLeft)) { calGrid.scrollTop = 0; calGrid.scrollLeft = 0; }
+}
+calGrid.addEventListener("scroll", zoomPin, { passive: true });
+if (window.visualViewport) window.visualViewport.addEventListener("resize", () => requestAnimationFrame(zoomPin));
 function setMonthZoom(on, restoreScroll = true, keepScroll = false) {
   on = !!on;
   if (on && !keepScroll && !monthZoom && !alwaysZoom && zoomI < 0) zoomScroll = calGrid.scrollTop;
@@ -1730,6 +1744,7 @@ function renderCal() {
   deletePanel.style.gridColumn = "1 / span 2";
   deletePanel.style.gridRow = String(deleteRow);
   calLeg.hidden = !legacy.some(x => x);
+  zoomPin();   // 다른 기기의 변경을 반영해 다시 그릴 때도 확대 중이면 맨 위로 고정
   window.dispatchEvent(new Event("resize"));
 }
 function zbSet(i) {
@@ -1756,6 +1771,7 @@ function calZoom(i) {   // i: 확대할 칸 번호, -1: 축소
     if (window.matchMedia && matchMedia("(pointer:fine)").matches) { try { EDS[i].focus({ preventScroll: true }); } catch (e) {} }   // 터치에서는 키보드가 갑자기 올라오지 않게
   }
   window.dispatchEvent(new Event("resize"));
+  requestAnimationFrame(zoomPin);
 }
 function calGo(dm) { if (window.cfSelClear) window.cfSelClear(); if (monthZoom) setMonthZoom(false, false); if (alwaysZoom) setAlwaysZoom(false, false); calGrid.classList.remove("zooming"); calZoom(-1); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); calGrid.scrollTop = 0; }
 document.getElementById("calPrev").addEventListener("click", () => calGo(-1));
