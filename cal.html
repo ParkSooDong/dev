@@ -1517,14 +1517,31 @@ function makeRich(el) {
 
 /* ▼▼ DB 를 쓰려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요 ▼▼ */
 const DB_URLS = [
-  "https://pesdee00-memo-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB1 (처음 기본값)
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com",     // DB2
-  "https://YOUR-PROJECT-default-rtdb.firebaseio.com"      // DB3
-];
+  "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",    // DB1
+  "https://pesdee00-2026-01-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB2
+  "https://pesdee00-2027-01-default-rtdb.asia-southeast1.firebasedatabase.app",      // DB3
+  "https://pesdee00-memo-default-rtdb.asia-southeast1.firebasedatabase.app"        // DB4
+].filter(u => typeof u === "string" && u.trim().length > 0);
 /* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
-const DBSEL = "memo-db";   // 마지막으로 고른 DB 번호(0~2)를 이 PC(브라우저)에 기억 → 다음에 켜도 그 DB 로 시작
-const isSet = u => !u.includes("YOUR-PROJECT");
-let dbIdx = 0;             // 0=DB1, 1=DB2, 2=DB3 (기본 DB1)
+const DBSEL = "memo-db";   // 마지막으로 고른 DB 번호를 이 PC(브라우저)에 기억
+// DB_URLS 배열 길이에 맞춰 DB 버튼을 생성 (Local PC / 저장 일시정지 버튼은 유지)
+{
+  const group = document.getElementById("dbGrp");
+  const pause = document.getElementById("dbPause");
+  if (group) {
+    group.querySelectorAll('.dbbtn[data-i]').forEach(button => button.remove());
+    DB_URLS.forEach((url, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "fbbtn dbbtn";
+      button.dataset.i = String(index);
+      button.textContent = "DB" + (index + 1);
+      group.insertBefore(button, pause || null);
+    });
+  }
+}
+const isSet = u => typeof u === "string" && u.trim().length > 0 && !u.includes("YOUR-PROJECT");
+let dbIdx = 0;             // 기본 DB1
 try { const v = parseInt(localStorage.getItem(DBSEL), 10); if (v >= 0 && v < DB_URLS.length && isSet(DB_URLS[v])) dbIdx = v; } catch (e) {}
 
 const MAX_BYTES = 10000000;   // 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요
