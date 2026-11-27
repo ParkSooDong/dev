@@ -39,7 +39,7 @@
     z-index: 10;
   }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000badc8206bc6a16560a1778f0%26fn%3Dmm_parksoodong_github_io__dev_fixed2.html%26cd%3Dattachment%26ts%3D498831%26p%3Dfs%26cid%3D1%26sig%3D4e7fc725a7dc2ef01fac11692b259477a80c397d3f7d0b90241664a59bc62ed0%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000e820821184b8ddc5e4c1d858%26fn%3Dmm_parksoodong_github_io__dev_fixed3.html%26cd%3Dattachment%26ts%3D498831%26p%3Dfs%26cid%3D1%26sig%3Da280d5c513572de114d3e5536e441c7f3cd36dddc09e55d3fb80d90f6220915f%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001b348206a6dabe74589ce51c%26fn%3Dmm_parksoodong_github_io__dev_step17.html%26cd%3Dattachment%26ts%3D498830%26p%3Dfs%26cid%3D1%26sig%3D6425ababba6a357a3844bcf3911a8a296d4c70a946df12a786368c565c8aa291%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
@@ -12797,6 +12797,41 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
         body.dbslot-mini #edwrap .edsplit > .dbslot-pane-a { grid-area:titleA !important; }
         body.dbslot-mini #edwrap .edsplit > .dbslot-pane-b { grid-area:titleB !important; }
         body.dbslot-mini #edwrap .edsplit > .splitter { display:none !important; }
+        /* DB 미니창 최종 배치: Grid의 기존 행/열 및 접힘 상태 충돌을 우회하고
+           가·나 편집 영역과 제목을 absolute 위치로 직접 고정합니다. */
+        body.dbslot-mini #edwrap, body.dbslot-mini #edwrap .edsplit {
+          position:absolute !important; inset:0 !important; width:auto !important; height:auto !important;
+          display:block !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important;
+        }
+        body.dbslot-mini #edwrap .edsplit > #memo,
+        body.dbslot-mini #edwrap .edsplit > #memo2 {
+          display:block !important; visibility:visible !important; opacity:1 !important;
+          position:absolute !important; top:0 !important; bottom:20px !important;
+          width:50% !important; height:auto !important; min-width:0 !important; min-height:0 !important;
+          max-width:none !important; max-height:none !important; margin:0 !important;
+          overflow:auto !important; transform:none !important; clip:auto !important; clip-path:none !important;
+          box-sizing:border-box !important; padding:3px 4px !important;
+          border:1px solid rgba(118,85,201,.42) !important; border-bottom:0 !important;
+          border-radius:4px 4px 0 0 !important; background:var(--card) !important;
+          color:var(--mfg) !important; -webkit-text-fill-color:var(--mfg) !important;
+          font-size:10px !important; line-height:1.25 !important; flex:none !important;
+        }
+        body.dbslot-mini #edwrap .edsplit > #memo { left:0 !important; right:auto !important; }
+        body.dbslot-mini #edwrap .edsplit > #memo2 { left:50% !important; right:0 !important; }
+        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-a,
+        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-b {
+          display:flex !important; visibility:visible !important; opacity:1 !important;
+          position:absolute !important; top:auto !important; bottom:0 !important;
+          width:50% !important; height:18px !important; min-width:0 !important; min-height:0 !important;
+          max-width:none !important; max-height:18px !important; margin:0 !important;
+          overflow:hidden !important; box-sizing:border-box !important;
+          align-items:center !important; justify-content:center !important;
+          border:1px solid rgba(118,85,201,.42) !important; border-top:0 !important;
+          border-radius:0 0 4px 4px !important; background:rgba(118,85,201,.10) !important;
+          color:var(--ink) !important; font-size:7px !important; font-weight:700 !important; line-height:7px !important;
+        }
+        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-a { left:0 !important; right:auto !important; }
+        body.dbslot-mini #edwrap .edsplit > .dbslot-pane-b { left:50% !important; right:0 !important; }
       `;
             html = html.replace('</head>', `<style id="newmm-db-slot-css">${slotCss}</style></head>`);
         }
