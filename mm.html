@@ -39,7 +39,7 @@
     z-index: 10;
   }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000001584820ba3c4ff29e2dc9c95%26fn%3Dmm_parksoodong_github_io__dev_step12.html%26cd%3Dattachment%26ts%3D498830%26p%3Dfs%26cid%3D1%26sig%3D43953056e31eb8f746028d7299d6a09636de192f59175aa0f7b6dc9666cd8fc8%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000525882068bf8cf147cbc04a7%26fn%3Dmm_parksoodong_github_io__dev_step14.html%26cd%3Dattachment%26ts%3D498830%26p%3Dfs%26cid%3D1%26sig%3D97f9b63695c4ac5f2aab88b1a97f68025a44c536fd61f4f16a3db93c656d8b5c%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <div id="host"><div id="stage"></div></div>
@@ -2578,19 +2578,19 @@ dbSlotUrls.forEach((url, index) => {
         try {
             const doc = frame.contentDocument;
             doc.body.classList.add("dbslot-mini");
-            // 가·나 편집기를 각각 '제목줄 + 입력 영역' 구조로 감쌉니다.
+            // 작은 7×6 칸에서만 가·나 제목을 별도 표시합니다.
+            // 편집기 자체는 원래 edsplit 안의 DOM 위치에 그대로 두어 확대 시
+            // 기존 메모장 레이아웃(툴바와 가·나·다)을 온전히 복원합니다.
             const split = doc.getElementById("edsplit");
-            [ ["memo", "가 영역"], ["memo2", "나 영역"] ].forEach(([id, caption], paneIndex) => {
-                const editor = doc.getElementById(id);
-                if (!split || !editor || editor.parentElement?.classList.contains("dbslot-pane-wrap")) return;
-                const wrap = doc.createElement("section");
-                wrap.className = "dbslot-pane-wrap";
-                const heading = doc.createElement("div");
-                heading.className = "dbslot-pane-title";
-                heading.textContent = caption;
-                split.appendChild(wrap);
-                wrap.append(heading, editor);
-            });
+            if (split) {
+                [["가\n영역", "a"], ["나\n영역", "b"]].forEach(([caption, pane]) => {
+                    if (split.querySelector(".dbslot-pane-title.dbslot-pane-" + pane)) return;
+                    const heading = doc.createElement("div");
+                    heading.className = "dbslot-pane-title dbslot-pane-" + pane;
+                    heading.textContent = caption;
+                    split.appendChild(heading);
+                });
+            }
             const title = doc.querySelector("header h1");
             if (title)
                 title.textContent = "DB" + (index + 1) + " 메모장";
@@ -12730,17 +12730,15 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
         body.dbslot-mini .imgx-box, body.dbslot-mini .imgx-hint { display:none !important; }
         body.dbslot-mini #edwrap { position:absolute !important; inset:0 !important; display:block !important; min-width:0 !important; min-height:0 !important; }
         body.dbslot-mini #edgut { display:none !important; }
-        body.dbslot-mini #edwrap .edsplit { position:absolute !important; inset:0 !important; display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; grid-template-rows:minmax(0,1fr) !important; gap:3px !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important; }
-        .dbslot-pane-wrap { display:contents; }
-        body.dbslot-mini .dbslot-pane-wrap { display:grid !important; grid-template-rows:16px minmax(0,1fr) !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important; border:1px solid rgba(118,85,201,.42) !important; border-radius:4px !important; background:var(--card) !important; }
-        body.dbslot-mini .dbslot-pane-title { display:flex !important; align-items:center !important; min-width:0 !important; padding:0 4px !important; border-bottom:1px solid var(--line) !important; background:rgba(118,85,201,.10) !important; color:var(--ink) !important; font-size:9px !important; font-weight:700 !important; line-height:16px !important; }
+        body.dbslot-mini #edwrap .edsplit { position:absolute !important; inset:0 !important; display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; grid-template-rows:20px minmax(0,1fr) !important; gap:2px !important; min-width:0 !important; min-height:0 !important; overflow:hidden !important; }
+        .dbslot-pane-title { display:none !important; }
+        body.dbslot-mini .dbslot-pane-title { display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; white-space:pre-line !important; overflow:hidden !important; min-width:0 !important; min-height:0 !important; padding:0 1px !important; border:1px solid rgba(118,85,201,.42) !important; border-bottom:0 !important; border-radius:4px 4px 0 0 !important; background:rgba(118,85,201,.10) !important; color:var(--ink) !important; font-size:8px !important; font-weight:700 !important; line-height:8px !important; }
+        body.dbslot-mini .dbslot-pane-a { grid-column:1 !important; grid-row:1 !important; }
+        body.dbslot-mini .dbslot-pane-b { grid-column:2 !important; grid-row:1 !important; }
         body.dbslot-mini #memo { grid-column:1 !important; grid-row:2 !important; }
         body.dbslot-mini #memo2 { grid-column:2 !important; grid-row:2 !important; }
-        .dbslot-pane-wrap:first-of-type { grid-column:1 !important; grid-row:1 !important; }
-        .dbslot-pane-wrap:last-of-type { grid-column:2 !important; grid-row:1 !important; }
-        body.dbslot-mini #memo3, body.dbslot-mini .splitter, body.dbslot-mini .cmphd,
-        body.dbslot-mini .cmp, body.dbslot-mini .vsp { display:none !important; }
-        body.dbslot-mini #memo, body.dbslot-mini #memo2 { display:block !important; grid-column:auto !important; grid-row:auto !important; min-width:0 !important; min-height:0 !important; width:100% !important; height:100% !important; max-height:100% !important; overflow:hidden !important; padding:3px 4px !important; border:0 !important; border-radius:0 !important; font-size:10px !important; line-height:1.25 !important; }
+        body.dbslot-mini #edwrap .edsplit > :not(#memo):not(#memo2):not(.dbslot-pane-title) { display:none !important; }
+        body.dbslot-mini #memo, body.dbslot-mini #memo2 { display:block !important; position:relative !important; min-width:0 !important; min-height:0 !important; width:100% !important; height:100% !important; max-height:100% !important; overflow:hidden !important; padding:3px 4px !important; border:1px solid rgba(118,85,201,.42) !important; border-top:0 !important; border-radius:0 0 4px 4px !important; background:var(--card) !important; font-size:10px !important; line-height:1.25 !important; }
         body.dbslot-mini #memo::before, body.dbslot-mini #memo2::before { content:none !important; display:none !important; }
       `;
             html = html.replace('</head>', `<style id="newmm-db-slot-css">${slotCss}</style></head>`);
