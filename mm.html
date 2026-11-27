@@ -39,7 +39,7 @@
     z-index: 10;
   }
 </style>
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000d0d8820bb8fa2cc4d3d76c05%26fn%3Dmm_parksoodong_github_io__dev_step9.html%26cd%3Dattachment%26ts%3D498829%26p%3Dfs%26cid%3D1%26sig%3D203c5d6ab40a7ac0daa05d18da42e888b86f69e3100a15aac64b4b7e437edda1%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000da9c820ba783adae0ad5b9ef%26fn%3Dmm_parksoodong_github_io__dev_step10.html%26cd%3Dattachment%26ts%3D498829%26p%3Dfs%26cid%3D1%26sig%3D2ade1273a4896e250f833a29c707f38ca33a25f38e274c76db3e8f876ffdb5fd%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795783609831&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <div id="host"><div id="stage"></div></div>
@@ -2383,15 +2383,18 @@ let dbSlotZoomed = null;
 const dbSlotStyle = document.createElement("style");
 dbSlotStyle.textContent = [
     ".dbslot { z-index:3; display:flex; flex-direction:column; min-width:0; min-height:0; overflow:hidden; border:2px solid #7655c9; border-radius:8px; background:var(--card); }",
-    ".dbslot-head { flex:none; display:flex; align-items:center; gap:2px; min-width:0; padding:2px 4px 2px 6px; border-bottom:1px solid rgba(118,85,201,.38); background:rgba(118,85,201,.09); font-size:10px; font-weight:700; color:var(--ink); }",
-    ".dbslot-head b { flex:none; min-width:0; }",
-    ".dbslot-head button.dbslot-expand { margin-left:auto; }",
+    ".dbslot-head { flex:none; display:flex; align-items:center; gap:0; min-width:0; padding:2px 4px 2px 6px; border-bottom:1px solid rgba(118,85,201,.38); background:rgba(118,85,201,.09); font-size:10px; font-weight:700; color:var(--ink); }",
+    ".dbslot-head b { flex:none; min-width:0; margin:0; padding:0; }",
+    ".dbslot-head button.dbslot-connect { margin-left:0 !important; padding-left:3px; padding-right:3px; }",
+    ".dbslot-head button.dbslot-expand { margin-left:auto; display:inline-flex; align-items:center; justify-content:center; flex:0 0 30px; width:30px; min-width:30px; height:28px; padding:0 !important; font-size:20px !important; line-height:1; color:var(--ink); position:relative; z-index:2; }",
     ".dbslot-head button { flex:none; min-width:0; margin:0; padding:1px 6px; border:1px solid var(--line); border-radius:5px; background:transparent; color:var(--ink); font:inherit; font-size:10px; line-height:1.35; cursor:pointer; white-space:nowrap; }",
     ".dbslot-head button[aria-pressed=true] { background:var(--ink); color:var(--bg); border-color:var(--ink); }",
     ".dbslot-head button:disabled { opacity:.4; cursor:default; }",
     ".dbslot-frame { display:block; flex:1; width:100%; min-width:0; min-height:0; border:0; background:var(--bg); }",
     ".dbslot.zoom { position:absolute !important; inset:0 !important; z-index:20 !important; grid-column:1 / -1 !important; grid-row:1 / -1 !important; display:flex !important; width:auto !important; height:auto !important; min-width:0 !important; min-height:0 !important; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.2); }",
-    ".dbslot.zoom .dbslot-head { padding:5px 8px; font-size:13px; }",
+    ".dbslot.zoom .dbslot-head { min-height:38px; padding:5px 8px; font-size:13px; }",
+    ".dbslot.zoom .dbslot-head button.dbslot-expand { display:inline-flex !important; visibility:visible !important; opacity:1 !important; flex-basis:34px; width:34px; min-width:34px; height:32px; font-size:23px !important; }",
+    "@media (max-width:700px) { .dbslot.zoom .dbslot-head { min-height:42px; } .dbslot.zoom .dbslot-head b { display:block !important; visibility:visible !important; } .dbslot.zoom .dbslot-head button.dbslot-expand { display:inline-flex !important; visibility:visible !important; opacity:1 !important; } }",
     ".dbslot.zoom .dbslot-head button { padding:3px 10px; font-size:12px; }"
 ].join("\\n");
 document.head.appendChild(dbSlotStyle);
@@ -2470,6 +2473,7 @@ function closeDbSlotZoom(item) {
     if (!item || !item.el.classList.contains("zoom"))
         return;
     item.el.classList.remove("zoom");
+    item.label.textContent = String(item.index + 1);
     item.expand.textContent = "⤢";
     item.expand.title = "DB" + (item.index + 1) + " 메모 확대";
     item.expand.setAttribute("aria-label", "DB" + (item.index + 1) + " 메모 확대");
@@ -2490,6 +2494,7 @@ function openDbSlotZoom(item) {
     if (alwaysZoom)
         setAlwaysZoom(false, false);
     item.el.classList.add("zoom");
+    item.label.textContent = "DB" + (item.index + 1) + " 메모장";
     item.expand.textContent = "×";
     item.expand.title = "DB" + (item.index + 1) + " 메모 축소";
     item.expand.setAttribute("aria-label", "DB" + (item.index + 1) + " 메모 축소");
@@ -2516,6 +2521,7 @@ dbSlotUrls.forEach((url, index) => {
     label.textContent = String(index + 1);
     const connect = document.createElement("button");
     connect.type = "button";
+    connect.className = "dbslot-connect";
     connect.textContent = "로컬";
     connect.disabled = true;
     const expand = document.createElement("button");
@@ -2531,7 +2537,7 @@ dbSlotUrls.forEach((url, index) => {
     frame.setAttribute("allow", "clipboard-read; clipboard-write; local-fonts; fullscreen");
     el.append(head, frame);
     calGrid.appendChild(el);
-    const item = { index, url, el, frame, connect, expand };
+    const item = { index, url, el, frame, label, connect, expand };
     dbSlotItems.push(item);
     connect.addEventListener("click", () => {
         try {
