@@ -7,7 +7,8 @@
 <meta name="supported-color-schemes" content="light">
 
 
-<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795749297029&amp;type=content-script&amp;dmn=fs.mybox.naver.com&amp;url=https%3A%2F%2Ffs.mybox.naver.com%2Ffile%2Fdownload.api%3FsvcType%3DMYBOX-WEB%26resourceKey%3DcGVzZGVlMDB8MzQ3MjYwMDQxMzQyOTQzNzI3MnxGfDA%26time%3D1795756891966&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795749297029&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000008180820b84fedee25d6679ca%26fn%3Dbarcode_db_buttons_dynamic.html%26cd%3Dattachment%26ts%3D498821%26p%3Dfs%26cid%3D1%26sig%3Ddb2a7ea8345d29076334b3d98bd58f69fd6f2524aa728a822cfd0a234ba249c4%26v%3D0&amp;app=whale.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
+<script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795749297029&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795749297029&amp;type=content-script&amp;dmn=fs.mybox.naver.com&amp;url=https%3A%2F%2Ffs.mybox.naver.com%2Ffile%2Fdownload.api%3FsvcType%3DMYBOX-WEB%26resourceKey%3DcGVzZGVlMDB8MzQ3MjYwMDQxMzQyOTQzNzI3MnxGfDA%26time%3D1795756891966&amp;app=whale.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script>
 <script type="text/javascript" nonce="df2d9c00f7fa42e2874851dbd40" src="//local.adguard.org?ts=1795749297029&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script>
 /* 색상 팔레트(네이티브 color 선택창) 공통 처리: 'change' 는 선택창이 완전히 닫혀야 오고, 닫으려고 누른 클릭이 먼저 처리되는 바람에 예전 색이 쓰이던 문제를 막아요.
    고르는 즉시 오는 'input' 값을 기억해 두고, 'change' / 다음 클릭 / 키 입력 / 창 포커스 복귀 중 먼저 오는 때 한 번만 적용해요 */
@@ -187,7 +188,7 @@ img[data-alpha-view="1"]{background-color:transparent!important;background-image
 #cnt{font-size:12px;font-weight:400;color:var(--mute);white-space:nowrap}
 #cnt.cw{color:#e8590c}
 #cnt.ce{color:var(--warn);font-weight:600}
-/* 메모 확대 중에는 제목줄 전체(Firebase 버튼 | DB1~3 | 저장 상태 | DB 크기)를 memo 파일처럼 한 줄 알약으로 오른쪽 아래에 띄워 둠 */
+/* 메모 확대 중에는 제목줄 전체(Firebase 버튼 | DB1~DBn | 저장 상태 | DB 크기)를 memo 파일처럼 한 줄 알약으로 오른쪽 아래에 띄워 둠 */
 body.has-max .mhead{position:fixed;left:8px;right:auto;top:max(6px,env(safe-area-inset-top,0px));bottom:auto;z-index:101;max-width:calc(100vw - 56px);flex-wrap:wrap;gap:4px 6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:3px 8px;opacity:.96}
 body.has-max .mhead:hover,body.has-max .mhead:focus-within{opacity:1}
 body.has-max .mhead>span:first-child{display:none}   /* "메모" 글자는 숨김 */
@@ -837,7 +838,7 @@ body input.hexin.bad{outline:2px solid #e03131;outline-offset:0}
 <label>저장 형식<select id="f"><option value="png">PNG</option><option value="svg">SVG</option></select></label>
 </div>
 <div class="grid" id="g"></div>
-<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><span id="dbCtl"><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbbtn" data-i="0">DB1</button><button type="button" class="fbbtn dbbtn" data-i="1">DB2</button><button type="button" class="fbbtn dbbtn" data-i="2">DB3</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span></span><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
+<div class="lbl" style="margin-top:12px"><div class="mhead"><span>메모</span><span id="dbCtl"><span id="dbGrp"><button type="button" id="fbBtn" class="fbbtn dbbtn dbloc" aria-pressed="true" title="Local PC 사용: 메모를 이 PC의 브라우저에만 저장해요">Local PC 사용</button><button type="button" class="fbbtn dbpause" id="dbPause" aria-pressed="false" title="실시간 저장을 잠시 멈춥니다">저장 일시정지</button></span></span><span id="mst" role="status"></span><span id="cnt"></span></div><div class="mslot" id="mslot"><div class="mpane" id="mpane">
 <div class="tb" id="tb" role="toolbar" aria-label="서식">
   <button type="button" data-cmd="undo" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
   <button type="button" data-cmd="redo" title="다시 실행 (Ctrl+Y)" aria-label="다시 실행"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
@@ -1579,7 +1580,7 @@ const observeEds = (cb, o) => { const mo = new MutationObserver(cb); EDS.forEach
   /* 기본 비율: memo 파일은 세로 10:80:10(1:8:1) / barcode 파일은 세로 60:20:20(6:2:2), 가로 균등 */
   const DEFV = MP ? [60, 20, 20] : [10, 80, 10], DEFH = MP ? EQ : [35, 35, 30], KP = "memo-lay2-";
   const ctx = () => mp ? (mp.classList.contains("max") ? "x" : "n") : "m";   // m: memo 파일 / n: barcode 세 줄 모드 / x: barcode 확대
-  const scope = () => { try { return useFb ? "d" + (dbIdx + 1) : "pc"; } catch (e) { return "pc"; } };   // PC(미사용) / DB1~3
+  const scope = () => { try { return useFb ? "d" + (dbIdx + 1) : "pc"; } catch (e) { return "pc"; } };   // PC(미사용) / DB1~DBn
   const okA = a => Array.isArray(a) && a.length === 3 && a.every(x => typeof x === "number" && x >= 0) && Math.abs(a[0] + a[1] + a[2] - 100) < 0.5;
   const defMode = () => ctx() === "n" ? "h" : "v";   // barcode 기본화면: 가로 / barcode 확대·memo: 세로
   let cur = null;   // 현재 (DB × 화면모드)의 분할 상태 {k, m, V, H}
@@ -1836,28 +1837,39 @@ mex.addEventListener("click",()=>setMemoMax(!mpane.classList.contains("max")));
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mpane.classList.contains("max")&&!document.querySelector("#tb .pop:not([hidden])")&&$("fbar").hidden)setMemoMax(false)});
 
 /* ===== Firebase Realtime Database 사용/미사용 (memo 파일과 같은 DB 경로 /memo 를 사용해요) ===== */
-/* ▼▼ 사용하려면 본인 Firebase Realtime Database 주소로 바꾸세요 (끝에 / 없이). DB1·DB2·DB3 순서이고, 안 쓰는 칸은 YOUR-PROJECT 그대로 두면 버튼이 비활성화돼요. memo 파일과 같은 주소를 넣으세요 ▼▼ */
+/* ▼▼ Firebase Realtime Database 주소를 사용할 개수만큼 입력하세요 (끝에 / 없이).
+   배열의 1번째 주소가 DB1, 2번째가 DB2 ... 순서입니다.
+   주소를 추가/삭제하면 화면의 DB 버튼 수도 자동으로 바뀝니다.
+   YOUR-PROJECT 기본 주소는 버튼은 표시하되 비활성화됩니다. ▼▼ */
 const DB_URLS = [
   "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app"     // DB1 (처음 기본값)
 ];
-/* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
-const DBSEL="bc9-db";   /* 마지막으로 고른 DB 번호(0~2)를 이 PC(브라우저)에 기억 → 다음에 켜도 그 DB 로 시작 */
-const isSet=u=>!u.includes("YOUR-PROJECT");
-let dbIdx=0;            /* 0=DB1, 1=DB2, 2=DB3 (기본 DB1) */
+/* ▲▲ 예: "https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app" ▲▲ */
+const DBSEL="bc9-db";   /* 마지막으로 고른 DB 번호(0부터)를 이 PC(브라우저)에 기억 */
+const isSet=u=>typeof u==="string"&&u.trim().length>0&&!u.includes("YOUR-PROJECT");
+let dbIdx=0;            /* 기본 DB1 */
 try{const v=parseInt(localStorage.getItem(DBSEL),10);if(v>=0&&v<DB_URLS.length&&isSet(DB_URLS[v]))dbIdx=v}catch(e){}
 const MAX_BYTES=10000000,POLL_MS=3000,IDLE_MS=1500,MAX_WAIT_MS=30000;   /* 메모 최대 크기(UTF-8 바이트): Firebase 문자열 1개 한도 10MB. 규칙의 글자 수 숫자(10000000)와 함께 바꿔요 */
 const utf8Len = s => new Blob([s]).size;   // 실제 UTF-8 바이트 수 (한글 3바이트, 영문·숫자·base64 1바이트)
 let BASE,URL_MEMO,URL_AT,dbSet;
 function applyDb(){   /* 선택된 DB(dbIdx)의 주소로 맞춤 */
-  const u=DB_URLS[dbIdx];
-  BASE=u.replace(/\/+$/,"");URL_MEMO=BASE+"/memo.json";URL_AT=BASE+"/memo/updatedAt.json";dbSet=isSet(u);
+  const u=DB_URLS[dbIdx]||"https://YOUR-PROJECT-default-rtdb.firebaseio.com";
+  BASE=u.replace(/\/+$/,"");URL_MEMO=BASE+"/memo.json";URL_AT=BASE+"/memo/updatedAt.json";dbSet=isSet(DB_URLS[dbIdx]);
 }
 applyDb();
 const dbName=()=>"DB"+(dbIdx+1);
 const needUrlMsg=()=>dbName()+" 주소(DB_URLS)를 먼저 설정해 주세요";
 const stashKey=i=>"bc9-dbmemo-"+(i+1);   /* 지금 선택되지 않은 DB 의 이 PC 메모 사본 보관 칸 (지금 DB 의 사본은 기존 bc9-state 에 그대로 저장) */
 let gen=0,switching=false;   /* gen: DB 를 바꾸면 올라가는 번호 (바꾸기 전 DB 의 진행 중 작업을 버리기 위함) */
-const memoEl=$("memo"),mst=$("mst"),fbBtn=$("fbBtn"),dbGrp=$("dbGrp"),dbBtns=Array.from(dbGrp.querySelectorAll(".dbbtn:not(.dbloc)"));
+const memoEl=$("memo"),mst=$("mst"),fbBtn=$("fbBtn"),dbGrp=$("dbGrp");
+/* DB_URLS 항목 수만큼 DB1~DBn 버튼을 생성합니다. YOUR-PROJECT 주소도 버튼은 만들되 아래 renderFb에서 비활성화합니다. */
+const dbPauseEl=$("dbPause");
+const dbBtns=DB_URLS.map((u,i)=>{
+  const b=document.createElement("button");
+  b.type="button";b.className="fbbtn dbbtn";b.dataset.i=String(i);b.textContent="DB"+(i+1);
+  dbGrp.insertBefore(b,dbPauseEl);
+  return b;
+});
 
 /* ===== DB 저장 크기(바이트) 표시 =====
    Firebase 에 저장되는 값(서식·표·이미지 데이터까지 포함한 메모 전체)의 크기(UTF-8 바이트)를 한도(MAX_BYTES)와 함께 보여줘요.
@@ -1882,7 +1894,7 @@ const hhmm=()=>new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-d
 const say=(t,c)=>{mst.textContent=t;mst.className=c||""};
 const localNote=()=>say("수정 내용은 이 PC의 지금 브라우저에만 저장됩니다.");
 function renderFb(){ try { if (window.refreshSplit) window.refreshSplit(); } catch (e) { console.error("refreshSplit", e); }
-  fbBtn.setAttribute("aria-pressed",String(!useFb));   /* [Local PC 사용] [DB1] [DB2] [DB3] 중 지금 쓰는 하나만 눌린 모양 */
+  fbBtn.setAttribute("aria-pressed",String(!useFb));   /* Local PC 또는 설정된 DB1~DBn 중 현재 위치만 눌린 모양 */
   dbGrp.hidden=false;
   {const pb=document.getElementById("dbPause");if(pb)pb.hidden=!useFb}   /* 저장 일시정지는 DB 를 쓸 때만 */
   dbBtns.forEach((b,i)=>{b.setAttribute("aria-pressed",String(useFb&&i===dbIdx));b.disabled=!isSet(DB_URLS[i]);b.title="DB"+(i+1)+(b.disabled?" — 주소가 설정되지 않았어요 (DB_URLS)":" 로 전환")});
@@ -2048,7 +2060,7 @@ function setFb(on){
   if(!dbSet){say(needUrlMsg(),"err");return}
   say("불러오는 중…");firstTry=true;connect();
 }
-function pickDb(i) {   // 저장 위치 선택: i=-1 이면 Local PC, 0~2 이면 DB1~DB3 (넷 중 하나만 선택돼요)
+function pickDb(i) {   // 저장 위치 선택: i=-1 이면 Local PC, 0 이상은 DB_URLS 순서의 DB1~DBn
   if (switching) return;
   if (i < 0) { if (useFb) setFb(false); return; }
   if (!DB_URLS[i] || !isSet(DB_URLS[i])) return;
@@ -2063,7 +2075,7 @@ function pickDb(i) {   // 저장 위치 선택: i=-1 이면 Local PC, 0~2 이면
 }
 fbBtn.addEventListener("click",()=>pickDb(-1));
 
-/* DB1/2/3 전환: 지금 DB 의 변경을 저장해 두고, 선택한 DB 의 주소·비밀번호·이 PC 메모 사본으로 바꾼 뒤 다시 연결.
+/* DB1~DBn 전환: 지금 DB 의 변경을 저장해 두고, 선택한 DB 의 주소·비밀번호·이 PC 메모 사본으로 바꾼 뒤 다시 연결.
    선택한 번호는 이 PC 에 기억돼서 다음에 켜도 그 DB 로 시작해요 (바코드 입력값 등 메모 이외의 설정은 DB 와 상관없이 그대로) */
 async function switchDb(i){
   if(switching||i===dbIdx||!useFb||!DB_URLS[i]||!isSet(DB_URLS[i]))return;
