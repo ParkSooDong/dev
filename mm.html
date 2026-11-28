@@ -45,16 +45,17 @@
 <body>
   <div id="host"><div id="stage"></div></div>
 <script>/* ===== 통합 공통 설정 ===== */
-// 주소는 DB1~DB4 순서대로 입력합니다. 빈 문자열이나 YOUR-PROJECT 기본값은 해당 번호의 DB를 만들지 않습니다.
+// 주소는 DB1~DB5 순서대로 입력합니다. 빈 문자열이나 YOUR-PROJECT 기본값은 해당 번호의 DB를 만들지 않습니다.
+// DB1~DB4는 메모장·달력 메모와 달력의 여유 4칸(1~4)에 대응하고, DB5는 메모장·달력 메모에서만 추가로 사용합니다(여유 칸 없음).
 // 예: DB3만 사용하려면 ["", "", "https://실제-DB3-주소"]처럼 앞의 빈 자리를 유지하세요.
 const DB_URL_INPUTS = [
   "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",    // DB1
   "https://pesdee00-2026-01-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB2
   "https://pesdee00-2027-01-default-rtdb.asia-southeast1.firebasedatabase.app",      // DB3
   "https://pesdee00-memo-default-rtdb.asia-southeast1.firebasedatabase.app",        // DB4
-  "https://pesdee01-mm-default-rtdb.asia-southeast1.firebasedatabase.app"        // DB5
+  "https://pesdee01-mm-default-rtdb.asia-southeast1.firebasedatabase.app"            // DB5
 ];
-window.NEWMM_DB_URLS = Array.from({ length: Math.min(DB_URL_INPUTS.length, 4) }, (_, index) => {
+window.NEWMM_DB_URLS = Array.from({ length: Math.min(DB_URL_INPUTS.length, 5) }, (_, index) => {
     const url = typeof DB_URL_INPUTS[index] === "string"
         ? DB_URL_INPUTS[index].trim()
         : "";
@@ -3408,10 +3409,10 @@ function makeRich(el) {
         })();
     });
 }
-/* ▼▼ DB1~DB4 주소를 해당 순번에 입력하세요. 빈 값 또는 YOUR-PROJECT 기본값인 번호는 만들지 않으며, 나머지 DB 번호는 그대로 유지됩니다. 각 DB 슬롯은 memo에 연결됩니다. ▼▼ */
+/* ▼▼ DB1~DB5 주소를 해당 순번에 입력하세요. 빈 값 또는 YOUR-PROJECT 기본값인 번호는 만들지 않으며, 나머지 DB 번호는 그대로 유지됩니다. 각 DB 슬롯은 memo에 연결됩니다. ▼▼ */
 const DB_URLS = parent.NEWMM_DB_URLS;
 /* ▲▲ 예: https://my-memo-12345-default-rtdb.asia-southeast1.firebasedatabase.app ▲▲ */
-const DBSEL = "memo-db"; // 마지막으로 고른 DB 번호(0~3)를 이 PC(브라우저)에 기억 → 다음에 켜도 그 DB 로 시작
+const DBSEL = "memo-db"; // 마지막으로 고른 DB 번호(0~4)를 이 PC(브라우저)에 기억 → 다음에 켜도 그 DB 로 시작
 const isSet = u => typeof u === "string" && u.trim().length > 0 && !u.includes("YOUR-PROJECT");
 let dbIdx = 0; // 0=DB1, 1=DB2, ... (기본 DB1)
 try {
@@ -12795,7 +12796,7 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
         stage.appendChild(frame);
         return frame;
     }
-    /* 저장 위치 선택 읽기/맞추기: -1 = Local PC 사용, 0~3 = DB1~DB4 */
+    /* 저장 위치 선택 읽기/맞추기: -1 = Local PC 사용, 0~4 = DB1~DB5 */
     function dbState(frame) {
         try {
             const doc = frame.contentDocument;
