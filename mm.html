@@ -56,6 +56,11 @@ const DB_URL_INPUTS = [
   "https://pesdee00-memo-default-rtdb.asia-southeast1.firebasedatabase.app",        // DB4
   "https://pesdee01-mm-default-rtdb.asia-southeast1.firebasedatabase.app"            // DB5
 ];
+// 공휴일(빨간 날)은 자동 계산됩니다. 계산할 수 없는 임시공휴일·선거일 등은 "YYYY-MM-DD": "이름" 으로 추가하고,
+// 자동 공휴일에서 빼려면 이름을 "" 로 적으세요. 예) "2027-01-04": "임시공휴일", "2026-10-05": ""
+window.NEWMM_HOLIDAY_CUSTOM = {
+    "2026-06-03": "지방선거"
+};
 window.NEWMM_DB_URLS = Array.from({ length: Math.min(DB_URL_INPUTS.length, 42) }, (_, index) => {
     const url = typeof DB_URL_INPUTS[index] === "string"
         ? DB_URL_INPUTS[index].trim()
@@ -1159,6 +1164,9 @@ document.getElementById("resetAll").addEventListener("click", () => {
 .calcell.sat .calhd {
   color: #1c7ed6;
 }
+.calcell.hol .calhd {
+  color: #e03131;
+}
 .calcell.today {
   border-color: var(--ink);
   box-shadow: 0 0 0 1px var(--ink);
@@ -2181,6 +2189,79 @@ const store = new Map(), titles = new Map(), monthStore = new Map();
 let alwaysMemo = { title: "", body: "" }, legacy = [], calDis = false; // 날짜별 메모·제목, 월별 메모
 let calY = now0.getFullYear(), calM = now0.getMonth();
 const dkey = (y, m, d) => y + "-" + p2(m + 1) + "-" + p2(d);
+/* ===== 한국 공휴일 (빨간 날) =====
+   고정일 + 음력(설날·부처님오신날·추석: 브라우저의 음력 변환) + 대체공휴일 규칙으로 계산합니다.
+   임시공휴일·선거일처럼 계산할 수 없는 날은 맨 위 설정의 NEWMM_HOLIDAY_CUSTOM 에 직접 적으세요. */
+const HOL_CUSTOM = (() => { try {
+    return parent.NEWMM_HOLIDAY_CUSTOM || {};
+}
+catch (e) {
+    return {};
+} })();
+/* [월, 일, 이름, 공휴일이 된 첫 해, 대체공휴일이 적용된 첫 해(0 = 대체 없음)] */
+const HOL_FIXED = [[1, 1, "신정", 0, 0], [3, 1, "삼일절", 0, 2022], [5, 1, "노동절", 2026, 2026], [5, 5, "어린이날", 0, 2018], [6, 6, "현충일", 0, 0], [7, 17, "제헌절", 2026, 2026], [8, 15, "광복절", 0, 2021], [10, 3, "개천절", 0, 2021], [10, 9, "한글날", 2013, 2022], [12, 25, "성탄절", 0, 2023]];
+const holLunarFmt = new Intl.DateTimeFormat("en-u-ca-chinese", { timeZone: "Asia/Seoul", month: "numeric", day: "numeric" });
+function holLunarDate(y, lm, ld, fromM, toM) {
+    for (let t = Date.UTC(y, fromM - 1, 1, 3); ; t += 86400000) {
+        const dt = new Date(t);
+        if (dt.getUTCMonth() + 1 > toM)
+            return null;
+        let m = "", d = "";
+        holLunarFmt.formatToParts(dt).forEach(p => { if (p.type === "month")
+            m = p.value;
+        else if (p.type === "day")
+            d = p.value; });
+        if (m === String(lm) && d === String(ld))
+            return [dt.getUTCMonth(), dt.getUTCDate()];
+    }
+}
+const holCache = {};
+function holidaysOf(y) {
+    if (holCache[y])
+        return holCache[y];
+    const key = dt => dkey(dt.getFullYear(), dt.getMonth(), dt.getDate());
+    const groups = [], names = {}, subs = {}, claims = {}, done = {};
+    HOL_FIXED.forEach(h => { if (y >= h[3])
+        groups.push({ name: h[2], dts: [new Date(y, h[0] - 1, h[1], 12)], sub: h[4] > 0 && y >= h[4], sat: true, multi: false }); });
+    [["설날", 1, 1, 1, 3, 2014, true], ["부처님오신날", 4, 8, 4, 6, 2023, false], ["추석", 8, 15, 8, 11, 2014, true]].forEach(L => {
+        const c = holLunarDate(y, L[1], L[2], L[3], L[4]);
+        if (!c)
+            return;
+        const dts = L[6] ? [-1, 0, 1].map(o => new Date(y, c[0], c[1] + o, 12)) : [new Date(y, c[0], c[1], 12)];
+        groups.push({ name: L[0], dts, sub: y >= L[5], sat: !L[6], multi: L[6] });
+    });
+    groups.forEach(g => { g.keys = g.dts.map(key);
+        g.keys.forEach((k, i) => { claims[k] = (claims[k] || 0) + 1;
+            const label = g.multi && i !== 1 ? g.name + " 연휴" : g.name;
+            names[k] = names[k] ? names[k] + "·" + label : label; }); });
+    Object.keys(HOL_CUSTOM).forEach(k => { if (k.slice(0, 4) === String(y) && HOL_CUSTOM[k])
+        names[k] = HOL_CUSTOM[k]; });
+    groups.sort((a, b) => a.keys[0] > b.keys[0] ? 1 : -1);
+    const isOff = dt => dt.getDay() === 0 || !!names[key(dt)] || !!subs[key(dt)];
+    groups.forEach(g => {
+        if (!g.sub)
+            return;
+        let hit = false;
+        g.dts.forEach((dt, i) => { const k = g.keys[i], w = dt.getDay();
+            if (!done[k] && (w === 0 || (g.sat && w === 6) || claims[k] > 1)) {
+                hit = true;
+                done[k] = true;
+            } });
+        if (!hit)
+            return;
+        let nx = g.dts[g.dts.length - 1];
+        do {
+            nx = new Date(nx.getFullYear(), nx.getMonth(), nx.getDate() + 1, 12);
+        } while (isOff(nx));
+        subs[key(nx)] = g.name + " 대체";
+    });
+    const all = Object.assign({}, names, subs);
+    Object.keys(HOL_CUSTOM).forEach(k => { if (k.slice(0, 4) === String(y) && !HOL_CUSTOM[k])
+        delete all[k]; });
+    holCache[y] = all;
+    return all;
+}
+function holidayName(y, m0, d) { return holidaysOf(y)[dkey(y, m0, d)] || ""; }
 function dIdx(k) { return EDS.findIndex(e => e.dataset.date === k); }
 function monthKey() { return calY + "-" + p2(calM + 1); }
 function syncStore() {
@@ -2228,13 +2309,13 @@ function renderCal() {
     for (let i = 0; i \u003c 42; i++) {
         const e = EDS[i], c = CELLS[i], d = i - off + 1;
         if (d >= 1 && d \u003c= dim) {
-            const k = dkey(calY, calM, d), wd = (off + d - 1) % 7;
+            const k = dkey(calY, calM, d), wd = (off + d - 1) % 7, hn = holidayName(calY, calM, d);
             e.dataset.date = k;
             CAL_LBL[i] = calY + "년 " + (calM + 1) + "월 " + d + "일 " + CAL_WD[wd] + "요일";
-            CAL_HS[i].textContent = (calM + 1) + "." + d + "." + CAL_WD[wd];
-            CAL_HL[i].textContent = CAL_LBL[i];
-            c.firstChild.title = CAL_LBL[i]; // 칸 위 표시는 [11.26.목], 확대하면 긴 형태
-            c.className = "calcell" + (wd === 0 ? " sun" : wd === 6 ? " sat" : "") + (k === td ? " today" : "") + (i === zoomI ? " zoom" : "") + (titles.get(k) ? " has-t" : "");
+            CAL_HS[i].textContent = (calM + 1) + "." + d + "." + CAL_WD[wd] + (hn ? " " + hn : "");
+            CAL_HL[i].textContent = CAL_LBL[i] + (hn ? " · " + hn : "");
+            c.firstChild.title = CAL_LBL[i] + (hn ? " · " + hn : ""); // 칸 위 표시는 [11.26.목], 확대하면 긴 형태
+            c.className = "calcell" + (wd === 0 ? " sun" : wd === 6 ? " sat" : "") + (hn ? " hol" : "") + (k === td ? " today" : "") + (i === zoomI ? " zoom" : "") + (titles.get(k) ? " has-t" : "");
             e.value = store.get(k) || "";
             e.disabled = calDis;
             CAL_TT[i].value = titles.get(k) || "";
