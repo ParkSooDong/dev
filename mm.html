@@ -2262,6 +2262,79 @@ function holidaysOf(y) {
     return all;
 }
 function holidayName(y, m0, d) { return holidaysOf(y)[dkey(y, m0, d)] || ""; }
+/* ===== 일요일 음력 표시 =====
+   기본은 브라우저 음력 변환(바로 표시, 한국 시간 기준)이고, 한국천문연구원(KASI) 양력→음력 조회로 확인되면 그 값으로 바꿉니다.
+   조회 주소: https://astro.kasi.re.kr/life/solc?yyyy=2026&mm=11&dd=28 (JSON: LUNC_MM, LUNC_DD, LUNC_LEAP_MM "평"/"윤")
+   브라우저가 외부 조회를 막으면 조용히 브라우저 변환값을 그대로 씁니다. 콘솔에서 ixDebugLunar = true 를 입력하면 조회 응답을 로그로 봅니다. */
+const HOL_LUNAR_OK = (() => { try {
+    let m = "", d = "";
+    holLunarFmt.formatToParts(new Date(Date.UTC(2026, 1, 17, 3))).forEach(q => { if (q.type === "month")
+        m = q.value;
+    else if (q.type === "day")
+        d = q.value; });
+    return m === "1" && d === "1";
+}
+catch (e) {
+    return false;
+} })();
+const KASI_KEY = "cal-lunar-kasi";
+let kasiCache = {}, kasiDead = false;
+const kasiPending = {};
+try {
+    kasiCache = JSON.parse(localStorage.getItem(KASI_KEY) || "{}") || {};
+}
+catch (e) {
+    kasiCache = {};
+}
+function calLunarIntl(y, m0, d) {
+    let m = "", dd = "";
+    holLunarFmt.formatToParts(new Date(Date.UTC(y, m0, d, 3))).forEach(q => { if (q.type === "month")
+        m = q.value;
+    else if (q.type === "day")
+        dd = q.value; });
+    return [m.indexOf("bis") >= 0, parseInt(m, 10), parseInt(dd, 10)];
+}
+function calLunarOf(y, m0, d) {
+    const k = dkey(y, m0, d);
+    if (kasiCache[k])
+        return kasiCache[k];
+    return HOL_LUNAR_OK ? calLunarIntl(y, m0, d) : null;
+}
+/* 칸 머리글: 11.29.일 음10.21 (공휴일이면 이름도), 확대하면 긴 형태 */
+function calHeadFill(i, y, m0, d, wd) {
+    const hn = holidayName(y, m0, d), lu = wd === 0 ? calLunarOf(y, m0, d) : null;
+    const luS = lu ? "음" + (lu[0] ? "윤" : "") + lu[1] + "." + lu[2] : "";
+    const luL = lu ? "음력 " + (lu[0] ? "윤" : "") + lu[1] + "월 " + lu[2] + "일" : "";
+    CAL_HS[i].textContent = (m0 + 1) + "." + d + "." + CAL_WD[wd] + (luS ? " " + luS : "") + (hn ? " " + hn : "");
+    CAL_HL[i].textContent = CAL_LBL[i] + (luL ? " · " + luL : "") + (hn ? " · " + hn : "");
+    CELLS[i].firstChild.title = CAL_HL[i].textContent;
+    if (wd === 0)
+        kasiFetch(y, m0, d);
+}
+function kasiFetch(y, m0, d) {
+    const k = dkey(y, m0, d);
+    if (kasiDead || kasiCache[k] || kasiPending[k])
+        return;
+    kasiPending[k] = true;
+    fetch("https://astro.kasi.re.kr/life/solc?yyyy=" + y + "&mm=" + (m0 + 1) + "&dd=" + d)
+        .then(r => r.json())
+        .then(j => {
+        if (window.ixDebugLunar)
+            console.log("[ixDebugLunar]", k, j);
+        const m = parseInt(j.LUNC_MM, 10), dd = parseInt(j.LUNC_DD, 10);
+        if (!(m >= 1 && m \u003c= 12 && dd >= 1 && dd \u003c= 30))
+            return;
+        kasiCache[k] = [j.LUNC_LEAP_MM === "윤", m, dd];
+        try {
+            localStorage.setItem(KASI_KEY, JSON.stringify(kasiCache));
+        }
+        catch (e) { }
+        const i = dIdx(k);
+        if (i >= 0)
+            calHeadFill(i, y, m0, d, 0);
+    })
+        .catch(() => { kasiDead = true; });
+}
 function dIdx(k) { return EDS.findIndex(e => e.dataset.date === k); }
 function monthKey() { return calY + "-" + p2(calM + 1); }
 function syncStore() {
@@ -2312,9 +2385,7 @@ function renderCal() {
             const k = dkey(calY, calM, d), wd = (off + d - 1) % 7, hn = holidayName(calY, calM, d);
             e.dataset.date = k;
             CAL_LBL[i] = calY + "년 " + (calM + 1) + "월 " + d + "일 " + CAL_WD[wd] + "요일";
-            CAL_HS[i].textContent = (calM + 1) + "." + d + "." + CAL_WD[wd] + (hn ? " " + hn : "");
-            CAL_HL[i].textContent = CAL_LBL[i] + (hn ? " · " + hn : "");
-            c.firstChild.title = CAL_LBL[i] + (hn ? " · " + hn : ""); // 칸 위 표시는 [11.26.목], 확대하면 긴 형태
+            calHeadFill(i, calY, calM, d, wd); // 칸 위 표시는 [11.26.목], 확대하면 긴 형태
             c.className = "calcell" + (wd === 0 ? " sun" : wd === 6 ? " sat" : "") + (hn ? " hol" : "") + (k === td ? " today" : "") + (i === zoomI ? " zoom" : "") + (titles.get(k) ? " has-t" : "");
             e.value = store.get(k) || "";
             e.disabled = calDis;
