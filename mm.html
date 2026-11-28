@@ -2867,13 +2867,16 @@ function positionDbSlots() {
             }
         }
     }
+    // 확대 중에는 칸의 CSS Grid 위치가 바뀌므로(전체 덮기/auto) 계산된 스타일 대신 평소 자리를 기준으로 점유 칸을 정합니다.
     EDS.forEach((editor, index) => {
         if (editor.dataset.date)
-            markGridArea(CELLS[index]);
+            used.add(index);
     });
-    // 일간 메모 배치가 끝난 뒤 월간 메모와 삭제·상시 메모의 실제 위치를 반영합니다.
-    markGridArea(monthMemo);
-    markGridArea(deletePanel);
+    for (let col = 2; col \u003c 7; col++)
+        used.add(35 + col); // 월간 메모: 6행 3~7열
+    const delRow = EDS[1].dataset.date ? 5 : 0; // 삭제·상시 메모: 1~2열, 1행 또는 6행
+    used.add(delRow * 7);
+    used.add(delRow * 7 + 1);
     // 남은 칸을 위에서 아래로, 각 행에서는 왼쪽에서 오른쪽 순서로 사용합니다.
     const free = [];
     for (let cell = 0; cell \u003c 42; cell++) {
