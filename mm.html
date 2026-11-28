@@ -51,7 +51,8 @@ const DB_URL_INPUTS = [
   "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",    // DB1
   "https://pesdee00-2026-01-default-rtdb.asia-southeast1.firebasedatabase.app",     // DB2
   "https://pesdee00-2027-01-default-rtdb.asia-southeast1.firebasedatabase.app",      // DB3
-  "https://pesdee00-memo-default-rtdb.asia-southeast1.firebasedatabase.app"        // DB4
+  "https://pesdee00-memo-default-rtdb.asia-southeast1.firebasedatabase.app",        // DB4
+  "https://pesdee01-mm-default-rtdb.asia-southeast1.firebasedatabase.app"        // DB5
 ];
 window.NEWMM_DB_URLS = Array.from({ length: Math.min(DB_URL_INPUTS.length, 4) }, (_, index) => {
     const url = typeof DB_URL_INPUTS[index] === "string"
