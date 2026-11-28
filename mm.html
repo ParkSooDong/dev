@@ -1820,6 +1820,10 @@ document.getElementById("resetAll").addEventListener("click", () => {
   .calcell:not(.zoom) .calhdt {
     flex: 0 1 auto;
   }
+  /* 모바일 7x6 작은 칸: 음력·공휴일 이름은 숨기고(공휴일은 빨간색만), 확대하면 긴 형태로 보여요 */
+  .calcell:not(.zoom) .calhdt .s .x {
+    display: none;
+  }
   .calcell:not(.zoom) .calzoom {
     margin-left: auto;
     width: 13px;
@@ -2305,7 +2309,14 @@ function calHeadFill(i, y, m0, d, wd) {
     const hn = holidayName(y, m0, d), lu = wd === 0 ? calLunarOf(y, m0, d) : null;
     const luS = lu ? "음" + (lu[0] ? "윤" : "") + lu[1] + "." + lu[2] : "";
     const luL = lu ? "음력 " + (lu[0] ? "윤" : "") + lu[1] + "월 " + lu[2] + "일" : "";
-    CAL_HS[i].textContent = (m0 + 1) + "." + d + "." + CAL_WD[wd] + (luS ? " " + luS : "") + (hn ? " " + hn : "");
+    CAL_HS[i].textContent = (m0 + 1) + "." + d + "." + CAL_WD[wd];
+    const extra = (luS ? luS : "") + (luS && hn ? " " : "") + (hn ? hn : "");
+    if (extra) { // 음력·공휴일 이름은 따로 감싸서, 모바일 7x6 작은 칸에서는 숨깁니다 (확대하면 아래 긴 형태로 표시)
+        const x = document.createElement("span");
+        x.className = "x";
+        x.textContent = " " + extra;
+        CAL_HS[i].appendChild(x);
+    }
     CAL_HL[i].textContent = CAL_LBL[i] + (luL ? " · " + luL : "") + (hn ? " · " + hn : "");
     CELLS[i].firstChild.title = CAL_HL[i].textContent;
     if (wd === 0)
