@@ -2041,6 +2041,10 @@ makeRich(monthMemoBody);
 let monthZoom = false, alwaysZoom = false;
 function syncMemoZoomState() {
     calGrid.classList.toggle("zooming", monthZoom || alwaysZoom || zoomI >= 0);
+    try {
+        positionDbSlots();
+    }
+    catch (_) { } // DB 칸 코드가 준비되기 전이면 건너뜀 // 확대·축소할 때마다 DB 칸을 지금 달의 표준 자리로 다시 계산
     window.dispatchEvent(new Event("resize"));
     requestAnimationFrame(zoomPin);
 }
@@ -2562,6 +2566,10 @@ function calZoom(i) {
         } // 터치에서는 키보드가 갑자기 올라오지 않게
     }
     calNavSync();
+    try {
+        positionDbSlots();
+    }
+    catch (_) { } // DB 칸 코드가 준비되기 전이면 건너뜀
     window.dispatchEvent(new Event("resize"));
     requestAnimationFrame(zoomPin);
 }
@@ -2887,10 +2895,15 @@ function positionDbSlots() {
     dbSlotItems.forEach((item, index) => {
         const cell = free[index];
         if (cell == null) {
+            // 이 달에는 자리가 없는 DB 칸: 이전 위치 기억 없이 완전히 숨겨요 (CSS display 지정과 상관없이 inline 으로도 숨김)
             item.el.hidden = true;
+            item.el.style.display = "none";
+            item.el.style.gridColumn = "";
+            item.el.style.gridRow = "";
             return;
         }
         item.el.hidden = false;
+        item.el.style.display = "";
         if (item.load)
             item.load(); // 여유 칸이 생긴 슬롯만 편집기를 처음 한 번 만듭니다.
         item.el.style.gridColumn = String(cell % 7 + 1);
