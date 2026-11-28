@@ -2803,6 +2803,7 @@ let dbSlotZoomed = null;
 const dbSlotStyle = document.createElement("style");
 dbSlotStyle.textContent = [
     ".dbslot { z-index:3; display:flex; flex-direction:column; min-width:0; min-height:0; overflow:hidden; border:2px solid #7655c9; border-radius:8px; background:var(--card); }",
+    ".dbslot[hidden] { display:none !important; }",
     ".dbslot-head { flex:none; display:flex; align-items:center; gap:0; min-width:0; padding:2px 4px 2px 6px; border-bottom:1px solid rgba(118,85,201,.38); background:rgba(118,85,201,.09); font-size:10px; font-weight:700; color:var(--ink); }",
     ".dbslot-head b { flex:none; min-width:0; margin:0; padding:0; }",
     ".dbslot-head button.dbslot-connect { margin-left:0 !important; padding-left:3px; padding-right:3px; }",
