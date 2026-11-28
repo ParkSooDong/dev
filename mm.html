@@ -1824,6 +1824,22 @@ document.getElementById("resetAll").addEventListener("click", () => {
   .calcell:not(.zoom) .calhdt .s .x {
     display: none;
   }
+  /* 모바일 확대 머리글: 양력은 첫 줄, 음력·공휴일은 둘째 줄에 줄바꿈해서 잘리지 않게 */
+  .calcell.zoom .calhd {
+    white-space: normal;
+  }
+  .calcell.zoom .calhdt {
+    white-space: normal;
+    overflow: visible;
+  }
+  .calcell.zoom .calhdt .l .sep {
+    display: none;
+  }
+  .calcell.zoom .calhdt .l .lx {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+  }
   .calcell:not(.zoom) .calzoom {
     margin-left: auto;
     width: 13px;
@@ -2317,8 +2333,18 @@ function calHeadFill(i, y, m0, d, wd) {
         x.textContent = " " + extra;
         CAL_HS[i].appendChild(x);
     }
-    CAL_HL[i].textContent = CAL_LBL[i] + (luL ? " · " + luL : "") + (hn ? " · " + hn : "");
-    CELLS[i].firstChild.title = CAL_HL[i].textContent;
+    const extraL = (luL ? luL : "") + (luL && hn ? " · " : "") + (hn ? hn : "");
+    CAL_HL[i].textContent = CAL_LBL[i];
+    if (extraL) { // 확대한 머리글: PC는 한 줄(날짜 · 음력 · 공휴일), 모바일은 둘째 줄에 음력·공휴일
+        const sep = document.createElement("span"), lx = document.createElement("span");
+        sep.className = "sep";
+        sep.textContent = " · ";
+        lx.className = "lx";
+        lx.textContent = extraL;
+        CAL_HL[i].appendChild(sep);
+        CAL_HL[i].appendChild(lx);
+    }
+    CELLS[i].firstChild.title = CAL_LBL[i] + (extraL ? " · " + extraL : "");
     if (wd === 0)
         kasiFetch(y, m0, d);
 }
