@@ -46,7 +46,8 @@
   <div id="host"><div id="stage"></div></div>
 <script>/* ===== 통합 공통 설정 ===== */
 // 주소는 DB1~DB5 순서대로 입력합니다. 빈 문자열이나 YOUR-PROJECT 기본값은 해당 번호의 DB를 만들지 않습니다.
-// DB1~DB4는 메모장·달력 메모와 달력의 여유 4칸(1~4)에 대응하고, DB5는 메모장·달력 메모에서만 추가로 사용합니다(여유 칸 없음).
+// 모든 DB는 메모장·달력 메모에 버튼으로 생기고, 달력 7×6의 여유 칸에는 앞번호부터 여유 칸 수만큼만 DB 편집칸이 만들어집니다.
+// DB8 이상이 필요하면 아래 배열에 줄을 더 추가하세요(최대 42개).
 // 예: DB3만 사용하려면 ["", "", "https://실제-DB3-주소"]처럼 앞의 빈 자리를 유지하세요.
 const DB_URL_INPUTS = [
   "https://parksoodong-memo-default-rtdb.asia-southeast1.firebasedatabase.app",    // DB1
@@ -55,7 +56,7 @@ const DB_URL_INPUTS = [
   "https://pesdee00-memo-default-rtdb.asia-southeast1.firebasedatabase.app",        // DB4
   "https://pesdee01-mm-default-rtdb.asia-southeast1.firebasedatabase.app"            // DB5
 ];
-window.NEWMM_DB_URLS = Array.from({ length: Math.min(DB_URL_INPUTS.length, 5) }, (_, index) => {
+window.NEWMM_DB_URLS = Array.from({ length: Math.min(DB_URL_INPUTS.length, 42) }, (_, index) => {
     const url = typeof DB_URL_INPUTS[index] === "string"
         ? DB_URL_INPUTS[index].trim()
         : "";
@@ -2375,12 +2376,12 @@ window.refreshSplit = () => { };
 window.refreshLabels = () => { };
 window.clearLayoutPrefs = () => { };
 renderCal();
-/* ===== 달력의 여유 4칸: DB1~DB4 메모장 편집 슬롯 =====
-   실제 주소가 입력된 번호만 표시하고 DB 번호는 유지합니다. 각 슬롯은 memo 컬렉션을 쓰는 메모장 앱 인스턴스이며
+/* ===== 달력의 여유 칸: DB 메모장 편집 슬롯 =====
+   실제 주소가 입력된 번호만, 앞번호부터 7×6의 여유 칸 수만큼 표시하고 DB 번호는 유지합니다. 각 슬롯은 memo 컬렉션을 쓰는 메모장 앱 인스턴스이며
    기본은 로컬, [연결]을 눌렀을 때만 해당 DB에 실시간 연결합니다. */
 window.NEWMM_SHARED_DOM = parent.NEWMM_SHARED_DOM;
 window.NEWMM_DB_URLS = parent.NEWMM_DB_URLS;
-const dbSlotUrls = (Array.isArray(window.NEWMM_DB_URLS) ? window.NEWMM_DB_URLS : []).slice(0, 4);
+const dbSlotUrls = (Array.isArray(window.NEWMM_DB_URLS) ? window.NEWMM_DB_URLS : []).slice(0, 42);
 const dbSlotItems = [];
 let dbSlotZoomed = null;
 const dbSlotStyle = document.createElement("style");
@@ -2470,6 +2471,8 @@ function positionDbSlots() {
             return;
         }
         item.el.hidden = false;
+        if (item.load)
+            item.load(); // 여유 칸이 생긴 슬롯만 편집기를 처음 한 번 만듭니다.
         item.el.style.gridColumn = String(cell % 7 + 1);
         item.el.style.gridRow = String(Math.floor(cell / 7) + 1);
     });
@@ -2613,15 +2616,20 @@ dbSlotUrls.forEach((url, index) => {
             connect.disabled = true;
         }
     });
-    try {
-        frame.srcdoc = parent.NEWMM_COMPOSE_APP("memo", { dbSlotIndex: index });
-    }
-    catch (error) {
-        connect.disabled = true;
-        const message = document.createElement("div");
-        message.textContent = "메모 편집기를 만들지 못했습니다";
-        el.appendChild(message);
-    }
+    item.load = () => {
+        if (item.loaded)
+            return;
+        item.loaded = true;
+        try {
+            frame.srcdoc = parent.NEWMM_COMPOSE_APP("memo", { dbSlotIndex: index });
+        }
+        catch (error) {
+            connect.disabled = true;
+            const message = document.createElement("div");
+            message.textContent = "메모 편집기를 만들지 못했습니다";
+            el.appendChild(message);
+        }
+    };
 });
 const renderCalBeforeDbSlots = renderCal;
 renderCal = function () { const result = renderCalBeforeDbSlots.apply(this, arguments); positionDbSlots(); return result; };
@@ -12726,9 +12734,9 @@ window.NEWMM_SHARED_SCRIPTS.imageEditor = "/* ===== 이미지: 크기 조절 / �
             return `<button type="button" class="fbbtn dbbtn" data-i="${index}">DB${index + 1}</button>`;
         }).join("");
         html = html.replace('<span id="dbButtonsSlot"></span>', dbButtons);
-        // 달력의 DB1~DB4 작은 편집칸은 메모장 앱을 그대로 재사용하되, 각 칸의 DB 번호를 고정하고 기본은 로컬로 시작합니다.
+        // 달력의 DB 작은 편집칸(여유 칸 수만큼)은 메모장 앱을 그대로 재사용하되, 각 칸의 DB 번호를 고정하고 기본은 로컬로 시작합니다.
         if (options && Number.isInteger(options.dbSlotIndex)) {
-            const slotIndex = Math.max(0, Math.min(3, options.dbSlotIndex));
+            const slotIndex = Math.max(0, Math.min(41, options.dbSlotIndex));
             html = html.replace(/let dbIdx = 0;[^\n]*\n\s*try\s*\{[\s\S]*?localStorage\.getItem\(DBSEL\)[\s\S]*?\n\s*\}\s*catch\s*\(e\)\s*\{\s*\}/, `let dbIdx = ${slotIndex}; // DB 슬롯은 해당 번호에 고정`);
             html = html.replace('let useFb = !!(saved && saved.fb === true);', 'let useFb = false;');
             html = html.replace('const KEY = "memo-state";', `const KEY = "memo-dbslot-${slotIndex + 1}";`);
