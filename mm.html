@@ -1781,6 +1781,9 @@ document.getElementById("resetAll").addEventListener("click", () => {
   min-width: 0;
   text-align: center;
 }
+#calNav.dayzoom #calTitle {
+  width: 10.8em;
+}
 #calTitle:hover {
   border-color: var(--line);
 }
@@ -2498,10 +2501,13 @@ function renderCal() {
         }
         zbSet(i);
     }
-    if (!ta || !ta.dataset.date)
+    if (monthZoom)
+        ta = monthMemoBody;
+    else if (alwaysZoom)
+        ta = alwaysMemoBody;
+    else if (!ta || !ta.dataset.date)
         ta = EDS[off];
-    calTitle.value = calY + "년 " + (calM + 1) + "월";
-    calTitle.classList.remove("bad");
+    calNavSync();
     renderMonthMemo();
     // 삭제 패널은 날짜가 없는 연속 2칸을 합쳐 사용: 1행 2열이 비어 있으면 1행 1~2열, 아니면 6행 1~2열.
     const deleteRow = EDS[1].dataset.date ? 6 : 1;
@@ -2555,18 +2561,88 @@ function calZoom(i) {
             catch (e) { }
         } // 터치에서는 키보드가 갑자기 올라오지 않게
     }
+    calNavSync();
     window.dispatchEvent(new Event("resize"));
     requestAnimationFrame(zoomPin);
 }
-function calGo(dm) { if (window.cfSelClear)
-    window.cfSelClear(); if (monthZoom)
-    setMonthZoom(false, false); if (alwaysZoom)
-    setAlwaysZoom(false, false); calGrid.classList.remove("zooming"); calZoom(-1); syncStore(); const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1); calY = t.getFullYear(); calM = t.getMonth(); renderCal(); calGrid.scrollTop = 0; }
-document.getElementById("calPrev").addEventListener("click", () => calGo(-1));
-document.getElementById("calNext").addEventListener("click", () => calGo(1));
+// 달 단위 이동. 월간·상시 메모 확대는 그대로 유지하고(뒤의 7x6 달력만 바뀌어요), 날짜 칸 확대 중에는 같은 날짜 칸 확대를 유지한 채 이동해요.
+function calGo(dm) {
+    if (window.cfSelClear)
+        window.cfSelClear();
+    if (zoomI >= 0) {
+        if (dm === 0)
+            calZoomTo(now0.getFullYear(), now0.getMonth(), now0.getDate());
+        else
+            calZoomStep(0, dm);
+        return;
+    }
+    syncStore();
+    const t = dm === 0 ? new Date(now0.getFullYear(), now0.getMonth(), 1) : new Date(calY, calM + dm, 1);
+    calY = t.getFullYear();
+    calM = t.getMonth();
+    renderCal();
+    if (!monthZoom && !alwaysZoom)
+        calGrid.scrollTop = 0;
+}
+// 날짜 칸 확대 중 이동: 확대를 유지한 채 y-m-d 날짜 칸으로 옮겨요 (다른 달이면 그 달의 7x6 달력을 뒤에서 다시 그려요)
+function calZoomTo(y, m, d) {
+    if (zoomI \u003c 0)
+        return;
+    if (window.cfSelClear)
+        window.cfSelClear();
+    syncStore();
+    const t = new Date(y, m, d);
+    calY = t.getFullYear();
+    calM = t.getMonth();
+    zoomI = new Date(calY, calM, 1).getDay() + t.getDate() - 1;
+    renderCal();
+    ta = EDS[zoomI];
+    calGrid.scrollTop = 0;
+    calGrid.scrollLeft = 0;
+    if (window.matchMedia && matchMedia("(pointer:fine)").matches) {
+        try {
+            EDS[zoomI].focus({ preventScroll: true });
+        }
+        catch (e) { }
+    }
+}
+// dd: 일 단위, dm: 월 단위 (월 이동은 같은 일자로, 그 달에 없으면 마지막 날로)
+function calZoomStep(dd, dm) {
+    if (zoomI \u003c 0 || !EDS[zoomI].dataset.date)
+        return;
+    const p = EDS[zoomI].dataset.date.split("-").map(Number);
+    if (dd) {
+        calZoomTo(p[0], p[1] - 1, p[2] + dd);
+        return;
+    }
+    const f = new Date(p[0], p[1] - 1 + dm, 1), dim = new Date(f.getFullYear(), f.getMonth() + 1, 0).getDate();
+    calZoomTo(f.getFullYear(), f.getMonth(), Math.min(p[2], dim));
+}
+function calTitleText() {
+    if (zoomI >= 0 && EDS[zoomI] && EDS[zoomI].dataset.date) {
+        const p = EDS[zoomI].dataset.date.split("-").map(Number);
+        return p[0] + "년 " + p[1] + "월 " + p[2] + "일";
+    }
+    return calY + "년 " + (calM + 1) + "월";
+}
+// 날짜 칸 확대 중에는 제목이 '2026년 11월 28일'로 바뀌고, 가까운 버튼은 하루씩·바깥 버튼은 한 달씩 움직여요
+function calNavSync() {
+    const z = zoomI >= 0;
+    calTitle.value = calTitleText();
+    calTitle.classList.remove("bad");
+    document.getElementById("calNav").classList.toggle("dayzoom", z);
+    const set = (id, label) => { const b = document.getElementById(id); b.title = label; b.setAttribute("aria-label", label); };
+    set("calPrev", z ? "전날" : "이전 달");
+    set("calNext", z ? "다음날" : "다음 달");
+    set("calPrevY", z ? "전달 같은 날" : "전년 동월");
+    set("calNextY", z ? "다음달 같은 날" : "다음해 동월");
+    calTitle.title = z ? "날짜를 입력하고 Enter: 2026.11.28 / 2026-11-28 / 2026년 11월 28일" : "연·월을 입력하고 Enter: 2026.11 / 2026-11 / 2026년 11월";
+}
+document.getElementById("calPrev").addEventListener("click", () => { if (zoomI >= 0) calZoomStep(-1, 0); else calGo(-1); });
+document.getElementById("calNext").addEventListener("click", () => { if (zoomI >= 0) calZoomStep(1, 0); else calGo(1); });
 document.getElementById("calToday").addEventListener("click", () => calGo(0));
-document.getElementById("calPrevY").addEventListener("click", () => calGo(-12));
-document.getElementById("calNextY").addEventListener("click", () => calGo(12));
+document.getElementById("calPrevY").addEventListener("click", () => { if (zoomI >= 0) calZoomStep(0, -1); else calGo(-12); });
+document.getElementById("calNextY").addEventListener("click", () => { if (zoomI >= 0) calZoomStep(0, 1); else calGo(12); });
 /* 연·월 직접 입력: 4자리 연도와 1~2자리 월만 있으면 사이·앞뒤에 어떤 글자가 와도 해당 월로 이동 (2026.11 / 2026-11 / 2026년 11월 / 202611 / 11월 2026년) */
 function calParseYM(str) {
     const text = String(str);
@@ -2581,9 +2657,41 @@ function calParseYM(str) {
     }
     return y >= 1000 && m >= 1 && m \u003c= 12 ? [y, m] : null;
 }
-function calTitleReset() { calTitle.value = calY + "년 " + (calM + 1) + "월"; calTitle.classList.remove("bad"); }
+// 연·월·일 입력 (날짜 칸 확대 중): 2026.11.28 / 2026-11-28 / 2026년 11월 28일 / 20261128. 일이 없으면 지금 일자를 유지해요
+function calParseYMD(str) {
+    const text = String(str).trim();
+    let hit = text.match(/^([0-9]{4})([0-9]{2})([0-9]{2})$/) || text.match(/([0-9]{4})[^0-9]*?([0-9]{1,2})[^0-9]+([0-9]{1,2})(?![0-9])/);
+    let y, m, d;
+    if (hit) {
+        y = Number(hit[1]);
+        m = Number(hit[2]);
+        d = Number(hit[3]);
+    }
+    else {
+        const ym = calParseYM(text);
+        if (!ym || !EDS[zoomI] || !EDS[zoomI].dataset.date)
+            return null;
+        y = ym[0];
+        m = ym[1];
+        d = Number(EDS[zoomI].dataset.date.split("-")[2]);
+        d = Math.min(d, new Date(y, m, 0).getDate());
+    }
+    const t = new Date(y, m - 1, d);
+    return y >= 1000 && m >= 1 && m \u003c= 12 && t.getMonth() === m - 1 && t.getDate() === d ? [y, m, d] : null;
+}
+function calTitleReset() { calNavSync(); }
 calTitle.addEventListener("focus", () => calTitle.select());
 calTitle.addEventListener("change", () => {
+    if (zoomI >= 0) {
+        const ymd = calParseYMD(calTitle.value);
+        if (!ymd) {
+            calTitle.classList.add("bad");
+            setTimeout(calTitleReset, 900);
+            return;
+        }
+        calZoomTo(ymd[0], ymd[1] - 1, ymd[2]);
+        return;
+    }
     const ym = calParseYM(calTitle.value);
     if (!ym) {
         calTitle.classList.add("bad");
